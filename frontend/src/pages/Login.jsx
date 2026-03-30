@@ -103,9 +103,9 @@ export default function Login() {
 
           {/* DIVIDER */}
           <div className="flex items-center gap-2 text-gray-400 text-sm">
-            <div className="flex-1 h-[1px] bg-zinc-700"></div>
+            <div className="flex-1 h-px bg-zinc-700"></div>
             Or continue with
-            <div className="flex-1 h-[1px] bg-zinc-700"></div>
+            <div className="flex-1 h-px bg-zinc-700"></div>
           </div>
 
           {/* GOOGLE BUTTON */}

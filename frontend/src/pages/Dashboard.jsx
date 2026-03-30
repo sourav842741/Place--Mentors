@@ -30,7 +30,7 @@ export default function Dashboard() {
       <div className="max-w-3xl mx-auto bg-zinc-900 rounded-2xl overflow-hidden shadow-lg">
 
         {/* Cover Image */}
-        <div className="h-40 bg-gradient-to-r from-orange-500 to-pink-500 relative">
+        <div className="h-40 bg-linear-to-r from-orange-500 to-pink-500 relative">
           {user?.coverImage && (
             <img
               src={user.coverImage}
