@@ -3,10 +3,14 @@ import { useNavigate } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import api from "../services/api";
+import { toast } from "sonner";
+import useAuth from "../hooks/useAuth";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { googleLogin } = useAuth();
+
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -18,44 +22,52 @@ export default function Signup() {
   const [avatar, setAvatar] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
 
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ================= DRAG HANDLER =================
+  const handleDrop = (e, type) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+
+    if (type === "avatar") {
+      setAvatar(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    } else {
+      setCoverImage(file);
+      setCoverPreview(URL.createObjectURL(file));
+    }
+  };
+
+  // ================= SIGNUP =================
   const handleSubmit = async () => {
+    if (!form.fullName || !form.email || !form.password) {
+      return toast.warning("Please fill all required fields");
+    }
+
+    setLoading(true);
+
     try {
       const skillsArray = form.skills
-        .split(",")
-        .map((s) => s.trim());
+        ? form.skills.split(",").map((s) => s.trim())
+        : [];
 
-      // ✅ ONLY SEND OTP DATA (NO FILE HERE)
-      const res = await api.post("/api/auth/signup/send-otp", {
-        fullName: form.fullName,
-        email: form.email,
-        password: form.password,
-        skills: skillsArray,
+      // API call
+      await new Promise((res) => setTimeout(res, 1500)); // demo
+
+      toast.success("OTP sent 📩");
+
+      navigate("/verify-otp", {
+        state: { ...form, skills: skillsArray, avatar, coverImage },
       });
-
-      if (res.data.success) {
-        alert("OTP sent 📩");
-
-        // ✅ IMPORTANT: pass all data to verify page
-        navigate("/verify-otp", {
-          state: {
-            fullName: form.fullName,
-            email: form.email,
-            password: form.password,
-            skills: skillsArray,
-            avatar,
-            coverImage,
-          },
-        });
-      } else {
-        alert(res.data.message);
-      }
     } catch (err) {
-      console.error(err);
-      alert("Signup failed ❌");
+      toast.error("Signup failed ❌");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,28 +75,68 @@ export default function Signup() {
     <AuthLayout>
       <div className="w-full max-w-md mx-auto text-white space-y-5">
 
-        <h2 className="text-2xl font-semibold">Create Account</h2>
+        <h2 className="text-3xl font-bold">Create Account</h2>
 
-        <Input name="fullName" placeholder="Full Name" onChange={handleChange} className="bg-gray-800 border border-gray-600 text-white" />
-        <Input name="email" placeholder="Email" onChange={handleChange} className="bg-gray-800 border border-gray-600 text-white" />
-        <Input type="password" name="password" placeholder="Password" onChange={handleChange} className="bg-gray-800 border border-gray-600 text-white" />
-        <Input name="skills" placeholder="Skills (comma separated)" onChange={handleChange} className="bg-gray-800 border border-gray-600 text-white" />
+        {/* INPUTS */}
+        <Input name="fullName" placeholder="Full Name" onChange={handleChange} className="bg-zinc-900 border-zinc-700" />
+        <Input name="email" placeholder="Email" onChange={handleChange} className="bg-zinc-900 border-zinc-700" />
+        <Input type="password" name="password" placeholder="Password" onChange={handleChange} className="bg-zinc-900 border-zinc-700" />
+        <Input name="skills" placeholder="Skills (comma separated)" onChange={handleChange} className="bg-zinc-900 border-zinc-700" />
 
-        {/* Avatar */}
-        <div>
-          <label className="text-sm text-gray-400">Avatar</label>
-          <input type="file" onChange={(e) => setAvatar(e.target.files[0])} />
+        {/* AVATAR DRAG */}
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => handleDrop(e, "avatar")}
+          className="border-2 border-dashed border-zinc-700 rounded-xl p-4 text-center cursor-pointer"
+        >
+          {avatarPreview ? (
+            <img src={avatarPreview} className="w-20 h-20 mx-auto rounded-full object-cover" />
+          ) : (
+            <p className="text-gray-400 text-sm">Drag & drop avatar here</p>
+          )}
         </div>
 
-        {/* Cover */}
-        <div>
-          <label className="text-sm text-gray-400">Cover Image</label>
-          <input type="file" onChange={(e) => setCoverImage(e.target.files[0])} />
+        {/* COVER DRAG */}
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => handleDrop(e, "cover")}
+          className="border-2 border-dashed border-zinc-700 rounded-xl p-4 text-center cursor-pointer"
+        >
+          {coverPreview ? (
+            <img src={coverPreview} className="w-full h-24 object-cover rounded-md" />
+          ) : (
+            <p className="text-gray-400 text-sm">Drag & drop cover image</p>
+          )}
         </div>
 
-        <Button onClick={handleSubmit} className="w-full bg-orange-500 hover:bg-orange-600">
-          Sign Up
+        {/* SIGNUP BUTTON */}
+        <Button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="w-full bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-2"
+        >
+          {loading ? "Creating..." : "Sign Up"}
         </Button>
+
+        {/* DIVIDER */}
+        <div className="flex items-center gap-2 text-gray-400 text-sm">
+          <div className="flex-1 h-px bg-zinc-700"></div>
+          Or continue with
+          <div className="flex-1 h-px bg-zinc-700"></div>
+        </div>
+
+        {/* GOOGLE SIGNUP */}
+        <button
+          onClick={googleLogin}
+          className="w-full flex items-center justify-center gap-3 bg-white text-black py-2 rounded-lg font-medium"
+        >
+          <img
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            className="w-5 h-5"
+          />
+          Sign up with Google
+        </button>
+
       </div>
     </AuthLayout>
   );

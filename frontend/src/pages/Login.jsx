@@ -1,47 +1,75 @@
-// pages/Login.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 import useAuth from "../hooks/useAuth";
+import AuthLayout from "../components/AuthLayout";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, googleLogin } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
+  // ================= LOGIN =================
   const handleLogin = async () => {
-    const res = await login(form);
+    if (!form.email || !form.password) {
+      return toast.warning("Please enter email and password");
+    }
 
-    if (res.success) {
-      navigate("/dashboard");
-    } else {
-      alert(res.message);
+    setLoading(true);
+
+    try {
+      const res = await login(form);
+
+      if (res.success) {
+        toast.success("Welcome back 🎉");
+        navigate("/dashboard");
+      } else {
+        toast.error(res.message || "Login failed");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
- const handleGoogleLogin = async () => {
-  const res = await googleLogin();
+  // ================= GOOGLE LOGIN =================
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
 
-  if (res.success) {
-    navigate("/dashboard");
-  } else {
-    alert(res.message);
-  }
-};
+    try {
+      const res = await googleLogin();
+
+      if (res.success) {
+        toast.success("Google login successful 🚀");
+        navigate("/dashboard");
+      } else {
+        toast.error(res.message || "Google login failed");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-black text-white">
+    <>
+      {/* FULL SCREEN LOADER */}
+      {(loading || googleLoading) && <FullScreenLoader />}
 
-      {/* LEFT */}
-      <div className="flex items-center justify-center px-6">
+      <AuthLayout>
         <div className="w-full max-w-md space-y-5">
 
           <h2 className="text-3xl font-bold">Sign in</h2>
@@ -96,9 +124,17 @@ export default function Login() {
           {/* LOGIN BUTTON */}
           <Button
             onClick={handleLogin}
-            className="w-full bg-orange-500 hover:bg-orange-600"
+            disabled={loading}
+            className="w-full bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-2"
           >
-            Sign in
+            {loading ? (
+              <>
+                <Spinner />
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </Button>
 
           {/* DIVIDER */}
@@ -111,59 +147,47 @@ export default function Login() {
           {/* GOOGLE BUTTON */}
           <button
             onClick={handleGoogleLogin}
+            disabled={googleLoading}
             className="w-full flex items-center justify-center gap-3 bg-white text-black py-2 rounded-lg font-medium"
           >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="google"
-              className="w-5 h-5"
-            />
-            Sign in with Google
+            {googleLoading ? (
+              <Spinner dark />
+            ) : (
+              <>
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt="google"
+                  className="w-5 h-5"
+                />
+                Sign in with Google
+              </>
+            )}
           </button>
 
         </div>
-      </div>
-
-      {/* RIGHT */}
-      <div className="hidden md:flex flex-col justify-center px-12 bg-zinc-900 space-y-8">
-
-        <h1 className="text-4xl font-bold">
-          Welcome to Preparation Buddy 🚀
-        </h1>
-
-        <div className="space-y-6">
-
-          <Feature
-            title="All in One Coding Profile"
-            desc="Track all your coding stats and progress in one place."
-          />
-
-          <Feature
-            title="Follow Popular Sheets"
-            desc="Organize questions and follow coding sheets easily."
-          />
-
-          <Feature
-            title="Contest Tracker"
-            desc="Track coding contests and improve performance."
-          />
-
-        </div>
-      </div>
-    </div>
+      </AuthLayout>
+    </>
   );
 }
 
-// 🔥 reusable component
-function Feature({ title, desc }) {
+// ================= SPINNER =================
+function Spinner({ dark }) {
   return (
-    <div className="flex items-start gap-4">
-      <div className="bg-black p-3 rounded-lg">
-        <div className="w-6 h-6 bg-orange-500 rounded"></div>
-      </div>
-      <div>
-        <h3 className="font-semibold text-lg">{title}</h3>
-        <p className="text-gray-400 text-sm">{desc}</p>
+    <div
+      className={`w-4 h-4 border-2 ${
+        dark ? "border-black" : "border-white"
+      } border-t-transparent rounded-full animate-spin`}
+    ></div>
+  );
+}
+
+// ================= FULL SCREEN LOADER =================
+function FullScreenLoader() {
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-white text-sm">Please wait...</p>
       </div>
     </div>
   );
