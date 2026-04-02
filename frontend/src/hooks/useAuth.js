@@ -146,7 +146,7 @@ const sendResetOtp = async (data) => {
     });
 
     if (res.data.success) {
-      dispatch(setUserData(res.data.user)); // 🔥 IMPORTANT
+      dispatch(setUserData(res.data.user)); 
       navigate("/dashboard");
       return { success: true };
     }
@@ -154,6 +154,20 @@ const sendResetOtp = async (data) => {
   } catch (err) {
     console.log(err);
     return { success: false, message: "Google login failed" };
+  }
+};
+
+// ================= TIME TRACK =================
+const updateTimeSpent = async (minutes) => {
+  try {
+    const res = await api.post("/api/xp/time", { minutes });
+
+    //  IMPORTANT: Redux update
+    dispatch(setUserData(res.data));
+
+    return { success: true };
+  } catch (err) {
+    return { success: false };
   }
 };
 
@@ -169,6 +183,7 @@ const sendResetOtp = async (data) => {
     sendResetOtp,
     resetPassword,
     googleLogin,
+     updateTimeSpent,
   };
 };
 

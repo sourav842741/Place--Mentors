@@ -17,7 +17,7 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Generic error
-  console.error('❌ Error:', err);
+  console.error(' Error:', err);
   res.status(500).json(
     new ApiResponse(500, null, 'Internal Server Error', false)
   );

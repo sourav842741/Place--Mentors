@@ -18,7 +18,7 @@ const isAuth = async (req, res, next) => {
       throw new ApiError(401, "User not found");
     }
 
-    req.user = user; // 🔥 full user object
+    req.user = user; //  full user object
 
     next();
   } catch (error) {

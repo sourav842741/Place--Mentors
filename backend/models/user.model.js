@@ -81,6 +81,26 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    
+    //  STREAK
+streakCount: { type: Number, default: 0 },
+lastLoginDate: { type: Date, default: null },
+longestStreak: { type: Number, default: 0 },
+
+//  XP SYSTEM
+xp: { type: Number, default: 0 },
+level: { type: Number, default: 1 },
+
+//  BADGES
+badges: [
+  {
+    name: String,
+    earnedAt: Date,
+  },
+],
+
+//  TIME TRACKING
+totalTimeSpent: { type: Number, default: 0 }, // minutes
   },
   { timestamps: true }
 );

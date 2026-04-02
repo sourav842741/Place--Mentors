@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react"; // 🔥 ADD
 import api from "../services/api";
 import { setUserData } from "../redux/userSlice";
 import { Pencil } from "lucide-react";
@@ -14,18 +14,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-// ❌ REMOVE THIS
-// import { useToast } from "@/hooks/use-toast";
-
-// ✅ ADD THIS
 import { toast } from "sonner";
 
 export default function Profile() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  // ❌ REMOVE THIS
-  // const { toast } = useToast();
+  const [badges, setBadges] = useState([]); // 🔥 ADD
 
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [skills, setSkills] = useState(user?.skills?.join(", ") || "");
@@ -37,6 +32,20 @@ export default function Profile() {
   const [coverPreview, setCoverPreview] = useState(user?.coverImage);
 
   const [loading, setLoading] = useState(false);
+
+  // 🔥 FETCH BADGES
+  useEffect(() => {
+    const fetchBadges = async () => {
+      try {
+        const res = await api.get("/api/xp/badges"); // ✅ correct route
+        setBadges(res.data.badges);
+      } catch (err) {
+        console.log("Badge fetch error", err);
+      }
+    };
+
+    fetchBadges();
+  }, []);
 
   const handlePreview = (file, type) => {
     if (!file) return;
@@ -63,8 +72,6 @@ export default function Profile() {
       const res = await api.put("/api/auth/profile", formData);
 
       dispatch(setUserData(res.data.data));
-
-      // ✅ SONNER
       toast.success("Profile updated successfully 🎉");
 
       setAvatar(null);
@@ -88,7 +95,6 @@ export default function Profile() {
       });
 
       dispatch(setUserData(res.data.data));
-
       toast.success("Skills updated ✅");
 
     } catch (err) {
@@ -103,21 +109,12 @@ export default function Profile() {
         {/* 🔥 COVER */}
         <div className="relative h-52 bg-linear-to-r from-blue-500 to-purple-500">
           {coverPreview && (
-            <img
-              src={coverPreview}
-              className="w-full h-full object-cover"
-            />
+            <img src={coverPreview} className="w-full h-full object-cover" />
           )}
 
           <label className="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded cursor-pointer">
             Change Cover
-            <input
-              type="file"
-              hidden
-              onChange={(e) =>
-                handlePreview(e.target.files[0], "cover")
-              }
-            />
+            <input type="file" hidden onChange={(e) => handlePreview(e.target.files[0], "cover")} />
           </label>
         </div>
 
@@ -133,37 +130,73 @@ export default function Profile() {
 
             <label className="absolute bottom-0 right-0 bg-orange-500 text-white px-2 py-1 rounded cursor-pointer text-xs">
               <Pencil size={14} />
-              <input
-                type="file"
-                hidden
-                onChange={(e) =>
-                  handlePreview(e.target.files[0], "avatar")
-                }
-              />
+              <input type="file" hidden onChange={(e) => handlePreview(e.target.files[0], "avatar")} />
             </label>
           </div>
 
           {/* INFO */}
           <div className="mt-4">
-            <h2 className="text-2xl font-bold">
-              {user?.fullName}
-            </h2>
-            <p className="text-gray-500 text-sm">
-              {user?.email}
-            </p>
+            <h2 className="text-2xl font-bold">{user?.fullName}</h2>
+            <p className="text-gray-500 text-sm">{user?.email}</p>
 
             {/* Skills */}
             <div className="flex flex-wrap gap-2 mt-3">
               {user?.skills?.map((skill, i) => (
-                <span
-                  key={i}
-                  className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm"
-                >
+                <span key={i} className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm">
                   {skill}
                 </span>
               ))}
             </div>
           </div>
+
+         
+          {/* 🔥 PREMIUM BADGE UI */}
+<div className="mt-10 text-center">
+  <h2 className="text-2xl font-semibold text-yellow-400 mb-6">
+    🎉 Achievements
+  </h2>
+
+  {badges.length === 0 ? (
+    <p className="text-gray-400">No badges yet</p>
+  ) : (
+    <div className="flex flex-wrap justify-center gap-8">
+      {badges.map((badge, i) => (
+        <div
+          key={i}
+          className="relative w-56 h-64 rounded-2xl bg-linear-to-br from-black via-gray-900 to-black shadow-2xl border border-yellow-500/20 hover:scale-105 transition duration-300"
+        >
+          {/* Glow */}
+          <div className="absolute inset-0 bg-yellow-400 opacity-10 blur-2xl rounded-2xl"></div>
+
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 badge-glow">
+
+            {/* Badge Icon */}
+            <div className="text-6xl mb-4 animate-bounce">
+              {badge.icon || "🏅"}
+            </div>
+
+            {/* Title */}
+            <h3 className="text-lg font-bold text-white">
+              {badge.name}
+            </h3>
+
+            {/* Subtitle */}
+            <p className="text-xs text-gray-400 mt-2">
+              Achievement Unlocked
+            </p>
+
+            {/* Date */}
+            <p className="text-[10px] text-gray-500 mt-1">
+              {new Date(badge.earnedAt).toLocaleDateString()}
+            </p>
+
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
           {/* SAVE BUTTON */}
           {(avatar || cover) && (
@@ -187,12 +220,7 @@ export default function Profile() {
                   <DialogTitle>Edit Profile</DialogTitle>
                 </DialogHeader>
 
-                <Input
-                  value={fullName}
-                  onChange={(e) =>
-                    setFullName(e.target.value)
-                  }
-                />
+                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
 
                 <Button onClick={updateProfile} disabled={loading}>
                   {loading ? "Saving..." : "Save Changes"}

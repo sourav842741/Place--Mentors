@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import authRouter from "./routes/auth.routes.js";
+import xpRouter from "./routes/xp.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 import dns from "dns";
@@ -32,6 +33,7 @@ app.use(cookieParser());
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
+app.use("/api/xp", xpRouter);
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);

@@ -14,6 +14,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+import { handleLoginStreak } from "../utils/streakManager.js";
+import { checkAndAssignBadges } from "../utils/badgeManager.js";
+import { addXP } from "../utils/xpManager.js";
+
 // ================= HELPERS =================
 const sanitizeUser = (user) => {
   const obj = user.toObject();
@@ -129,19 +133,41 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
 
   const { avatarUrl, coverUrl } = await handleImageUploads(req);
 
-  const user = await User.create({
-    fullName: tempUser.fullName.trim(),
-    email: tempUser.email,
-    password: hashedPassword,
-    skills: tempUser.skills,
-    avatar: avatarUrl,
-    coverImage: coverUrl,
-    isEmailVerified: true,
-  });
+const user = await User.create({
+  fullName: tempUser.fullName.trim(),
+  email: tempUser.email,
+  password: hashedPassword,
+  skills: tempUser.skills,
+  avatar: avatarUrl,
+  coverImage: coverUrl,
+  isEmailVerified: true,
+
+  // ✅ STREAK INIT
+  streakCount: 1,
+  lastLoginDate: new Date(),
+
+  // ✅ XP INIT
+  xp: 0,
+  level: 1,
+});
+
+//  Give signup reward
+addXP(user, 10); // 
+
+//  check badges
+checkAndAssignBadges(user);
+
+await user.save();
 
   sendWelcomeMail(user.email, user.fullName);
 
   await TempUser.deleteOne({ email: tempUser.email });
+
+  user.streakCount = 1;
+user.lastLoginDate = new Date();
+user.xp = 10;
+
+await user.save();
 
   const token = await genToken(user._id);
 
@@ -176,15 +202,28 @@ export const signIn = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid credentials");
   }
 
+    await handleLoginStreak(user);
+checkAndAssignBadges(user);
+
+await user.save();
+
   const token = genToken(user._id);
 
   res.cookie("token", token, cookieOptions);
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, sanitizeUser(user), "Login successful"));
-});
 
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      ...sanitizeUser(user),
+      xp: user.xp,
+      level: user.level,
+      streak: user.streakCount,
+      badges: user.badges,
+    }, "Login successful")
+  );
+});
+  
 // ================= UPDATE SKILLS =================
 export const updateSkills = asyncHandler(async (req, res) => {
   const { skills } = req.body;
@@ -217,7 +256,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
  if (skills) {
   let parsedSkills = skills;
 
-  // 🔥 CASE 1: string → parse
+  //  CASE 1: string → parse
   if (typeof skills === "string") {
     try {
       parsedSkills = JSON.parse(skills);
@@ -226,7 +265,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     }
   }
 
-  // 🔥 CASE 2: ensure array
+  //  CASE 2: ensure array
   if (!Array.isArray(parsedSkills)) {
     parsedSkills = [parsedSkills];
   }
@@ -243,7 +282,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     const avatar = await uploadOnCloudinary(req.files.avatar[0].path);
 
     if (avatar?.secure_url) {
-      // 🔥 delete old image
+      //  delete old image
       await deleteFromCloudinary(user.avatar);
 
       updateData.avatar = avatar.secure_url;
@@ -255,7 +294,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     const cover = await uploadOnCloudinary(req.files.coverImage[0].path);
 
     if (cover?.secure_url) {
-      // 🔥 delete old image
+      //  delete old image
       await deleteFromCloudinary(user.coverImage);
 
       updateData.coverImage = cover.secure_url;
@@ -294,29 +333,54 @@ export const googleAuth = asyncHandler(async (req, res) => {
     email: email.toLowerCase().trim(),
   });
 
-  if (!user) {
-    // 🔥 AUTO PASSWORD GENERATE
-    const randomPassword = Math.random().toString(36).slice(-8);
+  let isNewUser = false;
 
+  if (!user) {
+    isNewUser = true;
+
+    const randomPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
     user = await User.create({
       fullName: fullName?.trim() || "Google User",
       email: email.toLowerCase().trim(),
-      password: hashedPassword, // ✅ auto set
+      password: hashedPassword,
       avatar: avatar || "",
       skills: ["Beginner"],
       isEmailVerified: true,
+
+      //  INIT STREAK
+      streakCount: 1,
+      lastLoginDate: new Date(),
     });
   }
 
-  const token = genToken(user._id);
+  // ================= XP + STREAK =================
 
+  if (isNewUser) {
+    //  Signup bonus
+    addXP(user, 10);
+  } else {
+    //  Normal login streak
+    await handleLoginStreak(user);
+  }
+
+  //  Badge check
+  checkAndAssignBadges(user);
+
+  await user.save();
+
+  // ================= TOKEN =================
+  const token = genToken(user._id);
   res.cookie("token", token, cookieOptions);
 
   return res.status(200).json({
     success: true,
     user,
+    xp: user.xp,
+    level: user.level,
+    streak: user.streakCount,
+    badges: user.badges,
   });
 });
 
@@ -409,7 +473,7 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
   user.resetOtp = undefined;
   user.resetOtpExpires = undefined;
 
-  await user.save(); // 🔥 VERY IMPORTANT
+  await user.save(); 
 
   return res
     .status(200)
