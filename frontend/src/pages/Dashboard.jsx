@@ -23,6 +23,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import api from "../services/api"
+import Sidebar from "@/components/Sidebar"
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user)
@@ -139,8 +140,9 @@ const percentChange = calculateWeeklyChange();
   // ======================================================
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-950">
-
+    <>
+    <Navbar/>
+<div className="ml-64 pt-20 p-6 bg-gray-100 min-h-screen">
       {/* 🔥 BADGE POPUP */}
       {unlockedBadges.length > 0 && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -167,35 +169,14 @@ const percentChange = calculateWeeklyChange();
       )}
 
       {/* ================= SIDEBAR ================= */}
-      <aside className="relative w-64 bg-white dark:bg-gray-900 border-r p-4 hidden md:block">
-        <h2 className="text-xl font-bold text-blue-600 mb-6">Place-Mentors</h2>
+       
+  <Sidebar/>
 
-        <nav className="space-y-3">
-          {["Dashboard", "Companies", "Practice", "Jobs"].map((item) => (
-            <div
-              key={item}
-              className={`p-2 rounded-lg cursor-pointer ${
-                item === "Dashboard"
-                  ? "bg-blue-100 text-blue-600"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100"
-              }`}
-            >
-              {item}
-            </div>
-          ))}
-        </nav>
 
-        <div className="absolute bottom-6 left-4 right-4 bg-blue-100 p-3 rounded-xl text-center">
-          <p className="text-sm text-gray-600">🔥 Streak</p>
-          <h2 className="text-xl font-bold text-blue-600">
-            {streak} days
-          </h2>
-        </div>
-      </aside>
 
       {/* ================= MAIN ================= */}
       <div className="flex-1">
-        <Navbar />
+        
 
         <div className="p-6 space-y-6">
 
@@ -355,5 +336,6 @@ const percentChange = calculateWeeklyChange();
         </div>
       </div>
     </div>
+    </>
   )
 }

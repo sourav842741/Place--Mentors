@@ -29,7 +29,7 @@ if (minutes === undefined || isNaN(minutes) || minutes <= 0 || minutes > 300) {
 
   user.totalTimeSpent += minutes;
 
-  const today = req.body.date || new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 
@@ -105,7 +105,7 @@ export const completeQuiz = asyncHandler(async (req, res) => {
   //  badges
   const newBadges = checkAndAssignBadges(user);
 
-const today = req.body.date || new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 

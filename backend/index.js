@@ -12,6 +12,7 @@ import dns from "dns";
 import interviewRouter from "./routes/interview.route.js";
 import paymentRouter from "./routes/payment.route.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
+import leaderboardRoutes from "./routes/leaderboard.routes.js";
 
 dns.setServers([
   "1.1.1.1",
@@ -40,6 +41,7 @@ app.use("/api/xp", xpRouter);
 app.use("/api/interview" , interviewRouter)
 app.use("/api/payment" , paymentRouter)
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 
 // ================= ERROR HANDLER =================

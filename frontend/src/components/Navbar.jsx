@@ -40,10 +40,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="w-full sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md px-6 py-3 flex items-center justify-between">
-      
-     
-
+<nav className="ml-64 w-[calc(100%-16rem)] fixed top-0 right-0 bg-white dark:bg-gray-900 shadow-md px-6 py-3 flex items-center justify-between z-50">
       {/* Desktop Links */}
       <div className="hidden md:flex items-center gap-6">
         {navLinks.map((link) => (

@@ -14,6 +14,7 @@ import QuizPage from "./pages/QuizPage";
 import Pricing from "./pages/Pricing";
 import InterviewHistory from "./pages/InterviewHistory";
 import InterviewReport from "./pages/InterviewReport";
+import Leaderboard from "./pages/Leaderboard";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -44,6 +45,7 @@ function App() {
            <Route path="/pricing" element={<Pricing />} />
            <Route path="/history" element={<InterviewHistory />} />
            <Route path="/report/:id" element={<InterviewReport />} />
+           <Route path="/leaderboard" element={<Leaderboard />} />
         </Route>
       </Routes>
     </>
