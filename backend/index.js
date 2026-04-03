@@ -9,6 +9,9 @@ import xpRouter from "./routes/xp.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 import dns from "dns";
+import interviewRouter from "./routes/interview.route.js";
+import paymentRouter from "./routes/payment.route.js";
+import dashboardRouter from "./routes/dashboard.routes.js";
 
 dns.setServers([
   "1.1.1.1",
@@ -34,6 +37,10 @@ app.use(cookieParser());
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
 app.use("/api/xp", xpRouter);
+app.use("/api/interview" , interviewRouter)
+app.use("/api/payment" , paymentRouter)
+app.use("/api/dashboard", dashboardRouter);
+
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);

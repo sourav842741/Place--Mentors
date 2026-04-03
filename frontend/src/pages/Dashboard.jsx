@@ -3,6 +3,17 @@ import Navbar from "@/components/Navbar"
 import Autoplay from "embla-carousel-autoplay"
 import * as React from "react"
 import useAuth from "@/hooks/useAuth" 
+import { useNavigate } from "react-router-dom";
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
 
 import { Play, Briefcase, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,9 +22,15 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel"
+import api from "../services/api"
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user)
+
+   const navigate = useNavigate();
+
+   const [weeklyData, setWeeklyData] = React.useState([]);
+
   const { updateTimeSpent } = useAuth() 
 
   const [unlockedBadges, setUnlockedBadges] = React.useState([])
@@ -60,7 +77,7 @@ const percent = (currentXP / maxXP) * 100;
         try {
           const res = await updateTimeSpent(5) // 🔥 every 5 min
 
-          // 🔥 Badge popup trigger
+          //  Badge popup trigger
           if (res?.newBadges?.length > 0) {
             setUnlockedBadges(res.newBadges)
             playSound()
@@ -74,6 +91,51 @@ const percent = (currentXP / maxXP) * 100;
 
     return () => clearInterval(interval)
   }, [user])
+
+  React.useEffect(() => {
+  const fetchWeekly = async () => {
+    try {
+      const res = await api.get("/api/dashboard/weekly", {
+        withCredentials: true,
+      });
+
+      // date ko short form me convert (Mon, Tue...)
+   const formatted = (res.data?.weeklyData || []).map((item) => ({
+  ...item,
+  date: new Date(item.date).toLocaleDateString("en-US", {
+    weekday: "short",
+  }),
+}));
+
+      setWeeklyData(formatted);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  fetchWeekly();
+}, []);
+
+const calculateWeeklyChange = () => {
+  if (!weeklyData || weeklyData.length === 0) return 0;
+
+  const currentAvg =
+    weeklyData.reduce((sum, d) => sum + d.avgScore, 0) /
+    weeklyData.length;
+
+  const previousAvg =
+    weeklyData.slice(0, weeklyData.length - 1).reduce((sum, d) => sum + d.avgScore, 0) /
+    (weeklyData.length - 1 || 1);
+
+  // ❗ FIX HERE
+  if (previousAvg === 0) {
+    return null; // special case
+  }
+
+  return Math.round(((currentAvg - previousAvg) / previousAvg) * 100);
+};
+
+const percentChange = calculateWeeklyChange();
   // ======================================================
 
   return (
@@ -171,42 +233,94 @@ const percent = (currentXP / maxXP) * 100;
             </div>
           </div>
 
-          {/* ACTION */}
-          <div className="grid md:grid-cols-2 gap-6">
+         {/* ACTION */}
+<div className="grid md:grid-cols-2 gap-6">
 
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow">
-              <div className="flex items-center gap-3">
-                <Play className="text-blue-500" />
-                <div>
-                  <h3 className="font-semibold">Practice</h3>
-                  <p className="text-sm text-gray-500">Daily quiz</p>
-                </div>
-              </div>
-              →
-            </div>
+  <div
+    onClick={() => navigate("/quiz")}
+    className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+  >
+    <div className="flex items-center gap-3">
+      <Play className="text-blue-500" />
+      <div>
+        <h3 className="font-semibold">Practice</h3>
+        <p className="text-sm text-gray-500">Daily quiz</p>
+      </div>
+    </div>
+    →
+  </div>
 
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow">
-              <div className="flex items-center gap-3">
-                <Briefcase className="text-purple-500" />
-                <div>
-                  <h3 className="font-semibold">Jobs</h3>
-                  <p className="text-sm text-gray-500">Openings</p>
-                </div>
-              </div>
-              →
-            </div>
-          </div>
+  <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow">
+    <div className="flex items-center gap-3">
+      <Briefcase className="text-purple-500" />
+      <div>
+        <h3 className="font-semibold">Jobs</h3>
+        <p className="text-sm text-gray-500">Openings</p>
+      </div>
+    </div>
+    →
+  </div>
 
-          {/* GRAPH */}
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp size={18} /> Weekly Performance
-            </h3>
+</div>
 
-            <div className="h-40 bg-linear-to-r from-blue-200 to-blue-100 rounded-xl flex items-end p-4">
-              <div className="w-full h-[60%] bg-blue-500 rounded-lg"></div>
-            </div>
-          </div>
+    
+<div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
+
+  {/* HEADER */}
+  <div className="flex justify-between items-center mb-4">
+    <div>
+      <h3 className="font-semibold flex items-center gap-2">
+        <TrendingUp size={18} /> Weekly Performance
+      </h3>
+      <p className="text-sm text-gray-500">
+        Score & Time (last 7 days)
+      </p>
+    </div>
+
+    <p className="font-semibold text-blue-400">
+  {percentChange === null
+    ? "New Activity 🚀"
+    : `${percentChange >= 0 ? "+" : ""}${percentChange}% this week`}
+</p>
+  </div>
+
+  {/* CHART */}
+  <div className="w-full h-[300px]">
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={weeklyData}>
+        <XAxis dataKey="date" />
+
+        {/* 🎯 IMPORTANT: separate scales */}
+        <YAxis yAxisId="left" domain={[0, 10]} />
+        <YAxis yAxisId="right" orientation="right" />
+
+        <Tooltip />
+
+        {/* 🔵 AVG SCORE */}
+        <Line
+          yAxisId="left"
+          type="monotone"
+          dataKey="avgScore"
+          stroke="#3b82f6"
+          strokeWidth={3}
+          dot={{ r: 4 }}
+          name="Avg Score"
+        />
+
+        {/* 🟢 TIME SPENT */}
+        <Line
+          yAxisId="right"
+          type="monotone"
+          dataKey="timeSpent"
+          stroke="#22c55e"
+          strokeWidth={3}
+          dot={{ r: 4 }}
+          name="Time (min)"
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+</div>
 
           {/* COMPANIES */}
           <div>

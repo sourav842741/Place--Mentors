@@ -352,6 +352,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
       //  INIT STREAK
       streakCount: 1,
       lastLoginDate: new Date(),
+      credits:100,
     });
   }
 

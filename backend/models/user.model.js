@@ -99,9 +99,35 @@ badges: [
   },
 ],
 
+dailyStats: [
+  {
+    date: String, // "2026-04-03"
+    timeSpent: {
+      type: Number,
+      default: 0,
+    },
+    avgScore: {
+      type: Number,
+      default: 0,
+    },
+    quizzesGiven: {
+      type: Number,
+      default: 0,
+    },
+  },
+],
+
 //  TIME TRACKING
 totalTimeSpent: { type: Number, default: 0 }, // minutes
+
+credits:{
+        type:Number,
+        default:100
+    }
+
   },
+
+  
   { timestamps: true }
 );
 

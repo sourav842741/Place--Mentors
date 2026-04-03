@@ -10,6 +10,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { Toaster } from "sonner";
 import Profile from "./pages/Profile";
+import QuizPage from "./pages/QuizPage";
+import Pricing from "./pages/Pricing";
+import InterviewHistory from "./pages/InterviewHistory";
+import InterviewReport from "./pages/InterviewReport";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -20,7 +24,7 @@ function App() {
 
   return (
     <>
-      {/* ✅ Toaster must be inside */}
+      {/*  Toaster must be inside */}
       <Toaster position="top-right" richColors />
 
       <Routes>
@@ -36,6 +40,10 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/quiz" element={<QuizPage />} />
+           <Route path="/pricing" element={<Pricing />} />
+           <Route path="/history" element={<InterviewHistory />} />
+           <Route path="/report/:id" element={<InterviewReport />} />
         </Route>
       </Routes>
     </>

@@ -14,16 +14,23 @@ const storage = multer.diskStorage({
   },
 });
 
-const isImageFile = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+const isAllowedFile = (req, file, cb) => {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "application/pdf", // ✅ allow PDF
+  ];
+
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files allowed'), false);
+    cb(new Error("Only image or PDF files allowed"), false);
   }
 };
 
 export const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: isImageFile,
+  fileFilter: isAllowedFile,
 });
