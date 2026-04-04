@@ -203,16 +203,18 @@ Make questions based on the candidate’s role, experience,interviewMode, projec
       questions: questionsArray.map((q, index) => ({
         question: q,
         difficulty: [
-           "easy", "easy", "easy",
-  "medium", "medium", "medium",
-  "hard", "hard", "hard",
-  "hard"
-         
+          "easy",
+          "easy",
+          "easy",
+          "medium",
+          "medium",
+          "medium",
+          "hard",
+          "hard",
+          "hard",
+          "hard",
         ][index],
-        timeLimit: [ 60, 60, 60,
-  90, 90, 90,
-  120, 120, 120,
-  150 ][index],
+        timeLimit: [60, 60, 60, 90, 90, 90, 120, 120, 120, 150][index],
       })),
     });
 
@@ -446,10 +448,8 @@ export const getInterviewReport = async (req, res) => {
       questionWiseScore: interview.questions,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: `failed to find currentUser Interview report ${error}`,
-      });
+    return res.status(500).json({
+      message: `failed to find currentUser Interview report ${error}`,
+    });
   }
 };

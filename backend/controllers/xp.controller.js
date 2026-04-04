@@ -18,12 +18,12 @@ if (minutes === undefined || isNaN(minutes) || minutes <= 0 || minutes > 300) {
 
   const user = await User.findById(req.user._id);
 
-  // ✅ safety for dailyStats
+
   if (!user.dailyStats) {
     user.dailyStats = [];
   }
 
-  // ✅ better XP logic
+  //  better XP logic
   const xpEarned = minutes * 2;
   addXP(user, xpEarned);
 
@@ -63,7 +63,7 @@ const today = new Date().toISOString().split("T")[0];
 export const completeQuiz = asyncHandler(async (req, res) => {
   let { score } = req.body;
 
-  //  validation (0–10 only)
+  //  validation
   if (score === undefined || score < 0 || score > 10) {
     return res.status(400).json({
       success: false,
@@ -80,32 +80,32 @@ export const completeQuiz = asyncHandler(async (req, res) => {
     });
   }
 
-  //  safety for dailyStats
-  if (!user.dailyStats) {
+
+  if (!Array.isArray(user.dailyStats)) {
     user.dailyStats = [];
   }
 
-  //  XP logic (fixed 10 questions)
+  //  REMOVE CORRUPTED DATA (IMPORTANT)
+  user.dailyStats = user.dailyStats.filter(
+    (d) => d && typeof d === "object" && d.date
+  );
+
+  //  XP logic
   let xpEarned = score * 10;
 
-  //  perfect score bonus
   if (score === 10) {
     xpEarned += 50;
   }
 
-  //  streak bonus
   xpEarned += (user.streakCount || 0) * 2;
 
-  //  level tracking
   const oldLevel = user.level || 1;
 
-  //  add XP
   addXP(user, xpEarned);
 
-  //  badges
   const newBadges = checkAndAssignBadges(user);
 
-const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 
@@ -119,12 +119,16 @@ const today = new Date().toISOString().split("T")[0];
     user.dailyStats.push(todayData);
   }
 
-  //  weighted avg score
-  todayData.avgScore =
-    (todayData.avgScore * todayData.quizzesGiven + score) /
-    (todayData.quizzesGiven + 1);
 
-  todayData.quizzesGiven += 1;
+  const prevAvg = todayData.avgScore || 0;
+  const prevCount = todayData.quizzesGiven || 0;
+
+  //  CORRECT AVG FORMULA + ROUND
+  const newAvg =
+    (prevAvg * prevCount + score) / (prevCount + 1);
+
+  todayData.avgScore = Math.round(newAvg); // 🔥 important
+  todayData.quizzesGiven = prevCount + 1;
 
   await user.save();
 
@@ -136,7 +140,6 @@ const today = new Date().toISOString().split("T")[0];
     level: user.level,
     leveledUp: user.level > oldLevel,
 
-    //  progress bar
     currentLevelXP: user.currentLevelXP,
     nextLevelXP: user.nextLevelXP,
 

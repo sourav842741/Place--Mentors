@@ -22,7 +22,7 @@ function QuizPage() {
 
       {step === 2 && (
         <Step2QuizPlay
-          interviewData={quizData}   // ✅ FIX HERE
+          interviewData={quizData}   
           onFinish={(result) => {
             setQuizData(result);
             setStep(3);

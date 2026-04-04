@@ -18,7 +18,7 @@ export default function VerifyOtp() {
 
   useEffect(() => {
     if (!email) {
-      toast.error("Session expired ❌");
+      toast.error("Session expired ");
       navigate("/signup");
     }
   }, [email, navigate]);
@@ -63,7 +63,7 @@ export default function VerifyOtp() {
     const finalOtp = otp.join("");
 
     if (finalOtp.length !== 4) {
-      return toast.warning("Enter valid OTP ❗");
+      return toast.warning("Enter valid OTP ");
     }
 
     setLoading(true);
@@ -86,14 +86,14 @@ export default function VerifyOtp() {
       );
 
       if (res.data.success) {
-        toast.success("Signup Successful 🎉");
+        toast.success("Signup Successful ");
         navigate("/dashboard");
       } else {
         toast.error(res.data.message || "Invalid OTP");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong ❌");
+      toast.error("Something went wrong ");
     } finally {
       setLoading(false);
     }

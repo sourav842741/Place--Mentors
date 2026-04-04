@@ -37,7 +37,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchBadges = async () => {
       try {
-        const res = await api.get("/api/xp/badges"); // ✅ correct route
+        const res = await api.get("/api/xp/badges"); 
         setBadges(res.data.badges);
       } catch (err) {
         console.log("Badge fetch error", err);
@@ -95,10 +95,10 @@ export default function Profile() {
       });
 
       dispatch(setUserData(res.data.data));
-      toast.success("Skills updated ✅");
+      toast.success("Skills updated ");
 
     } catch (err) {
-      toast.error("Failed to update skills ❌");
+      toast.error("Failed to update skills ");
     }
   };
 
@@ -106,7 +106,7 @@ export default function Profile() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 p-6">
       <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-lg overflow-hidden">
 
-        {/* 🔥 COVER */}
+        {/*  COVER */}
         <div className="relative h-52 bg-linear-to-r from-blue-500 to-purple-500">
           {coverPreview && (
             <img src={coverPreview} className="w-full h-full object-cover" />
@@ -118,7 +118,7 @@ export default function Profile() {
           </label>
         </div>
 
-        {/* 🔥 PROFILE */}
+        {/*  PROFILE */}
         <div className="px-6 pb-6">
 
           {/* Avatar */}
@@ -150,7 +150,7 @@ export default function Profile() {
           </div>
 
          
-          {/* 🔥 PREMIUM BADGE UI */}
+          {/*  PREMIUM BADGE UI */}
 <div className="mt-10 text-center">
   <h2 className="text-2xl font-semibold text-yellow-400 mb-6">
     🎉 Achievements
@@ -212,7 +212,7 @@ export default function Profile() {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button>Edit Profile ✏️</Button>
+                <Button>Edit Profile </Button>
               </DialogTrigger>
 
               <DialogContent>

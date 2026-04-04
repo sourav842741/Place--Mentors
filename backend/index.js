@@ -13,6 +13,8 @@ import interviewRouter from "./routes/interview.route.js";
 import paymentRouter from "./routes/payment.route.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 import leaderboardRoutes from "./routes/leaderboard.routes.js";
+import plannerRouter from "./routes/planner.routes.js"
+import aiRouter from "./routes/ai.routes.js";
 
 dns.setServers([
   "1.1.1.1",
@@ -42,6 +44,8 @@ app.use("/api/interview" , interviewRouter)
 app.use("/api/payment" , paymentRouter)
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/leaderboard", leaderboardRoutes);
+app.use("/api/planner", plannerRouter );
+app.use("/api/ai", aiRouter);
 
 
 // ================= ERROR HANDLER =================
@@ -50,13 +54,13 @@ app.use(errorHandler);
 // ================= START SERVER =================
 const startServer = async () => {
   try {
-    await connectDb(); // 🔥 pehle DB connect
+    await connectDb(); //  pehle DB connect
 
     app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
+      console.log(` Server running on port ${port}`);
     });
   } catch (error) {
-    console.error("❌ DB connection failed:", error.message);
+    console.error(" DB connection failed:", error.message);
     process.exit(1);
   }
 };

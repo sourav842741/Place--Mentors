@@ -4,28 +4,43 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 export const getDailyLeaderboard = asyncHandler(async (req, res) => {
   const users = await User.find();
 
-const today = new Date().toLocaleDateString("en-CA");
+ 
+  const today = new Date().toISOString().split("T")[0];
 
- const leaderboard = users.map((user) => {
-  let stat =
-    user.dailyStats.find((d) => d.date === today) ||
-    user.dailyStats[user.dailyStats.length - 1];
+const leaderboard = users.map((user) => {
 
-  const score = stat
-    ? (stat.timeSpent * 0.5) +
-      (stat.avgScore * 2) +
-      (stat.quizzesGiven * 5)
-    : 0;
+  const validStats = (user.dailyStats || []).filter(
+    (d) => d && typeof d === "object" && d.date
+  );
+
+  let totalScore = 0;
+  let totalQuizzes = 0;
+  let totalTime = 0;
+
+  validStats.forEach((d) => {
+    totalScore += (d.avgScore || 0) * (d.quizzesGiven || 0);
+    totalQuizzes += d.quizzesGiven || 0;
+    totalTime += d.timeSpent || 0;
+  });
+
+  const avgAccuracy =
+    totalQuizzes > 0
+      ? Math.round(totalScore / totalQuizzes)
+      : 0;
+
+  const score =
+    (totalTime * 0.5) +
+    (avgAccuracy * 2) +
+    (totalQuizzes * 5);
 
   return {
     name: user.fullName,
     avatar: user.avatar || "",
-    score,
+    score: Math.round(score),
     streak: user.streakCount || 0,
-    accuracy: stat?.avgScore || 0,
+    accuracy: avgAccuracy,
   };
 });
-
 
   const sorted = leaderboard.sort((a, b) => b.score - a.score);
 

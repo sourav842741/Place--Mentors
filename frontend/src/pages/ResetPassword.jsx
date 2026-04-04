@@ -24,7 +24,7 @@ export default function ResetPassword() {
   // Redirect if no email
   useEffect(() => {
     if (!email) {
-      toast.error("Session expired ❌");
+      toast.error("Session expired ");
       navigate("/forgot-password");
     }
   }, [email, navigate]);
@@ -82,14 +82,14 @@ export default function ResetPassword() {
       });
 
       if (res.success) {
-        toast.success("Password Reset Successful ✅");
+        toast.success("Password Reset Successful ");
         navigate("/login");
       } else {
         toast.error(res.message || "Invalid OTP");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Server error ❌");
+      toast.error("Server error ");
     } finally {
       setLoading(false);
     }

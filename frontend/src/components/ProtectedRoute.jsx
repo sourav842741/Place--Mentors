@@ -18,5 +18,5 @@ export default function ProtectedRoute({ role }) {
     return <Navigate to="/unauthorized" />;
   }
 
-  return <Outlet />; // 🔥 THIS IS THE FIX
+  return <Outlet />; 
 }

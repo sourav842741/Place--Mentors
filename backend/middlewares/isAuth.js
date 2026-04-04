@@ -18,8 +18,7 @@ const isAuth = async (req, res, next) => {
       throw new ApiError(401, "User not found");
     }
 
-    req.user = user; //  full user object
-
+    req.user = user;
     next();
   } catch (error) {
     throw new ApiError(401, "Unauthorized: Invalid token");

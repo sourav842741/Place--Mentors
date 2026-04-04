@@ -30,3 +30,16 @@ export const askAi = async (messages) => {
 
     }
 }
+
+export const extractJSON = (response) => {
+  try {
+    const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/) || response.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonStr = jsonMatch[1] || jsonMatch[0];
+      return JSON.parse(jsonStr.trim());
+    }
+    return {};
+  } catch {
+    return {};
+  }
+};

@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      index: true, // 🔥 performance improve
+      index: true, //  performance improve
     },
 
     password: {
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     },
 
     googleId: {
-      type: String, // 🔥 add this (important)
+      type: String, 
       default: null,
     },
 
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
 
     avatar: {
       type: String,
-      default: "", // optional safe default
+      default: "", 
     },
 
     coverImage: {
@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema(
 
     skills: {
       type: [String],
-      required: true, // 🔥 IMPORTANT (tumhari requirement)
+      required: true, 
       validate: {
         validator: function (arr) {
           return arr.length > 0;
@@ -81,54 +81,54 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    
+
     //  STREAK
-streakCount: { type: Number, default: 0 },
-lastLoginDate: { type: Date, default: null },
-longestStreak: { type: Number, default: 0 },
+    streakCount: { type: Number, default: 0 },
+    lastLoginDate: { type: Date, default: null },
+    longestStreak: { type: Number, default: 0 },
 
-//  XP SYSTEM
-xp: { type: Number, default: 0 },
-level: { type: Number, default: 1 },
+    //  XP SYSTEM
+    xp: { type: Number, default: 0 },
+    level: { type: Number, default: 1 },
 
-//  BADGES
-badges: [
-  {
-    name: String,
-    earnedAt: Date,
-  },
-],
+    //  BADGES
+    badges: [
+      {
+        name: String,
+        earnedAt: Date,
+      },
+    ],
 
-dailyStats: [
-  {
-    date: String, // "2026-04-03"
-    timeSpent: {
+    dailyStats: [
+      {
+        date: String, // "2026-04-03"
+        timeSpent: {
+          type: Number,
+          default: 0,
+        },
+        avgScore: {
+          type: Number,
+          default: 0,
+        },
+        quizzesGiven: {
+          type: Number,
+          default: 0,
+        },
+      },
+    ],
+
+    //  TIME TRACKING
+    totalTimeSpent: { type: Number, default: 0 }, // minutes
+
+    credits: {
       type: Number,
-      default: 0,
+      default: 100,
     },
-    avgScore: {
-      type: Number,
-      default: 0,
-    },
-    quizzesGiven: {
-      type: Number,
-      default: 0,
-    },
-  },
-],
-
-//  TIME TRACKING
-totalTimeSpent: { type: Number, default: 0 }, // minutes
-
-credits:{
-        type:Number,
-        default:100
-    }
-
+    googleCalendarAccessToken: String,
+    googleCalendarRefreshToken: String,
   },
 
-  
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("User", userSchema);

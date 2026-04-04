@@ -15,6 +15,10 @@ import Pricing from "./pages/Pricing";
 import InterviewHistory from "./pages/InterviewHistory";
 import InterviewReport from "./pages/InterviewReport";
 import Leaderboard from "./pages/Leaderboard";
+import AIPlanner from "./pages/AIPlanner";
+import PlannerHistory from "./pages/PlannerHistory";
+import ResumeAnalyzer from "./pages/ResumeAnalyzer";
+import ResumeGenerator from "./pages/ResumeGenerator";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -46,6 +50,12 @@ function App() {
            <Route path="/history" element={<InterviewHistory />} />
            <Route path="/report/:id" element={<InterviewReport />} />
            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/ai-planner" element={<AIPlanner />} />
+            <Route path="/planner-history" element={<PlannerHistory />} />
+            <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
+            <Route path="/resume-generator" element={<ResumeGenerator />} />
+            <Route path="/ai-planner/:id" element={<AIPlanner />} />
+
         </Route>
       </Routes>
     </>

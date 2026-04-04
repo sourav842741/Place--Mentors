@@ -65,7 +65,7 @@ export default function Signup() {
         state: { ...form, skills: skillsArray, avatar, coverImage },
       });
     } catch (err) {
-      toast.error("Signup failed ❌");
+      toast.error("Signup failed ");
     } finally {
       setLoading(false);
     }

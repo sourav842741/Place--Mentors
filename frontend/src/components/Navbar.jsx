@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Menu, X, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -20,7 +20,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
   const handleLogout = () => {
@@ -40,7 +39,7 @@ export default function Navbar() {
   ];
 
   return (
-<nav className="ml-64 w-[calc(100%-16rem)] fixed top-0 right-0 bg-white dark:bg-gray-900 shadow-md px-6 py-3 flex items-center justify-between z-50">
+    <nav className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-md px-4 md:px-6 py-3 flex items-center justify-between z-50 md:pl-64 transition-all">
       {/* Desktop Links */}
       <div className="hidden md:flex items-center gap-6">
         {navLinks.map((link) => (
@@ -61,7 +60,7 @@ export default function Navbar() {
       {/* Right Side */}
       <div className="flex items-center gap-3">
         
-        {/* 🌙 Dark Mode */}
+        {/*  Dark Mode */}
         <Button variant="ghost" size="icon" onClick={toggleDark}>
           {dark ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
@@ -86,7 +85,7 @@ export default function Navbar() {
                 Profile
               </DropdownMenuItem>
 
-              {/* 🔥 ROLE BASED */}
+              {/*  ROLE BASED */}
               {user?.role === "admin" && (
                 <DropdownMenuItem
                   onClick={() => navigate("/admin/dashboard")}
@@ -113,42 +112,14 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Mobile Toggle */}
+        {/* Mobile Menu Toggle - Now Controls Sidebar */}
         <button
-          className="md:hidden"
-          onClick={() => setOpen(!open)}
+          className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+          onClick={() => document.dispatchEvent(new CustomEvent('toggleMobileSidebar'))}
         >
-          {open ? <X /> : <Menu />}
+          <Menu className="w-6 h-6" />
         </button>
       </div>
-
-      {/* 📱 Mobile Menu */}
-      {open && (
-        <div className="absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-md flex flex-col items-start p-6 gap-4 md:hidden">
-          
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              onClick={() => setOpen(false)}
-              className="text-gray-700 dark:text-gray-300"
-            >
-              {link.name}
-            </Link>
-          ))}
-
-          {!isAuth && (
-            <>
-              <Link to="/login" onClick={() => setOpen(false)}>
-                <Button variant="outline">Login</Button>
-              </Link>
-              <Link to="/register" onClick={() => setOpen(false)}>
-                <Button>Register</Button>
-              </Link>
-            </>
-          )}
-        </div>
-      )}
     </nav>
   );
 }

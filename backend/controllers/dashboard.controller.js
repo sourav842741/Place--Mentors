@@ -10,7 +10,7 @@ export const getWeeklyStats = asyncHandler(async (req, res) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
 
-    // ✅ FIXED DATE
+   
     const date = d.toLocaleDateString("en-CA");
 
     const dayData = user.dailyStats.find(x => x.date === date);

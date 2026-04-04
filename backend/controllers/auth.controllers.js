@@ -142,11 +142,11 @@ const user = await User.create({
   coverImage: coverUrl,
   isEmailVerified: true,
 
-  // ✅ STREAK INIT
+ 
   streakCount: 1,
   lastLoginDate: new Date(),
 
-  // ✅ XP INIT
+ 
   xp: 0,
   level: 1,
 });
