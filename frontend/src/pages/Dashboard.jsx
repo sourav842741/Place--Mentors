@@ -40,16 +40,15 @@ export default function Dashboard() {
   const level = user?.level || 1;
   const totalXP = user?.xp || 0;
 
-  // 🔥 XP required for current level
+  //  XP required for current level
   const maxXP = level * 100;
 
-  // 🔥 total XP till previous levels (correct formula)
+  //  total XP till previous levels (correct formula)
   const prevXP = ((level - 1) * level * 100) / 2;
 
-  // 🔥 current progress
+  //  current progress
   const currentXP = totalXP - prevXP;
 
-  // 🔥 percentage
   const percent = (currentXP / maxXP) * 100;
 
   const companies = [
@@ -67,34 +66,56 @@ export default function Dashboard() {
     Autoplay({ delay: 1500, stopOnInteraction: false }),
   );
 
-  // 🔥 SOUND
+ 
   const playSound = () => {
     const audio = new Audio("/sounds/badge.mp3");
     audio.play();
   };
 
   // ================= FIXED TIME TRACK =================
-  React.useEffect(() => {
-    let interval;
+React.useEffect(() => {
+  let interval;
 
-    if (user) {
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") {
+
       interval = setInterval(async () => {
         try {
-          const res = await updateTimeSpent(5); // 🔥 every 5 min
+       
+          await api.post("/api/xp/time", { minutes: 1 });
 
-          //  Badge popup trigger
-          if (res?.newBadges?.length > 0) {
-            setUnlockedBadges(res.newBadges);
-            playSound();
-          }
+       
+          const res = await api.get("/api/dashboard/weekly", {
+            withCredentials: true,
+          });
+
+          const formatted = (res.data?.weeklyData || []).map((item) => ({
+            ...item,
+            date: new Date(item.date).toLocaleDateString("en-US", {
+              weekday: "short",
+            }),
+          }));
+
+          setWeeklyData(formatted);
+
         } catch (err) {
-          console.log(err);
+          console.log("Time sync error");
         }
-      }, 300000); // 5 min
-    }
+      }, 180000);
 
-    return () => clearInterval(interval);
-  }, [user]);
+    } else {
+      clearInterval(interval);
+    }
+  };
+
+  document.addEventListener("visibilitychange", handleVisibility);
+  handleVisibility();
+
+  return () => {
+    clearInterval(interval);
+    document.removeEventListener("visibilitychange", handleVisibility);
+  };
+}, []);
 
   React.useEffect(() => {
     const fetchWeekly = async () => {
@@ -131,7 +152,7 @@ export default function Dashboard() {
         .slice(0, weeklyData.length - 1)
         .reduce((sum, d) => sum + d.avgScore, 0) / (weeklyData.length - 1 || 1);
 
-    // ❗ FIX HERE
+    //  FIX HERE
     if (previousAvg === 0) {
       return null; // special case
     }
@@ -179,6 +200,10 @@ export default function Dashboard() {
                 </h1>
 
                 <p className="mt-2 text-sm opacity-90">Level {level} 🚀</p>
+
+                <p className="text-sm mt-1">
+  ⏱ Today: {weeklyData?.[weeklyData.length - 1]?.timeSpent || 0} min
+</p>
 
                 <button className="mt-4 bg-white text-black px-4 py-2 rounded-lg">
                   Resume →

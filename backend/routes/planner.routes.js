@@ -26,8 +26,9 @@ router.get("/calendar/auth", isAuth, getCalendarAuthUrl);
 router.get("/calendar/callback", calendarCallback);
 router.get("/calendar/status", isAuth, getCalendarStatus);
 router.get("/all", isAuth, getAllPlanners);
-router.get("/:id", isAuth, getPlannerById);
 router.get("/user", isAuth, getAllPlanners);
+router.get("/:id", isAuth, getPlannerById);
+
 router.post("/analyze-resume", isAuth, upload.single("resume"), analyzeResume);
 
 

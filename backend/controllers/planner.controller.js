@@ -361,8 +361,8 @@ export const getMyPlanner = async (req, res) => {
     const planner = await Planner.findOne({ userId: req.user._id });
 
     if (!planner) {
-      return res.status(404).json({ message: "Planner not found" });
-    }
+  return res.status(200).json(null); // ✅ FIX
+}
 
     res.json(planner);
 

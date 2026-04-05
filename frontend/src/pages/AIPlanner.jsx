@@ -65,18 +65,26 @@ export default function AIPlanner() {
   }, [successMsg]);
 
   // Load planner
-  const fetchPlanner = useCallback(async (plannerId = null) => {
-    try {
-      const url = plannerId ? `/api/planner/${plannerId}` : "/api/planner/my";
-      const res = await api.get(url, { withCredentials: true });
-      if (!res.data?.plan)
-        throw new Error("Invalid planner data - no plan array");
-      setPlanner(res.data);
-    } catch (err) {
-      console.error("Fetch error:", err.response?.data || err.message);
-      throw err;
+const fetchPlanner = useCallback(async (plannerId = null) => {
+  try {
+    const url = plannerId
+      ? `/api/planner/${plannerId}`
+      : "/api/planner/my";
+
+    const res = await api.get(url, { withCredentials: true });
+
+    if (!res.data) {
+      setPlanner(null);
+      return;
     }
-  }, []);
+
+    setPlanner(res.data);
+
+  } catch (err) {
+    console.error("Fetch error:", err.response?.data || err.message);
+    setPlanner(null); // 🔥 important
+  }
+}, []);
 
   useEffect(() => {
     // Check for Google Calendar success param

@@ -424,6 +424,12 @@ export const finishInterview = async (req, res) => {
 
       todayData.avgScore = Math.round(newAvg);
       todayData.quizzesGiven = prevCount + 1;
+ 
+      // 🔥 interview time add
+const duration =
+  (new Date() - new Date(interview.createdAt)) / (1000 * 60);
+
+todayData.timeSpent += Math.round(duration);
 
       console.log("AFTER UPDATE:", user.dailyStats);
 

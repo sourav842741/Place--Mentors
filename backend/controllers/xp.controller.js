@@ -7,45 +7,45 @@ import { addXP } from "../utils/xpManager.js";
 export const updateTimeSpent = asyncHandler(async (req, res) => {
   let { minutes } = req.body;
 
- minutes = Number(minutes);
+  minutes = Number(minutes);
 
-if (minutes === undefined || isNaN(minutes) || minutes <= 0 || minutes > 300) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid minutes",
-  });
-}
+  if (isNaN(minutes) || minutes <= 0 || minutes > 300) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid minutes",
+    });
+  }
 
   const user = await User.findById(req.user._id);
 
-
-  if (!user.dailyStats) {
+  // ✅ safe array check
+  if (!Array.isArray(user.dailyStats)) {
     user.dailyStats = [];
   }
 
-  //  better XP logic
+  // XP
   const xpEarned = minutes * 2;
   addXP(user, xpEarned);
 
   user.totalTimeSpent += minutes;
 
-const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA");
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 
   if (!todayData) {
-    todayData = {
+    user.dailyStats.push({
       date: today,
       timeSpent: 0,
       avgScore: 0,
       quizzesGiven: 0,
-    };
-    user.dailyStats.push(todayData);
+    });
+
+    todayData = user.dailyStats[user.dailyStats.length - 1]; // 🔥 fix
   }
 
   todayData.timeSpent += minutes;
 
-  //  get new badges
   const newBadges = checkAndAssignBadges(user);
 
   await user.save();
@@ -63,8 +63,9 @@ const today = new Date().toISOString().split("T")[0];
 export const completeQuiz = asyncHandler(async (req, res) => {
   let { score } = req.body;
 
-  //  validation
-  if (score === undefined || score < 0 || score > 10) {
+  score = Number(score);
+
+  if (isNaN(score) || score < 0 || score > 10) {
     return res.status(400).json({
       success: false,
       message: "Score must be between 0 and 10",
@@ -80,24 +81,25 @@ export const completeQuiz = asyncHandler(async (req, res) => {
     });
   }
 
-
+  // ✅ safe array
   if (!Array.isArray(user.dailyStats)) {
     user.dailyStats = [];
   }
 
-  //  REMOVE CORRUPTED DATA (IMPORTANT)
+  // remove bad data
   user.dailyStats = user.dailyStats.filter(
     (d) => d && typeof d === "object" && d.date
   );
 
-  //  XP logic
+  // ================= XP =================
   let xpEarned = score * 10;
 
   if (score === 10) {
     xpEarned += 50;
   }
 
-  xpEarned += (user.streakCount || 0) * 2;
+  // 🔥 streak cap
+  xpEarned += Math.min(user.streakCount || 0, 10) * 2;
 
   const oldLevel = user.level || 1;
 
@@ -105,30 +107,33 @@ export const completeQuiz = asyncHandler(async (req, res) => {
 
   const newBadges = checkAndAssignBadges(user);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA");
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 
   if (!todayData) {
-    todayData = {
+    user.dailyStats.push({
       date: today,
       timeSpent: 0,
       avgScore: 0,
       quizzesGiven: 0,
-    };
-    user.dailyStats.push(todayData);
-  }
+    });
 
+    todayData = user.dailyStats[user.dailyStats.length - 1]; // 🔥 fix
+  }
 
   const prevAvg = todayData.avgScore || 0;
   const prevCount = todayData.quizzesGiven || 0;
 
-  //  CORRECT AVG FORMULA + ROUND
   const newAvg =
     (prevAvg * prevCount + score) / (prevCount + 1);
 
-  todayData.avgScore = Math.round(newAvg); // 🔥 important
+  // 🔥 better precision
+  todayData.avgScore = Number(newAvg.toFixed(1));
   todayData.quizzesGiven = prevCount + 1;
+
+  // 🔥 add time spent (important)
+  todayData.timeSpent += 10;
 
   await user.save();
 
@@ -139,10 +144,8 @@ export const completeQuiz = asyncHandler(async (req, res) => {
     totalXP: user.xp,
     level: user.level,
     leveledUp: user.level > oldLevel,
-
     currentLevelXP: user.currentLevelXP,
     nextLevelXP: user.nextLevelXP,
-
     newBadges,
   });
 });

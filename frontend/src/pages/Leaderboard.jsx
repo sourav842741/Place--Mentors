@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Bell,
-  Sun,
-  Search,
-  Filter,
-  TrendingUp,
-  ChevronRight,
-  Flame,
-} from "lucide-react";
+import { Flame } from "lucide-react";
 import { useSelector } from "react-redux";
 import api from "../services/api";
 import Navbar from "@/components/Navbar";
 
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
+  const [myRank, setMyRank] = useState(null);
+  const [myTime, setMyTime] = useState(0);
 
   const currentUser = useSelector((state) => state.user.user);
 
@@ -24,7 +18,17 @@ export default function Leaderboard() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setLeaderboard(res.data.leaderboard);
+
+      const data = res.data.leaderboard;
+      setLeaderboard(data);
+
+      // 🔥 find current user
+      const me = data.find((u) => u.name === currentUser?.fullName);
+
+      if (me) {
+        setMyRank(me.rank);
+        setMyTime(me.timeSpent || 0);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -34,151 +38,160 @@ export default function Leaderboard() {
     fetchLeaderboard();
   }, []);
 
-  //  DATA SPLIT
-  const topThree = leaderboard.slice(0, 3).map((user, i) => ({
-    rank: i + 1,
-    name: user.name,
-    points: user.score,
-    accuracy: user.accuracy,
-    streak: user.streak,
-    image:
-      user.avatar && user.avatar !== "null"
-        ? user.avatar
-        : `https://ui-avatars.com/api/?name=${user.name}&background=${
-            i === 0
-              ? "facc15" // gold
-              : i === 1
-                ? "9ca3af" // silver
-                : "d97706" // bronze
-          }`,
-    champion: i === 0,
-  }));
+  // 🔥 TOP 3
+  const topThree = leaderboard.slice(0, 3);
 
-  const performers = leaderboard.slice(3).map((user, i) => ({
-    rank: i + 4,
-    name: user.name,
-    points: user.score,
-    accuracy: user.accuracy,
-    streak: user.streak,
-    image:
-      user.avatar && user.avatar !== "null"
-        ? user.avatar
-        : `https://ui-avatars.com/api/?name=${user.name}&background=2563eb&color=fff`,
-    badge: currentUser?.fullName === user.name ? "YOU" : null,
-  }));
+  const others = leaderboard.slice(3);
 
   return (
     <>
       <Navbar />
+
       <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16">
-        <main className="flex-1">
-          {" "}
-          <div className="p-6 max-w-6xl mx-auto">
-            {/* TITLE */}
-            <h1 className="text-3xl font-bold mb-6">Campus Leaderboard 🏆</h1>
+        <div className="max-w-6xl mx-auto">
 
-            {/*  TOP 3 */}
-            <div className="bg-white rounded-xl p-8 mb-8 shadow-sm">
-              <div className="flex items-end justify-center gap-10">
-                {topThree.map((person) => (
-                  <div
-                    key={person.rank}
-                    className={`flex flex-col items-center ${
-                      person.rank === 1
-                        ? "order-2 scale-110"
-                        : person.rank === 2
-                          ? "order-1"
-                          : "order-3"
-                    }`}
-                  >
-                    {person.rank === 1 && (
-                      <span className="mb-3 px-4 py-1 bg-blue-500 text-white text-xs rounded-full">
-                        CHAMPION
-                      </span>
-                    )}
+        
+          <div className="flex justify-between items-center mb-6">
 
-                    <div className="relative mb-3">
-                      <img
-                        src={person.image}
-                        className={`rounded-full object-cover ${
-                          person.rank === 1 ? "w-24 h-24" : "w-20 h-20"
-                        }`}
-                      />
-                      <div className="absolute -bottom-2 -right-2 bg-white rounded-full px-3 py-1 text-sm font-bold shadow">
-                        {person.rank}
-                      </div>
-                    </div>
+            <h1 className="text-3xl font-bold">Campus Leaderboard 🏆</h1>
 
-                    <h3 className="font-semibold text-gray-900">
-                      {person.name}
-                    </h3>
+            <div className="flex gap-4">
 
-                    <p className="text-blue-600 font-bold text-lg">
-                      {person.points} pts
-                    </p>
-
-                    <div className="flex gap-6 mt-2 text-sm text-gray-600">
-                      <span>{person.accuracy}%</span>
-                      <span>🔥 {person.streak}</span>
-                    </div>
-                  </div>
-                ))}
+              {/* TIME CARD */}
+              <div className="bg-white px-5 py-3 rounded-xl shadow-md border flex flex-col items-center hover:scale-105 transition">
+                <span className="text-xs text-gray-500">TOTAL TIME</span>
+                <span className="text-lg font-bold text-blue-600">
+                  ⏱ {myTime} min
+                </span>
               </div>
-            </div>
 
-            {/* TABLE */}
-            <div className="bg-white rounded-xl shadow-sm">
-              <div className="p-4 border-b font-bold">Top Performers</div>
+              {/* RANK CARD */}
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-xl shadow-md text-white flex flex-col items-center hover:scale-105 transition">
+                <span className="text-xs opacity-80">MY RANK</span>
+                <span className="text-xl font-bold">
+                  #{myRank || "--"}
+                </span>
+              </div>
 
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left p-3">Rank</th>
-                    <th className="text-left p-3">Student</th>
-                    <th className="text-left p-3">Points</th>
-                    <th className="text-left p-3">Streak</th>
-                    <th className="text-left p-3">Accuracy</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {performers.map((p) => (
-                    <tr key={p.rank} className="border-b hover:bg-gray-50">
-                      <td className="p-3">#{p.rank}</td>
-
-                      <td className="p-3">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={p.image}
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold">{p.name}</span>
-                              {p.badge && (
-                                <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-xs font-bold">
-                                  YOU
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="p-3 text-blue-600 font-semibold">
-                        {p.points}
-                      </td>
-
-                      <td className="p-3">🔥 {p.streak}</td>
-
-                      <td className="p-3">{p.accuracy}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
-        </main>
+
+          {/* 🔥 TOP 3 CARDS */}
+          <div className="bg-white rounded-xl p-8 mb-8 shadow-sm">
+            <div className="flex items-end justify-center gap-10">
+
+              {topThree.map((user, i) => (
+                <div
+                  key={i}
+                  className={`flex flex-col items-center ${
+                    i === 0 ? "order-2 scale-110" : i === 1 ? "order-1" : "order-3"
+                  }`}
+                >
+                  {i === 0 && (
+                    <span className="mb-3 px-4 py-1 bg-blue-500 text-white text-xs rounded-full">
+                      CHAMPION
+                    </span>
+                  )}
+
+                  <img
+                    src={
+                      user.avatar ||
+                      `https://ui-avatars.com/api/?name=${user.name}`
+                    }
+                    className={`rounded-full object-cover ${
+                      i === 0 ? "w-24 h-24" : "w-20 h-20"
+                    }`}
+                  />
+
+                  <h3 className="mt-2 font-semibold">{user.name}</h3>
+
+                  <p className="text-blue-600 font-bold text-lg">
+                    {user.score} pts
+                  </p>
+
+                  <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                    <span>{user.accuracy}%</span>
+                    <span>🔥 {user.streak}</span>
+                  </div>
+                </div>
+              ))}
+
+            </div>
+          </div>
+
+          {/* 🔥 TABLE */}
+          <div className="bg-white rounded-xl shadow-sm">
+
+            <div className="p-4 border-b font-bold">
+              Top Performers
+            </div>
+
+            <table className="w-full">
+
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="text-left p-3">Rank</th>
+                  <th className="text-left p-3">Student</th>
+                  <th className="text-left p-3">Points</th>
+                  <th className="text-left p-3">Streak</th>
+                  <th className="text-left p-3">Accuracy</th>
+                  <th className="text-left p-3">Time</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {others.map((user, i) => (
+                  <tr
+                    key={i}
+                    className={`border-b hover:bg-gray-50 ${
+                      currentUser?.fullName === user.name
+                        ? "bg-blue-50"
+                        : ""
+                    }`}
+                  >
+                    <td className="p-3 font-semibold">
+                      #{user.rank}
+                    </td>
+
+                    <td className="p-3 flex items-center gap-3">
+                      <img
+                        src={
+                          user.avatar ||
+                          `https://ui-avatars.com/api/?name=${user.name}`
+                        }
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <span>{user.name}</span>
+
+                      {currentUser?.fullName === user.name && (
+                        <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white text-xs rounded">
+                          YOU
+                        </span>
+                      )}
+                    </td>
+
+                    <td className="p-3 text-blue-600 font-semibold">
+                      {user.score}
+                    </td>
+
+                    <td className="p-3">
+                      <Flame size={16} className="inline mr-1 text-orange-500" />
+                      {user.streak}
+                    </td>
+
+                    <td className="p-3">{user.accuracy}%</td>
+
+                    <td className="p-3">
+                      ⏱ {user.timeSpent || 0} min
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+            </table>
+          </div>
+
+        </div>
       </div>
     </>
   );
