@@ -101,7 +101,7 @@ React.useEffect(() => {
         } catch (err) {
           console.log("Time sync error");
         }
-      }, 180000);
+      }, 60000);
 
     } else {
       clearInterval(interval);
