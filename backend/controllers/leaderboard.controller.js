@@ -9,10 +9,9 @@ export const getDailyLeaderboard = asyncHandler(async (req, res) => {
 
 const leaderboard = users.map((user) => {
 
-  const validStats = (user.dailyStats || []).filter(
-    (d) => d && typeof d === "object" && d.date
-  );
-
+  const validStats = user.dailyStats = user.dailyStats.filter(
+  (d) => d && d.date && !isNaN(new Date(d.date))
+);
   let totalScore = 0;
   let totalQuizzes = 0;
   let totalTime = 0;

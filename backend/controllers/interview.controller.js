@@ -3,6 +3,7 @@ import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { askAi } from "../services/openRouter.service.js";
 import User from "../models/user.model.js";
 import Interview from "../models/interview.model.js";
+import { addXP } from "../utils/xpManager.js";
 
 export const analyzeResume = async (req, res) => {
   try {
@@ -319,7 +320,14 @@ Answer: ${answer}
 
     const aiResponse = await askAi(messages);
 
-    const parsed = JSON.parse(aiResponse);
+    let parsed;
+    try {
+      parsed = JSON.parse(aiResponse);
+    } catch (err) {
+      return res.status(500).json({
+        message: "AI response parsing failed",
+      });
+    }
 
     question.answer = answer;
     question.confidence = parsed.confidence;
@@ -340,19 +348,31 @@ Answer: ${answer}
 export const finishInterview = async (req, res) => {
   try {
     const { interviewId } = req.body;
-    const interview = await Interview.findById(interviewId);
-    if (!interview) {
-      return res.status(400).json({ message: "failed to find Interview" });
+
+    if (!interviewId) {
+      return res.status(400).json({
+        message: "Interview ID required",
+      });
     }
 
-    const totalQuestions = interview.questions.length;
+    const interview = await Interview.findById(interviewId);
+
+    if (!interview) {
+      return res.status(400).json({
+        message: "Failed to find Interview",
+      });
+    }
+
+    // ================= SAFE QUESTIONS =================
+    const questions = interview.questions || [];
+    const totalQuestions = questions.length;
 
     let totalScore = 0;
     let totalConfidence = 0;
     let totalCommunication = 0;
     let totalCorrectness = 0;
 
-    interview.questions.forEach((q) => {
+    questions.forEach((q) => {
       totalScore += q.score || 0;
       totalConfidence += q.confidence || 0;
       totalCommunication += q.communication || 0;
@@ -362,26 +382,64 @@ export const finishInterview = async (req, res) => {
     const finalScore = totalQuestions ? totalScore / totalQuestions : 0;
 
     const avgConfidence = totalQuestions ? totalConfidence / totalQuestions : 0;
-
     const avgCommunication = totalQuestions
       ? totalCommunication / totalQuestions
       : 0;
-
     const avgCorrectness = totalQuestions
       ? totalCorrectness / totalQuestions
       : 0;
 
+    // ================= UPDATE INTERVIEW =================
     interview.finalScore = finalScore;
     interview.status = "completed";
 
     await interview.save();
 
+    // ================= UPDATE USER =================
+    const user = await User.findById(interview.userId);
+
+    if (user) {
+      if (!Array.isArray(user.dailyStats)) {
+        user.dailyStats = [];
+      }
+      const today = new Date().toLocaleDateString("en-CA");
+
+      let todayData = user.dailyStats.find((d) => d.date === today);
+
+      if (!todayData) {
+        user.dailyStats.push({
+          date: today,
+          timeSpent: 0,
+          avgScore: 0,
+          quizzesGiven: 0,
+        });
+
+        todayData = user.dailyStats[user.dailyStats.length - 1]; // 🔥 IMPORTANT
+      }
+
+      const prevAvg = todayData.avgScore || 0;
+      const prevCount = todayData.quizzesGiven || 0;
+
+      const newAvg = (prevAvg * prevCount + finalScore) / (prevCount + 1);
+
+      todayData.avgScore = Math.round(newAvg);
+      todayData.quizzesGiven = prevCount + 1;
+
+      console.log("AFTER UPDATE:", user.dailyStats);
+
+      // XP
+      addXP(user, Math.round(finalScore * 10));
+
+      await user.save();
+    }
+
+    // ================= RESPONSE =================
     return res.status(200).json({
       finalScore: Number(finalScore.toFixed(1)),
       confidence: Number(avgConfidence.toFixed(1)),
       communication: Number(avgCommunication.toFixed(1)),
       correctness: Number(avgCorrectness.toFixed(1)),
-      questionWiseScore: interview.questions.map((q) => ({
+      questionWiseScore: questions.map((q) => ({
         question: q.question,
         score: q.score || 0,
         feedback: q.feedback || "",
@@ -391,15 +449,18 @@ export const finishInterview = async (req, res) => {
       })),
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `failed to finish Interview ${error}` });
+    console.error("FINISH INTERVIEW ERROR:", error); 
+
+    return res.status(500).json({
+      message: "Failed to finish interview",
+      error: error.message,
+    });
   }
 };
 
 export const getMyInterviews = async (req, res) => {
   try {
-    const interviews = await Interview.find({ userId: req.user._id }) // ✅ FIX
+    const interviews = await Interview.find({ userId: req.user._id }) 
       .sort({ createdAt: -1 })
       .select("role experience mode finalScore status createdAt");
 
