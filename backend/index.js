@@ -4,6 +4,7 @@ import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+
 import authRouter from "./routes/auth.routes.js";
 import xpRouter from "./routes/xp.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
@@ -13,8 +14,10 @@ import interviewRouter from "./routes/interview.route.js";
 import paymentRouter from "./routes/payment.route.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 import leaderboardRoutes from "./routes/leaderboard.routes.js";
-import plannerRouter from "./routes/planner.routes.js"
+import plannerRouter from "./routes/planner.routes.js";
 import aiRouter from "./routes/ai.routes.js";
+import jobRouter from "./routes/job.routes.js";
+import cronJobs from "./utils/cronJobs.js";
 
 dns.setServers([
   "1.1.1.1",
@@ -40,13 +43,13 @@ app.use(cookieParser());
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
 app.use("/api/xp", xpRouter);
-app.use("/api/interview" , interviewRouter)
-app.use("/api/payment" , paymentRouter)
+app.use("/api/interview", interviewRouter);
+app.use("/api/payment", paymentRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/leaderboard", leaderboardRoutes);
-app.use("/api/planner", plannerRouter );
+app.use("/api/planner", plannerRouter);
 app.use("/api/ai", aiRouter);
-
+app.use("/api/jobs", jobRouter);
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);
@@ -54,15 +57,19 @@ app.use(errorHandler);
 // ================= START SERVER =================
 const startServer = async () => {
   try {
-    await connectDb(); //  pehle DB connect
+    await connectDb(); 
+    cronJobs.startCronJobs();
+    
 
     app.listen(port, () => {
-      console.log(` Server running on port ${port}`);
+      console.log(`Server running on port ${port}`);
+      console.log('🔄 Job cron scheduler started (runs every 8h)');
     });
   } catch (error) {
-    console.error(" DB connection failed:", error.message);
+    console.error("DB connection failed:", error.message);
     process.exit(1);
   }
 };
 
 startServer();
+

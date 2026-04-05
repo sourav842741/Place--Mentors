@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Play, Briefcase, TrendingUp } from "lucide-react";
+import { Play, Briefcase, TrendingUp,Building2, Globe, Cpu, Code} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -22,6 +22,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import api from "../services/api";
+
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
@@ -51,71 +52,62 @@ export default function Dashboard() {
 
   const percent = (currentXP / maxXP) * 100;
 
-  const companies = [
-    "Google",
-    "Meta",
-    "Amazon",
-    "Microsoft",
-    "Netflix",
-    "Adobe",
-    "Flipkart",
-    "Swiggy",
-  ];
+ const companies = [
+  { name: "Google", icon: <Globe className="text-blue-500 w-5 h-5" /> },
+  { name: "Amazon", icon: <Briefcase className="text-yellow-500 w-5 h-5" /> },
+  { name: "Microsoft", icon: <Cpu className="text-green-500 w-5 h-5" /> },
+  { name: "Meta", icon: <Code className="text-blue-400 w-5 h-5" /> },
+  { name: "Netflix", icon: <Building2 className="text-red-500 w-5 h-5" /> },
+];
 
   const plugin = React.useRef(
     Autoplay({ delay: 1500, stopOnInteraction: false }),
   );
 
- 
   const playSound = () => {
     const audio = new Audio("/sounds/badge.mp3");
     audio.play();
   };
 
   // ================= FIXED TIME TRACK =================
-React.useEffect(() => {
-  let interval;
+  React.useEffect(() => {
+    let interval;
 
-  const handleVisibility = () => {
-    if (document.visibilityState === "visible") {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        interval = setInterval(async () => {
+          try {
+            await api.post("/api/xp/time", { minutes: 1 });
 
-      interval = setInterval(async () => {
-        try {
-       
-          await api.post("/api/xp/time", { minutes: 1 });
+            const res = await api.get("/api/dashboard/weekly", {
+              withCredentials: true,
+            });
 
-       
-          const res = await api.get("/api/dashboard/weekly", {
-            withCredentials: true,
-          });
+            const formatted = (res.data?.weeklyData || []).map((item) => ({
+              ...item,
+              date: new Date(item.date).toLocaleDateString("en-US", {
+                weekday: "short",
+              }),
+            }));
 
-          const formatted = (res.data?.weeklyData || []).map((item) => ({
-            ...item,
-            date: new Date(item.date).toLocaleDateString("en-US", {
-              weekday: "short",
-            }),
-          }));
+            setWeeklyData(formatted);
+          } catch (err) {
+            console.log("Time sync error");
+          }
+        }, 60000);
+      } else {
+        clearInterval(interval);
+      }
+    };
 
-          setWeeklyData(formatted);
+    document.addEventListener("visibilitychange", handleVisibility);
+    handleVisibility();
 
-        } catch (err) {
-          console.log("Time sync error");
-        }
-      }, 60000);
-
-    } else {
+    return () => {
       clearInterval(interval);
-    }
-  };
-
-  document.addEventListener("visibilitychange", handleVisibility);
-  handleVisibility();
-
-  return () => {
-    clearInterval(interval);
-    document.removeEventListener("visibilitychange", handleVisibility);
-  };
-}, []);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
 
   React.useEffect(() => {
     const fetchWeekly = async () => {
@@ -202,8 +194,9 @@ React.useEffect(() => {
                 <p className="mt-2 text-sm opacity-90">Level {level} 🚀</p>
 
                 <p className="text-sm mt-1">
-  ⏱ Today: {weeklyData?.[weeklyData.length - 1]?.timeSpent || 0} min
-</p>
+                  ⏱ Today: {weeklyData?.[weeklyData.length - 1]?.timeSpent || 0}{" "}
+                  min
+                </p>
 
                 <button className="mt-4 bg-white text-black px-4 py-2 rounded-lg">
                   Resume →
@@ -243,7 +236,10 @@ React.useEffect(() => {
                 →
               </div>
 
-              <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow">
+              <div
+                onClick={() => navigate("/jobs")}
+                className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow cursor-pointer hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+              >
                 <div className="flex items-center gap-3">
                   <Briefcase className="text-purple-500" />
                   <div>
@@ -251,7 +247,10 @@ React.useEffect(() => {
                     <p className="text-sm text-gray-500">Openings</p>
                   </div>
                 </div>
-                →
+
+                <span className="text-xl text-gray-400 group-hover:translate-x-1 transition">
+                  →
+                </span>
               </div>
             </div>
 
@@ -314,33 +313,39 @@ React.useEffect(() => {
 
             {/* COMPANIES */}
             <div>
-              <h3 className="font-semibold mb-4">Recommended Companies</h3>
+  <h3 className="font-semibold mb-4">Recommended Companies</h3>
 
-              <Carousel
-                plugins={[plugin.current]}
-                opts={{ align: "start", loop: true }}
-                className="w-full"
-              >
-                <CarouselContent>
-                  {companies.map((company, index) => (
-                    <CarouselItem
-                      key={index}
-                      className="basis-1/2 sm:basis-1/3 lg:basis-1/5"
-                    >
-                      <div className="p-2">
-                        <Card className="hover:scale-105 transition">
-                          <CardContent className="flex items-center justify-center h-24">
-                            <span className="font-semibold text-lg">
-                              {company}
-                            </span>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-            </div>
+  <Carousel
+    plugins={[plugin.current]}
+    opts={{ align: "start", loop: true }}
+    className="w-full"
+  >
+    <CarouselContent>
+      {companies.map((company, index) => (
+        <CarouselItem
+          key={index}
+          className="basis-1/2 sm:basis-1/3 lg:basis-1/6"
+        >
+          <div className="p-2">
+            <Card className="hover:scale-105 transition">
+              <CardContent className="flex flex-col items-center justify-center h-24 gap-2">
+                
+                {/* Icon */}
+                {company.icon}
+
+                {/* Small Name */}
+                <span className="text-sm font-medium text-gray-600">
+                  {company.name}
+                </span>
+
+              </CardContent>
+            </Card>
+          </div>
+        </CarouselItem>
+      ))}
+    </CarouselContent>
+  </Carousel>
+</div>
           </div>
         </main>
       </div>

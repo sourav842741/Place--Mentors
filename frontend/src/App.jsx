@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Jobs from "./pages/Jobs";
 import { Toaster } from "sonner";
 import Profile from "./pages/Profile";
 import QuizPage from "./pages/QuizPage";
@@ -19,6 +20,7 @@ import AIPlanner from "./pages/AIPlanner";
 import PlannerHistory from "./pages/PlannerHistory";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ResumeGenerator from "./pages/ResumeGenerator";
+import JobDetailsPage from "./pages/JobDetailsPage";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -43,6 +45,7 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+          <Route path="/jobs" element={<Jobs />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/quiz" element={<QuizPage />} />
@@ -55,7 +58,7 @@ function App() {
             <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
             <Route path="/resume-generator" element={<ResumeGenerator />} />
             <Route path="/ai-planner/:id" element={<AIPlanner />} />
-
+            <Route path="/jobs/:id" element={<JobDetailsPage />} />
         </Route>
       </Routes>
     </>
