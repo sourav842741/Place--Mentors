@@ -22,7 +22,6 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import api from "../services/api";
-import Sidebar from "@/components/Sidebar";
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
@@ -146,7 +145,7 @@ export default function Dashboard() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16">
         {/* 🔥 BADGE POPUP */}
         {unlockedBadges.length > 0 && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -168,9 +167,6 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-
-        {/* Sidebar */}
-        <Sidebar />
 
         {/* Main Content */}
         <main className="flex-1">
@@ -254,7 +250,7 @@ export default function Dashboard() {
               </div>
 
               {/* CHART */}
-              <div className="w-full h-75">
+              <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] min-h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyData}>
                     <XAxis dataKey="date" />

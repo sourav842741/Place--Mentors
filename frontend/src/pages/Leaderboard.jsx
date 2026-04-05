@@ -11,7 +11,6 @@ import {
 import { useSelector } from "react-redux";
 import api from "../services/api";
 import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
 
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -45,7 +44,13 @@ export default function Leaderboard() {
     image:
       user.avatar && user.avatar !== "null"
         ? user.avatar
-        : `https://ui-avatars.com/api/?name=${user.name}&background=2563eb&color=fff`,
+        : `https://ui-avatars.com/api/?name=${user.name}&background=${
+            i === 0
+              ? "facc15" // gold
+              : i === 1
+                ? "9ca3af" // silver
+                : "d97706" // bronze
+          }`,
     champion: i === 0,
   }));
 
@@ -65,8 +70,7 @@ export default function Leaderboard() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen">
-        <Sidebar />
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16">
         <main className="flex-1">
           {" "}
           <div className="p-6 max-w-6xl mx-auto">
@@ -88,7 +92,7 @@ export default function Leaderboard() {
                     }`}
                   >
                     {person.rank === 1 && (
-                      <span className="mb-3 px-4 py-1 bg-blue-600 text-white text-xs rounded-full">
+                      <span className="mb-3 px-4 py-1 bg-blue-500 text-white text-xs rounded-full">
                         CHAMPION
                       </span>
                     )}
@@ -174,11 +178,8 @@ export default function Leaderboard() {
               </table>
             </div>
           </div>
-          \n{" "}
         </main>
-        \n{" "}
       </div>
-      \n{" "}
     </>
   );
 }

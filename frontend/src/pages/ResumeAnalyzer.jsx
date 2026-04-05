@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@
 import { toast } from 'sonner';
 import { uploadResumeAndAnalyze, clearAnalysis, setFileName, selectResume } from '@/redux/resumeSlice';
 import Navbar from '@/components/Navbar';
-import Sidebar from '@/components/Sidebar';
 import UploadArea from '@/components/ui/UploadArea';
 
 export default function ResumeAnalyzer() {
@@ -53,8 +52,7 @@ export default function ResumeAnalyzer() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen">
-        <Sidebar />
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-15">
         <div className="flex-1">
           <div className="max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-8">
@@ -64,7 +62,7 @@ export default function ResumeAnalyzer() {
                 </h1>
                 <p className="text-gray-600 mt-2">Upload your PDF resume for FAANG-level feedback (20 credits)</p>
               </div>
-              <Button onClick={() => navigate('/dashboard')} variant="outline">
+              <Button onClick={() => navigate('/dashboard')} variant="outline" className="bg-yellow-200">
                 Dashboard
               </Button>
             </div>

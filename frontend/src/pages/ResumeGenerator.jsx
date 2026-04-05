@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 import { Loader2, Download } from "lucide-react";
-import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 
 export default function ResumeGenerator() {
@@ -60,7 +59,6 @@ export default function ResumeGenerator() {
   return (
     <>
     <Navbar/>
-    <Sidebar/>
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
       <Card className="w-full max-w-4xl shadow-2xl rounded-2xl">
         <CardContent className="p-8">

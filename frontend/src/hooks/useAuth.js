@@ -31,19 +31,22 @@ const useAuth = () => {
   };
 
   // ================= GET CURRENT USER =================
-  const getCurrentUser = async () => {
-    try {
-      dispatch(setLoading(true));
+ const getCurrentUser = async () => {
+  try {
+    dispatch(setLoading(true));
 
-      const res = await api.get("/api/auth/me");
-      dispatch(setUserData(res.data.data));
+    const res = await api.get("/api/auth/me", {
+      withCredentials: true, 
+    });
 
-    } catch {
-      dispatch(logoutUser());
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
+    dispatch(setUserData(res.data.data));
+
+  } catch {
+    dispatch(logoutUser());
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
   // ================= SIGNUP SEND OTP =================
   const sendSignupOtp = async (data) => {

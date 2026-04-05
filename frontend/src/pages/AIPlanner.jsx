@@ -27,7 +27,6 @@ import { Label } from "@/components/ui/label";
 
 import api from "../services/api";
 import useAuth from "@/hooks/useAuth";
-import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 
 export default function AIPlanner() {
@@ -254,8 +253,8 @@ export default function AIPlanner() {
   return (
     <>
       <Navbar />
-      <Sidebar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen">
+
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-17">
         <main className="flex-1">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
