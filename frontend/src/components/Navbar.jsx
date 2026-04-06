@@ -32,7 +32,10 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function Navbar() {
+
   const { user, isAuth } = useSelector((state) => state.user);
+  const companyCredits = useSelector((state) => state.company?.credits || 0);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -64,7 +67,8 @@ export default function Navbar() {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-    { icon: Building2, label: "Companies", path: "/companies" },
+{ icon: Building2, label: "All Companies", path: "/companies" },
+
     { icon: BookOpen, label: "Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
@@ -141,9 +145,11 @@ export default function Navbar() {
               >
                 <BsCoin className="text-yellow-500" size={16} />
 
+
                 <span className="text-xs sm:text-sm md:text-base font-semibold">
-                  {user?.credits || 0}
+                  {companyCredits > 0 ? companyCredits : (user?.credits || 0)}
                 </span>
+
               </button>
 
               {showCreditPopup && (

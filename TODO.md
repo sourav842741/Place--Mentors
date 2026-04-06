@@ -1,19 +1,7 @@
-# Job UI Improvements ✅ COMPLETE
+# Task: Fix 404 error on company API calls
 
-✅ **Jobs.jsx**: Modern list/detail split-view
-✅ **JobDetailsPage.jsx**: Fullscreen modern page
-   - Gradient hero w/ Apply/Share/Bookmark
-   - Rich badges (salary/remote/type/date)
-   - Prose description + skills grid
-   - Company sidebar, quick actions
-   - Skeletons, not-found state, responsive
+## Steps:
 
-**Test**: `cd frontend && npm run dev` → `/jobs` (list) + `/jobs/{id}` (detail)
+- [x] Step 2: Test the fix by restarting frontend dev server and checking AllCompanies page (Backend needs to run on port 5000 with /api prefix - use `cd backend && npm run dev`; frontend VITE_SERVER_URL likely http://localhost:5000/api - check .env)\n- [ ] Step 3: Mark complete
 
-**Files Updated**:
-- `frontend/src/pages/Jobs.jsx`
-- `frontend/src/pages/JobDetailsPage.jsx`
-- `TODO.md`
-
-Production-ready job UI! 🚀
-
+Current progress: Step 1 complete. Step 2: Test by running `cd frontend && npm run dev` (restart if running), then visit AllCompanies page and check browser console/Network tab for no more 404s on /api/company/.

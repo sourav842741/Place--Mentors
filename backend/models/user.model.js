@@ -116,6 +116,13 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    // 🔥 Company Preparation Tracking
+prepCompanies: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company"
+  }
+],
 
     //  TIME TRACKING
     totalTimeSpent: { type: Number, default: 0 }, // minutes
@@ -127,6 +134,7 @@ const userSchema = new mongoose.Schema(
     googleCalendarAccessToken: String,
     googleCalendarRefreshToken: String,
   },
+  
 
   { timestamps: true },
 );

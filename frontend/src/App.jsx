@@ -21,6 +21,9 @@ import PlannerHistory from "./pages/PlannerHistory";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ResumeGenerator from "./pages/ResumeGenerator";
 import JobDetailsPage from "./pages/JobDetailsPage";
+import CompanyPage from "./pages/CompanyPage";
+import AllCompanies from "./pages/AllCompanies";
+
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -59,6 +62,9 @@ function App() {
             <Route path="/resume-generator" element={<ResumeGenerator />} />
             <Route path="/ai-planner/:id" element={<AIPlanner />} />
             <Route path="/jobs/:id" element={<JobDetailsPage />} />
+            <Route path="/companies" element={<AllCompanies />} />
+            <Route path="/company/:name?" element={<CompanyPage />} />
+
         </Route>
       </Routes>
     </>

@@ -19,6 +19,8 @@ import aiRouter from "./routes/ai.routes.js";
 import jobRouter from "./routes/job.routes.js";
 import cronJobs from "./utils/cronJobs.js";
 
+import companyRoutes from "./routes/company.routes.js";
+
 dns.setServers([
   "1.1.1.1",
   "8.8.8.8"
@@ -27,7 +29,7 @@ dns.setServers([
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 // ================= MIDDLEWARE =================
 app.use(
@@ -50,6 +52,8 @@ app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/planner", plannerRouter);
 app.use("/api/ai", aiRouter);
 app.use("/api/jobs", jobRouter);
+
+app.use("/api", companyRoutes);
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);
