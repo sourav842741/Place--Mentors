@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import CompanySearch from '../components/CompanySearch';
-import useCompany from '../hooks/useCompany';
+import React, { useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import CompanySearch from "../components/CompanySearch";
+import useCompany from "../hooks/useCompany";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../components/ui/card';
-import { Skeleton } from '../components/ui/skeleton';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Badge } from '../components/ui/badge';
+} from "../components/ui/card";
+import { Skeleton } from "../components/ui/skeleton";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Badge } from "../components/ui/badge";
 import {
   Building2,
   Users,
@@ -24,8 +24,8 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
-} from 'lucide-react';
-import { Button } from '../components/ui/button';
+} from "lucide-react";
+import { Button } from "../components/ui/button";
 
 const CompanyPage = () => {
   const { name: paramName } = useParams();
@@ -33,11 +33,11 @@ const CompanyPage = () => {
   const { company, loading, error, credits, getCompany } = useCompany();
 
   // Auto fetch if param name
-useEffect(() => {
-  if (paramName) {
-    getCompany(paramName.toLowerCase());
-  }
-}, [paramName]);
+  useEffect(() => {
+    if (paramName) {
+      getCompany(paramName.toLowerCase());
+    }
+  }, [paramName]);
 
   if (loading) {
     return (
@@ -51,9 +51,11 @@ useEffect(() => {
               <Skeleton className="h-64" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array(6).fill().map((_, i) => (
-                <Skeleton key={i} className="h-48" />
-              ))}
+              {Array(6)
+                .fill()
+                .map((_, i) => (
+                  <Skeleton key={i} className="h-48" />
+                ))}
             </div>
           </div>
         </div>
@@ -66,11 +68,10 @@ useEffect(() => {
       <Navbar />
       <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-50 min-h-screen lg:mt-16">
         <div className="max-w-7xl mx-auto">
-
           {/* Header + Search */}
           <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={() => navigate('/dashboard')}>
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
@@ -80,24 +81,27 @@ useEffect(() => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-<CompanySearch 
-  onSearch={(name) => paramName !== name && navigate(`/company/${name}`)} 
-  showAIBtn={!company && !loading && paramName} 
-  onAIGenerate={() => paramName && getCompany(paramName)}
-/>
+              <CompanySearch
+                onSearch={(name) =>
+                  paramName !== name && navigate(`/company/${name}`)
+                }
+                showAIBtn={!company && !loading && paramName}
+                onAIGenerate={() => paramName && getCompany(paramName)}
+              />
 
-              <Button 
-                onClick={() => company?.name && getCompany(company.name)} 
-                disabled={!company?.name || loading}
+              <Button
+                onClick={() =>
+                  company?.overview?.name && getCompany(company?.overview?.name)
+                }
+                disabled={!company?.overview?.name || loading}
                 variant="outline"
                 className="flex items-center gap-2"
               >
                 <Brain className="h-4 w-4" />
-                {loading ? 'AI Searching...' : 'AI Refresh'}
+                {loading ? "AI Searching..." : "AI Refresh"}
               </Button>
             </div>
           </div>
-
 
           {error && (
             <Alert className="mb-6">
@@ -110,12 +114,13 @@ useEffect(() => {
             <div className="text-center py-12">
               <Building2 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-medium mb-2">No company selected</h3>
-              <p className="text-gray-500 mb-6">Search for a company to view details</p>
-<CompanySearch 
-  showAIBtn={!company && !loading && paramName} 
-  onAIGenerate={() => paramName && getCompany(paramName)}
-/>
-
+              <p className="text-gray-500 mb-6">
+                Search for a company to view details
+              </p>
+              <CompanySearch
+                showAIBtn={!company && !loading && paramName}
+                onAIGenerate={() => paramName && getCompany(paramName)}
+              />
             </div>
           )}
 
@@ -130,7 +135,9 @@ useEffect(() => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Remaining Credits</p>
-                      <p className="text-2xl font-bold text-gray-900">{credits}</p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {credits}
+                      </p>
                     </div>
                   </div>
                   <Button variant="outline" className="self-start sm:self-auto">
@@ -151,11 +158,29 @@ useEffect(() => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <h3 className="font-bold text-xl">{company?.overview?.name || 'N/A'}</h3>
-                      {company?.overview?.tagline && <p className="text-2xl font-light italic text-gray-600 mt-2">{company.overview.tagline}</p>}
+                      <h3 className="font-bold text-xl">
+                        {company?.overview?.name || "N/A"}
+                      </h3>
+                      {company?.overview?.tagline && (
+                        <p className="text-2xl font-light italic text-gray-600 mt-2">
+                          {company?.overview?.tagline}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-gray-600 leading-relaxed">{company?.overview?.description || 'No description available'}</p>
+                    <p className="text-gray-600 leading-relaxed">
+                      {company?.overview?.description ||
+                        "No description available"}
+                    </p>
 
+                    <p className="text-gray-600 leading-relaxed">
+                      {company?.overview?.industry ||
+                        "No description available"}
+                    </p>
+
+                    <p className="text-gray-600 leading-relaxed">
+                      {company?.overview?.headquarters ||
+                        "No description available"}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -168,15 +193,24 @@ useEffect(() => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {company.hiring?.pattern?.length ? (
+                    {company?.hiring?.pattern?.length ? (
                       <div className="space-y-2">
                         {company.hiring.pattern.map((round, i) => (
-                          <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                            <Badge variant="secondary" className="mt-0.5 flex-shrink-0">Round {i + 1}</Badge>
+                          <div
+                            key={i}
+                            className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                          >
+                            <Badge
+                              variant="secondary"
+                              className="mt-0.5 flex-shrink-0"
+                            >
+                              Round {i + 1}
+                            </Badge>
                             <div>
-                              <h4 className="font-semibold">{round.round}</h4>
-                              <p className="text-sm text-gray-600">{round.details}</p>
-
+                              <h4 className="font-semibold">{round?.round}</h4>
+                              <p className="text-sm text-gray-600">
+                                {round?.details}
+                              </p>
                             </div>
                           </div>
                         ))}
@@ -199,16 +233,135 @@ useEffect(() => {
                     {company.salary ? (
                       <>
                         <div className="text-center p-4 bg-green-50 rounded-lg">
-                          <p className="text-2xl font-bold text-green-700">{company.salary.average || 'N/A'}</p>
+                          <p className="text-2xl font-bold text-green-700">
+                            {company.salary.average || "N/A"}
+                          </p>
                           <p className="text-sm text-green-600">Average CTC</p>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
-                          <div><span className="font-semibold">Intern:</span> {company.salary.intern || 'N/A'}</div>
-                          <div><span className="font-semibold">Bonus:</span> {company.salary.bonus || 'N/A'}</div>
+                          <div>
+                            <span className="font-semibold">Intern:</span>{" "}
+                            {company.salary.intern || "N/A"}
+                          </div>
+                          <div>
+                            <span className="font-semibold">Bonus:</span>{" "}
+                            {company.salary.bonus || "N/A"}
+                          </div>
                         </div>
                       </>
                     ) : (
-                      <p className="text-gray-500 italic">Salary info not available</p>
+                      <p className="text-gray-500 italic">
+                        Salary info not available
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* 3. Exam Timeline */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5" />
+                      Exam Timeline
+                    </CardTitle>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
+                    {/* ✅ Exam Timeline */}
+                    {company?.examTimeline ? (
+                      <>
+                        <div className="p-4 bg-blue-50 rounded-lg text-center">
+                          <p className="text-lg font-bold text-blue-700">
+                            {company.examTimeline.expected || "N/A"}
+                          </p>
+                          <p className="text-sm text-blue-600">Expected</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-2 text-sm">
+                          <div>
+                            <span className="font-semibold">Last Year:</span>{" "}
+                            {company.examTimeline.lastYear || "N/A"}
+                          </div>
+
+                          <div>
+                            <span className="font-semibold">Note:</span>{" "}
+                            {company.examTimeline.note || "N/A"}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-gray-500 italic">
+                        Exam timeline not available
+                      </p>
+                    )}
+
+                    {/* 🔥 Roadmap + Daily Plan (YAHIN ADD KARNA HAI) */}
+                    {(company?.preparation?.roadmap ||
+                      company?.preparation?.dailyPlanGuide) && (
+                      <div className="p-4 bg-purple-50 rounded-lg space-y-3">
+                        {company?.preparation?.roadmap && (
+                          <div>
+                            <h4 className="font-semibold text-purple-700">
+                              Roadmap
+                            </h4>
+                            <p className="text-sm text-gray-700 mt-1">
+                              {company.preparation.roadmap}
+                            </p>
+                          </div>
+                        )}
+
+                        {company?.preparation?.dailyPlanGuide && (
+                          <div>
+                            <h4 className="font-semibold text-purple-700">
+                              Daily Plan
+                            </h4>
+                            <p className="text-sm text-gray-700 mt-1">
+                              {company.preparation.dailyPlanGuide}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* 🔥 Cutoff Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Code className="h-5 w-5" />
+                      Cutoff Criteria
+                    </CardTitle>
+                  </CardHeader>
+
+                  <CardContent className="space-y-3">
+                    {company?.cutoff ? (
+                      <>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-green-50 rounded-lg text-center">
+                            <p className="text-sm text-gray-500">Aptitude</p>
+                            <p className="font-bold text-green-700">
+                              {company.cutoff.aptitude || "N/A"}
+                            </p>
+                          </div>
+
+                          <div className="p-3 bg-yellow-50 rounded-lg text-center">
+                            <p className="text-sm text-gray-500">Coding</p>
+                            <p className="font-bold text-yellow-700">
+                              {company.cutoff.coding || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-blue-50 rounded-lg text-sm">
+                          <span className="font-semibold">Note: </span>
+                          {company.cutoff.note || "N/A"}
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-gray-500 italic">
+                        Cutoff info not available
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -222,89 +375,193 @@ useEffect(() => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {company.preparation ? (
+                    {company?.preparation ? (
                       <>
                         {company?.preparation?.topics && (
                           <>
                             {/* Must Do */}
-                            {company.preparation.topics.mustDo?.length > 0 && (
+                            {company?.preparation?.topics?.mustDo?.length >
+                              0 && (
                               <div>
-                                <h4 className="font-semibold mb-2">Must Do Topics</h4>
+                                <h4 className="font-semibold mb-2">
+                                  Must Do Topics
+                                </h4>
                                 <div className="flex flex-wrap gap-1 mb-4">
-                                  {company.preparation.topics.mustDo.map((topic, i) => (
-                                    <Badge key={i} variant="outline" className="text-xs">{topic}</Badge>
-                                  ))}
+                                  {company?.preparation?.topics?.mustDo?.map(
+                                    (topic, i) => (
+                                      <Badge
+                                        key={i}
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        {topic}
+                                      </Badge>
+                                    ),
+                                  )}
                                 </div>
                               </div>
                             )}
-                            
+
                             {/* Aptitude */}
-                            {Object.values(company.preparation.topics.aptitude || {}).some(arr => arr?.length > 0) && (
+                            {Object.values(
+                              company?.preparation?.topics?.aptitude || {},
+                            ).some((arr) => arr?.length > 0) && (
                               <div>
                                 <h4 className="font-semibold mb-2">Aptitude</h4>
                                 <div className="space-y-2">
                                   {[
-                                    {title: 'Quantitative', topics: company?.preparation?.topics?.aptitude?.quantitative},
-                                    {title: 'Logical', topics: company?.preparation?.topics?.aptitude?.logical},
-                                    {title: 'Verbal', topics: company?.preparation?.topics?.aptitude?.verbal}
-                                  ].map(({title, topics}) => topics?.length > 0 && (
-                                    <div key={title} className="flex flex-wrap gap-1">
-                                      <span className="text-xs font-medium text-gray-500 mr-2">{title}:</span>
-                                      {topics.map((topic, i) => (
-                                        <Badge key={i} variant="secondary" className="text-xs">{topic}</Badge>
-                                      ))}
-                                    </div>
-                                  ))}
+                                    {
+                                      title: "Quantitative",
+                                      topics:
+                                        company?.preparation?.topics?.aptitude
+                                          ?.quantitative,
+                                    },
+                                    {
+                                      title: "Logical",
+                                      topics:
+                                        company?.preparation?.topics?.aptitude
+                                          ?.logical,
+                                    },
+                                    {
+                                      title: "Verbal",
+                                      topics:
+                                        company?.preparation?.topics?.aptitude
+                                          ?.verbal,
+                                    },
+                                  ].map(
+                                    ({ title, topics }) =>
+                                      topics?.length > 0 && (
+                                        <div
+                                          key={title}
+                                          className="flex flex-wrap gap-1"
+                                        >
+                                          <span className="text-xs font-medium text-gray-500 mr-2">
+                                            {title}:
+                                          </span>
+                                          {topics.map((topic, i) => (
+                                            <Badge
+                                              key={i}
+                                              variant="secondary"
+                                              className="text-xs"
+                                            >
+                                              {topic}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      ),
+                                  )}
                                 </div>
                               </div>
                             )}
-                            
+
                             {/* Core Subjects */}
-                            {Object.values(company.preparation.topics.coreSubjects || {}).some(arr => arr?.length > 0) && (
+                            {Object.values(
+                              company.preparation.topics.coreSubjects || {},
+                            ).some((arr) => arr?.length > 0) && (
                               <div>
-                                <h4 className="font-semibold mb-2">Core Subjects</h4>
+                                <h4 className="font-semibold mb-2">
+                                  Core Subjects
+                                </h4>
                                 <div className="space-y-2">
                                   {[
-                                    {title: 'OS', topics: company?.preparation?.topics?.coreSubjects?.os},
-                                    {title: 'DBMS', topics: company?.preparation?.topics?.coreSubjects?.dbms},
-                                    {title: 'OOPS', topics: company?.preparation?.topics?.coreSubjects?.oops}
-                                  ].map(({title, topics}) => topics?.length > 0 && (
-                                    <div key={title} className="flex flex-wrap gap-1">
-                                      <span className="text-xs font-medium text-gray-500 mr-2">{title}:</span>
-                                      {topics.map((topic, i) => (
-                                        <Badge key={i} variant="outline" className="text-xs">{topic}</Badge>
-                                      ))}
-                                    </div>
-                                  ))}
+                                    {
+                                      title: "OS",
+                                      topics:
+                                        company?.preparation?.topics
+                                          ?.coreSubjects?.os,
+                                    },
+                                    {
+                                      title: "DBMS",
+                                      topics:
+                                        company?.preparation?.topics
+                                          ?.coreSubjects?.dbms,
+                                    },
+                                    {
+                                      title: "OOPS",
+                                      topics:
+                                        company?.preparation?.topics
+                                          ?.coreSubjects?.oops,
+                                    },
+                                  ].map(
+                                    ({ title, topics }) =>
+                                      topics?.length > 0 && (
+                                        <div
+                                          key={title}
+                                          className="flex flex-wrap gap-1"
+                                        >
+                                          <span className="text-xs font-medium text-gray-500 mr-2">
+                                            {title}:
+                                          </span>
+                                          {topics.map((topic, i) => (
+                                            <Badge
+                                              key={i}
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              {topic}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      ),
+                                  )}
                                 </div>
                               </div>
                             )}
-                            
+
                             {/* Advanced */}
-                            {Object.values(company.preparation.topics.advanced || {}).some(arr => arr?.length > 0) && (
+                            {Object.values(
+                              company.preparation.topics.advanced || {},
+                            ).some((arr) => arr?.length > 0) && (
                               <div>
-                                <h4 className="font-semibold mb-2">Advanced Topics</h4>
+                                <h4 className="font-semibold mb-2">
+                                  Advanced Topics
+                                </h4>
                                 <div className="space-y-2">
                                   {[
-                                    {title: 'System Design', topics: company?.preparation?.topics?.advanced?.systemDesign},
-                                    {title: 'CS Concepts', topics: company?.preparation?.topics?.advanced?.csConcepts}
-                                  ].map(({title, topics}) => topics?.length > 0 && (
-                                    <div key={title} className="flex flex-wrap gap-1">
-                                      <span className="text-xs font-medium text-gray-500 mr-2">{title}:</span>
-                                      {topics.map((topic, i) => (
-                                        <Badge key={i} variant="destructive" className="text-xs">{topic}</Badge>
-                                      ))}
-                                    </div>
-                                  ))}
+                                    {
+                                      title: "System Design",
+                                      topics:
+                                        company?.preparation?.topics?.advanced
+                                          ?.systemDesign,
+                                    },
+                                    {
+                                      title: "CS Concepts",
+                                      topics:
+                                        company?.preparation?.topics?.advanced
+                                          ?.csConcepts,
+                                    },
+                                  ].map(
+                                    ({ title, topics }) =>
+                                      topics?.length > 0 && (
+                                        <div
+                                          key={title}
+                                          className="flex flex-wrap gap-1"
+                                        >
+                                          <span className="text-xs font-medium text-gray-500 mr-2">
+                                            {title}:
+                                          </span>
+                                          {topics.map((topic, i) => (
+                                            <Badge
+                                              key={i}
+                                              variant="destructive"
+                                              className="text-xs"
+                                            >
+                                              {topic}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      ),
+                                  )}
                                 </div>
                               </div>
                             )}
                           </>
                         )}
-
                       </>
                     ) : (
-                      <p className="text-gray-500 italic">No preparation info</p>
+                      <p className="text-gray-500 italic">
+                        No preparation info
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -324,18 +581,38 @@ useEffect(() => {
                           <div>
                             <h4 className="font-semibold mb-2">YouTube</h4>
                             <div className="space-y-1">
-{company.resources.youtube?.filter(item => {
-                                const url = typeof item === 'string' ? item : item?.link;
-                                return url && typeof url === 'string';
-                              }).map((item, i) => {
-                                const url = typeof item === 'string' ? item : item.link;
-                                const displayText = (typeof item === 'object' && item.title ? item.title : url.replace('https://www.youtube.com/watch?v=', '')).slice(0, 50) + (url.length > 50 ? '...' : '');
-                                return (
-                                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:underline text-sm">
-                                    • {displayText}
-                                  </a>
-                                );
-                              })}
+                              {company?.resources?.youtube
+                                ?.filter((item) => {
+                                  const url =
+                                    typeof item === "string"
+                                      ? item
+                                      : item?.link;
+                                  return url && typeof url === "string";
+                                })
+                                .map((item, i) => {
+                                  const url =
+                                    typeof item === "string" ? item : item.link;
+                                  const displayText =
+                                    (typeof item === "object" && item.title
+                                      ? item.title
+                                      : url.replace(
+                                          "https://www.youtube.com/watch?v=",
+                                          "",
+                                        )
+                                    ).slice(0, 50) +
+                                    (url.length > 50 ? "..." : "");
+                                  return (
+                                    <a
+                                      key={i}
+                                      href={url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="block text-blue-600 hover:underline text-sm"
+                                    >
+                                      • {displayText}
+                                    </a>
+                                  );
+                                })}
                             </div>
                           </div>
                         )}
@@ -343,8 +620,14 @@ useEffect(() => {
                           <div>
                             <h4 className="font-semibold mb-2">Coding</h4>
                             <div className="space-y-1">
-                              {company.resources.coding.map((item, i) => (
-                                <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:underline text-sm">
+                              {company?.resources?.coding?.map((item, i) => (
+                                <a
+                                  key={i}
+                                  href={item.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block text-blue-600 hover:underline text-sm"
+                                >
                                   • {item.platform}
                                 </a>
                               ))}
@@ -352,9 +635,30 @@ useEffect(() => {
                           </div>
                         )}
 
+                        {/* 🔥 NEW: Aptitude section */}
+                        {company?.resources?.aptitude && (
+                          <div>
+                            <h4 className="font-semibold mb-2">Aptitude</h4>
+                            <div className="space-y-1">
+                              {company?.resources?.aptitude?.map((item, i) => (
+                                <a
+                                  key={i}
+                                  href={item.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block text-green-600 hover:underline text-sm"
+                                >
+                                  • {item.platform}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic">No resources available</p>
+                      <p className="text-gray-500 italic">
+                        No resources available
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -369,24 +673,26 @@ useEffect(() => {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {company?.strategy?.finalTips?.length ? (
-
                       <>
                         <div>
                           <h4 className="font-semibold mb-2">Tips</h4>
                           <ul className="space-y-1 list-disc list-inside text-sm">
-                            {company.strategy.finalTips.map((tip, i) => (
-
+                            {company?.strategy?.finalTips?.map((tip, i) => (
                               <li key={i}>{tip}</li>
                             ))}
                           </ul>
                         </div>
                         {company.strategy.mistakesToAvoid?.length && (
                           <div>
-                            <h4 className="font-semibold mb-2">Mistakes to Avoid</h4>
+                            <h4 className="font-semibold mb-2">
+                              Mistakes to Avoid
+                            </h4>
                             <ul className="space-y-1 list-disc list-inside text-sm text-orange-700">
-                              {company.strategy.mistakesToAvoid.map((mistake, i) => (
-                                <li key={i}>{mistake}</li>
-                              ))}
+                              {company?.strategy?.mistakesToAvoid?.map(
+                                (mistake, i) => (
+                                  <li key={i}>{mistake}</li>
+                                ),
+                              )}
                             </ul>
                           </div>
                         )}
@@ -408,33 +714,51 @@ useEffect(() => {
                   <CardContent>
                     {company.aiFeatures ? (
                       <div className="space-y-3">
-{company?.aiFeatures?.resumeTips && (
+                        {company?.aiFeatures?.resumeTips && (
                           <div>
                             <h4 className="font-semibold mb-1">Resume Tips</h4>
-                            <p className="text-sm">{company.aiFeatures.resumeTips}</p>
+                            <p className="text-sm">
+                              {company.aiFeatures.resumeTips}
+                            </p>
                           </div>
                         )}
 
-
-{Array.isArray(company.aiFeatures?.interviewQuestions) && company.aiFeatures.interviewQuestions.length > 0 && (
-                          <div>
-                            <h4 className="font-semibold mb-1">Sample Interview Questions</h4>
-                            <div className="space-y-2 mt-2">
-                              {company.aiFeatures.interviewQuestions.slice(0, 3).map((q, i) => (
-                                <div key={i} className="p-3 bg-gray-50 rounded-lg text-sm">
-                                  Q{i+1}: {q}
-                                </div>
-                              ))}
-                              {company.aiFeatures.interviewQuestions.length > 3 && (
-                                <p className="text-xs text-gray-500">... and {company.aiFeatures.interviewQuestions.length - 3} more</p>
-                              )}
+                        {Array.isArray(
+                          company.aiFeatures?.interviewQuestions,
+                        ) &&
+                          company.aiFeatures.interviewQuestions.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold mb-1">
+                                Sample Interview Questions
+                              </h4>
+                              <div className="space-y-2 mt-2">
+                                {company?.aiFeatures?.interviewQuestions
+                                  ?.slice(0, 3)
+                                  .map((q, i) => (
+                                    <div
+                                      key={i}
+                                      className="p-3 bg-gray-50 rounded-lg text-sm"
+                                    >
+                                      Q{i + 1}: {q}
+                                    </div>
+                                  ))}
+                                {company.aiFeatures.interviewQuestions.length >
+                                  3 && (
+                                  <p className="text-xs text-gray-500">
+                                    ... and{" "}
+                                    {company.aiFeatures.interviewQuestions
+                                      .length - 3}{" "}
+                                    more
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
-
+                          )}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic">AI features coming soon</p>
+                      <p className="text-gray-500 italic">
+                        AI features coming soon
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -448,4 +772,3 @@ useEffect(() => {
 };
 
 export default CompanyPage;
-

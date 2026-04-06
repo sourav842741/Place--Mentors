@@ -1,7 +1,11 @@
-# Task: Fix 404 error on company API calls
+# CompanyPage.jsx Backend Structure Fix
+- [x] 1. Create TODO.md tracking progress
+  - [x] 2. Edit CompanyPage.jsx: Add missing optional chaining throughout
+  - [x] 6. Ensure all arrays/maps use safe ?. and length checks
+- [ ] 3. Add missing backend sections: Exam Timeline, Cutoff
+- [x] 4. Fix YouTube resource rendering for consistent object structure
+- [x] 5. Update button references to use company?.overview?.name
+- [ ] 6. Ensure all arrays/maps use safe ?. and length checks
+- [ ] 7. Test rendering with real company data
+- [ ] 8. attempt_completion
 
-## Steps:
-
-- [x] Step 2: Test the fix by restarting frontend dev server and checking AllCompanies page (Backend needs to run on port 5000 with /api prefix - use `cd backend && npm run dev`; frontend VITE_SERVER_URL likely http://localhost:5000/api - check .env)\n- [ ] Step 3: Mark complete
-
-Current progress: Step 1 complete. Step 2: Test by running `cd frontend && npm run dev` (restart if running), then visit AllCompanies page and check browser console/Network tab for no more 404s on /api/company/.
