@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 export default function Profile() {
   const { user } = useSelector((state) => state.user);
@@ -103,6 +104,8 @@ export default function Profile() {
   };
 
   return (
+    <>
+    
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 p-6">
       <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-lg overflow-hidden">
 
@@ -243,5 +246,7 @@ export default function Profile() {
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }

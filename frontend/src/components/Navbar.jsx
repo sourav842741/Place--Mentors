@@ -74,8 +74,9 @@ export default function Navbar() {
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
     { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
+    { icon: BookOpen, label: "AI Notes", path: "/notes" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
-{ icon: BookOpen, label: "AI Notes", path: "/notes" },
+
   ];
 
   return (
@@ -116,7 +117,7 @@ export default function Navbar() {
 
             {/* Desktop Links */}
             <div className="hidden md:flex gap-6 lg:ml-21">
-              <Link to="/">Home</Link>
+              <Link to="/dashboard">Home</Link>
               <Link to="/jobs">Jobs</Link>
               <Link to="/about">About</Link>
             </div>
@@ -301,6 +302,7 @@ export default function Navbar() {
               </button>
             ))}
           </div>
+          
         </>
       )}
     </>

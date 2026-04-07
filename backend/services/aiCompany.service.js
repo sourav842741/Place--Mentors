@@ -1,5 +1,140 @@
 import { generateAI } from "./ai.service.js";
 
+
+const COMPANY_RESOURCES = {
+  amazon: {
+    youtube: [
+      {
+        title: "Amazon Interview Preparation (Striver)",
+        link: "https://www.youtube.com/results?search_query=amazon+interview+preparation+striver"
+      }
+    ],
+    coding: [
+      {
+        platform: "LeetCode",
+        link: "https://leetcode.com/problem-list/top-amazon-questions/"
+      }
+    ],
+    aptitude: [
+      {
+        platform: "IndiaBIX",
+        link: "https://www.indiabix.com/aptitude/questions-and-answers/"
+      }
+    ]
+  },
+
+  tcs: {
+    youtube: [
+      {
+        title: "TCS NQT Preparation",
+        link: "https://www.youtube.com/results?search_query=tcs+nqt+preparation"
+      }
+    ],
+    coding: [
+      {
+        platform: "LeetCode",
+        link: "https://leetcode.com/problemset/all/?difficulty=Easy"
+      }
+    ],
+    aptitude: [
+      {
+        platform: "IndiaBIX",
+        link: "https://www.indiabix.com/aptitude/questions-and-answers/"
+      }
+    ]
+  }
+};
+// ✅ Safe JSON parse
+const safeParseJSON = (text) => {
+  try {
+    if (typeof text === "object") return text;
+
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.error("JSON Parse Error:", err.message);
+    return null;
+  }
+};
+
+// ✅ Validate + clean AI response
+const validateCompanyData = (data, companyName) => {
+  if (!data || typeof data !== "object") return null;
+
+  const companyKey = companyName.toLowerCase().trim();
+
+if (COMPANY_RESOURCES[companyKey]) {
+  data.resources = COMPANY_RESOURCES[companyKey];
+}
+if (!data.resources || Object.keys(data.resources).length === 0) {
+  data.resources = {
+    youtube: [
+      {
+        title: "DSA Preparation",
+        link: "https://www.youtube.com/results?search_query=dsa+preparation+placement"
+      }
+    ],
+    coding: [
+      {
+        platform: "LeetCode",
+        link: "https://leetcode.com/problemset/"
+      }
+    ],
+    aptitude: [
+      {
+        platform: "IndiaBIX",
+        link: "https://www.indiabix.com/"
+      }
+    ]
+  };
+}
+
+  // overview
+  data.overview = data.overview || {};
+  data.overview.name = data.overview.name || companyName;
+
+  // salary
+  data.salary = data.salary || {};
+  data.salary.average = data.salary.average || "Not disclosed";
+
+  // timeline fix
+  const fixDate = (d) => {
+    if (!d || /2023|2024|2025/.test(d)) {
+      return "Not officially announced";
+    }
+    return d;
+  };
+
+  data.examTimeline = data.examTimeline || {};
+  data.examTimeline.expected = fixDate(data.examTimeline.expected);
+  data.examTimeline.lastYear = fixDate(data.examTimeline.lastYear);
+
+  // links fix
+  const validDomains = [
+    "youtube.com",
+    "leetcode.com",
+    "geeksforgeeks.org",
+    "indiabix.com"
+  ];
+
+  const cleanLinks = (arr = []) =>
+    arr.map(item => ({
+      ...item,
+      link: validDomains.some(d => item.link?.includes(d))
+        ? item.link
+        : ""
+    }));
+
+  if (!COMPANY_RESOURCES[companyKey]) {
+  data.resources = data.resources || {};
+  data.resources.youtube = cleanLinks(data.resources.youtube);
+  data.resources.coding = cleanLinks(data.resources.coding);
+  data.resources.aptitude = cleanLinks(data.resources.aptitude);
+}
+
+  return data;
+};
+
 export const generateAICompany = async (companyName) => {
   const prompt = `You are a placement preparation AI expert.
 
@@ -13,6 +148,17 @@ Return STRICT JSON ONLY. No explanations, no markdown.
 - Use ONLY real platforms for links (YouTube, LeetCode, IndiaBIX, GeeksforGeeks).
 - Do NOT generate fake URLs.
 - Use general valid links if specific not known.
+
+DATE LOGIC UPDATE:
+
+- If lastYear exam date is available → generate expected date using SAME month and NEXT year
+  Example:
+  lastYear: "March 2025" → expected: "March 2026"
+
+- If lastYear is "Not officially announced" → expected must also be "Not officially announced"
+
+- DO NOT randomly guess months
+- ONLY calculate expected date based on lastYear
 
 Generate detailed company data for: ${companyName}
 
@@ -94,29 +240,25 @@ Company-specific data:
 
   try {
     const aiResponse = await generateAI(prompt);
-    
-    // Safe JSON parse
-    let companyData;
-    if (typeof aiResponse === 'object') {
-      companyData = aiResponse;
-    } else {
-      const cleaned = aiResponse.replace(/```json|```/g, '').trim();
-      companyData = JSON.parse(cleaned);
+
+    // ✅ safe parse
+    let companyData = safeParseJSON(aiResponse);
+
+    if (!companyData) {
+      throw new Error("Invalid AI JSON");
     }
 
-    // Validate required fields
-    if (!companyData.overview?.name) {
-      throw new Error('Invalid AI response structure');
-    }
+    // ✅ validate
+    companyData = validateCompanyData(companyData, companyName);
 
     return {
       ...companyData,
       name: companyName.toLowerCase().trim()
     };
+
   } catch (error) {
     console.error('AI Company generation failed:', error.message);
-    
-    // Minimal fallback
+
     return {
       name: companyName.toLowerCase().trim(),
       overview: { name: companyName },
@@ -128,4 +270,3 @@ Company-specific data:
     };
   }
 };
-

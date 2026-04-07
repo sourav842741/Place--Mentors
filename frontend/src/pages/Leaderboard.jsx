@@ -3,6 +3,7 @@ import { Flame } from "lucide-react";
 import { useSelector } from "react-redux";
 import api from "../services/api";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -193,6 +194,7 @@ export default function Leaderboard() {
 
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

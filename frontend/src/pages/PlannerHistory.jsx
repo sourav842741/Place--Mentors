@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import api from "../services/api";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function PlannerHistory() {
   const navigate = useNavigate();
@@ -238,6 +239,7 @@ export default function PlannerHistory() {
           </div>
         </main>
       </div>
+      <Footer/>
     </>
   );
 }

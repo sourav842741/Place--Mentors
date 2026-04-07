@@ -28,6 +28,7 @@ import { Label } from "@/components/ui/label";
 import api from "../services/api";
 import useAuth from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function AIPlanner() {
   const { user } = useSelector((state) => state.user);
@@ -555,6 +556,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
           </div>
         </main>
       </div>
+      <Footer/>
     </>
   );
 }

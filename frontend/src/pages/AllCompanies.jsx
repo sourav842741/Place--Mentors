@@ -33,6 +33,8 @@ import {
 } from '../components/ui/glass-card';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { cn } from '../lib/utils';
+import Footer from '@/components/Footer';
+import SuccessStories from '@/components/SuccessStories';
 
 const AllCompanies = () => {
   const navigate = useNavigate();
@@ -239,6 +241,8 @@ const AllCompanies = () => {
 
       </div>
     </div>
+    <SuccessStories/>
+    <Footer/>
   </>
 );
 };

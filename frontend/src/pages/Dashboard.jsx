@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Play, Briefcase, TrendingUp,Building2, Globe, Cpu, Code} from "lucide-react";
+import { Play, Briefcase, TrendingUp,Building2, Globe, Cpu, Code,ExternalLink} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -22,6 +22,8 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import api from "../services/api";
+import Footer from "@/components/Footer";
+import SuccessStories from "@/components/SuccessStories";
 
 
 export default function Dashboard() {
@@ -52,12 +54,97 @@ export default function Dashboard() {
 
   const percent = (currentXP / maxXP) * 100;
 
- const companies = [
-  { name: "Google", icon: <Globe className="text-blue-500 w-5 h-5" /> },
-  { name: "Amazon", icon: <Briefcase className="text-yellow-500 w-5 h-5" /> },
-  { name: "Microsoft", icon: <Cpu className="text-green-500 w-5 h-5" /> },
-  { name: "Meta", icon: <Code className="text-blue-400 w-5 h-5" /> },
-  { name: "Netflix", icon: <Building2 className="text-red-500 w-5 h-5" /> },
+const companies = [
+  {
+    name: "Google",
+    role: "Software Engineer",
+    rating: "4.8",
+    logo: "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
+  },
+  {
+    name: "Microsoft",
+    role: "Cloud Architect",
+    rating: "4.7",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+  },
+  {
+    name: "Amazon",
+    role: "SDE-II",
+    rating: "4.5",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
+  },
+  {
+    name: "Apple",
+    role: "iOS Developer",
+    rating: "4.9",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+  },
+  {
+    name: "Meta",
+    role: "Product Manager",
+    rating: "4.6",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg"
+  },
+  {
+    name: "Netflix",
+    role: "UI/UX Designer",
+    rating: "4.7",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+  },
+  {
+    name: "Tesla",
+    role: "Hardware Engineer",
+    rating: "4.3",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg"
+  },
+  {
+    name: "Spotify",
+    role: "Data Scientist",
+    rating: "4.8",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg"
+  },
+  {
+    name: "Adobe",
+    role: "Product Designer",
+    rating: "4.6",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Adobe_Inc._logo_2020.svg"
+  },
+  {
+    name: "LinkedIn",
+    role: "Full Stack Developer",
+    rating: "4.5",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
+  },
+  {
+    name: "Uber",
+    role: "Backend Engineer",
+    rating: "4.4",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
+  },
+  {
+    name: "Airbnb",
+    role: "Frontend Engineer",
+    rating: "4.7",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Belo.svg"
+  },
+  {
+    name: "NVIDIA",
+    role: "AI Researcher",
+    rating: "4.9",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg"
+  },
+  {
+    name: "Slack",
+    role: "DevOps Engineer",
+    rating: "4.6",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg"
+  },
+  {
+    name: "PayPal",
+    role: "Fintech Analyst",
+    rating: "4.4",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+  }
 ];
 
   const plugin = React.useRef(
@@ -311,44 +398,103 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* COMPANIES */}
+           
             <div>
+
+               {/* COMPANIES */}
   <h3 className="font-semibold mb-4">Recommended Companies</h3>
 
-  <Carousel
-    plugins={[plugin.current]}
-    opts={{ align: "start", loop: true }}
-    className="w-full"
-  >
-    <CarouselContent>
-      {companies.map((company, index) => (
-        <CarouselItem
-          key={index}
-          className="basis-1/2 sm:basis-1/3 lg:basis-1/6"
-        >
-          <div className="p-2">
-            <Card className="hover:scale-105 transition">
-              <CardContent className="flex flex-col items-center justify-center h-24 gap-2">
-                
-                {/* Icon */}
-                {company.icon}
+ <div className="space-y-4 overflow-hidden">
 
-                {/* Small Name */}
-                <span className="text-sm font-medium text-gray-600">
-                  {company.name}
-                </span>
+  {/* 🔵 ROW 1 (Left → Right) */}
+  <div className="flex gap-4 animate-scroll-left">
+    {[...companies, ...companies].map((company, index) => (
+      <div
+        key={index}
+        onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
+        className="min-w-[180px] cursor-pointer"
+      >
+        <Card
+  onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
+  className="flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer"
+>
+  {/* LEFT: Logo */}
+  <div className="flex items-center gap-4">
+    <img
+      src={company.logo}
+      alt={company.name}
+      className="h-12 w-12 rounded-lg object-contain bg-gray-100 p-2"
+    />
 
-              </CardContent>
-            </Card>
+    {/* CENTER: Text */}
+    <div>
+      <h3 className="font-semibold text-gray-900">{company.name}</h3>
+      
+      <p className="text-sm text-gray-500">
+        {company.role}
+      </p>
+
+      {/* Rating */}
+      <div className="flex items-center gap-1 text-sm text-yellow-500 mt-1">
+        ⭐ <span className="text-gray-700">{company.rating}</span>
+      </div>
+    </div>
+  </div>
+
+  {/* RIGHT: Redirect Icon */}
+  <ExternalLink className="h-5 w-5 text-gray-400" />
+</Card>
+      </div>
+    ))}
+  </div>
+
+  {/* 🔴 ROW 2 (Right → Left) */}
+  <div className="flex gap-4 animate-scroll-right">
+  {[...companies, ...companies].map((company, index) => (
+    <div
+      key={index}
+      onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
+      className="min-w-[280px] cursor-pointer"
+    >
+      <Card
+        className="flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition"
+      >
+        {/* LEFT */}
+        <div className="flex items-center gap-4">
+          <img
+            src={company.logo}
+            alt={company.name}
+            className="h-12 w-12 rounded-lg object-contain bg-gray-100 p-2"
+          />
+
+          {/* TEXT */}
+          <div>
+            <h3 className="font-semibold text-gray-900">{company.name}</h3>
+
+            <p className="text-sm text-gray-500">
+              {company.role}
+            </p>
+
+            <div className="flex items-center gap-1 text-sm text-yellow-500 mt-1">
+              ⭐ <span className="text-gray-700">{company.rating}</span>
+            </div>
           </div>
-        </CarouselItem>
-      ))}
-    </CarouselContent>
-  </Carousel>
+        </div>
+
+        {/* RIGHT ICON */}
+        <ExternalLink className="h-5 w-5 text-gray-400" />
+      </Card>
+    </div>
+  ))}
+</div>
+
+</div>
 </div>
           </div>
         </main>
       </div>
+      <SuccessStories/>
+      <Footer/>
     </>
   );
 }

@@ -5,6 +5,7 @@ import useCompany from "../hooks/useCompany";
 import { useNavigate } from "react-router-dom";
 import { Brain, Sparkles } from "lucide-react";
 import { Button } from "../components/ui/button";
+import Footer from "@/components/Footer";
 
 const AISearchPage = () => {
   const [query, setQuery] = useState("");
@@ -70,6 +71,7 @@ const AISearchPage = () => {
 
       </div>
     </div>
+    <Footer/>
   </>
 );
 };

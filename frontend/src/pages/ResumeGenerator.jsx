@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 
 import { Loader2, Download } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function ResumeGenerator() {
   const [formData, setFormData] = useState({
@@ -110,6 +111,7 @@ export default function ResumeGenerator() {
         </CardContent>
       </Card>
     </div>
+    <Footer/>
     </>
   );
 }

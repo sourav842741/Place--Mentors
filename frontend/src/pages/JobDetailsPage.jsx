@@ -32,6 +32,7 @@ import {
   FileText,
 } from "lucide-react";
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 const JobDetailsPage = () => {
   const { id } = useParams();
@@ -65,6 +66,7 @@ const JobDetailsPage = () => {
   // Loading Skeleton
   if (loading) {
     return (
+      
       <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
         <Navbar />
         <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -118,6 +120,7 @@ const JobDetailsPage = () => {
   };
 
   return (
+    <>
     <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navbar />
 
@@ -292,6 +295,8 @@ const JobDetailsPage = () => {
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

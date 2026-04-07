@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { uploadResumeAndAnalyze, clearAnalysis, setFileName, selectResume } from '@/redux/resumeSlice';
 import Navbar from '@/components/Navbar';
 import UploadArea from '@/components/ui/UploadArea';
+import Footer from '@/components/Footer';
 
 export default function ResumeAnalyzer() {
   const dispatch = useDispatch();
@@ -200,6 +201,7 @@ export default function ResumeAnalyzer() {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

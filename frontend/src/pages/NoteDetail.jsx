@@ -10,6 +10,8 @@ import NoteDiagram from '../components/NoteDiagram'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 function NoteDetail() {
   const { id } = useParams()
@@ -108,6 +110,8 @@ function NoteDetail() {
   }
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 ">
         {/* HEADER */}
@@ -222,6 +226,8 @@ function NoteDetail() {
         )}
       </div>
     </div>
+    <Footer/>
+    </>
   )
 }
 

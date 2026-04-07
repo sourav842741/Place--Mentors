@@ -26,6 +26,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
+import Footer from "@/components/Footer";
 
 const CompanyPage = () => {
   const { name: paramName } = useParams();
@@ -721,6 +722,7 @@ const CompanyPage = () => {
           )}
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

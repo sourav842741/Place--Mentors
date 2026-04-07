@@ -6,6 +6,8 @@ import api from "../services/api";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 function Pricing() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("free");
@@ -105,6 +107,8 @@ function Pricing() {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50 py-16 px-6">
       <div className="max-w-6xl mx-auto mb-14 flex items-start gap-4">
         <button
@@ -211,6 +215,8 @@ function Pricing() {
         })}
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 

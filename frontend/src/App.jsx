@@ -26,6 +26,7 @@ import AllCompanies from "./pages/AllCompanies";
 import AISearchPage from "./pages/AISearchPage";
 import Notes from "./pages/Notes";
 import NoteDetail from "./pages/NoteDetail";
+import About from "./pages/About";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -69,6 +70,7 @@ function App() {
           <Route path="/ai-search" element={<AISearchPage />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/notes/:id" element={<NoteDetail />} />
+          <Route path="/about" element={<About />} />
         </Route>
       </Routes>
     </>
