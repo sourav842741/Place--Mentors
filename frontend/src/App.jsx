@@ -24,7 +24,8 @@ import JobDetailsPage from "./pages/JobDetailsPage";
 import CompanyPage from "./pages/CompanyPage";
 import AllCompanies from "./pages/AllCompanies";
 import AISearchPage from "./pages/AISearchPage";
-
+import Notes from "./pages/Notes";
+import NoteDetail from "./pages/NoteDetail";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -53,20 +54,21 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/quiz" element={<QuizPage />} />
-           <Route path="/pricing" element={<Pricing />} />
-           <Route path="/history" element={<InterviewHistory />} />
-           <Route path="/report/:id" element={<InterviewReport />} />
-           <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/ai-planner" element={<AIPlanner />} />
-            <Route path="/planner-history" element={<PlannerHistory />} />
-            <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
-            <Route path="/resume-generator" element={<ResumeGenerator />} />
-            <Route path="/ai-planner/:id" element={<AIPlanner />} />
-            <Route path="/jobs/:id" element={<JobDetailsPage />} />
-            <Route path="/companies" element={<AllCompanies />} />
-            <Route path="/company/:name?" element={<CompanyPage />} />
-            <Route path="/ai-search" element={<AISearchPage />} />
-
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/history" element={<InterviewHistory />} />
+          <Route path="/report/:id" element={<InterviewReport />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/ai-planner" element={<AIPlanner />} />
+          <Route path="/planner-history" element={<PlannerHistory />} />
+          <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
+          <Route path="/resume-generator" element={<ResumeGenerator />} />
+          <Route path="/ai-planner/:id" element={<AIPlanner />} />
+          <Route path="/jobs/:id" element={<JobDetailsPage />} />
+          <Route path="/companies" element={<AllCompanies />} />
+          <Route path="/company/:name?" element={<CompanyPage />} />
+          <Route path="/ai-search" element={<AISearchPage />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/notes/:id" element={<NoteDetail />} />
         </Route>
       </Routes>
     </>

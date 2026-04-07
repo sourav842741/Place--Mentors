@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 
 const isAuth = async (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+let token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found");
@@ -19,6 +19,7 @@ const isAuth = async (req, res, next) => {
     }
 
     req.user = user;
+    req.userId = decoded.userId;
     next();
   } catch (error) {
     throw new ApiError(401, "Unauthorized: Invalid token");

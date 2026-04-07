@@ -86,9 +86,9 @@ const JobsPage = () => {
   }, [reduxFilters]);
 
   // Load initial jobs
-  useEffect(() => {
-    loadJobs(1);
-  }, []);
+ useEffect(() => {
+  loadJobs(currentPage);
+}, [currentPage]);
 
   // Debounced search
   const debouncedSearch = useCallback(
@@ -470,21 +470,30 @@ const JobsPage = () => {
             <JobList />
             {pagination && !loading && (
               <div className="flex justify-center gap-2 mt-8 pt-8 border-t">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => loadJobs(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => loadJobs(currentPage + 1)}
-                  disabled={currentPage >= pagination.pages}
-                >
-                  Next
-                </Button>
+               <Button
+  variant="outline"
+  size="sm"
+  onClick={() => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  }}
+  disabled={currentPage === 1}
+>
+  Previous
+</Button>
+
+<Button
+  size="sm"
+  onClick={() => {
+    if (currentPage < pagination.pages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }}
+  disabled={currentPage >= pagination.pages}
+>
+  Next
+</Button>
               </div>
             )}
           </div>
@@ -508,4 +517,3 @@ const JobsPage = () => {
 };
 
 export default JobsPage;
-

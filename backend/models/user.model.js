@@ -123,6 +123,12 @@ prepCompanies: [
     ref: "Company"
   }
 ],
+ notes:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:"Notes",
+        default:[]
+
+    },
 
     //  TIME TRACKING
     totalTimeSpent: { type: Number, default: 0 }, // minutes

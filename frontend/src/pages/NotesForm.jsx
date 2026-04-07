@@ -1,0 +1,82 @@
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { generateNotes } from "../redux/notesSlice";
+import { generatePDFAPI } from "../services/notes.api";
+
+function NotesForm() {
+  const dispatch = useDispatch();
+
+  const { singleNote, loading } = useSelector((state) => state.notes);
+
+  const [form, setForm] = useState({
+    topic: "",
+    classLevel: "",
+    examType: "",
+    revisionMode: false,
+    includeDiagram: false,
+    includeChart: false,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(generateNotes(form));
+  };
+
+  // ✅ PDF Download Function
+  const handleDownload = async () => {
+    try {
+      const res = await generatePDFAPI({ result: singleNote });
+
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.setAttribute("download", "ExamNotesAI.pdf");
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error("PDF download error:", err);
+    }
+  };
+
+  return (
+    <div className="space-y-6 px-4 sm:px-6 md:px-8 py-6">
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="space-y-3 ">
+        <input
+          className="border p-2 w-full rounded"
+          placeholder="Enter Topic (e.g. DBMS, OS)"
+          onChange={(e) => setForm({ ...form, topic: e.target.value })}
+        />
+
+        <button
+          disabled={loading}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          {loading ? "Generating..." : "Generate Notes"}
+        </button>
+      </form>
+
+      {/* ✅ SHOW RESULT */}
+      {singleNote && (
+        <div className="p-4 border rounded bg-gray-50">
+          <h2 className="font-bold mb-2">Generated Notes</h2>
+
+          <pre className="whitespace-pre-wrap text-sm">
+            {singleNote.notes}
+          </pre>
+
+          {/* ✅ PDF BUTTON */}
+          <button
+            onClick={handleDownload}
+            className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:scale-105 transition"
+          >
+            Download PDF
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default NotesForm;

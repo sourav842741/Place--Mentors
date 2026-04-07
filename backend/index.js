@@ -18,6 +18,8 @@ import plannerRouter from "./routes/planner.routes.js";
 import aiRouter from "./routes/ai.routes.js";
 import jobRouter from "./routes/job.routes.js";
 import cronJobs from "./utils/cronJobs.js";
+import notesRouter from "./routes/genrate.route.js"
+import pdfRouter from "./routes/pdf.route.js"
 
 import companyRoutes from "./routes/company.routes.js";
 
@@ -52,8 +54,9 @@ app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/planner", plannerRouter);
 app.use("/api/ai", aiRouter);
 app.use("/api/jobs", jobRouter);
-
-app.use("/api", companyRoutes);
+app.use("/api", companyRoutes)
+app.use("/api/notes", notesRouter)
+app.use("/api/pdf", pdfRouter)
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);

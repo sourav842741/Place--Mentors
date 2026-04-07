@@ -13,6 +13,7 @@ import {
   Trophy,
   FileText,
   Flame,
+  Zap 
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -34,7 +35,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 export default function Navbar() {
 
   const { user, isAuth } = useSelector((state) => state.user);
-  const companyCredits = useSelector((state) => state.company?.credits || 0);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ export default function Navbar() {
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
     { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
-    { icon: Trophy, label: "quick-revision", path: "/quick-revision" },
+{ icon: BookOpen, label: "AI Notes", path: "/notes" },
   ];
 
   return (
@@ -148,7 +148,7 @@ export default function Navbar() {
 
 
                 <span className="text-xs sm:text-sm md:text-base font-semibold">
-                  {companyCredits > 0 ? companyCredits : (user?.credits || 0)}
+                  {user?.credits || 0}
                 </span>
 
               </button>

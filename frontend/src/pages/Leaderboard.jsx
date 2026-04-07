@@ -47,7 +47,7 @@ export default function Leaderboard() {
     <>
       <Navbar />
 
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16 md:ml-8">
         <div className="max-w-6xl mx-auto">
 
         
