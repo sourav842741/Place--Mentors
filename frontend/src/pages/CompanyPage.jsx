@@ -66,85 +66,39 @@ const CompanyPage = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-50 min-h-screen lg:mt-16">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 mt-6 bg-gray-50 min-h-screen lg:mt-16 ml-5 sm:mt-5">
         <div className="max-w-7xl mx-auto">
           {/* Header + Search */}
-          <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={() => navigate("/dashboard")}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold">Company Details</h1>
-                <p className="text-gray-500">Full preparation guide</p>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <CompanySearch
-                onSearch={(name) =>
-                  paramName !== name && navigate(`/company/${name}`)
-                }
-                showAIBtn={!company && !loading && paramName}
-                onAIGenerate={() => paramName && getCompany(paramName)}
-              />
+ <div className="mb-8 p-6 bg-white rounded-2xl shadow-sm border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-              <Button
-                onClick={() =>
-                  company?.overview?.name && getCompany(company?.overview?.name)
-                }
-                disabled={!company?.overview?.name || loading}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Brain className="h-4 w-4" />
-                {loading ? "AI Searching..." : "AI Refresh"}
-              </Button>
-            </div>
-          </div>
+  <div className="flex items-center gap-4">
+    <Button
+      variant="outline"
+      onClick={() => navigate("/companies")}
+      className="rounded-xl shadow-sm hover:shadow-md transition"
+    >
+      <ArrowLeft className="h-4 w-4 mr-2" />
+      Back
+    </Button>
 
-          {error && (
-            <Alert className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+    <div>
+      <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+        {company?.overview?.name || "Company Details"}
+      </h1>
+      <p className="text-sm text-gray-500">
+        {company?.overview?.tagline || "Preparation guide"}
+      </p>
+    </div>
+  </div>
 
-          {!company && !error && !paramName && (
-            <div className="text-center py-12">
-              <Building2 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium mb-2">No company selected</h3>
-              <p className="text-gray-500 mb-6">
-                Search for a company to view details
-              </p>
-              <CompanySearch
-                showAIBtn={!company && !loading && paramName}
-                onAIGenerate={() => paramName && getCompany(paramName)}
-              />
-            </div>
-          )}
+
+</div>
+
+         
 
           {company && (
             <>
-              {/* Credits */}
-              <div className="mb-8 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl border">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center">
-                      <DollarSign className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Remaining Credits</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {credits}
-                      </p>
-                    </div>
-                  </div>
-                  <Button variant="outline" className="self-start sm:self-auto">
-                    Buy More Credits
-                  </Button>
-                </div>
-              </div>
+             
 
               {/* Sections Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">

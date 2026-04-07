@@ -75,6 +75,7 @@ export default function Navbar() {
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
     { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
+    { icon: Trophy, label: "quick-revision", path: "/quick-revision" },
   ];
 
   return (

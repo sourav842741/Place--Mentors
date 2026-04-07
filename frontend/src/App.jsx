@@ -23,6 +23,7 @@ import ResumeGenerator from "./pages/ResumeGenerator";
 import JobDetailsPage from "./pages/JobDetailsPage";
 import CompanyPage from "./pages/CompanyPage";
 import AllCompanies from "./pages/AllCompanies";
+import AISearchPage from "./pages/AISearchPage";
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
             <Route path="/jobs/:id" element={<JobDetailsPage />} />
             <Route path="/companies" element={<AllCompanies />} />
             <Route path="/company/:name?" element={<CompanyPage />} />
+            <Route path="/ai-search" element={<AISearchPage />} />
 
         </Route>
       </Routes>

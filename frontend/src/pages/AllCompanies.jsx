@@ -17,10 +17,22 @@ import {
   Building2,
   Search,
   Users,
+  MapPin,
+  ArrowRight,
+  RefreshCw,
   Filter,
   AlertCircle,
+  Brain,
 } from 'lucide-react';
+import {
+  GlassCard,
+  GlassCardContent,
+  GlassCardHeader,
+  GlassCardTitle,
+  GlassCardDescription
+} from '../components/ui/glass-card';
 import { Alert, AlertDescription } from '../components/ui/alert';
+import { cn } from '../lib/utils';
 
 const AllCompanies = () => {
   const navigate = useNavigate();
@@ -48,9 +60,17 @@ const AllCompanies = () => {
                 <Skeleton className="h-10 w-32" />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {Array(8).fill().map((_, i) => (
-                <Skeleton key={i} className="h-64 w-full" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {Array(12).fill().map((_, i) => (
+                <div key={i} className="group bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl p-6 space-y-4 animate-pulse hover:shadow-2xl transition-all">
+                  <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl w-4/5"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-3/5"></div>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-2/3"></div>
+                    <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2"></div>
+                  </div>
+                  <div className="h-10 bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl w-full"></div>
+                </div>
               ))}
             </div>
           </div>
@@ -59,162 +79,168 @@ const AllCompanies = () => {
     );
   }
 
-  return (
-    <>
-      <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-50 min-h-screen mt-17">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
-                  All Companies
-                </h1>
-                <p className="text-xl text-gray-600">
-                  {companies.length} companies in database
-                </p>
-              </div>
-              <Button onClick={refetch} variant="outline" className="self-start md:self-auto">
-                <span className="sr-only md:not-sr-only">Refresh</span>
-                ↻
-              </Button>
-            </div>
+ return (
+  <>
+    <Navbar />
 
-            {error && (
-              <Alert className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+    <div className="pt-16 md:pl-64 p-6 md:p-10 bg-gradient-to-br mt-8 from-gray-50 to-gray-100 min-h-screen lg:mt-8 ml-5 sm:mt-8 ">
+      <div className="max-w-7xl mx-auto space-y-8">
 
-            {/* Search & Filters */}
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search companies by name..."
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant={filterDifficulty === 'all' ? 'default' : 'outline'}
-                  onClick={() => setFilterDifficulty('all')}
-                  size="sm"
-                >
-                  All
-                </Button>
-                <Button
-                  variant={filterDifficulty === 'Easy' ? 'default' : 'outline'}
-                  onClick={() => setFilterDifficulty('Easy')}
-                  size="sm"
-                >
-                  Easy
-                </Button>
-                <Button
-                  variant={filterDifficulty === 'Medium' ? 'default' : 'outline'}
-                  onClick={() => setFilterDifficulty('Medium')}
-                  size="sm"
-                >
-                  Medium
-                </Button>
-                <Button
-                  variant={filterDifficulty === 'Hard' ? 'default' : 'outline'}
-                  onClick={() => setFilterDifficulty('Hard')}
-                  size="sm"
-                >
-                  Hard
-                </Button>
-              </div>
-            </div>
+        {/* HEADER */}
+        <div className="bg-white rounded-2xl shadow-sm border p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+              Explore Companies
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">
+              Interview patterns, salary & preparation roadmap
+            </p>
           </div>
 
-          {/* Companies Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCompanies.length === 0 ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
-                <Building2 className="h-16 w-16 text-gray-400 mb-4" />
-                <h3 className="text-2xl font-bold mb-2 text-gray-900">
-                  {searchTerm || filterDifficulty !== 'all' 
-                    ? 'No companies match your search' 
-                    : 'No companies in database yet'
-                  }
-                </h3>
-                <p className="text-gray-500 mb-6 max-w-md">
-                  {searchTerm || filterDifficulty !== 'all'
-                    ? 'Try adjusting your search or filters'
-                    : 'Companies will appear here once added to the database'
-                  }
-                </p>
-                <Button onClick={refetch} variant="outline">
-                  Try Refreshing
+          <div className="flex gap-2">
+            <Button
+              onClick={refetch}
+              variant="outline"
+              className="rounded-xl"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+
+            <Button
+              onClick={() => navigate("/ai-search")}
+              className="rounded-xl bg-black text-white cursor-pointer"
+            >
+              <Brain className="h-4 w-4 mr-2" />
+              AI Search for more compines
+            </Button>
+          </div>
+        </div>
+
+        {/* SEARCH + FILTER */}
+        <div className="bg-white rounded-2xl shadow-sm border p-4 flex flex-col md:flex-row gap-3 items-center">
+
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search companies..."
+              className="pl-10 rounded-xl h-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="flex gap-2 flex-wrap">
+            {['All', 'Easy', 'Medium', 'Hard'].map((level) => (
+              <Button
+                key={level}
+                size="sm"
+                variant={filterDifficulty === level.toLowerCase() ? "default" : "outline"}
+                onClick={() => setFilterDifficulty(level.toLowerCase())}
+                className="rounded-full text-xs px-3"
+              >
+                {level}
+              </Button>
+            ))}
+          </div>
+
+        </div>
+
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+          {filteredCompanies.length === 0 ? (
+            <div className="col-span-full text-center py-20 bg-white rounded-2xl border shadow-sm">
+              <Building2 className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+              <h2 className="text-xl font-semibold text-gray-800">
+                No companies found
+              </h2>
+              <p className="text-gray-500 text-sm mt-2">
+                Try changing search or filters
+              </p>
+
+              <div className="flex justify-center gap-3 mt-6">
+                <Button variant="outline" onClick={() => setSearchTerm('')}>
+                  Clear
+                </Button>
+                <Button onClick={refetch}>
+                  Refresh
                 </Button>
               </div>
-            ) : (
-              filteredCompanies.map((company) => (
+            </div>
+          ) : (
+            filteredCompanies.map((company) => {
+              const difficulty = company.hiring?.difficulty || 'Medium';
+
+              const badgeColors = {
+                Easy: 'bg-green-100 text-green-700',
+                Medium: 'bg-yellow-100 text-yellow-700',
+                Hard: 'bg-red-100 text-red-700'
+              };
+
+              return (
                 <Card
                   key={company._id || company.name}
-                  className="group hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer"
                   onClick={() => navigate(`/company/${company.name}`)}
+                  className="cursor-pointer rounded-2xl shadow-sm border hover:shadow-md transition"
                 >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg font-bold group-hover:text-blue-600 transition-colors line-clamp-2">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <CardTitle className="text-lg font-semibold line-clamp-2">
                         {company.overview?.name || company.name}
                       </CardTitle>
-                      {company.hiring?.difficulty && (
-                        <Badge 
-                          variant={
-                            company.hiring.difficulty === 'Easy' ? 'default' :
-                            company.hiring.difficulty === 'Medium' ? 'secondary' : 'destructive'
-                          }
-                          className="text-xs px-2 py-1 ml-2 flex-shrink-0"
-                        >
-                          {company.hiring.difficulty}
-                        </Badge>
-                      )}
+
+                      <Badge className={`text-xs ${badgeColors[difficulty]}`}>
+                        {difficulty}
+                      </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3 pb-4">
+
+                  <CardContent className="space-y-3">
+
                     {company.overview?.industry && (
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Building2 className="h-4 w-4" />
-                        <span>{company.overview.industry}</span>
+                        {company.overview.industry}
                       </div>
                     )}
+
                     {company.overview?.headquarters && (
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Users className="h-4 w-4" />
-                        <span>{company.overview.headquarters}</span>
+                        <MapPin className="h-4 w-4" />
+                        {company.overview.headquarters}
                       </div>
                     )}
+
                     {company.overview?.tagline && (
-                      <CardDescription className="text-sm line-clamp-2">
+                      <p className="text-xs text-gray-500 italic line-clamp-2">
                         "{company.overview.tagline}"
-                      </CardDescription>
+                      </p>
                     )}
-                    <Button 
-                      className="w-full mt-2"
-                      size="sm"
+
+                    <Button
+                      className="w-full mt-4 rounded-xl"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/company/${company.name}`);
                       }}
                     >
-                      View Preparation Guide
+                      View Details
+                      <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>
+
                   </CardContent>
                 </Card>
-              ))
-            )}
-          </div>
+              );
+            })
+          )}
         </div>
+
       </div>
-    </>
-  );
+    </div>
+  </>
+);
 };
 
 export default AllCompanies;
