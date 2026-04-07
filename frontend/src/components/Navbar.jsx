@@ -12,6 +12,7 @@ import {
   Calendar,
   Trophy,
   FileText,
+  Code,
   Flame,
   Zap 
 } from "lucide-react";
@@ -73,7 +74,8 @@ export default function Navbar() {
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
-    { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
+{ icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
+    { icon: Code, label: "Code Compiler", path: "/code-editor" },
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
 

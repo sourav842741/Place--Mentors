@@ -20,6 +20,7 @@ import jobRouter from "./routes/job.routes.js";
 import cronJobs from "./utils/cronJobs.js";
 import notesRouter from "./routes/genrate.route.js"
 import pdfRouter from "./routes/pdf.route.js"
+import compilerRouter from "./routes/compiler.routes.js"
 
 import companyRoutes from "./routes/company.routes.js";
 
@@ -57,6 +58,7 @@ app.use("/api/jobs", jobRouter);
 app.use("/api", companyRoutes)
 app.use("/api/notes", notesRouter)
 app.use("/api/pdf", pdfRouter)
+app.use("/api/compiler", compilerRouter)
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);

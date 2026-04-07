@@ -4,16 +4,18 @@ import resumeSlice from "./resumeSlice"
 import jobSlice from "./jobSlice";
 import companySlice from "./companySlice";
 import { notesApi } from "./notesSlice";
+import { compilerApi } from "./compilerSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(notesApi.middleware),
+getDefaultMiddleware().concat(notesApi.middleware, compilerApi.middleware),
     reducer: {     
         user: userSlice,      
         resume: resumeSlice,       
         jobs: jobSlice,
-        company: companySlice,
+company: companySlice,
         [notesApi.reducerPath]: notesApi.reducer,
+        [compilerApi.reducerPath]: compilerApi.reducer,
      }
 })
 
