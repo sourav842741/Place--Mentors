@@ -15,7 +15,8 @@ import {
   Code,
   Flame,
   Zap ,
-   Bell
+   Bell,
+   Target
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -110,6 +111,7 @@ export default function Navbar() {
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
 { icon: Building2, label: "All Companies", path: "/companies" },
 
+{ icon: Target, label: "POTD", path: "/potd" },
     { icon: BookOpen, label: "Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },

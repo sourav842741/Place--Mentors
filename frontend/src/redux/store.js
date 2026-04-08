@@ -3,6 +3,7 @@ import userSlice from "./userSlice"
 import resumeSlice from "./resumeSlice"
 import jobSlice from "./jobSlice";
 import companySlice from "./companySlice";
+import potdSlice from "./potdSlice";
 import { notesApi } from "./notesSlice";
 import { compilerApi } from "./compilerSlice";
 
@@ -14,6 +15,7 @@ getDefaultMiddleware().concat(notesApi.middleware, compilerApi.middleware),
         resume: resumeSlice,       
         jobs: jobSlice,
 company: companySlice,
+        potd: potdSlice,
         [notesApi.reducerPath]: notesApi.reducer,
         [compilerApi.reducerPath]: compilerApi.reducer,
      }

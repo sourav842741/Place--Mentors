@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { generatePotd, getTodayPotd, submitPotd } from "../controllers/potd.controller.js";
+import isAuth from "../middlewares/isAuth.js";
+
+const router = Router();
+
+router.get("/", getTodayPotd);
+router.post("/generate", isAuth, generatePotd); // Manual trigger (admin?)
+router.post("/submit", isAuth, submitPotd);
+
+export default router;

@@ -30,6 +30,7 @@ import About from "./pages/About";
 import CodeEditor from "./pages/CodeEditor";
 import LandingPage from "./pages/LandingPage";
 import DoubtChatPage from "./pages/DoubtChatPage";
+import PotdPage from "./pages/PotdPage.jsx";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -76,6 +77,7 @@ function App() {
           <Route path="/code-editor" element={<CodeEditor />} />
           <Route path="/about" element={<About />} />
           <Route path="/doubts" element={<DoubtChatPage />} />
+          <Route path="/potd" element={<PotdPage />} />
         </Route>
       </Routes>
     </>

@@ -80,13 +80,26 @@ export const runFullCronCycle = async () => {
 };
 
 // 🔥 START CRON
+import { generatePotd } from "../controllers/potd.controller.js";
+
 export const startCronJobs = () => {
   cron.schedule("*/10 * * * *", async () => {
     console.log("⏰ Checking cron...");
     await runFullCronCycle();
   });
 
-  console.log("✅ Smart cron started (checks every 10 minutes)");
+  // 🔥 POTD Daily Cron - midnight
+  cron.schedule("0 0 * * *", async () => {
+    console.log("🌅 Generating daily POTD...");
+    try {
+      await generatePotd({ user: { _id: "cron" } }, { json: () => {}, status: () => ({}) }, () => {});
+      console.log("✅ POTD generated");
+    } catch (error) {
+      console.error("❌ POTD cron failed:", error.message);
+    }
+  });
+
+  console.log("✅ Smart cron started (checks every 10 minutes + POTD daily)");
 };
 
 export default { startCronJobs };

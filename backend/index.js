@@ -75,6 +75,8 @@ app.use("/api/notes", notesRouter);
 app.use("/api/pdf", pdfRouter);
 app.use("/api/compiler", compilerRouter);
 app.use("/api/doubts", doubtRouter);
+import potdRouter from "./routes/potd.routes.js";
+app.use("/api/potd", potdRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;
