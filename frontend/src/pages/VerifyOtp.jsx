@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import AuthLayout from "../components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import api from "../services/api";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 export default function VerifyOtp() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { email, fullName, password, skills, avatar, coverImage } =
     state || {};
@@ -17,11 +21,12 @@ export default function VerifyOtp() {
 
   useEffect(() => {
     if (!email) {
-      toast.error("Session expired");
+      toast.error("Session expired ❌");
       navigate("/signup");
     }
   }, [email, navigate]);
 
+  // ================= INPUT CHANGE =================
   const handleChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
 
@@ -34,12 +39,14 @@ export default function VerifyOtp() {
     }
   };
 
+  // ================= BACKSPACE =================
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
+  // ================= PASTE SUPPORT =================
   const handlePaste = (e) => {
     const paste = e.clipboardData.getData("text").slice(0, 4);
     if (!/^\d+$/.test(paste)) return;
@@ -54,11 +61,12 @@ export default function VerifyOtp() {
     });
   };
 
+  // ================= VERIFY =================
   const handleVerifyOtp = async () => {
     const finalOtp = otp.join("");
 
     if (finalOtp.length !== 4) {
-      return toast.warning("Enter valid OTP");
+      return toast.warning("Enter valid OTP ❗");
     }
 
     setLoading(true);
@@ -81,6 +89,7 @@ export default function VerifyOtp() {
       );
 
       if (res.data.success) {
+         dispatch(setUserData(res.data.data));
         toast.success("Signup Successful 🎉");
         navigate("/dashboard");
       } else {
@@ -88,7 +97,7 @@ export default function VerifyOtp() {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong");
+      toast.error("Something went wrong ❌");
     } finally {
       setLoading(false);
     }
@@ -96,17 +105,14 @@ export default function VerifyOtp() {
 
   return (
     <>
+      {/* FULL SCREEN LOADER */}
       {loading && <FullScreenLoader />}
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50 to-blue-50 px-4">
+      <AuthLayout>
+        <div className="w-full max-w-md mx-auto text-white space-y-6">
 
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 space-y-6 border text-center">
-
-          <h2 className="text-3xl font-bold text-gray-900">
-            Verify Email
-          </h2>
-
-          <p className="text-sm text-gray-500">
+          <h2 className="text-3xl font-bold">Verify Email</h2>
+          <p className="text-sm text-gray-400">
             Enter the 4-digit OTP sent to your email
           </p>
 
@@ -125,7 +131,7 @@ export default function VerifyOtp() {
                   handleChange(e.target.value, index)
                 }
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-14 h-14 text-center text-lg rounded-xl bg-gray-50 border border-gray-300 focus:border-orange-500 focus:outline-none transition"
+                className="w-14 h-14 text-center text-lg rounded-xl bg-zinc-900 border border-zinc-700 focus:border-orange-500 focus:outline-none transition"
               />
             ))}
           </div>
@@ -134,23 +140,38 @@ export default function VerifyOtp() {
           <Button
             onClick={handleVerifyOtp}
             disabled={loading}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+            className="w-full bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-2"
           >
-            {loading ? "Verifying..." : "Verify OTP"}
+            {loading ? (
+              <>
+                <Spinner />
+                Verifying...
+              </>
+            ) : (
+              "Verify OTP"
+            )}
           </Button>
 
         </div>
-      </div>
+      </AuthLayout>
     </>
   );
 }
 
+// ================= SPINNER =================
+function Spinner() {
+  return (
+    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+  );
+}
+
+// ================= FULL SCREEN LOADER =================
 function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 bg-white/70 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-gray-700 text-sm">Verifying OTP...</p>
+        <p className="text-white text-sm">Verifying OTP...</p>
       </div>
     </div>
   );

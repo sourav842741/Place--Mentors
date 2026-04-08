@@ -19,7 +19,7 @@ let token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', 
     }
 
     req.user = user;
-    req.userId = decoded.userId;
+    req.userId = user._id.toString();
     next();
   } catch (error) {
     throw new ApiError(401, "Unauthorized: Invalid token");

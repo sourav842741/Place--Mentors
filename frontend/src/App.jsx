@@ -29,6 +29,7 @@ import NoteDetail from "./pages/NoteDetail";
 import About from "./pages/About";
 import CodeEditor from "./pages/CodeEditor";
 import LandingPage from "./pages/LandingPage";
+import DoubtChatPage from "./pages/DoubtChatPage";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -71,9 +72,10 @@ function App() {
           <Route path="/company/:name?" element={<CompanyPage />} />
           <Route path="/ai-search" element={<AISearchPage />} />
           <Route path="/notes" element={<Notes />} />
-<Route path="/notes/:id" element={<NoteDetail />} />
+          <Route path="/notes/:id" element={<NoteDetail />} />
           <Route path="/code-editor" element={<CodeEditor />} />
           <Route path="/about" element={<About />} />
+          <Route path="/doubts" element={<DoubtChatPage />} />
         </Route>
       </Routes>
     </>

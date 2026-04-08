@@ -14,7 +14,8 @@ import {
   FileText,
   Code,
   Flame,
-  Zap 
+  Zap ,
+   Bell
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -31,8 +32,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+import { socket } from "../socket";
+
 
 export default function Navbar() {
 
@@ -45,6 +51,27 @@ export default function Navbar() {
   const [dark, setDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showCreditPopup, setShowCreditPopup] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotif, setShowNotif] = useState(false);
+
+  useEffect(() => {
+    if (!isAuth || !user?._id) return;
+
+    socket.emit("join", user._id);
+
+    socket.on("notification", (data) => {
+      setNotifications(prev => [data, ...prev]);
+    });
+
+    socket.on("online_users", (count) => {
+      // Global online can be used here if needed
+    });
+
+    return () => {
+      socket.off("notification");
+      socket.off("online_users");
+    };
+  }, [isAuth, user?._id]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "auto";
@@ -132,9 +159,9 @@ export default function Navbar() {
 
             {/* Desktop Links */}
             <div className="hidden md:flex gap-6 lg:ml-21">
-              <Link to="/dashboard">Home</Link>
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/doubts">Community</Link>
               <Link to="/jobs">Jobs</Link>
-              <Link to="/about">About</Link>
               <Link to="/code-editor">Code Compiler</Link>
             </div>
           </div>
@@ -142,6 +169,32 @@ export default function Navbar() {
 
         {/* RIGHT */}
         <div className="flex items-center gap-3">
+          {/* 🔔 NOTIFICATION BELL */}
+          {isAuth && (
+            <div className="relative">
+              <Button variant="ghost" size="icon" className="relative" onClick={() => setShowNotif(!showNotif)}>
+                <Bell size={20} />
+                {notifications.length > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs font-bold bg-red-500 border-2 border-white">
+                    {notifications.length}
+                  </Badge>
+                )}
+              </Button>
+              {showNotif && (
+                <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto">
+                  <h3 className="font-semibold mb-2 pb-2 border-b">Notifications</h3>
+                  {notifications.map((n, i) => (
+                    <div key={i} className="py-2 border-b last:border-b-0 text-sm hover:bg-gray-50 p-2 rounded">
+                      <p>{n.message}</p>
+                      <span className="text-xs text-gray-500 block mt-1">{n.time}</span>
+                    </div>
+                  ))}
+                  {notifications.length === 0 && <p className="text-gray-500 text-sm">No new notifications</p>}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* DARK MODE */}
           <Button variant="ghost" size="icon" onClick={toggleDark}>
             {dark ? <Sun size={18} /> : <Moon size={18} />}

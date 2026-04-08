@@ -3,13 +3,14 @@ import { setUserData, logoutUser, setLoading } from "../redux/userSlice";
 import api from "../services/api";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../utils/firebase";
-
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 
 
 
 const useAuth = () => {
+  const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -54,7 +55,7 @@ const useAuth = () => {
     try {
       await api.post("/api/auth/signup/send-otp", {
         ...data,
-        skills: data.skills.split(","),
+        skills: data.skills,
       });
 
       return { success: true };
@@ -176,19 +177,21 @@ const updateTimeSpent = async (minutes) => {
 };
 
   // ================= RETURN ALL =================
-  return {
-    login,
-    logout,
-    getCurrentUser,
-    sendSignupOtp,
-    verifySignupOtp,
-    updateProfile,
-    updateSkills,
-    sendResetOtp,
-    resetPassword,
-    googleLogin,
-     updateTimeSpent,
-  };
+return {
+  user,
+  loading,
+  login,
+  logout,
+  getCurrentUser,
+  sendSignupOtp,
+  verifySignupOtp,
+  updateProfile,
+  updateSkills,
+  sendResetOtp,
+  resetPassword,
+  googleLogin,
+  updateTimeSpent,
+};
 };
 
 export default useAuth;

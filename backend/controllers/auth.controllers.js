@@ -27,9 +27,9 @@ const sanitizeUser = (user) => {
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false,          // 🔥 CHANGE
-  sameSite: "lax",      // 🔥 CHANGE
-  path: "/",             // 🔥 ADD
+  secure: false,
+  sameSite: "lax",
+  path: "/",
   maxAge: 10 * 24 * 60 * 60 * 1000,
 };
 
@@ -315,14 +315,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
 // ================= SIGNOUT =================
 export const signOut = asyncHandler(async (req, res) => {
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: false,      // 🔥 CHANGE
-  sameSite: "lax",    // 🔥 CHANGE
-  path: "/",
-});
-
-console.log("Cookies:", req.headers.cookie);
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    
+  });
 
   return res
     .status(200)
