@@ -77,7 +77,7 @@ const successStoriesData = [
 
 const SuccessStories = () => {
   return (
-    <div className="w-full space-y-4 ml-70">
+    <div className="w-full space-y-4 md:5 lg:ml-70">
       
       {/* Header */}
       <div className="flex justify-between items-center">

@@ -22,6 +22,7 @@ import { BsCoin } from "react-icons/bs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/userSlice";
+import api from "../services/api"
 
 import { Button } from "@/components/ui/button";
 import {
@@ -54,10 +55,22 @@ export default function Navbar() {
     setDark(!dark);
   };
 
-  const handleLogout = () => {
+ const handleLogout = async () => {
+  console.log("Logout clicked");
+
+  try {
+    await api.get("/api/auth/signout", {
+      withCredentials: true,
+    });
+
+    console.log("API called");
+
     dispatch(logoutUser());
     navigate("/");
-  };
+  } catch (err) {
+    console.log("Logout error", err);
+  }
+};
 
   const getInitials = (name) => {
     if (!name) return "U";
@@ -122,6 +135,7 @@ export default function Navbar() {
               <Link to="/dashboard">Home</Link>
               <Link to="/jobs">Jobs</Link>
               <Link to="/about">About</Link>
+              <Link to="/code-editor">Code Compiler</Link>
             </div>
           </div>
         </div>
@@ -237,7 +251,7 @@ export default function Navbar() {
             <button
               key={item.label}
               onClick={() => navigate(item.path)}
-              className={`flex items-center gap-3 p-3 rounded-lg mb-2 ${
+              className={`flex items-center gap-2 p-2 rounded-lg mb-2 ${
                 isActive ? "bg-blue-100 text-blue-600" : "text-gray-600"
               }`}
             >

@@ -25,10 +25,11 @@ const useAuth = () => {
   };
 
   // ================= LOGOUT =================
-  const logout = async () => {
-    await api.get("/api/auth/signout");
-    dispatch(logoutUser());
-  };
+ const logout = async () => {
+  await api.get("/api/auth/signout");
+  dispatch(logoutUser());
+  navigate("/");
+};
 
   // ================= GET CURRENT USER =================
  const getCurrentUser = async () => {

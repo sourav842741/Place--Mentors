@@ -28,6 +28,7 @@ import Notes from "./pages/Notes";
 import NoteDetail from "./pages/NoteDetail";
 import About from "./pages/About";
 import CodeEditor from "./pages/CodeEditor";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -43,7 +44,7 @@ function App() {
 
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<LandingPage/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />

@@ -27,8 +27,9 @@ const sanitizeUser = (user) => {
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false,      // localhost pe hamesha false
-  sameSite: "lax",
+  secure: false,          // 🔥 CHANGE
+  sameSite: "lax",      // 🔥 CHANGE
+  path: "/",             // 🔥 ADD
   maxAge: 10 * 24 * 60 * 60 * 1000,
 };
 
@@ -314,7 +315,14 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
 // ================= SIGNOUT =================
 export const signOut = asyncHandler(async (req, res) => {
-  res.clearCookie("token", cookieOptions);
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: false,      // 🔥 CHANGE
+  sameSite: "lax",    // 🔥 CHANGE
+  path: "/",
+});
+
+console.log("Cookies:", req.headers.cookie);
 
   return res
     .status(200)
