@@ -20,10 +20,10 @@ export const compilerApi = createApi({
 
   endpoints: (builder) => ({
     runCode: builder.mutation({
-      query: ({ code, language }) => ({
+      query: ({ code, language,input }) => ({
         url: '/api/compiler/run',
         method: 'POST',
-        body: { code, language },
+        body: { code, language, input },
       }),
     }),
   }),

@@ -99,7 +99,18 @@ export const startCronJobs = () => {
     }
   });
 
-  console.log("✅ Smart cron started (checks every 10 minutes + POTD daily)");
+  console.log("✅ Smart cron started (checks every 10 minutes + POTD/CPOTD daily)");
+
+  // 🔥 CPOTD Daily Cron - midnight (same time as POTD)
+  cron.schedule("0 0 * * *", async () => {
+    console.log("🌅 Generating daily CPOTD...");
+    try {
+      await generateCpotd({ user: { _id: "cron" } }, { json: () => {}, status: () => ({}) }, () => {});
+      console.log("✅ CPOTD generated");
+    } catch (error) {
+      console.error("❌ CPOTD cron failed:", error.message);
+    }
+  });
 };
 
 export default { startCronJobs };

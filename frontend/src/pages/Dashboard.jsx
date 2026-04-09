@@ -28,6 +28,7 @@ import SuccessStories from "@/components/SuccessStories";
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
+  console.log("🔥 USER FRONTEND:", user);
 
   const navigate = useNavigate();
 
@@ -37,22 +38,26 @@ export default function Dashboard() {
 
   const [unlockedBadges, setUnlockedBadges] = React.useState([]);
 
-  const xp = user?.xp || 0;
+ 
   const streak = user?.streakCount || 0;
 
-  const level = user?.level || 1;
+
   const totalXP = user?.xp || 0;
 
   //  XP required for current level
-  const maxXP = level * 100;
+const xp = user?.xp || 0;
+const level = user?.level || 1;
 
-  //  total XP till previous levels (correct formula)
-  const prevXP = ((level - 1) * level * 100) / 2;
+const prevXP = ((level - 1) * level * 100) / 2;
+const currentXP = xp - prevXP;
+const maxXP = level * 100;
 
-  //  current progress
-  const currentXP = totalXP - prevXP;
 
-  const percent = (currentXP / maxXP) * 100;
+
+ const percent = Math.min(
+  Math.max((currentXP / maxXP) * 100, 0),
+  100
+);
 
 const companies = [
   {

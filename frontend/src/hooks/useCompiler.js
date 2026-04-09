@@ -1,15 +1,25 @@
 import { useRunCodeMutation } from "../redux/compilerSlice";
+import { useState } from "react";
 
 const useCompiler = () => {
-  const [runCode, { data, isLoading, error, isSuccess }] = useRunCodeMutation();
+  const [runCode, { isLoading, error }] = useRunCodeMutation();
+  const [result, setResult] = useState(null); // 🔥 FIX
 
-  const executeCode = async (code, language) => {
+  const executeCode = async (code, language, input = "") => {
     try {
-      const result = await runCode({ code, language }).unwrap();
-      return result;
+      const res = await runCode({
+        code,
+        language,
+        input,
+      }).unwrap();
+
+      console.log("✅ API RESPONSE:", res);
+
+      setResult(res); // 🔥 IMPORTANT
+      return res;
     } catch (err) {
       console.error("Code execution error:", err);
-      throw err;
+      setResult({ error: "Execution failed" });
     }
   };
 
@@ -17,10 +27,8 @@ const useCompiler = () => {
     executeCode,
     isLoading,
     error,
-    isSuccess,
-    result: data
+    result, // 🔥 now stable
   };
 };
 
 export default useCompiler;
-

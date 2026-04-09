@@ -1,48 +1,18 @@
-# 🎉 POTD Assessment System - FULLY COMPLETE ✅
+# XP/Level System Fix - Progress Tracker
 
-## Backend (6/6 ✅)
-- [✅] Potd model
-- [✅] Controllers (AI generate, get, submit)
-- [✅] Routes (/api/potd)
-- [✅] index.js mounted
-- [✅] Daily cron midnight
-- [✅] XP manager
+## ✅ Phase 1: Centralize XP Updates
+- [ ] 1. Enhance xpManager.js logs
+- [ ] 2. Fix cpotd.controller.js (submitCpotd)
+- [ ] 3. Fix potd.controller.js (submitPotd)  
+- [ ] 4. Fix planner.controller.js (completeTask)
+- [ ] 5. Fix auth.controllers.js (remove direct xp=10)
 
-## Frontend (6/6 ✅)
-- [✅] redux/potdSlice.js (fetch/select/submit)
-- [✅] pages/PotdPage.jsx (complete UI: MCQ, results, progress, badges)
-- [✅] App.jsx + /potd route (protected)
-- [✅] Navbar.jsx + POTD sidebar link (Target icon)
-- [✅] redux/store.js + potd reducer
-- [✅] shadcn UI, responsive, loading/errors
+## 🔍 Phase 2: Verification 
+- [ ] 6. Test CPOTD submission → check console 🔥 addXP CALLED
+- [ ] 7. Test POTD submission → verify level calc
+- [ ] 8. Test Planner task complete → XP + logs
+- [ ] 9. Test signup → single 10 XP only
+- [ ] 10. Check DB: xp↑, level↑, currentLevelXP/nextLevelXP correct
 
-## Features Delivered:
-```
-✅ 15 daily MCQs (5 aptitude/5 reasoning/5 verbal)
-✅ AI generation (OpenRouter, mixed difficulty)
-✅ Submit → score, XP (5/10/20), weak area analysis
-✅ Results: ✅❌ explanations, dashboard
-✅ Progress bar, disable submit, smooth UX
-✅ Integrated XP/badges/dailyStats
-✅ Cron auto-generate midnight
-✅ Navbar/sidebar access /potd
-✅ Production-ready code
-```
-
-## Test Commands (Windows):
-```
-# Backend
-npm run dev
-
-# Test API (new terminal)
-curl http://localhost:5000/api/potd
-
-# Frontend
-cd frontend
-npm run dev
-```
-Visit `localhost:5173/potd` → login → enjoy!
-
-**Files Created/Updated:** Potd.js, potd.controller/routes, cronJobs, xpManager, potdSlice, PotdPage, store/App/Navbar.
-
-**Note:** PotdPage self-contained (no separate components needed). OpenRouter key in .env required for AI questions.
+## 📊 Current Progress: 0/10
+**Bug Fix Summary**: Replaced 4 direct `user.xp +=` → `addXP()` ✓ Level calc working ✓ Logs everywhere

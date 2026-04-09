@@ -4,7 +4,7 @@ import TempUser from "../models/tempUser.model.js";
 import {
   sendSignupOtpMail,
   sendResetOtpMail,
-  sendWelcomeMail
+  sendWelcomeMail,
 } from "../config/mail.js";
 import genToken from "../config/token.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
@@ -35,7 +35,10 @@ const cookieOptions = {
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validatePassword = (password) => password && password.length >= 6;
-const validateSkills = (skills) => Array.isArray(skills) && skills.length > 0 && skills.every(skill => skill && skill.trim().length > 0);
+const validateSkills = (skills) =>
+  Array.isArray(skills) &&
+  skills.length > 0 &&
+  skills.every((skill) => skill && skill.trim().length > 0);
 const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 const handleImageUploads = async (req) => {
@@ -82,10 +85,15 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
   }
 
   if (!validateSkills(skills)) {
-    throw new ApiError(400, "Skills must be non-empty array with valid entries");
+    throw new ApiError(
+      400,
+      "Skills must be non-empty array with valid entries",
+    );
   }
 
-  const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+  const existingUser = await User.findOne({
+    email: email.toLowerCase().trim(),
+  });
   if (existingUser) {
     throw new ApiError(400, "Email already exists");
   }
@@ -102,14 +110,12 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
       otp,
       otpExpires: Date.now() + 5 * 60 * 1000,
     },
-    { upsert: true, returnDocument: "after" }
+    { upsert: true, returnDocument: "after" },
   );
 
- await sendSignupOtpMail(email, otp);
+  await sendSignupOtpMail(email, otp);
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "OTP sent to email"));
+  return res.status(200).json(new ApiResponse(200, null, "OTP sent to email"));
 });
 
 // ================= VERIFY SIGNUP OTP =================
@@ -120,13 +126,11 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Email and OTP are required");
   }
 
-  const tempUser = await TempUser.findOne({ email: email.toLowerCase().trim() });
+  const tempUser = await TempUser.findOne({
+    email: email.toLowerCase().trim(),
+  });
 
-  if (
-    !tempUser ||
-    tempUser.otp !== otp ||
-    tempUser.otpExpires < Date.now()
-  ) {
+  if (!tempUser || tempUser.otp !== otp || tempUser.otpExpires < Date.now()) {
     throw new ApiError(400, "Invalid or expired OTP");
   }
 
@@ -134,31 +138,29 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
 
   const { avatarUrl, coverUrl } = await handleImageUploads(req);
 
-const user = await User.create({
-  fullName: tempUser.fullName.trim(),
-  email: tempUser.email,
-  password: hashedPassword,
-  skills: tempUser.skills,
-  avatar: avatarUrl,
-  coverImage: coverUrl,
-  isEmailVerified: true,
+  const user = await User.create({
+    fullName: tempUser.fullName.trim(),
+    email: tempUser.email,
+    password: hashedPassword,
+    skills: tempUser.skills,
+    avatar: avatarUrl,
+    coverImage: coverUrl,
+    isEmailVerified: true,
 
- 
-  streakCount: 1,
-  lastLoginDate: new Date(),
+    streakCount: 1,
+    lastLoginDate: new Date(),
 
- 
-  xp: 0,
-  level: 1,
-});
+    xp: 0,
+    level: 1,
+  });
 
-//  Give signup reward
-addXP(user, 10); // 
+  //  Give signup reward
+  addXP(user, 10); //
 
-//  check badges
-checkAndAssignBadges(user);
+  //  check badges
+  checkAndAssignBadges(user);
 
-await user.save();
+  await user.save();
 
   sendWelcomeMail(user.email, user.fullName);
 
@@ -166,7 +168,6 @@ await user.save();
 
   user.streakCount = 1;
 user.lastLoginDate = new Date();
-user.xp = 10;
 
 await user.save();
 
@@ -174,9 +175,9 @@ await user.save();
 
   res.cookie("token", token, cookieOptions);
 
-  return res.status(201).json(
-    new ApiResponse(201, sanitizeUser(user), "Signup successful")
-  );
+  return res
+    .status(201)
+    .json(new ApiResponse(201, sanitizeUser(user), "Signup successful"));
 });
 
 // ================= SIGNIN =================
@@ -203,45 +204,48 @@ export const signIn = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid credentials");
   }
 
-    await handleLoginStreak(user);
-checkAndAssignBadges(user);
+  await handleLoginStreak(user);
+  checkAndAssignBadges(user);
 
-await user.save();
+  await user.save();
 
   const token = genToken(user._id);
 
   res.cookie("token", token, cookieOptions);
 
-
-
   return res.status(200).json(
-    new ApiResponse(200, {
-      ...sanitizeUser(user),
-      xp: user.xp,
-      level: user.level,
-      streak: user.streakCount,
-      badges: user.badges,
-    }, "Login successful")
+    new ApiResponse(
+      200,
+      {
+        ...sanitizeUser(user),
+        xp: user.xp,
+        level: user.level,
+        streak: user.streakCount,
+        badges: user.badges,
+      },
+      "Login successful",
+    ),
   );
 });
-  
+
 // ================= UPDATE SKILLS =================
 export const updateSkills = asyncHandler(async (req, res) => {
   const { skills } = req.body;
 
   if (!validateSkills(skills)) {
-    throw new ApiError(400, "Skills must be non-empty array with valid entries");
+    throw new ApiError(
+      400,
+      "Skills must be non-empty array with valid entries",
+    );
   }
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { $set: { skills } },
-    { returnDocument: "after" }
+    { returnDocument: "after" },
   ).select("-password");
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Skills updated"));
+  return res.status(200).json(new ApiResponse(200, user, "Skills updated"));
 });
 
 // ================= UPDATE PROFILE =================
@@ -254,29 +258,29 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   if (fullName) updateData.fullName = fullName.trim();
 
- if (skills) {
-  let parsedSkills = skills;
+  if (skills) {
+    let parsedSkills = skills;
 
-  //  CASE 1: string → parse
-  if (typeof skills === "string") {
-    try {
-      parsedSkills = JSON.parse(skills);
-    } catch (error) {
-      throw new ApiError(400, "Skills must be valid JSON array");
+    //  CASE 1: string → parse
+    if (typeof skills === "string") {
+      try {
+        parsedSkills = JSON.parse(skills);
+      } catch (error) {
+        throw new ApiError(400, "Skills must be valid JSON array");
+      }
     }
-  }
 
-  //  CASE 2: ensure array
-  if (!Array.isArray(parsedSkills)) {
-    parsedSkills = [parsedSkills];
-  }
+    //  CASE 2: ensure array
+    if (!Array.isArray(parsedSkills)) {
+      parsedSkills = [parsedSkills];
+    }
 
-  if (!validateSkills(parsedSkills)) {
-    throw new ApiError(400, "Skills must be valid");
-  }
+    if (!validateSkills(parsedSkills)) {
+      throw new ApiError(400, "Skills must be valid");
+    }
 
-  updateData.skills = parsedSkills;
-}
+    updateData.skills = parsedSkills;
+  }
 
   // ================= AVATAR =================
   if (req.files?.avatar?.[0]?.path) {
@@ -305,7 +309,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
     { $set: updateData },
-    { returnDocument: "after" }
+    { returnDocument: "after" },
   ).select("-password");
 
   return res
@@ -319,7 +323,6 @@ export const signOut = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: false,
     sameSite: "lax",
-    
   });
 
   return res
@@ -358,7 +361,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
       //  INIT STREAK
       streakCount: 1,
       lastLoginDate: new Date(),
-      credits:100,
+      credits: 100,
     });
   }
 
@@ -411,7 +414,7 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
   user.resetOtpExpires = Date.now() + 5 * 60 * 1000;
   await user.save();
 
- await sendResetOtpMail(email, otp);
+  await sendResetOtpMail(email, otp);
 
   return res
     .status(200)
@@ -435,11 +438,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     email: email.toLowerCase().trim(),
   });
 
-  if (
-    !user ||
-    user.resetOtp !== otp ||
-    user.resetOtpExpires < Date.now()
-  ) {
+  if (!user || user.resetOtp !== otp || user.resetOtpExpires < Date.now()) {
     throw new ApiError(400, "Invalid or expired OTP");
   }
 
@@ -452,7 +451,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
   user.resetOtp = undefined;
   user.resetOtpExpires = undefined;
 
- 
   user.isOtpVerified = false;
 
   await user.save();
@@ -468,11 +466,7 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email });
 
-  if (
-    !user ||
-    user.resetOtp !== otp ||
-    user.resetOtpExpires < Date.now()
-  ) {
+  if (!user || user.resetOtp !== otp || user.resetOtpExpires < Date.now()) {
     throw new ApiError(400, "Invalid or expired OTP");
   }
 
@@ -480,7 +474,7 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
   user.resetOtp = undefined;
   user.resetOtpExpires = undefined;
 
-  await user.save(); 
+  await user.save();
 
   return res
     .status(200)
@@ -495,8 +489,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, user, "Current user fetched successfully")
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Current user fetched successfully"));
 });
-

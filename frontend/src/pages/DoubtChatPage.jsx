@@ -220,9 +220,9 @@ export default function DoubtChatPage() {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-100 min-h-screen lg:ml-64">
+      <div className="bg-gray-100 min-h-screen lg:ml-64 mt-16">
         {/* 🔵 HEADER */}
-        <div className="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <div className="bg-blue-200 text-black p-4 flex justify-between items-center">
           <h1 className="text-xl font-bold">Community</h1>
 
           <div className="flex items-center gap-4">
@@ -231,14 +231,14 @@ export default function DoubtChatPage() {
 
             {/* 🔔 NOTIFICATION */}
             <div className="relative">
-              <button onClick={handleBellClick}>
+              {/* <button onClick={handleBellClick}>
                 <Bell />
                 {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-1 rounded-full">
                     {notifications.length}
                   </span>
                 )}
-              </button>
+              </button> */}
 
               {showNotif && (
                 <div className="absolute right-0 mt-2 w-72 bg-white text-black shadow-lg rounded-lg p-3 z-50">

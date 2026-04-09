@@ -7,19 +7,23 @@ import { getYoutubeVideo } from "../services/youtube.service.js";
 import { google } from "googleapis";
 import fs from "fs";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-
+import { addXP } from "../utils/xpManager.js";
 
 //  CALENDAR STATUS CHECK
 export const getCalendarStatus = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('googleCalendarAccessToken googleCalendarRefreshToken');
-    
-    const authorized = !!(user.googleCalendarAccessToken && user.googleCalendarRefreshToken);
-    
-    res.json({ 
+    const user = await User.findById(req.user._id).select(
+      "googleCalendarAccessToken googleCalendarRefreshToken",
+    );
+
+    const authorized = !!(
+      user.googleCalendarAccessToken && user.googleCalendarRefreshToken
+    );
+
+    res.json({
       authorized,
       hasAccessToken: !!user.googleCalendarAccessToken,
-      hasRefreshToken: !!user.googleCalendarRefreshToken 
+      hasRefreshToken: !!user.googleCalendarRefreshToken,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -42,9 +46,9 @@ export const createPlanner = async (req, res) => {
     }
 
     const messages = [
-{
-  role: "system",
-  content: `You are a senior software engineer, DSA mentor, and career coach.
+      {
+        role: "system",
+        content: `You are a senior software engineer, DSA mentor, and career coach.
 
 Your job is to create a HIGHLY PRACTICAL, REALISTIC, and STRUCTURED daily study plan that feels like a personal mentor guiding the student step-by-step.
 
@@ -129,26 +133,26 @@ Return ONLY valid JSON:
       "tasks": [ ...4 tasks... ]
     }
   ]
-}`
-},
+}`,
+      },
 
-{
-  role: "user",
-  content: `Create a ${daysLeft}-day mentor plan.
+      {
+        role: "user",
+        content: `Create a ${daysLeft}-day mentor plan.
 
 Goal: ${goal}
-Target Company: ${company || 'FAANG'}
+Target Company: ${company || "FAANG"}
 Daily Study Time: ${dailyHours} hours
 Current Level: ${level}
-User Skills: ${user.skills?.join(', ') || 'beginner'}
+User Skills: ${user.skills?.join(", ") || "beginner"}
 
 Make it:
 - Realistic
 - Progressive
 - Interview-focused
-- Personalized to the user`
-}
-];
+- Personalized to the user`,
+      },
+    ];
 
     const aiResponse = await askAi(messages);
     const parsed = extractJSON(aiResponse);
@@ -156,9 +160,9 @@ Make it:
     // Ensure minimum fields
     for (let day of parsed.plan) {
       for (let task of day.tasks) {
-        task.explanation = task.explanation || 'Important concept to master';
-        task.steps = task.steps || ['Complete this task'];
-        task.difficulty = task.difficulty || 'medium';
+        task.explanation = task.explanation || "Important concept to master";
+        task.steps = task.steps || ["Complete this task"];
+        task.difficulty = task.difficulty || "medium";
       }
     }
 
@@ -184,7 +188,7 @@ Make it:
       daysLeft,
       dailyHours,
       level,
-      plan: parsed.plan
+      plan: parsed.plan,
     });
 
     user.credits -= 30;
@@ -193,66 +197,78 @@ Make it:
     res.json({
       plannerId: planner._id,
       plan: planner.plan,
-      creditsLeft: user.credits
+      creditsLeft: user.credits,
     });
-
   } catch (error) {
     console.error("Planner Error:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-
-
 //  IMPROVED PLANNER SYNC TO CALENDAR
 export const syncCalendar = async (req, res) => {
   try {
     const { plannerId } = req.body;
     if (!plannerId) {
-      console.log('❌ Missing plannerId');
-      return res.status(400).json({ message: 'plannerId required' });
+      console.log("❌ Missing plannerId");
+      return res.status(400).json({ message: "plannerId required" });
     }
 
     const user = await User.findById(req.user._id);
 
     if (!user.googleCalendarAccessToken) {
-      return res.status(401).json({ message: 'Google Calendar not authorized. Please connect first.' });
+      return res
+        .status(401)
+        .json({
+          message: "Google Calendar not authorized. Please connect first.",
+        });
     }
 
-    const planner = await Planner.findOne({ _id: plannerId, userId: req.user._id });
-    
+    const planner = await Planner.findOne({
+      _id: plannerId,
+      userId: req.user._id,
+    });
+
     if (!planner) {
-      return res.status(404).json({ message: 'Planner not found' });
+      return res.status(404).json({ message: "Planner not found" });
     }
 
     const auth = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BASE_URL || 'http://localhost:5000'}/api/planner/calendar/callback`
+      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`,
     );
 
-    
     let needsSave = false;
     try {
       auth.setCredentials({
         access_token: user.googleCalendarAccessToken,
-        refresh_token: user.googleCalendarRefreshToken
+        refresh_token: user.googleCalendarRefreshToken,
       });
-      console.log('Using existing tokens');
+      console.log("Using existing tokens");
     } catch (tokenError) {
-      console.log(' Access token expired, refreshing...');
+      console.log(" Access token expired, refreshing...");
       if (!user.googleCalendarRefreshToken) {
-        return res.status(401).json({ message: 'Google Calendar authorization expired. Please reconnect.' });
+        return res
+          .status(401)
+          .json({
+            message: "Google Calendar authorization expired. Please reconnect.",
+          });
       }
-      
+
       const refreshed = await auth.getAccessToken();
       if (refreshed.token) {
         user.googleCalendarAccessToken = refreshed.token;
         needsSave = true;
-        console.log(' Token refreshed successfully');
+        console.log(" Token refreshed successfully");
       } else {
-        console.log(' Refresh failed');
-        return res.status(401).json({ message: 'Failed to refresh Google token. Please reconnect calendar.' });
+        console.log(" Refresh failed");
+        return res
+          .status(401)
+          .json({
+            message:
+              "Failed to refresh Google token. Please reconnect calendar.",
+          });
       }
     }
 
@@ -280,31 +296,45 @@ export const syncCalendar = async (req, res) => {
 
         // Check if exists
         const existingEvents = await calendar.events.list({
-          calendarId: 'primary',
+          calendarId: "primary",
           timeMin: eventDate.toISOString(),
-          timeMax: new Date(eventDate.getTime() + 24*60*60*1000).toISOString(),
+          timeMax: new Date(
+            eventDate.getTime() + 24 * 60 * 60 * 1000,
+          ).toISOString(),
           singleEvents: true,
-          q: summary
+          q: summary,
         });
 
         if (existingEvents.data.items.length === 0) {
           // Parse time e.g. "1h 30m" → duration
-          const timeMatch = task.time.match(/(\\d+)h\\s*(\\d+)m?/i) || [null, '1', '0'];
+          const timeMatch = task.time.match(/(\\d+)h\\s*(\\d+)m?/i) || [
+            null,
+            "1",
+            "0",
+          ];
           const durationHours = parseInt(timeMatch[1]);
           const durationMinutes = parseInt(timeMatch[2] || 0);
           const durationMs = (durationHours * 60 + durationMinutes) * 60 * 1000;
 
-          const startTime = new Date(eventDate.getTime() + Math.random() * 8 * 60 * 60 * 1000); // Random start 0-8hr
+          const startTime = new Date(
+            eventDate.getTime() + Math.random() * 8 * 60 * 60 * 1000,
+          ); // Random start 0-8hr
           const endTime = new Date(startTime.getTime() + durationMs);
 
           await calendar.events.insert({
-            calendarId: 'primary',
+            calendarId: "primary",
             resource: {
               summary,
-              description: `${task.type.toUpperCase()} | ${task.platform || ''} | ${task.explanation || ''}`,
-              start: { dateTime: startTime.toISOString(), timeZone: 'Asia/Kolkata' },
-              end: { dateTime: endTime.toISOString(), timeZone: 'Asia/Kolkata' }
-            }
+              description: `${task.type.toUpperCase()} | ${task.platform || ""} | ${task.explanation || ""}`,
+              start: {
+                dateTime: startTime.toISOString(),
+                timeZone: "Asia/Kolkata",
+              },
+              end: {
+                dateTime: endTime.toISOString(),
+                timeZone: "Asia/Kolkata",
+              },
+            },
           });
 
           syncedCount++;
@@ -316,15 +346,16 @@ export const syncCalendar = async (req, res) => {
     planner.syncedToCalendar = new Date();
     await planner.save();
 
-    res.json({ success: true, syncedCount, totalEvents: planner.plan.reduce((acc, d) => acc + d.tasks.length, 0) });
-
+    res.json({
+      success: true,
+      syncedCount,
+      totalEvents: planner.plan.reduce((acc, d) => acc + d.tasks.length, 0),
+    });
   } catch (error) {
     console.error("Calendar Sync Error:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 //  GOOGLE CALENDAR AUTH URL
 export const getCalendarAuthUrl = async (req, res) => {
@@ -332,15 +363,13 @@ export const getCalendarAuthUrl = async (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BASE_URL || 'http://localhost:5000'}/api/planner/calendar/callback`
+      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`,
     );
 
     const authUrl = oauth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: [
-        'https://www.googleapis.com/auth/calendar.events',
-      ],
-      state: JSON.stringify({ userId: req.user._id })
+      access_type: "offline",
+      scope: ["https://www.googleapis.com/auth/calendar.events"],
+      state: JSON.stringify({ userId: req.user._id }),
     });
 
     res.json({ authUrl });
@@ -353,19 +382,19 @@ export const getCalendarAuthUrl = async (req, res) => {
 export const calendarCallback = async (req, res) => {
   try {
     const { code, state } = req.query;
-    const { userId } = JSON.parse(state || '{}');
+    const { userId } = JSON.parse(state || "{}");
 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BASE_URL || 'http://localhost:5000'}/api/planner/calendar/callback`
+      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`,
     );
 
     const { tokens } = await oauth2Client.getToken(code);
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     user.googleCalendarAccessToken = tokens.access_token;
@@ -373,22 +402,24 @@ export const calendarCallback = async (req, res) => {
     await user.save();
 
     // Redirect to frontend
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/ai-planner?calendar=connected`);
+    res.redirect(
+      `${process.env.FRONTEND_URL || "http://localhost:5173"}/ai-planner?calendar=connected`,
+    );
   } catch (error) {
-    console.error('Callback error:', error);
-    res.status(500).json({ message: 'Auth failed' });
+    console.error("Callback error:", error);
+    res.status(500).json({ message: "Auth failed" });
   }
 };
-
-
 
 //  GET ALL PLANNERS (NEW)
 export const getAllPlanners = async (req, res) => {
   try {
     const planners = await Planner.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
-      .select('goal company daysLeft dailyHours level progress currentDay createdAt');
-    
+      .select(
+        "goal company daysLeft dailyHours level progress currentDay createdAt",
+      );
+
     res.json(planners);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -400,16 +431,18 @@ export const getPlannerById = async (req, res) => {
   try {
     const planner = await Planner.findOne({
       _id: req.params.id,
-      userId: req.user._id
+      userId: req.user._id,
     });
 
     if (!planner) {
-      return res.status(404).json({ message: "Planner not found or access denied" });
+      return res
+        .status(404)
+        .json({ message: "Planner not found or access denied" });
     }
 
     res.json(planner);
   } catch (error) {
-    console.error('getPlannerById error:', error);
+    console.error("getPlannerById error:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -420,19 +453,15 @@ export const getMyPlanner = async (req, res) => {
     const planner = await Planner.findOne({ userId: req.user._id });
 
     if (!planner) {
-  return res.status(200).json(null); // ✅ FIX
-}
+      return res.status(200).json(null); // ✅ FIX
+    }
 
     res.json(planner);
-
   } catch (error) {
-    console.error('getMyPlanner error:', error);
+    console.error("getMyPlanner error:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
 
 export const completeTask = async (req, res) => {
   try {
@@ -458,7 +487,9 @@ export const completeTask = async (req, res) => {
 
     //  TASK VALIDATION
     if (taskIndex < 0 || taskIndex >= day.tasks.length) {
-      return res.status(400).json({ message: `Invalid taskIndex: ${taskIndex}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid taskIndex: ${taskIndex}` });
     }
 
     const task = day.tasks[taskIndex];
@@ -468,38 +499,44 @@ export const completeTask = async (req, res) => {
       return res.json({
         planner,
         progress: planner.progress,
-        xp: planner.totalXP
+        xp: planner.totalXP,
       });
     }
 
     //  MARK COMPLETE
     task.completed = true;
 
-   
     planner.markModified("plan");
 
-    //  XP LOGIC 
+    //  XP LOGIC
     let xp = 0;
     switch (task.type) {
-      case "coding": xp = 10; break;
-      case "video": xp = 5; break;
-      case "theory": xp = 3; break;
-      case "quiz": xp = 15; break;
-      case "revision": xp = 5; break;
-      default: xp = 5;
+      case "coding":
+        xp = 10;
+        break;
+      case "video":
+        xp = 5;
+        break;
+      case "theory":
+        xp = 3;
+        break;
+      case "quiz":
+        xp = 15;
+        break;
+      case "revision":
+        xp = 5;
+        break;
+      default:
+        xp = 5;
     }
-    
+
     planner.totalXP += xp;
-    
-   
-    const totalTasks = planner.plan.reduce(
-      (acc, d) => acc + d.tasks.length,
-      0
-    );
+
+    const totalTasks = planner.plan.reduce((acc, d) => acc + d.tasks.length, 0);
 
     const completedTasks = planner.plan.reduce(
-      (acc, d) => acc + d.tasks.filter(t => t.completed).length,
-      0
+      (acc, d) => acc + d.tasks.filter((t) => t.completed).length,
+      0,
     );
 
     planner.progress = Math.round((completedTasks / totalTasks) * 100);
@@ -509,39 +546,37 @@ export const completeTask = async (req, res) => {
       planner.currentDay += 1;
     }
 
-  
     const user = await User.findById(req.user._id);
-    const today = new Date().toISOString().split('T')[0];
-    
-    let todayStat = user.dailyStats.find(stat => stat.date === today);
+    const today = new Date().toISOString().split("T")[0];
+
+    let todayStat = user.dailyStats.find((stat) => stat.date === today);
     if (!todayStat) {
       todayStat = { date: today, timeSpent: 0, avgScore: 0, quizzesGiven: 0 };
       user.dailyStats.push(todayStat);
     }
-    
+
     // Parse task.time "1h 30m" → minutes (safe)
     const timeMatch = task.time.match(/(\\d+)h?\\s*(\\d*)m?/i);
     const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
     const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
     todayStat.timeSpent += hours * 60 + minutes;
-    
-    if (task.type === 'quiz') {
+
+    if (task.type === "quiz") {
       todayStat.quizzesGiven += 1;
     }
-    
-    user.xp += xp;
+
+   
     await user.save();
+  
 
     await planner.save();
 
-   
     res.json({
       success: true,
       planner,
       progress: planner.progress,
-      xp: planner.totalXP
+      xp: planner.totalXP,
     });
-
   } catch (error) {
     console.error("Complete Task Error:", error);
     res.status(500).json({ message: error.message });
@@ -552,9 +587,11 @@ export const completeTask = async (req, res) => {
 export const analyzeResume = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     if (user.credits < 20) {
-      return res.status(400).json({ message: "Not enough credits. Need 20 credits." });
+      return res
+        .status(400)
+        .json({ message: "Not enough credits. Need 20 credits." });
     }
 
     if (!req.file) {
@@ -582,7 +619,11 @@ export const analyzeResume = async (req, res) => {
     fs.unlinkSync(filepath);
 
     if (resumeText.length < 100) {
-      return res.status(400).json({ message: "PDF is empty or too short. Min 100 chars required." });
+      return res
+        .status(400)
+        .json({
+          message: "PDF is empty or too short. Min 100 chars required.",
+        });
     }
 
     const messages = [
@@ -600,13 +641,13 @@ Return ONLY JSON:
   "suggestions": ["Solve 300 LeetCode mediums", "Build projects"],
   "interviewReady": true,
   "recommendedRole": "SDE1"
-}`
+}`,
       },
       {
         role: "user",
         content: `Resume:
-${resumeText}`
-      }
+${resumeText}`,
+      },
     ];
 
     const aiResponse = await askAi(messages);
@@ -619,17 +660,18 @@ ${resumeText}`
     res.json({
       success: true,
       analysis,
-      extractedText: resumeText.substring(0, 500) + (resumeText.length > 500 ? '...' : ''),
-      creditsLeft: user.credits
+      extractedText:
+        resumeText.substring(0, 500) + (resumeText.length > 500 ? "..." : ""),
+      creditsLeft: user.credits,
     });
   } catch (error) {
     console.error("Resume Analyzer Error:", error);
-    
+
     // Cleanup file if exists
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
-    
+
     res.status(500).json({ message: error.message });
   }
 };

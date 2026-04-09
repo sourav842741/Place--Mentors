@@ -91,6 +91,16 @@ const userSchema = new mongoose.Schema(
     xp: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
 
+      currentLevelXP: {
+  type: Number,
+  default: 0,
+},
+
+nextLevelXP: {
+  type: Number,
+  default: 100,
+},
+
     //  BADGES
     badges: [
       {
@@ -140,6 +150,8 @@ prepCompanies: [
     googleCalendarAccessToken: String,
     googleCalendarRefreshToken: String,
   },
+
+
   
 
   { timestamps: true },

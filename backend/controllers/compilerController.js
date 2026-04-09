@@ -9,7 +9,10 @@ const LANGUAGE_MAP = {
 };
 
 export const runCode = asyncHandler(async (req, res) => {
-  const { code, language } = req.body;
+  console.log("📥 Received body:", req.body);  // DEBUG: Check if input is received
+
+  const { code, language, input = "" } = req.body;
+  console.log("🔧 Processing:", { language, hasInput: !!input, inputLen: input.length });  // DEBUG
 
   if (!code || !language) {
     return res.status(400).json({
@@ -30,15 +33,20 @@ export const runCode = asyncHandler(async (req, res) => {
   try {
     // ✅ ENCODE
     const encodedCode = Buffer.from(code).toString("base64");
+    const encodedInput = Buffer.from(input).toString("base64");  // 🔥 FIX: Encode input
+
+    console.log("🚀 Judge0 call with stdin len:", encodedInput.length);  // DEBUG
 
     const response = await axios.post(
       "https://ce.judge0.com/submissions/?base64_encoded=true&wait=true",
       {
         source_code: encodedCode,
         language_id: langId,
-        stdin: ""
+        stdin: encodedInput  // 🔥 FIX: Pass input to stdin
       }
     );
+
+    console.log("📤 Judge0 raw response:", response.data);  // DEBUG: Raw Judge0 response
 
     const result = response.data;
 
@@ -46,11 +54,13 @@ export const runCode = asyncHandler(async (req, res) => {
     const decode = (data) =>
       data ? Buffer.from(data, "base64").toString("utf-8") : "";
 
-    const output =
+    const output = 
       decode(result.stdout) ||
-      decode(result.stderr) ||
+      decode(result.stderr) || 
       decode(result.compile_output) ||
       "No output";
+
+    console.log("📤 Final processed output:", output);  // DEBUG: Final output
 
     res.status(200).json({
       success: true,
@@ -70,3 +80,4 @@ export const runCode = asyncHandler(async (req, res) => {
     });
   }
 });
+

@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import Potd from "../models/Potd.js";
 import User from "../models/user.model.js";
 import { askAi, extractJSON } from "../services/openRouter.service.js";
+import { addXP } from "../utils/xpManager.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
@@ -168,8 +169,9 @@ export const submitPotd = asyncHandler(async (req, res) => {
 
   // Update user
   const user = await User.findById(req.user._id);
-
-  user.xp += xpEarned;
+  console.log(`📊 POTD XP attempt: +${xpEarned}`);
+ addXP(user, xpEarned, "potd");
+  console.log(`💾 Saving POTD user...`);
   user.dailyStats = user.dailyStats || [];
 
   const todayStat = user.dailyStats.find((s) => s.date === today);
@@ -188,6 +190,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   }
 
   await user.save();
+  console.log(`✅ POTD XP saved for ${user.email}`);
 
   return res.status(200).json({
     success: true,

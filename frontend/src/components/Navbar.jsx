@@ -112,6 +112,7 @@ export default function Navbar() {
 { icon: Building2, label: "All Companies", path: "/companies" },
 
 { icon: Target, label: "POTD", path: "/potd" },
+    { icon: Code, label: "CPOTD", path: "/coding-potd" },
     { icon: BookOpen, label: "Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },

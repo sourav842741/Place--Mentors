@@ -24,6 +24,8 @@ import pdfRouter from "./routes/pdf.route.js";
 import compilerRouter from "./routes/compiler.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import doubtRouter from "./routes/doubt.routes.js";
+import cpotdRouter from "./routes/cpotd.routes.js";
+import potdRouter from "./routes/potd.routes.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -75,8 +77,10 @@ app.use("/api/notes", notesRouter);
 app.use("/api/pdf", pdfRouter);
 app.use("/api/compiler", compilerRouter);
 app.use("/api/doubts", doubtRouter);
-import potdRouter from "./routes/potd.routes.js";
+
 app.use("/api/potd", potdRouter);
+
+app.use("/api/cpotd", cpotdRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;
