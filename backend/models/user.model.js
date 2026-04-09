@@ -147,6 +147,13 @@ prepCompanies: [
       type: Number,
       default: 100,
     },
+
+    // 🔥 POTD TRACKING
+    potdCompleted: { type: Boolean, default: false },
+    codingPotdCompleted: { type: Boolean, default: false },
+    lastPotdDate: { type: String, default: null }, // YYYY-MM-DD
+    lastCodingPotdDate: { type: String, default: null }, // YYYY-MM-DD
+
     googleCalendarAccessToken: String,
     googleCalendarRefreshToken: String,
   },

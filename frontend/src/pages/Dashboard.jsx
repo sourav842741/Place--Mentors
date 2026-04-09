@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Play, Briefcase, TrendingUp,Building2, Globe, Cpu, Code,ExternalLink} from "lucide-react";
+import { Play, Briefcase, TrendingUp,Building2, Globe, Cpu, Code,ExternalLink,ArrowRight} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   const [weeklyData, setWeeklyData] = React.useState([]);
 
-  const { updateTimeSpent } = useAuth();
+
 
   const [unlockedBadges, setUnlockedBadges] = React.useState([]);
 
@@ -164,6 +164,8 @@ const companies = [
     audio.play();
   };
 
+
+
   // ================= FIXED TIME TRACK =================
   React.useEffect(() => {
     let interval;
@@ -281,34 +283,34 @@ const companies = [
           <div className="p-2 md:p-6 space-y-4 md:space-y-6">
             {/* TOP */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <div className="md:col-span-2 bg-linear-to-r from-blue-500 to-purple-500 text-white p-6 rounded-2xl shadow">
-                <h1 className="text-2xl font-bold">
+              <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default">
+                <h1 className="text-3xl font-bold text-gray-900">
                   Welcome back, {user?.fullName} 👋
                 </h1>
 
-                <p className="mt-2 text-sm opacity-90">Level {level} 🚀</p>
+                <p className="mt-2 text-lg text-gray-500 font-medium">Level {level} 🚀</p>
 
-                <p className="text-sm mt-1">
+                <p className="text-lg text-gray-600 font-medium mt-1">
                   ⏱ Today: {weeklyData?.[weeklyData.length - 1]?.timeSpent || 0}{" "}
                   min
                 </p>
 
-                <button className="mt-4 bg-white text-black px-4 py-2 rounded-lg">
-                  Resume →
+                <button className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 font-semibold shadow-sm hover:shadow-md transition-all">
+                  Continue Learning →
                 </button>
               </div>
 
               {/* XP */}
-              <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl">
-                <p className="text-sm text-gray-500">Progress</p>
+              <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+                <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">Progress</p>
 
-                <h2 className="text-3xl font-bold text-blue-600">
+                <h2 className="text-3xl font-bold text-gray-900">
                   {currentXP} / {maxXP} XP
                 </h2>
 
-                <div className="w-full bg-gray-300 rounded-full h-2 mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-3 mt-4 shadow-inner">
                   <div
-                    className="bg-blue-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                    className="bg-black h-3 rounded-full shadow-md transition-all duration-1000 ease-out"
                     style={{ width: `${percent}%` }}
                   ></div>
                 </div>
@@ -319,65 +321,67 @@ const companies = [
             <div className="grid md:grid-cols-2 gap-6">
               <div
                 onClick={() => navigate("/quiz")}
-                className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <Play className="text-blue-500" />
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gray-100 rounded-xl shadow-sm">
+                    <Play className="w-6 h-6 text-gray-900" />
+                  </div>
                   <div>
-                    <h3 className="font-semibold">Practice</h3>
-                    <p className="text-sm text-gray-500">Daily quiz</p>
+                    <h3 className="text-xl font-bold text-gray-900">Practice</h3>
+                    <p className="text-gray-500 font-medium">Daily quiz challenges</p>
                   </div>
                 </div>
-                →
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
               </div>
 
               <div
                 onClick={() => navigate("/jobs")}
-                className="flex items-center justify-between bg-white dark:bg-gray-900 p-5 rounded-xl shadow cursor-pointer hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200 group"
               >
-                <div className="flex items-center gap-3">
-                  <Briefcase className="text-purple-500" />
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gray-100 rounded-xl shadow-sm">
+                    <Briefcase className="w-6 h-6 text-gray-900" />
+                  </div>
                   <div>
-                    <h3 className="font-semibold">Jobs</h3>
-                    <p className="text-sm text-gray-500">Openings</p>
+                    <h3 className="text-xl font-bold text-gray-900">Jobs</h3>
+                    <p className="text-gray-500 font-medium">Latest openings</p>
                   </div>
                 </div>
 
-                <span className="text-xl text-gray-400 group-hover:translate-x-1 transition">
-                  →
-                </span>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
 
             {/* 🔥 POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CpotdCard 
-                solved={false} 
+                solved={user?.codingPotdCompleted || false} 
                 onClick={() => navigate("/coding-potd")}
               />
               <PotdCard 
-                solved={false} 
+                solved={user?.potdCompleted || false} 
                 onClick={() => navigate("/potd")}
               />
             </div>
 
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">
+            <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
               {/* HEADER */}
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <TrendingUp size={18} /> Weekly Performance
+                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <TrendingUp size={20} className="text-gray-900" /> Weekly Performance
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 mt-1">
                     Score & Time (last 7 days)
                   </p>
                 </div>
 
-                <p className="font-semibold text-blue-400">
+                <div className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? 'bg-green-100 text-green-700' : percentChange >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                   {percentChange === null
                     ? "New Activity 🚀"
-                    : `${percentChange >= 0 ? "+" : ""}${percentChange}% this week`}
-                </p>
+                    : `${percentChange >= 0 ? "+" : ""}${percentChange}%`}
+                </div>
               </div>
 
               {/* CHART */}
@@ -435,8 +439,8 @@ const companies = [
         className="min-w-[180px] cursor-pointer"
       >
         <Card
+  className="flex items-center justify-between p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 transition-all cursor-pointer"
   onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
-  className="flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer"
 >
   {/* LEFT: Logo */}
   <div className="flex items-center gap-4">

@@ -14,9 +14,9 @@ import {
   FileText,
   Code,
   Flame,
-  Zap ,
-   Bell,
-   Target
+  Zap,
+  Bell,
+  MessageSquare,
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -24,7 +24,7 @@ import { BsCoin } from "react-icons/bs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/userSlice";
-import api from "../services/api"
+import api from "../services/api";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,15 +38,16 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 
-
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { socket } from "../socket";
 
-
 export default function Navbar() {
+  const userState = useSelector((state) => state.user);
 
-  const { user, isAuth } = useSelector((state) => state.user);
+  const user = userState.user;
+  const isAuth = userState.isAuth;
+  const credits = user?.credits ?? 0;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export default function Navbar() {
     socket.emit("join", user._id);
 
     socket.on("notification", (data) => {
-      setNotifications(prev => [data, ...prev]);
+      setNotifications((prev) => [data, ...prev]);
     });
 
     socket.on("online_users", (count) => {
@@ -86,22 +87,22 @@ export default function Navbar() {
     setDark(!dark);
   };
 
- const handleLogout = async () => {
-  console.log("Logout clicked");
+  const handleLogout = async () => {
+    console.log("Logout clicked");
 
-  try {
-    await api.get("/api/auth/signout", {
-      withCredentials: true,
-    });
+    try {
+      await api.get("/api/auth/signout", {
+        withCredentials: true,
+      });
 
-    console.log("API called");
+      console.log("API called");
 
-    dispatch(logoutUser());
-    navigate("/");
-  } catch (err) {
-    console.log("Logout error", err);
-  }
-};
+      dispatch(logoutUser());
+      navigate("/");
+    } catch (err) {
+      console.log("Logout error", err);
+    }
+  };
 
   const getInitials = (name) => {
     if (!name) return "U";
@@ -112,21 +113,20 @@ export default function Navbar() {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-{ icon: Building2, label: "All Companies", path: "/companies" },
+    { icon: Building2, label: "All Companies", path: "/companies" },
 
-{ icon: Target, label: "POTD", path: "/potd" },
-    { icon: Code, label: "CPOTD", path: "/coding-potd" },
     { icon: BookOpen, label: "Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
-{ icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
+    { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
     { icon: Code, label: "Code Compiler", path: "/code-editor" },
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
+    { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
-
   ];
-
+  console.log("NAVBAR CREDITS:", user?.credits);
+  const isLoading = userState.loading;
   return (
     <>
       {/* NAVBAR */}
@@ -141,12 +141,10 @@ export default function Navbar() {
             <Menu />
           </button>
           <div className="flex items-center gap-6">
-           
             <div
               onClick={() => navigate("/dashboard")}
               className="flex items-center gap-2 cursor-pointer group"
             >
-             
               <div
                 className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-blue-600 text-white font-bold rounded-lg 
   transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
@@ -166,7 +164,6 @@ export default function Navbar() {
             {/* Desktop Links */}
             <div className="hidden md:flex gap-6 lg:ml-21">
               <Link to="/dashboard">Dashboard</Link>
-              <Link to="/doubts">Community</Link>
               <Link to="/jobs">Jobs</Link>
               <Link to="/code-editor">Code Compiler</Link>
             </div>
@@ -180,7 +177,12 @@ export default function Navbar() {
             {/* 🔔 NOTIFICATION BELL */}
             {isAuth && (
               <div className="relative">
-                <Button variant="ghost" size="icon" className="relative" onClick={() => setShowNotif(!showNotif)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                  onClick={() => setShowNotif(!showNotif)}
+                >
                   <Bell size={20} />
                   {notifications.length > 0 && (
                     <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs font-bold bg-red-500 border-2 border-white">
@@ -190,23 +192,29 @@ export default function Navbar() {
                 </Button>
                 {showNotif && (
                   <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto">
-                    <h3 className="font-semibold mb-2 pb-2 border-b">Notifications</h3>
+                    <h3 className="font-semibold mb-2 pb-2 border-b">
+                      Notifications
+                    </h3>
                     {notifications.map((n, i) => (
-                      <div key={i} className="py-2 border-b last:border-b-0 text-sm hover:bg-gray-50 p-2 rounded">
+                      <div
+                        key={i}
+                        className="py-2 border-b last:border-b-0 text-sm hover:bg-gray-50 p-2 rounded"
+                      >
                         <p>{n.message}</p>
-                        <span className="text-xs text-gray-500 block mt-1">{n.time}</span>
+                        <span className="text-xs text-gray-500 block mt-1">
+                          {n.time}
+                        </span>
                       </div>
                     ))}
-                    {notifications.length === 0 && <p className="text-gray-500 text-sm">No new notifications</p>}
+                    {notifications.length === 0 && (
+                      <p className="text-gray-500 text-sm">
+                        No new notifications
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
             )}
-
-            {/* DARK MODE */}
-            <Button variant="ghost" size="icon" onClick={toggleDark}>
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </Button>
 
             {/* CREDIT */}
             {isAuth && (
@@ -224,11 +232,12 @@ export default function Navbar() {
                 >
                   <BsCoin className="text-yellow-500" size={16} />
 
-
-                  <span className="text-xs sm:text-sm md:text-base font-semibold">
-                    {user?.credits || 0}
+                  <span
+                    key={credits}
+                    className="text-xs sm:text-sm md:text-base font-semibold"
+                  >
+                    {isLoading ? "..." : credits}
                   </span>
-
                 </button>
 
                 {showCreditPopup && (
@@ -262,7 +271,6 @@ export default function Navbar() {
 
           {/* MOBILE: AVATAR ONLY */}
 
-
           {/* USER */}
           {isAuth ? (
             <DropdownMenu>
@@ -273,11 +281,16 @@ export default function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-80 min-w-72 md:w-96">
+              <DropdownMenuContent
+                align="end"
+                className="w-80 min-w-72 md:w-96"
+              >
                 {/* User Header */}
                 <div className="p-4 pb-2 border-b">
                   <div className="font-bold text-lg">{user?.fullName}</div>
-                  <div className="text-sm text-gray-500">Level {user?.level}</div>
+                  <div className="text-sm text-gray-500">
+                    Level {user?.level}
+                  </div>
                 </div>
 
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
@@ -295,9 +308,14 @@ export default function Navbar() {
                 </DropdownMenuLabel>
                 <div className="px-2 py-1 max-h-48 overflow-y-auto">
                   {notifications.map((n, i) => (
-                    <div key={i} className="py-1.5 px-2 text-xs hover:bg-gray-50 rounded-md cursor-default mb-1 last:mb-0 border-b border-b-gray-100 last:border-b-0">
+                    <div
+                      key={i}
+                      className="py-1.5 px-2 text-xs hover:bg-gray-50 rounded-md cursor-default mb-1 last:mb-0 border-b border-b-gray-100 last:border-b-0"
+                    >
                       <p className="font-medium">{n.message}</p>
-                      <span className="text-xs text-gray-500 block">{n.time}</span>
+                      <span className="text-xs text-gray-500 block">
+                        {n.time}
+                      </span>
                     </div>
                   ))}
                   {notifications.length === 0 && (
@@ -314,9 +332,11 @@ export default function Navbar() {
                   <>
                     <DropdownMenuLabel className="p-2 flex items-center gap-2">
                       <BsCoin className="text-yellow-500 h-4 w-4" />
-                      <span className="font-semibold">{user?.credits || 0} Credits</span>
+                      <span className="font-semibold">
+                        {user?.credits || 0} Credits
+                      </span>
                     </DropdownMenuLabel>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => navigate("/pricing")}
                       className="focus:bg-orange-50 px-2 py-1.5"
                     >
@@ -327,23 +347,9 @@ export default function Navbar() {
 
                 <DropdownMenuSeparator />
 
-                {/* Dark Mode Toggle */}
-                <DropdownMenuItem className="flex items-center justify-between p-2 cursor-pointer">
-                  <span>Dark Mode</span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={toggleDark}
-                    className="h-7 w-7 p-0"
-                  >
-                    {dark ? <Sun size={16} /> : <Moon size={16} />}
-                  </Button>
-                </DropdownMenuItem>
-
                 <DropdownMenuSeparator />
 
                 {user?.role === "admin" && (
-
                   <DropdownMenuItem
                     onClick={() => navigate("/admin/dashboard")}
                   >
@@ -357,7 +363,6 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-
             <div className="hidden md:flex gap-2">
               <Link to="/login">
                 <Button variant="outline">Login</Button>
@@ -381,7 +386,7 @@ export default function Navbar() {
             <button
               key={item.label}
               onClick={() => navigate(item.path)}
-              className={`flex items-center gap-2 p-2 rounded-lg mb-2 ${
+              className={`flex items-center gap-2 p-1.5 rounded-lg mb-2 cursor-pointer hover:bg-blue-100 ${
                 isActive ? "bg-blue-100 text-blue-600" : "text-gray-600"
               }`}
             >
@@ -448,7 +453,6 @@ export default function Navbar() {
               </button>
             ))}
           </div>
-          
         </>
       )}
     </>

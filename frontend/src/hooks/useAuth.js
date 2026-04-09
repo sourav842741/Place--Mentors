@@ -5,6 +5,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../utils/firebase";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 
 
@@ -33,22 +34,28 @@ const useAuth = () => {
 };
 
   // ================= GET CURRENT USER =================
- const getCurrentUser = async () => {
+const getCurrentUser = useCallback(async () => {
   try {
     dispatch(setLoading(true));
 
     const res = await api.get("/api/auth/me", {
-      withCredentials: true, 
+      withCredentials: true,
     });
 
-    dispatch(setUserData(res.data.data));
+    // 🔥 SAFE DATA EXTRACTION
+    const userData = res.data?.data || res.data;
 
-  } catch {
+    console.log("UPDATED USER:", userData); // debug
+
+    dispatch(setUserData(userData));
+
+  } catch (err) {
+    console.error(err);
     dispatch(logoutUser());
   } finally {
     dispatch(setLoading(false));
   }
-};
+}, [dispatch]);
 
   // ================= SIGNUP SEND OTP =================
   const sendSignupOtp = async (data) => {

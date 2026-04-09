@@ -2,9 +2,15 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateNotes } from "../redux/notesSlice";
 import { generatePDFAPI } from "../services/notes.api";
+import { updateCredits } from "../redux/userSlice";
+import { toast } from "sonner";
+import useAuth from "../hooks/useAuth";
+
 
 function NotesForm() {
   const dispatch = useDispatch();
+
+  const { getCurrentUser } = useAuth();
 
   const { singleNote, loading } = useSelector((state) => state.notes);
 
@@ -17,10 +23,41 @@ function NotesForm() {
     includeChart: false,
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(generateNotes(form));
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const res = await dispatch(generateNotes(form));
+
+  console.log("API RESPONSE 👉", res.payload);
+
+  // ❌ ERROR HANDLE
+  if (res?.error) {
+    let message = "Something went wrong";
+
+    if (typeof res.payload === "string") {
+      message = res.payload;
+    } else if (res.payload?.message) {
+      message = res.payload.message;
+    } else if (res.payload?.error) {
+      message = res.payload.error;
+    }
+
+    toast.error(message);
+    return;
+  }
+
+  // 🔥 FINAL FIX (IMPORTANT LINE)
+  const credits =
+    res?.payload?.creditsLeft ||   // ✅ THIS IS YOUR REAL FIELD
+    res?.payload?.credits ||
+    res?.payload?.data?.credits;
+
+  if (credits !== undefined) {
+    dispatch(updateCredits(credits)); // 💥 INSTANT NAVBAR UPDATE
+  } else {
+    await getCurrentUser(); // fallback
+  }
+};
 
   // ✅ PDF Download Function
   const handleDownload = async () => {

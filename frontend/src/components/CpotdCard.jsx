@@ -5,21 +5,20 @@ import { useNavigate } from "react-router-dom";
 export default function CpotdCard({ solved = false, onClick }) {
   return (
     <Card 
-      className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer bg-gradient-to-br from-orange-500/10 via-red-500/10 to-orange-600/20 border-0 hover:scale-[1.02] hover:-translate-y-2 active:scale-[0.98]"
+className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:border-black/50 transition-all duration-200 cursor-pointer hover:scale-[1.005]"
       onClick={onClick}
     >
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500/80 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
       
       {/* Content */}
       <CardContent className="relative p-8 pb-12">
         <div className="flex items-center gap-4 mb-4">
-          <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg">
-            <Code className="w-8 h-8 text-white" />
+          <div className="p-3 bg-gray-100 rounded-2xl shadow-sm">
+            <Code className="w-8 h-8 text-gray-900" />
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-white drop-shadow-lg">Coding POTD</h3>
-            <p className="text-white/80 text-lg">Daily DSA Challenge</p>
+            <h3 className="text-2xl font-bold text-gray-900">Coding POTD</h3>
+            <p className="text-gray-500 text-lg font-medium">Daily DSA Challenge</p>
           </div>
         </div>
         
@@ -29,8 +28,8 @@ export default function CpotdCard({ solved = false, onClick }) {
 
         {/* Solved Badge */}
         {solved && (
-          <div className="absolute top-4 right-4 p-3 bg-green-500/20 backdrop-blur-sm rounded-2xl border border-green-400/50 shadow-lg">
-            <CheckCircle className="w-6 h-6 text-green-400" />
+          <div className="absolute top-4 right-4 p-3 bg-green-100 border border-green-200 rounded-full shadow-sm">
+            <CheckCircle className="w-6 h-6 text-green-700" />
           </div>
         )}
 
@@ -39,7 +38,7 @@ export default function CpotdCard({ solved = false, onClick }) {
           <span className="text-3xl">
             💻
           </span>
-          <div className="flex items-center gap-2 text-white font-semibold bg-black/20 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/30 hover:bg-black/30 transition-all">
+          <div className="flex items-center gap-2 text-white font-semibold bg-black backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/30 hover:bg-black/30 transition-all">
             {solved ? (
               <>
                 ✅ Completed

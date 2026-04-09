@@ -60,7 +60,7 @@ const CompanySearch = ({ onSearch, showAIBtn, onAIGenerate }) => {
       {showAIBtn && !company && (
         <Button 
           onClick={onAIGenerate}
-          className="w-full mt-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+          className="w-full mt-2 bg-black text-white hover:bg-gray-800 rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md transition-all"
         >
           <Brain className="h-4 w-4 mr-2" />
           Generate with AI

@@ -48,7 +48,7 @@ export default function Leaderboard() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 pt-16 md:pl-64 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-100 pt-16 md:pl-64 px-4 sm:px-6 lg:px-8 lg:ml-64">
         <div className="max-w-6xl mx-auto">
         
           {/* Header Section - Responsive */}
@@ -89,11 +89,23 @@ export default function Leaderboard() {
                       : "md:order-3"
                   }`}
                 >
-                  {i === 0 && (
-                    <span className="mb-2 px-3 py-1 bg-blue-500 text-white text-xs sm:text-sm rounded-full shadow-md">
-                      🏆 CHAMPION
-                    </span>
-                  )}
+                 {i === 0 && (
+  <span className="mb-2 px-3 py-1 bg-yellow-500 text-white text-xs sm:text-sm rounded-full shadow-md">
+    🏆 CHAMPION
+  </span>
+)}
+
+{i === 1 && (
+  <span className="mb-2 px-3 py-1 bg-gray-400 text-white text-xs sm:text-sm rounded-full shadow-md">
+    ⚡ RUNNER-UP
+  </span>
+)}
+
+{i === 2 && (
+  <span className="mb-2 px-3 py-1 bg-orange-500 text-white text-xs sm:text-sm rounded-full shadow-md">
+    🔥 RISING STAR
+  </span>
+)}
 
                   <img
                     src={
@@ -117,7 +129,7 @@ export default function Leaderboard() {
                   </p>
 
                   <div className="flex gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-gray-600 mt-2">
-                    <span>{user.accuracy}%</span>
+                   <span>{Number(user.accuracy?.toFixed(2) || 0)}%</span>
                     <span className="flex items-center">
                       🔥 {user.streak}
                     </span>

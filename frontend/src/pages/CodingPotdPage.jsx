@@ -35,6 +35,9 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar.jsx";
 
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+
 const CodingPotdPage = () => {
   const dispatch = useDispatch();
   const {
@@ -58,6 +61,9 @@ const CodingPotdPage = () => {
   const [customInput, setCustomInput] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
+const { getCurrentUser } = useAuth();
 
   // ✅ fetch only once
   useEffect(() => {
@@ -99,22 +105,26 @@ const CodingPotdPage = () => {
       );
     }
   };
+const handleSubmit = async () => {
+  if (isSubmitting) return;
 
-  const handleSubmit = async () => {
-    if (isSubmitting) return;
+  setIsSubmitting(true);
 
-    setIsSubmitting(true);
+  const res = await dispatch(
+    submitCpotdCode({
+      questionIndex: currentQuestionIndex,
+      language,
+      code,
+    })
+  );
 
-    await dispatch(
-      submitCpotdCode({
-        questionIndex: currentQuestionIndex,
-        language,
-        code,
-      }),
-    );
+  if (res?.payload) {
+    await getCurrentUser();      
+        
+  }
 
-    setIsSubmitting(false);
-  };
+  setIsSubmitting(false);
+};
 
   useEffect(() => {
     console.log("EXEC RESULT:", execResult);
@@ -377,7 +387,7 @@ const CodingPotdPage = () => {
                       </TabsContent>
                       <TabsContent value="submit" className="mt-4">
                         <div className="space-y-4">
-                          <p className="text-sm text-gray-300">
+                          <p className="text-sm text-gray-700">
                             Ready to submit your solution?
                           </p>
                           <Button

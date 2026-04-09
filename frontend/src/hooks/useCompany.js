@@ -1,6 +1,6 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchCompany,clearCompany,fetchCompanies } from '../redux/companySlice';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCompany, clearCompany, fetchCompanies } from '../redux/companySlice';
 import useAuth from './useAuth';
 import { toast } from 'sonner';
 
@@ -10,25 +10,55 @@ const useCompany = () => {
   const companyState = useSelector((state) => state.company);
   const { getCurrentUser } = useAuth();
 
- const getCompany = async (name) => {
-  if (!name?.trim()) {
-    toast.error('Enter a company name');
-    return;
+  const getCompany = async (name) => {
+    if (!name?.trim()) {
+      toast.error('Enter a company name');
+      return null;
+    }
+
+    if (!user?._id) {
+      toast.error('Please login first');
+      await getCurrentUser();
+      return null;
+    }
+
+    dispatch(clearCompany());
+
+    try {
+      const res = await dispatch(
+        fetchCompany({ name: name.trim(), userId: user._id })
+      );
+
+      // 🔥 ERROR HANDLE
+    if (res?.error) {
+  let message = "Something went wrong";
+
+  if (typeof res.payload === "string") {
+    message = res.payload;
+  } else if (res.payload?.message) {
+    message = res.payload.message;
+  } else if (res.payload?.error) {
+    message = res.payload.error;
+  } else if (res.error?.message) {
+    message = res.error.message;
   }
 
-  if (!user?._id) {
-    toast.error('Please login first');
-    getCurrentUser();
-    return;
-  }
+  toast.error(message);
+  return null;
+}
 
-  dispatch(clearCompany()); // 🔥 FIX
+      // 🔥 SUCCESS RETURN
+      const data = res.payload;
 
-  await dispatch(fetchCompany({ name: name.trim(), userId: user._id }));
-  dispatch(fetchCompanies());
-};
+      dispatch(fetchCompanies());
 
-  
+      return data;
+
+    } catch (err) {
+      toast.error(err?.message || "Failed to fetch company");
+      return null;
+    }
+  };
 
   return {
     company: companyState.company,

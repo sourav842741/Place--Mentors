@@ -119,11 +119,16 @@ if (percentage >= 0.3) {
 const isAccepted = percentage === 1;
 
   const user = await User.findById(userId);
-  if (user) {
+  if (user && isAccepted) {
+    // 🔥 MARK CPOTD COMPLETED
+    const today = new Date().toISOString().split('T')[0];
+    user.codingPotdCompleted = true;
+    user.lastCodingPotdDate = today;
+    
     console.log(`📊 CPOTD XP attempt: +${xpEarned}`);
     addXP(user, xpEarned, "cpotd");
     await user.save();
-    console.log(`✅ CPOTD XP saved for ${user.email}`);
+    console.log(`✅ CPOTD completed & XP saved for ${user.email}`);
   }
 
   return res.status(200).json({

@@ -169,8 +169,14 @@ export const submitPotd = asyncHandler(async (req, res) => {
 
   // Update user
   const user = await User.findById(req.user._id);
+  
+  // 🔥 MARK POTD COMPLETED
+  const todayDate = new Date().toISOString().split('T')[0];
+  user.potdCompleted = true;
+  user.lastPotdDate = todayDate;
+  
   console.log(`📊 POTD XP attempt: +${xpEarned}`);
- addXP(user, xpEarned, "potd");
+  addXP(user, xpEarned, "potd");
   console.log(`💾 Saving POTD user...`);
   user.dailyStats = user.dailyStats || [];
 
@@ -190,7 +196,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   }
 
   await user.save();
-  console.log(`✅ POTD XP saved for ${user.email}`);
+  console.log(`✅ POTD completed & XP saved for ${user.email}`);
 
   return res.status(200).json({
     success: true,

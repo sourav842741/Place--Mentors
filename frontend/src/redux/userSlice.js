@@ -11,8 +11,8 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserData: (state, action) => {
-      state.user = action.payload;
-      state.isAuth = true;
+      state.user = action.payload || null;
+      state.isAuth = !!action.payload;
       state.loading = false;
     },
 
@@ -23,10 +23,21 @@ const userSlice = createSlice({
     },
 
     setLoading: (state, action) => {
-      state.loading = action.payload;
+      if (typeof action.payload === "boolean") {
+        state.loading = action.payload;
+      }
     },
+
+    updateCredits: (state, action) => {
+  if (state.user) {
+    state.user = {
+      ...state.user,
+      credits: action.payload,
+    };
+  }
+},
   },
 });
 
-export const { setUserData, logoutUser, setLoading } = userSlice.actions;
+export const { setUserData, logoutUser, setLoading, updateCredits} = userSlice.actions;
 export default userSlice.reducer;
