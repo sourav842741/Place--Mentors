@@ -1,18 +1,12 @@
-# XP/Level System Fix - Progress Tracker
+# DoubtChatPage Responsiveness Improvements
+- [x] 1. Create TODO.md ✅
+- [x] 2. Update main grid layout: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 + responsive padding/gaps
+- [x] 3. Header: Add flex-wrap, responsive padding
+- [x] 4. Ask Box: Responsive padding, button py-4 md:py-6, text-base md:text-lg 
+- [x] 5. Doubt Cards: Responsive padding, break-words on text
+- [x] 6. Replies Section: flex-col md:flex-row, gap responsive
+- [x] 7. Reply Input: flex-col sm:flex-row
+- [x] 8. Sidebar: Add order-first on mobile (order-2 lg:order-1), responsive padding
+- [x] 9. General: break-words everywhere needed, test no overflow
+- [x] 10. Mark complete and attempt_completion
 
-## ✅ Phase 1: Centralize XP Updates
-- [ ] 1. Enhance xpManager.js logs
-- [ ] 2. Fix cpotd.controller.js (submitCpotd)
-- [ ] 3. Fix potd.controller.js (submitPotd)  
-- [ ] 4. Fix planner.controller.js (completeTask)
-- [ ] 5. Fix auth.controllers.js (remove direct xp=10)
-
-## 🔍 Phase 2: Verification 
-- [ ] 6. Test CPOTD submission → check console 🔥 addXP CALLED
-- [ ] 7. Test POTD submission → verify level calc
-- [ ] 8. Test Planner task complete → XP + logs
-- [ ] 9. Test signup → single 10 XP only
-- [ ] 10. Check DB: xp↑, level↑, currentLevelXP/nextLevelXP correct
-
-## 📊 Current Progress: 0/10
-**Bug Fix Summary**: Replaced 4 direct `user.xp +=` → `addXP()` ✓ Level calc working ✓ Logs everywhere

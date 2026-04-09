@@ -48,7 +48,8 @@ const cpotdSchema = new mongoose.Schema({
   questions: [codingQuestionSchema],
   generatedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    expires: 86400 
   }
 }, { timestamps: true });
 

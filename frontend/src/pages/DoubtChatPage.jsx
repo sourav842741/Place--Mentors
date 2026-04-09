@@ -53,12 +53,10 @@ export default function DoubtChatPage() {
   useEffect(() => {
     if (!user?._id) return;
 
-    // 🔥 ensure connection
     if (!socket.connected) {
       socket.connect();
     }
 
-    // 🔥 JOIN ROOM (FIXED)
     const joinRoom = () => {
       console.log("🔥 JOIN ROOM:", user._id, "Socket:", socket.id);
       socket.emit("join", user._id);
@@ -67,7 +65,6 @@ export default function DoubtChatPage() {
     joinRoom();
     socket.on("connect", joinRoom);
 
-    // 🔥 HANDLERS
     const handleNewReply = ({ doubtId }) => {
       if (openId === doubtId) {
         fetchReplies(doubtId);
@@ -84,7 +81,6 @@ export default function DoubtChatPage() {
       setOnlineUsers(count);
     };
 
-    // 🔥 LISTENERS
     socket.on("new_reply", handleNewReply);
     socket.on("notification", handleNotification);
     socket.on("online_users", handleOnlineUsers);
@@ -93,7 +89,6 @@ export default function DoubtChatPage() {
     socket.on("connect", () => console.log("🟢 Connected"));
     socket.on("disconnect", () => console.log("🔴 Disconnected"));
 
-    // 🔥 CLEANUP
     return () => {
       socket.off("connect", joinRoom);
       socket.off("new_reply", handleNewReply);
@@ -149,7 +144,7 @@ export default function DoubtChatPage() {
     if (!question.trim()) return;
 
     try {
-      setLoading(true); // 🔥 start loader
+      setLoading(true);
 
       const res = await askDoubtApi(question);
       setDoubts([res.data, ...doubts]);
@@ -158,7 +153,7 @@ export default function DoubtChatPage() {
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
-      setLoading(false); // 🔥 stop loader
+      setLoading(false);
     }
   };
 
@@ -187,12 +182,10 @@ export default function DoubtChatPage() {
     }
   };
 
-  // 🔥 TRENDING POSTS (top upvotes)
   const trending = [...doubts]
     .sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0))
     .slice(0, 3);
 
-  // 🏷️ DYNAMIC TOPICS
   const topics = Array.from(
     new Set(
       doubts.flatMap(
@@ -208,72 +201,66 @@ export default function DoubtChatPage() {
 
   const handleBellClick = () => {
     if (showNotif) {
-      // 🔥 already open → clear & close
       setNotifications([]);
       setShowNotif(false);
     } else {
-      // 🔥 closed → open
       setShowNotif(true);
     }
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
       <Navbar />
-      <div className="bg-gray-100 min-h-screen lg:ml-64 mt-16">
-        {/* 🔵 HEADER */}
-        <div className="bg-blue-200 text-black p-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">Community</h1>
-
-          <div className="flex items-center gap-4">
-            {/* ONLINE USERS */}
-            <span className="text-sm">🟢 {onlineUsers} online</span>
-
-            {/* 🔔 NOTIFICATION */}
-            <div className="relative">
-              {/* <button onClick={handleBellClick}>
-                <Bell />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-1 rounded-full">
-                    {notifications.length}
-                  </span>
+      <div className="lg:ml-64 mt-16 px-3 sm:px-4 md:px-6">
+        {/* Header */}
+        <div className="bg-white border-b shadow-sm mb-6 p-4 md:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              Community
+            </h1>
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <span className="text-sm text-gray-600">
+                🟢 {onlineUsers} online
+              </span>
+              <div className="relative">
+                {showNotif && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-4 z-50 max-h-64 overflow-y-auto">
+                    {notifications.map((n, i) => (
+                      <div
+                        key={i}
+                        className="border-b py-3 text-sm last:border-b-0"
+                      >
+                        <p className="font-medium text-gray-900">{n.message}</p>
+                        <span className="text-xs text-gray-500">{n.time}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
-              </button> */}
-
-              {showNotif && (
-                <div className="absolute right-0 mt-2 w-72 bg-white text-black shadow-lg rounded-lg p-3 z-50">
-                  {notifications.map((n, i) => (
-                    <div key={i} className="border-b py-2 text-sm">
-                      <p>{n.message}</p>
-                      <span className="text-xs text-gray-500">{n.time}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* MAIN */}
-        <div className="grid lg:grid-cols-3 gap-6 p-6">
-          {/* LEFT */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* ASK BOX */}
-            <div className="bg-white p-6 rounded-2xl shadow-lg border">
+        {/* Main Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+          {/* Main Content Area */}
+          <div className="lg:col-span-2 order-1 lg:order-2 space-y-4">
+            {/* Ask Doubt Box */}
+            <div className="bg-white border rounded-2xl shadow-sm p-4 md:p-6">
               <Textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask your programming doubt or interview question..."
-                className="w-full resize-none mb-4 min-h-[100px]"
+                className="w-full resize-none mb-4 min-h-[100px] border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <Button
                 onClick={handleAsk}
-                disabled={loading} // 🔥 disable button
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-6 text-lg rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 text-sm md:text-base rounded-xl shadow-md transition-all h-12 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
-                    <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                    <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                     Asking...
                   </>
                 ) : (
@@ -282,73 +269,93 @@ export default function DoubtChatPage() {
               </Button>
             </div>
 
-            {/* DOUBTS */}
+            {/* Doubts List */}
             {doubts.map((d) => (
-              <div key={d._id} className="bg-white p-4 rounded-xl shadow">
+              <div
+                key={d._id}
+                className="bg-white border rounded-xl shadow-sm overflow-hidden"
+              >
                 <div
+                  className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => toggleOpen(d._id)}
-                  className="cursor-pointer"
                 >
-                  <h3 className="font-semibold line-clamp-2" title={d.question}>
+                  <h3
+                    className="font-semibold text-gray-900 line-clamp-2 break-words mb-2"
+                    title={d.question}
+                  >
                     {d.question}
                   </h3>
-
-                  <p className="text-xs text-gray-500 flex gap-2 mt-1">
-                    <MessageCircle size={14} />
-                    {repliesMap[d._id]?.length || 0}
-                  </p>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <MessageCircle size={16} />
+                    {repliesMap[d._id]?.length || 0} replies
+                  </div>
                 </div>
 
                 {openId === d._id && (
-                  <div className="mt-3 space-y-3">
-                    {/* AI */}
-                    <div className="bg-green-100 p-3 rounded text-sm">
-  <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
-</div>
+                  <div className="border-t p-4 md:p-6 space-y-4">
+                    {/* AI Answer */}
+                    <div className="bg-green-50 border rounded-lg p-4">
+                      <div className="prose prose-sm max-w-none">
+                        <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
+                      </div>
+                    </div>
 
-                    {/* REPLIES */}
-                    {repliesMap[d._id]?.map((r) => (
-                      <div
-                        key={r._id}
-                        className="flex justify-between items-center bg-gray-50 p-2 rounded"
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                            {r.user?.avatar ? (
-                              <img
-                                src={r.user.avatar}
-                                alt="avatar"
-                                className="w-full h-full object-cover rounded-full"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white rounded-full">
-                                <span>
-                                  {(r.user?.fullName || "U")
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")
-                                    .toUpperCase()}
-                                </span>
+                    {/* Replies */}
+                    <div className="space-y-3">
+                      {repliesMap[d._id]?.map((r) => (
+                        <div
+                          key={r._id}
+                          className="bg-gray-50 hover:bg-gray-100 border rounded-lg p-3 md:p-4 transition-colors"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div className="flex items-start gap-3 min-w-0 flex-1">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
+                                {r.user?.avatar ? (
+                                  <img
+                                    src={r.user.avatar}
+                                    alt="avatar"
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
+                                    {(r.user?.fullName || "U")
+                                      .split(" ")
+                                      .map((n) => n[0])
+                                      .join("")
+                                      .toUpperCase()}
+                                  </div>
+                                )}
                               </div>
-                            )}
+                              <div className="min-w-0 flex-1">
+                                <p className="font-medium text-sm text-gray-900 break-words">
+                                  {r.user?.fullName}
+                                </p>
+                                <p className="text-sm text-gray-700 break-words mt-1 leading-relaxed">
+                                  {r.answer}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleUpvote(r._id, d._id)}
+                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors whitespace-nowrap flex-shrink-0"
+                            >
+                              <ThumbsUp size={16} />
+                              {r.upvotesCount || r.upvotes?.length || 0}
+                            </button>
                           </div>
-                          <p className="text-sm">
-                            <b>{r.user?.fullName}</b> {r.answer}
+                        </div>
+                      )) || (
+                        <div className="text-center py-12 text-gray-500">
+                          <MessageCircle className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                          <p className="text-sm font-medium">
+                            Be the first to reply!
                           </p>
                         </div>
+                      )}
+                    </div>
 
-                        <button
-                          onClick={() => handleUpvote(r._id, d._id)}
-                          className="text-blue-600 flex gap-1 text-xs"
-                        >
-                          <ThumbsUp size={14} />
-                          {r.upvotesCount || r.upvotes?.length || 0}
-                        </button>
-                      </div>
-                    ))}
-
-                    {/* INPUT */}
-                    <div className="flex gap-2 mt-4 p-3 bg-gray-50 rounded-xl">
+                    {/* Reply Input */}
+                    <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
                       <Input
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
@@ -358,7 +365,7 @@ export default function DoubtChatPage() {
                       <Button
                         onClick={() => handleReply(d._id)}
                         size="icon"
-                        className="h-12 w-12 bg-gradient-to-r from-gray-800 to-black hover:from-gray-900 hover:to-gray-900 shadow-lg border-0"
+                        className="h-12 w-12 bg-gray-800 hover:bg-gray-900 text-white shadow-md border-0 flex-shrink-0"
                       >
                         <Send className="h-4 w-4" />
                       </Button>
@@ -369,29 +376,40 @@ export default function DoubtChatPage() {
             ))}
           </div>
 
-          {/* RIGHT SIDEBAR */}
-          <div className="space-y-4">
-            {/* TRENDING */}
-            <div className="bg-white p-4 rounded-xl shadow">
-              <h2 className="font-semibold mb-2">🔥 Trending</h2>
-
-              {trending.map((t) => (
-                <p key={t._id} className="text-sm mb-2">
-                  {t.question}
+          {/* Sidebar */}
+          <div className="order-2 lg:order-2 space-y-4 w-full lg:w-auto">
+            {/* Trending */}
+            <div className="bg-white border rounded-xl shadow-sm p-3 md:p-4 sticky top-6">
+              <h2 className="font-semibold text-gray-900 mb-3 text-lg">
+                🔥 Trending
+              </h2>
+              {trending.length > 0 ? (
+                trending.map((t) => (
+                  <p
+                    key={t._id}
+                    className="text-sm text-gray-700 mb-2 line-clamp-2 break-words hover:text-blue-600 cursor-pointer p-2 -m-2 rounded-lg transition-colors"
+                  >
+                    {t.question}
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 italic">
+                  No trending doubts yet
                 </p>
-              ))}
+              )}
             </div>
 
-            {/* POPULAR TOPICS */}
-            <div className="bg-white p-4 rounded-xl shadow">
-              <h2 className="font-semibold mb-2">Topics</h2>
-
+            {/* Topics */}
+            <div className="bg-white border rounded-xl shadow-sm p-3 md:p-4">
+              <h2 className="font-semibold text-gray-900 mb-3 text-lg">
+                Topics
+              </h2>
               <div className="flex flex-wrap gap-2">
                 {topics.map((topic) => (
                   <Badge
                     key={topic}
                     variant="secondary"
-                    className="text-xs px-3 py-1"
+                    className="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs px-2.5 py-1.5 cursor-pointer transition-colors"
                   >
                     {topic}
                   </Badge>
@@ -402,6 +420,6 @@ export default function DoubtChatPage() {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

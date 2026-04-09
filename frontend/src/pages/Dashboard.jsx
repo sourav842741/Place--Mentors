@@ -24,6 +24,9 @@ import {
 import api from "../services/api";
 import Footer from "@/components/Footer";
 import SuccessStories from "@/components/SuccessStories";
+import PotdCard from "@/components/PotdCard";
+import CpotdCard from "@/components/CpotdCard";
+
 
 
 export default function Dashboard() {
@@ -344,6 +347,18 @@ const companies = [
                   →
                 </span>
               </div>
+            </div>
+
+            {/* 🔥 POTD SECTION */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CpotdCard 
+                solved={false} 
+                onClick={() => navigate("/coding-potd")}
+              />
+              <PotdCard 
+                solved={false} 
+                onClick={() => navigate("/potd")}
+              />
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow">

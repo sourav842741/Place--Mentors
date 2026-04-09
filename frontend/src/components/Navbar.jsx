@@ -32,7 +32,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+
 import { Badge } from "@/components/ui/badge";
 
 
@@ -172,105 +175,175 @@ export default function Navbar() {
 
         {/* RIGHT */}
         <div className="flex items-center gap-3">
-          {/* 🔔 NOTIFICATION BELL */}
-          {isAuth && (
-            <div className="relative">
-              <Button variant="ghost" size="icon" className="relative" onClick={() => setShowNotif(!showNotif)}>
-                <Bell size={20} />
-                {notifications.length > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs font-bold bg-red-500 border-2 border-white">
-                    {notifications.length}
-                  </Badge>
+          {/* DESKTOP-ONLY ELEMENTS */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* 🔔 NOTIFICATION BELL */}
+            {isAuth && (
+              <div className="relative">
+                <Button variant="ghost" size="icon" className="relative" onClick={() => setShowNotif(!showNotif)}>
+                  <Bell size={20} />
+                  {notifications.length > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs font-bold bg-red-500 border-2 border-white">
+                      {notifications.length}
+                    </Badge>
+                  )}
+                </Button>
+                {showNotif && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto">
+                    <h3 className="font-semibold mb-2 pb-2 border-b">Notifications</h3>
+                    {notifications.map((n, i) => (
+                      <div key={i} className="py-2 border-b last:border-b-0 text-sm hover:bg-gray-50 p-2 rounded">
+                        <p>{n.message}</p>
+                        <span className="text-xs text-gray-500 block mt-1">{n.time}</span>
+                      </div>
+                    ))}
+                    {notifications.length === 0 && <p className="text-gray-500 text-sm">No new notifications</p>}
+                  </div>
                 )}
-              </Button>
-              {showNotif && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto">
-                  <h3 className="font-semibold mb-2 pb-2 border-b">Notifications</h3>
-                  {notifications.map((n, i) => (
-                    <div key={i} className="py-2 border-b last:border-b-0 text-sm hover:bg-gray-50 p-2 rounded">
-                      <p>{n.message}</p>
-                      <span className="text-xs text-gray-500 block mt-1">{n.time}</span>
-                    </div>
-                  ))}
-                  {notifications.length === 0 && <p className="text-gray-500 text-sm">No new notifications</p>}
-                </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
 
-          {/* DARK MODE */}
-          <Button variant="ghost" size="icon" onClick={toggleDark}>
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </Button>
+            {/* DARK MODE */}
+            <Button variant="ghost" size="icon" onClick={toggleDark}>
+              {dark ? <Sun size={18} /> : <Moon size={18} />}
+            </Button>
 
-          {/* CREDIT */}
-          {isAuth && (
-            <div className="relative">
-              <button
-                onClick={() => setShowCreditPopup(!showCreditPopup)}
-                className="flex items-center gap-1 sm:gap-2 md:gap-3 
-    bg-gray-100 
-    px-2 sm:px-3 md:px-4 
-    py-1 sm:py-1.5 md:py-2 
-    rounded-full 
-    hover:bg-gray-200 
-    transition-all duration-200 
-    shadow-sm hover:shadow-md"
-              >
-                <BsCoin className="text-yellow-500" size={16} />
-
-
-                <span className="text-xs sm:text-sm md:text-base font-semibold">
-                  {user?.credits || 0}
-                </span>
-
-              </button>
-
-              {showCreditPopup && (
-                <div
-                  className="absolute right-0 mt-3 
-    w-48 sm:w-56 md:w-64 
-    bg-white shadow-xl border rounded-xl 
-    p-3 sm:p-4 md:p-5 
-    z-50 animate-in fade-in zoom-in-95"
+            {/* CREDIT */}
+            {isAuth && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowCreditPopup(!showCreditPopup)}
+                  className="flex items-center gap-1 sm:gap-2 md:gap-3 
+      bg-gray-100 
+      px-2 sm:px-3 md:px-4 
+      py-1 sm:py-1.5 md:py-2 
+      rounded-full 
+      hover:bg-gray-200 
+      transition-all duration-200 
+      shadow-sm hover:shadow-md"
                 >
-                  <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-3">
-                    Need more credits?
-                  </p>
+                  <BsCoin className="text-yellow-500" size={16} />
 
-                  <button
-                    onClick={() => navigate("/pricing")}
-                    className="w-full 
-        bg-black text-white 
-        py-2 md:py-2.5 
-        rounded-lg 
-        text-xs sm:text-sm md:text-base 
-        hover:bg-gray-800 transition"
+
+                  <span className="text-xs sm:text-sm md:text-base font-semibold">
+                    {user?.credits || 0}
+                  </span>
+
+                </button>
+
+                {showCreditPopup && (
+                  <div
+                    className="absolute right-0 mt-3 
+      w-48 sm:w-56 md:w-64 
+      bg-white shadow-xl border rounded-xl 
+      p-3 sm:p-4 md:p-5 
+      z-50 animate-in fade-in zoom-in-95"
                   >
-                    Buy Credits
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                    <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-3">
+                      Need more credits?
+                    </p>
+
+                    <button
+                      onClick={() => navigate("/pricing")}
+                      className="w-full 
+            bg-black text-white 
+            py-2 md:py-2.5 
+            rounded-lg 
+            text-xs sm:text-sm md:text-base 
+            hover:bg-gray-800 transition"
+                    >
+                      Buy Credits
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* MOBILE: AVATAR ONLY */}
+
 
           {/* USER */}
           {isAuth ? (
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger className="ml-auto md:ml-0">
                 <Avatar>
                   <AvatarImage src={user?.avatar} />
                   <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent>
-                <DropdownMenuItem>{user?.fullName}</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-80 min-w-72 md:w-96">
+                {/* User Header */}
+                <div className="p-4 pb-2 border-b">
+                  <div className="font-bold text-lg">{user?.fullName}</div>
+                  <div className="text-sm text-gray-500">Level {user?.level}</div>
+                </div>
+
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   Profile
                 </DropdownMenuItem>
 
+                {/* Notifications Section */}
+                <DropdownMenuLabel className="flex items-center justify-between p-2">
+                  <span>Notifications ({notifications.length})</span>
+                  {notifications.length > 0 && (
+                    <Badge className="h-4 w-4 p-0 text-xs font-bold bg-red-500 border-2 border-white">
+                      {notifications.length}
+                    </Badge>
+                  )}
+                </DropdownMenuLabel>
+                <div className="px-2 py-1 max-h-48 overflow-y-auto">
+                  {notifications.map((n, i) => (
+                    <div key={i} className="py-1.5 px-2 text-xs hover:bg-gray-50 rounded-md cursor-default mb-1 last:mb-0 border-b border-b-gray-100 last:border-b-0">
+                      <p className="font-medium">{n.message}</p>
+                      <span className="text-xs text-gray-500 block">{n.time}</span>
+                    </div>
+                  ))}
+                  {notifications.length === 0 && (
+                    <div className="py-2 px-2 text-xs text-gray-500 text-center cursor-default">
+                      No new notifications
+                    </div>
+                  )}
+                </div>
+
+                <DropdownMenuSeparator />
+
+                {/* Credits Section */}
+                {isAuth && (
+                  <>
+                    <DropdownMenuLabel className="p-2 flex items-center gap-2">
+                      <BsCoin className="text-yellow-500 h-4 w-4" />
+                      <span className="font-semibold">{user?.credits || 0} Credits</span>
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem 
+                      onClick={() => navigate("/pricing")}
+                      className="focus:bg-orange-50 px-2 py-1.5"
+                    >
+                      Buy More Credits
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                <DropdownMenuSeparator />
+
+                {/* Dark Mode Toggle */}
+                <DropdownMenuItem className="flex items-center justify-between p-2 cursor-pointer">
+                  <span>Dark Mode</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={toggleDark}
+                    className="h-7 w-7 p-0"
+                  >
+                    {dark ? <Sun size={16} /> : <Moon size={16} />}
+                  </Button>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
                 {user?.role === "admin" && (
+
                   <DropdownMenuItem
                     onClick={() => navigate("/admin/dashboard")}
                   >
@@ -284,6 +357,7 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
+
             <div className="hidden md:flex gap-2">
               <Link to="/login">
                 <Button variant="outline">Login</Button>

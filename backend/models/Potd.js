@@ -44,7 +44,8 @@ const potdSchema = new mongoose.Schema({
   questions: [questionSchema],
   generatedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    expires: 86400 
   }
 }, { timestamps: true });
 
