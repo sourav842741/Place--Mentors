@@ -32,6 +32,7 @@ import LandingPage from "./pages/LandingPage";
 import DoubtChatPage from "./pages/DoubtChatPage";
 import PotdPage from "./pages/PotdPage.jsx";
 import CodingPotdPage from "./pages/CodingPotdPage.jsx";
+import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -80,6 +81,7 @@ function App() {
           <Route path="/doubts" element={<DoubtChatPage />} />
           <Route path="/potd" element={<PotdPage />} />
           <Route path="/coding-potd" element={<CodingPotdPage />} />
+          <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
         </Route>
       </Routes>
     </>

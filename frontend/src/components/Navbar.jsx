@@ -16,6 +16,7 @@ import {
   Flame,
   Zap,
   Bell,
+  
   MessageSquare,
 } from "lucide-react";
 
@@ -43,11 +44,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { socket } from "../socket";
 
 export default function Navbar() {
-  const userState = useSelector((state) => state.user);
-
-  const user = userState.user;
-  const isAuth = userState.isAuth;
-  const credits = user?.credits ?? 0;
+const user = useSelector((state) => state.user.user);
+  const isAuth = useSelector((state) => state.user.isAuth);
+  const credits = useSelector((state) => state.user.user?.credits ?? 0);
+  const loading = useSelector((state) => state.user.loading);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -123,10 +123,12 @@ export default function Navbar() {
     { icon: Code, label: "Code Compiler", path: "/code-editor" },
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
     { icon: MessageSquare, label: "Community", path: "/doubts" },
+    { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
+    { icon: Zap, label: "YouTube Summary", path: "/youtube-summary" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
   ];
-  console.log("NAVBAR CREDITS:", user?.credits);
-  const isLoading = userState.loading;
+
+  const isLoading = loading;
   return (
     <>
       {/* NAVBAR */}
@@ -333,7 +335,7 @@ export default function Navbar() {
                     <DropdownMenuLabel className="p-2 flex items-center gap-2">
                       <BsCoin className="text-yellow-500 h-4 w-4" />
                       <span className="font-semibold">
-                        {user?.credits || 0} Credits
+                        {credits} Credits
                       </span>
                     </DropdownMenuLabel>
                     <DropdownMenuItem

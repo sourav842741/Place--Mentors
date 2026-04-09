@@ -1,9 +1,11 @@
 import express from "express";
-import { generateResumePDF } from "../controllers/ai.controller.js";
+import { generateResumePDF, generateAIContent, generateYoutubeSummary } from "../controllers/ai.controller.js";
 import isAuth from "../middlewares/isAuth.js";
 
 const router = express.Router();
 
 router.post("/generate-resume-pdf", isAuth, generateResumePDF);
+router.post("/generate-content", isAuth, generateAIContent);
+router.post("/youtube-summary", isAuth, generateYoutubeSummary);
 
 export default router;

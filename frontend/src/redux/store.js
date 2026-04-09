@@ -7,6 +7,7 @@ import potdSlice from "./potdSlice";
 import { notesApi } from "./notesSlice";
 import { compilerApi } from "./compilerSlice";
 import codingPotdSlice from "./codingPotdSlice";
+import youtubeSlice from "./youtubeSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -20,6 +21,7 @@ getDefaultMiddleware().concat(notesApi.middleware, compilerApi.middleware),
         codingPotd: codingPotdSlice,
         [notesApi.reducerPath]: notesApi.reducer,
         [compilerApi.reducerPath]: compilerApi.reducer,
+        youtube: youtubeSlice,
      }
 })
 

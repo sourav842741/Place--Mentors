@@ -109,10 +109,10 @@ export default function VerifyOtp() {
       {loading && <FullScreenLoader />}
 
       <AuthLayout>
-        <div className="w-full max-w-md mx-auto text-white space-y-6">
+       <div className="w-full max-w-md mx-auto text-gray-900 space-y-6">
 
           <h2 className="text-3xl font-bold">Verify Email</h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-white">
             Enter the 4-digit OTP sent to your email
           </p>
 
@@ -131,7 +131,7 @@ export default function VerifyOtp() {
                   handleChange(e.target.value, index)
                 }
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-14 h-14 text-center text-lg rounded-xl bg-zinc-900 border border-zinc-700 focus:border-orange-500 focus:outline-none transition"
+               className="w-14 h-14 text-center text-lg rounded-xl bg-white text-black border border-gray-300 focus:border-orange-500 focus:outline-none transition"
               />
             ))}
           </div>
