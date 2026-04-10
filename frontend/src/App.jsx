@@ -33,6 +33,7 @@ import DoubtChatPage from "./pages/DoubtChatPage";
 import PotdPage from "./pages/PotdPage.jsx";
 import CodingPotdPage from "./pages/CodingPotdPage.jsx";
 import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
+import InstallPopup from "./components/InstallPopup";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -43,6 +44,7 @@ function App() {
 
   return (
     <>
+      <InstallPopup />
       {/*  Toaster must be inside */}
       <Toaster position="top-right" richColors />
 
@@ -57,6 +59,7 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+      
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
