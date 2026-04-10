@@ -1,60 +1,69 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import Potd from "../models/Potd.js";
 import User from "../models/user.model.js";
-import { askAi, extractJSON } from "../services/openRouter.service.js";
 import { addXP } from "../utils/xpManager.js";
+import { getOrCreateTodayPotd, generateTodayPotd } from "../services/potd.service.js";
+
 
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
 // 🔥 AI Prompt
 const POTD_PROMPT = `
-Generate EXACTLY 15 MCQ questions for "Problem of the Day" in JSON format only.
+You are an expert aptitude test generator.
 
-Requirements:
-- 5 Aptitude, 5 Reasoning, 5 Verbal Ability
-- Mix difficulty: 5 easy, 5 medium, 5 hard
-- EACH question MUST have:
-  * question
-  * options (4)
-  * answer
-  * explanation
-  * category
-  * difficulty
+Generate EXACTLY 15 MCQ questions in STRICT JSON format.
 
-Return ONLY valid JSON.
+## Rules:
+- Total 15 questions
+- 5 aptitude, 5 reasoning, 5 verbal
+- Difficulty:
+  - 5 easy
+  - 5 medium
+  - 5 hard
+
+## VERY IMPORTANT:
+- Return ONLY valid JSON
+- No explanation outside JSON
+
+Each question MUST have:
+- question (string)
+- options (array of 4 strings)
+- answer (must exactly match one option)
+- explanation (short)
+- category (MUST be EXACTLY one of: "aptitude", "reasoning", "verbal")
+- difficulty (MUST be EXACTLY one of: "easy", "medium", "hard")
+
+## DO NOT USE:
+- "Aptitude"
+- "Verbal Ability"
+- "Reasoning Skills"
+- Any variation
+
+## Output format:
+{
+  "questions": [
+    {
+      "question": "string",
+      "options": ["A", "B", "C", "D"],
+      "answer": "A",
+      "explanation": "short explanation",
+      "category": "aptitude",
+      "difficulty": "easy"
+    }
+  ]
+}
+
+Ensure:
+- EXACTLY 15 questions
+- Each category appears exactly 5 times
+- Each difficulty appears exactly 5 times
+
+Now generate.
 `;
 
 
 // ================= GENERATE POTD =================
 export const generatePotd = asyncHandler(async (req, res) => {
-  const today = getTodayDate();
-
-  // Already exists
-  let potd = await Potd.findOne({ date: today });
-  if (potd) {
-    return res.status(200).json({
-      success: true,
-      message: "POTD already generated",
-      data: potd,
-    });
-  }
-
-  // AI Generate
-  const aiResponse = await askAi([{ role: "user", content: POTD_PROMPT }]);
-  const data = extractJSON(aiResponse);
-
-  if (!data.questions || data.questions.length !== 15) {
-    return res.status(500).json({
-      success: false,
-      message: "Invalid AI response",
-    });
-  }
-
-  // Save
-  potd = await Potd.create({
-    date: today,
-    questions: data.questions,
-  });
+  const potd = await generateTodayPotd();
 
   return res.status(201).json({
     success: true,
@@ -64,29 +73,10 @@ export const generatePotd = asyncHandler(async (req, res) => {
 });
 
 
+
 // ================= GET TODAY POTD =================
 export const getTodayPotd = asyncHandler(async (req, res) => {
-  const today = getTodayDate();
-
-  let potd = await Potd.findOne({ date: today });
-
-  // 🔥 Auto generate if not exists (SAFE WAY)
-  if (!potd) {
-    const aiResponse = await askAi([{ role: "user", content: POTD_PROMPT }]);
-    const data = extractJSON(aiResponse);
-
-    if (!data.questions || data.questions.length !== 15) {
-      return res.status(500).json({
-        success: false,
-        message: "Failed to auto-generate POTD",
-      });
-    }
-
-    potd = await Potd.create({
-      date: today,
-      questions: data.questions,
-    });
-  }
+  const potd = await getOrCreateTodayPotd();
 
   return res.status(200).json({
     success: true,
@@ -96,12 +86,16 @@ export const getTodayPotd = asyncHandler(async (req, res) => {
 });
 
 
+
 // ================= SUBMIT POTD =================
 export const submitPotd = asyncHandler(async (req, res) => {
   const { answers } = req.body;
   const today = getTodayDate();
 
-  const potd = await Potd.findOne({ date: today });
+  // ✅ safety log
+  console.log("📩 Answers:", answers);
+
+  const potd = await getOrCreateTodayPotd();
   if (!potd) {
     return res.status(404).json({
       success: false,
@@ -109,7 +103,8 @@ export const submitPotd = asyncHandler(async (req, res) => {
     });
   }
 
-  if (!Array.isArray(answers) || answers.length !== 15) {
+  // ✅ validation
+  if (!answers || !Array.isArray(answers) || answers.length !== 15) {
     return res.status(400).json({
       success: false,
       message: "Submit exactly 15 answers",
@@ -120,18 +115,40 @@ export const submitPotd = asyncHandler(async (req, res) => {
   let xpEarned = 0;
 
   const results = [];
+
+  // ✅ category stats safe
   const categoryStats = {
     aptitude: { correct: 0, total: 0 },
     reasoning: { correct: 0, total: 0 },
     verbal: { correct: 0, total: 0 },
   };
 
+  // ✅ normalize function
+  const normalizeCategory = (cat = "") => {
+    const c = cat.toLowerCase();
+
+    if (c.includes("aptitude")) return "aptitude";
+    if (c.includes("reasoning")) return "reasoning";
+    if (c.includes("verbal")) return "verbal";
+
+    return "aptitude"; // fallback
+  };
+
   potd.questions.forEach((q, index) => {
-    const userAnswer = answers[index]?.selected;
+    // ✅ flexible answer handling
+    const userAnswer =
+      typeof answers[index] === "object"
+        ? answers[index]?.selected
+        : answers[index];
+
     const isCorrect = userAnswer === q.answer;
 
+    const category = normalizeCategory(q.category);
+
+    // ✅ XP + score
     if (isCorrect) {
       score++;
+
       const xp =
         q.difficulty === "easy"
           ? 5
@@ -140,44 +157,61 @@ export const submitPotd = asyncHandler(async (req, res) => {
           : 20;
 
       xpEarned += xp;
+      categoryStats[category].correct++;
     }
 
-    categoryStats[q.category].total++;
-    if (isCorrect) categoryStats[q.category].correct++;
+    categoryStats[category].total++;
 
     results.push({
       question: q.question,
       userAnswer,
       correctAnswer: q.answer,
       isCorrect,
-      explanation: q.explanation,
+      explanation: q.explanation || "No explanation provided",
       difficulty: q.difficulty,
     });
   });
 
-  // Weak Area
+  // ✅ weak area calculation
   let weakArea = "aptitude";
   let lowestAccuracy = 1;
 
   Object.entries(categoryStats).forEach(([cat, stats]) => {
-    const acc = stats.correct / stats.total;
+    const acc = stats.total === 0 ? 1 : stats.correct / stats.total;
+
     if (acc < lowestAccuracy) {
       lowestAccuracy = acc;
       weakArea = cat;
     }
   });
 
-  // Update user
+  // ✅ user safety
+  if (!req.user?._id) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+
   const user = await User.findById(req.user._id);
-  
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
   // 🔥 MARK POTD COMPLETED
-  const todayDate = new Date().toISOString().split('T')[0];
+  const todayDate = new Date().toISOString().split("T")[0];
   user.potdCompleted = true;
   user.lastPotdDate = todayDate;
-  
+
   console.log(`📊 POTD XP attempt: +${xpEarned}`);
+
   addXP(user, xpEarned, "potd");
-  console.log(`💾 Saving POTD user...`);
+
+  // ✅ daily stats
   user.dailyStats = user.dailyStats || [];
 
   const todayStat = user.dailyStats.find((s) => s.date === today);
@@ -196,6 +230,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   }
 
   await user.save();
+
   console.log(`✅ POTD completed & XP saved for ${user.email}`);
 
   return res.status(200).json({

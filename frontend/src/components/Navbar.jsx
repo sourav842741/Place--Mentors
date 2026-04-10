@@ -17,7 +17,9 @@ import {
   Zap,
   Bell,
   
+  
   MessageSquare,
+  Brain,
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -124,7 +126,7 @@ const user = useSelector((state) => state.user.user);
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
     { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
-    { icon: Zap, label: "YouTube Summary", path: "/youtube-summary" },
+   { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
   ];
 

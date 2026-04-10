@@ -142,11 +142,27 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDb();
+    
+    // 🔥 Startup recovery for missed POTD/CPOTD
+    console.log("🆕 [STARTUP] Checking POTD/CPOTD recovery...");
+    try {
+      await import("./services/potd.service.js").then(({ getOrCreateTodayPotd }) => getOrCreateTodayPotd());
+      console.log("✅ [STARTUP] POTD recovered");
+    } catch (e) {
+      console.error("❌ [STARTUP] POTD recovery failed:", e.message);
+    }
+    try {
+      await import("./services/cpotd.service.js").then(({ getOrCreateTodayCpotd }) => getOrCreateTodayCpotd());
+      console.log("✅ [STARTUP] CPOTD recovered");
+    } catch (e) {
+      console.error("❌ [STARTUP] CPOTD recovery failed:", e.message);
+    }
+    
     cronJobs.startCronJobs();
 
     server.listen(port, () => {
       console.log(`Server running on port ${port}`);
-      console.log("🔄 Job cron scheduler started (runs every 8h)");
+      console.log("🔄 Self-healing cron started (10min cycles)");
     });
   } catch (error) {
     console.error("DB connection failed:", error.message);
@@ -155,3 +171,4 @@ const startServer = async () => {
 };
 
 startServer();
+

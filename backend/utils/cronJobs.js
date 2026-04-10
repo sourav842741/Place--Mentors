@@ -1,6 +1,8 @@
 import cron from "node-cron";
 import CronState from "../models/cronState.model.js";
 import { fetchAdzunaJobs, saveJobsToDb } from "../services/adzuna.service.js";
+import { getOrCreateTodayPotd } from "../services/potd.service.js";
+import { getOrCreateTodayCpotd } from "../services/cpotd.service.js";
 
 const KEYWORDS = [
   "developer",
@@ -13,9 +15,7 @@ const LOCATIONS = [
   "Remote",
 ];
 
-
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-
 
 const INTERVAL = 8 * 60 * 60 * 1000;
 
@@ -38,79 +38,69 @@ const fetchAndSaveForQuery = async (keyword, location) => {
   }
 };
 
-// 🔥 MAIN CRON LOGIC
+// 🔥 MAIN CRON LOGIC - Self-Healing for Jobs + POTD/CPOTD (runs every 10min)
 export const runFullCronCycle = async () => {
+  const today = new Date().toISOString().split("T")[0];
+  console.log(`\n⏰ [CRON] Self-healing cycle for ${today}`);
+  
   try {
+    // 🔥 1. Jobs (existing 8h logic)
     const now = new Date();
-
     let state = await CronState.findOne({ name: "adzuna-cron" });
 
-    // ❌ अगर 8 घंटे पूरे नहीं हुए → skip
-    if (state && now - state.lastRun < INTERVAL) {
-      console.log("⏳ Skipped (8 hours not completed)");
-      return;
-    }
+    if (state && now - new Date(state.lastRun) < INTERVAL) {
+      console.log("⏳ [CRON-JOBS] Skipped (8h not due)");
+    } else {
+      console.log("\n🚀 [CRON-JOBS] Running Adzuna...");
+      for (const keyword of KEYWORDS) {
+        for (const location of LOCATIONS) {
+          await fetchAndSaveForQuery(keyword, location);
+          await delay(3000);
+        }
+      }
+      console.log("🎉 [CRON-JOBS] Complete!");
 
-    console.log("\n🚀 Running Adzuna cron cycle...");
-
-    // 🔥 RUN JOB FETCH
-    for (const keyword of KEYWORDS) {
-      for (const location of LOCATIONS) {
-        await fetchAndSaveForQuery(keyword, location);
-        await delay(3000); // avoid rate limit
+      if (!state) {
+        await CronState.create({ name: "adzuna-cron", lastRun: now });
+      } else {
+        state.lastRun = now;
+        await state.save();
       }
     }
 
-    console.log("🎉 All jobs updated!");
-
-    // 🔥 update lastRun
-    if (!state) {
-      await CronState.create({
-        name: "adzuna-cron",
-        lastRun: now,
-      });
-    } else {
-      state.lastRun = now;
-      await state.save();
+    // 🔥 2. POTD daily self-healing
+    try {
+      console.log("🔄 [CRON-POTD] Check...");
+      await getOrCreateTodayPotd();
+      console.log(`✅ [CRON-POTD] OK`);
+    } catch (e) {
+      console.error(`❌ [CRON-POTD] Error:`, e.message);
     }
 
+    // 🔥 3. CPOTD daily self-healing
+    try {
+      console.log("🔄 [CRON-CPOTD] Check...");
+      await getOrCreateTodayCpotd();
+      console.log(`✅ [CRON-CPOTD] OK`);
+    } catch (e) {
+      console.error(`❌ [CRON-CPOTD] Error:`, e.message);
+    }
+
+    console.log(`✅ [CRON] All systems healthy for ${today}`);
+
   } catch (error) {
-    console.error("❌ Cron failed:", error.message);
+    console.error("❌ [CRON] Cycle failed:", error.message);
   }
 };
 
-// 🔥 START CRON
-import { generatePotd } from "../controllers/potd.controller.js";
-
+// 🔥 START CRON - Only 10min smart cron (no more daily hacks)
 export const startCronJobs = () => {
   cron.schedule("*/10 * * * *", async () => {
-    console.log("⏰ Checking cron...");
     await runFullCronCycle();
   });
 
-  // 🔥 POTD Daily Cron - midnight
-  cron.schedule("0 0 * * *", async () => {
-    console.log("🌅 Generating daily POTD...");
-    try {
-      await generatePotd({ user: { _id: "cron" } }, { json: () => {}, status: () => ({}) }, () => {});
-      console.log("✅ POTD generated");
-    } catch (error) {
-      console.error("❌ POTD cron failed:", error.message);
-    }
-  });
-
-  console.log("✅ Smart cron started (checks every 10 minutes + POTD/CPOTD daily)");
-
-  // 🔥 CPOTD Daily Cron - midnight (same time as POTD)
-  cron.schedule("5 0 * * *", async () => {
-    console.log("🌅 Generating daily CPOTD...");
-    try {
-      await generateCpotd({ user: { _id: "cron" } }, { json: () => {}, status: () => ({}) }, () => {});
-      console.log("✅ CPOTD generated");
-    } catch (error) {
-      console.error("❌ CPOTD cron failed:", error.message);
-    }
-  });
+  console.log("✅ [CRON] Self-healing started (10min cycles: jobs/POTD/CPOTD)");
 };
 
 export default { startCronJobs };
+

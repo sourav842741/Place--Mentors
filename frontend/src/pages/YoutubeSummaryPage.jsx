@@ -13,7 +13,19 @@ import {
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { toast } from "sonner";
-import { Copy, Loader2, Maximize2, Minimize2, Play, Clock, MapPin, Star, Languages, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Copy,
+  Loader2,
+  Maximize2,
+  Minimize2,
+  Play,
+  Clock,
+  MapPin,
+  Star,
+  Languages,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { FaPlayCircle, FaVideo, FaStar } from "react-icons/fa";
 
 const YoutubeSummaryPage = () => {
@@ -33,38 +45,68 @@ const YoutubeSummaryPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, data, creditsLeft, error } = useSelector((state) => state.youtube);
+  const { loading, data, creditsLeft, error, apiResponse } = useSelector(
+    (state) => state.youtube,
+  );
   const userCredits = useSelector((state) => state.user.user?.credits) || 0;
+
+  // 🐛 DEBUG LOGS - Remove after fix
+  useEffect(() => {
+    console.log("🎥 COMPONENT RERENDER - data:", data);
+    console.log("🎥 Full youtube state:", {
+      loading,
+      data,
+      creditsLeft,
+      error,
+      apiResponse,
+    });
+    if (data) {
+      console.log("🎥 SUMMARY:", data.summary);
+      console.log("🎥 ENGLISH:", data.summary?.english);
+    }
+  }, [data, loading, creditsLeft, error, apiResponse]);
 
   // Reusable video ID extractor
   const extractVideoId = useCallback((urlStr) => {
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
+    const regex =
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
     const match = urlStr.match(regex);
     return match ? match[1] : null;
   }, []);
 
   // Fetch metadata (client-side preview)
-  const fetchMeta = useCallback(async (videoId) => {
-    setIsFetchingMeta(true);
-    setMetaError("");
-    try {
-      const response = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
-      if (!response.ok) throw new Error("API error");
-      const data = await response.json();
-      setVideoTitle(data.title || "Untitled Video");
-      const thumb = data.thumbnail_url || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-      setThumbnail(thumb);
-      setDuration(data.duration ? new Date(data.duration * 1000).toISOString().substr(14, 5) : "--:--");
-      setIsValidUrl(true);
-    } catch (err) {
-      setThumbnail(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`);
-      setVideoTitle("Video Preview");
-      setDuration("--:--");
-      setIsValidUrl(true);
-    } finally {
-      setIsFetchingMeta(false);
-    }
-  }, [url]);
+  const fetchMeta = useCallback(
+    async (videoId) => {
+      setIsFetchingMeta(true);
+      setMetaError("");
+      try {
+        const response = await fetch(
+          `https://noembed.com/embed?url=${encodeURIComponent(url)}`,
+        );
+        if (!response.ok) throw new Error("API error");
+        const data = await response.json();
+        setVideoTitle(data.title || "Untitled Video");
+        const thumb =
+          data.thumbnail_url ||
+          `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+        setThumbnail(thumb);
+        setDuration(
+          data.duration
+            ? new Date(data.duration * 1000).toISOString().substr(14, 5)
+            : "--:--",
+        );
+        setIsValidUrl(true);
+      } catch (err) {
+        setThumbnail(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`);
+        setVideoTitle("Video Preview");
+        setDuration("--:--");
+        setIsValidUrl(true);
+      } finally {
+        setIsFetchingMeta(false);
+      }
+    },
+    [url],
+  );
 
   // Debounced URL effect
   useEffect(() => {
@@ -107,7 +149,9 @@ const YoutubeSummaryPage = () => {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const pastedText = (e.clipboardData || window.clipboardData).getData("text");
+    const pastedText = (e.clipboardData || window.clipboardData).getData(
+      "text",
+    );
     const videoId = extractVideoId(pastedText.trim());
     if (videoId) {
       setUrl(pastedText.trim());
@@ -131,10 +175,12 @@ const YoutubeSummaryPage = () => {
   };
 
   const copySummary = () => {
-    const currentSummary = data?.summary?.[currentLang];
-    if (currentSummary) {
+    const currentSummary = data?.summary?.[currentLang] || "";
+    if (currentSummary.trim()) {
       navigator.clipboard.writeText(currentSummary);
       toast.success("Summary copied!");
+    } else {
+      toast.warning("No summary content to copy");
     }
   };
 
@@ -144,7 +190,15 @@ const YoutubeSummaryPage = () => {
   };
 
   if (data) {
-    const { title, thumbnail, duration, videoId, summary, timestamps, highlights } = data;
+    const {
+      title,
+      thumbnail,
+      duration,
+      videoId,
+      summary,
+      timestamps,
+      highlights,
+    } = data;
     const currentSummary = summary?.[currentLang] || "";
 
     return (
@@ -165,9 +219,14 @@ const YoutubeSummaryPage = () => {
               </div>
               <div className="p-8 space-y-4">
                 <div className="flex items-start justify-between">
-                  <h2 className="text-2xl md:text-3xl font-bold line-clamp-2 pr-8">{title}</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold line-clamp-2 pr-8">
+                    {title}
+                  </h2>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       <Clock className="w-3 h-3" />
                       {duration}
                     </Badge>
@@ -176,8 +235,8 @@ const YoutubeSummaryPage = () => {
                     </Badge>
                   </div>
                 </div>
-                <img 
-                  src={thumbnail} 
+                <img
+                  src={thumbnail}
                   alt="Thumbnail"
                   className="w-24 h-16 object-cover rounded-lg border shadow-md absolute -mt-20 ml-6"
                 />
@@ -188,23 +247,24 @@ const YoutubeSummaryPage = () => {
           {/* 🌐 LANGUAGE TOGGLE */}
           <div className="max-w-4xl mx-auto flex justify-center">
             <div className="inline-flex bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border">
-              <Button
-                variant={currentLang === "english" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentLang("english")}
-                className="gap-2 font-medium"
-              >
-                <Languages className="w-4 h-4" />
-                English 🇬🇧
-              </Button>
-              <Button
-                variant={currentLang === "hindi" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentLang("hindi")}
-                className="gap-2 font-medium"
-              >
-                हिंदी 🇮🇳
-              </Button>
+             <Button
+  variant={currentLang === "english" ? "default" : "ghost"}
+  size="sm"
+  onClick={() => setCurrentLang("english")}
+  className="gap-2 font-medium"
+>
+  <Languages className="w-4 h-4" />
+  English 🇬🇧
+</Button>
+
+<Button
+  variant={currentLang === "hinglish" ? "default" : "ghost"}
+  size="sm"
+  onClick={() => setCurrentLang("hinglish")}
+  className="gap-2 font-medium"
+>
+  Hinglish 🇮🇳
+</Button>
             </div>
           </div>
 
@@ -217,21 +277,37 @@ const YoutubeSummaryPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className={`prose prose-lg max-w-none ${expanded ? "max-h-none" : "max-h-96 overflow-hidden"}`}>
+              <div
+                className={`prose prose-lg max-w-none ${expanded ? "max-h-none" : "max-h-96 overflow-hidden"}`}
+              >
                 <div
                   className="leading-relaxed"
                   dangerouslySetInnerHTML={{
-                    __html: currentSummary.replace(/\n/g, "<br>")
+                    __html: currentSummary.replace(/\n/g, "<br>"),
                   }}
                 />
               </div>
               <div className="pt-6 border-t bg-gradient-to-r from-purple-50 to-pink-50 rounded-b-xl flex flex-wrap items-center gap-3 p-4">
-                <Button variant="outline" size="sm" onClick={copySummary} className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={copySummary}
+                  className="flex items-center gap-2"
+                >
                   <Copy className="w-4 h-4" />
                   Copy {currentLang.toUpperCase()}
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setExpanded(!expanded)} className="flex items-center gap-1">
-                  {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setExpanded(!expanded)}
+                  className="flex items-center gap-1"
+                >
+                  {expanded ? (
+                    <Minimize2 className="w-4 h-4" />
+                  ) : (
+                    <Maximize2 className="w-4 h-4" />
+                  )}
                   {expanded ? "Show Less" : "Show More"}
                 </Button>
                 <div className="ml-auto flex items-center gap-2 text-sm text-gray-600">
@@ -254,16 +330,19 @@ const YoutubeSummaryPage = () => {
               <CardContent>
                 <div className="grid gap-2 max-h-64 overflow-y-auto">
                   {timestamps.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group">
+                    <div
+                      key={idx}
+                      className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group"
+                    >
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center font-mono text-white font-bold text-sm">
                         {item.time}
                       </div>
                       <div className="flex-1 group-hover:text-blue-700">
                         {item.label}
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         className="p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() => copySection(item.label, "Timestamp")}
                       >
@@ -288,7 +367,10 @@ const YoutubeSummaryPage = () => {
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-3">
                   {highlights.map((highlight, idx) => (
-                    <div key={idx} className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-lg border hover:border-orange-200 transition-all hover:-translate-y-1 cursor-pointer">
+                    <div
+                      key={idx}
+                      className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-lg border hover:border-orange-200 transition-all hover:-translate-y-1 cursor-pointer"
+                    >
                       <div className="flex items-start gap-3">
                         <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center font-bold text-white text-sm mt-0.5">
                           {idx + 1}
@@ -297,9 +379,9 @@ const YoutubeSummaryPage = () => {
                           {highlight}
                         </div>
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         className="ml-auto mt-2 opacity-0 group-hover:opacity-100 p-1"
                         onClick={() => copySection(highlight, "Highlight")}
                       >
@@ -317,7 +399,9 @@ const YoutubeSummaryPage = () => {
             <CardContent className="p-8 space-y-4">
               <FaVideo className="w-16 h-16 text-emerald-600 mx-auto" />
               <h3 className="text-2xl font-bold text-gray-800">New Video?</h3>
-              <p className="text-gray-600">Paste another YouTube link for instant PRO summary</p>
+              <p className="text-gray-600">
+                Paste another YouTube link for instant PRO summary
+              </p>
               <div className="flex gap-3">
                 <Button
                   variant="outline"
@@ -331,7 +415,9 @@ const YoutubeSummaryPage = () => {
                   Clear All
                 </Button>
                 <Button
-                  onClick={() => inputRef.current?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() =>
+                    inputRef.current?.scrollIntoView({ behavior: "smooth" })
+                  }
                   className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
                 >
                   New Summary
@@ -358,12 +444,16 @@ const YoutubeSummaryPage = () => {
             </h1>
           </div>
           <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
-            Instant AI summaries in English + Hindi with timestamps & highlights (1 credit)
+            Instant AI summaries in English + Hindi with timestamps & highlights
+            (1 credit)
           </p>
         </div>
 
         {/* Input Section */}
-        <Card ref={inputRef} className="max-w-2xl mx-auto mb-8 shadow-2xl border-0 bg-white/70 backdrop-blur-sm">
+        <Card
+          ref={inputRef}
+          className="max-w-2xl mx-auto mb-8 shadow-2xl border-0 bg-white/70 backdrop-blur-sm"
+        >
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-3 text-2xl">
               <FaPlayCircle className="w-8 h-8 text-red-500" />
@@ -412,7 +502,10 @@ const YoutubeSummaryPage = () => {
               {userCredits < 1 && (
                 <p className="text-sm text-orange-600 text-center p-3 bg-orange-50 rounded-lg">
                   💰 No credits left.{" "}
-                  <button onClick={() => navigate("/pricing")} className="font-semibold underline">
+                  <button
+                    onClick={() => navigate("/pricing")}
+                    className="font-semibold underline"
+                  >
                     Buy Credits
                   </button>
                 </p>
@@ -436,8 +529,8 @@ const YoutubeSummaryPage = () => {
               <Card className="max-w-4xl mx-auto mb-8 shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardContent className="p-0 overflow-hidden rounded-xl">
                   <div className="relative">
-                    <img 
-                      src={thumbnail} 
+                    <img
+                      src={thumbnail}
                       alt="Preview"
                       className="w-full h-64 md:h-80 object-cover transition-transform hover:scale-105 duration-300"
                     />
@@ -463,7 +556,9 @@ const YoutubeSummaryPage = () => {
                 <CardContent className="p-6 text-red-800 text-center">
                   <FaVideo className="w-12 h-12 mx-auto mb-4 text-red-400" />
                   <h3 className="font-bold text-lg mb-2">Invalid URL</h3>
-                  <p className="text-sm mb-4">Use: youtube.com/watch?v=ID or youtu.be/ID</p>
+                  <p className="text-sm mb-4">
+                    Use: youtube.com/watch?v=ID or youtu.be/ID
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -474,7 +569,11 @@ const YoutubeSummaryPage = () => {
           <Card className="max-w-2xl mx-auto bg-red-50 border-red-200">
             <CardContent className="p-6 text-red-800">
               <p className="font-medium">{error}</p>
-              <Button onClick={() => dispatch(clearSummary())} variant="outline" className="mt-3">
+              <Button
+                onClick={() => dispatch(clearSummary())}
+                variant="outline"
+                className="mt-3"
+              >
                 Try Again
               </Button>
             </CardContent>
@@ -486,4 +585,3 @@ const YoutubeSummaryPage = () => {
 };
 
 export default YoutubeSummaryPage;
-

@@ -233,8 +233,12 @@ const companies = [
   const calculateWeeklyChange = () => {
     if (!weeklyData || weeklyData.length === 0) return 0;
 
-    const currentAvg =
-      weeklyData.reduce((sum, d) => sum + d.avgScore, 0) / weeklyData.length;
+  const currentAvg = Number(
+  (
+    weeklyData.reduce((sum, d) => sum + Number(d.avgScore), 0) /
+    weeklyData.length
+  ).toFixed(2)
+);
 
     const previousAvg =
       weeklyData
@@ -394,7 +398,7 @@ const companies = [
                     <YAxis yAxisId="left" domain={[0, 10]} />
                     <YAxis yAxisId="right" orientation="right" />
 
-                    <Tooltip />
+                  <Tooltip formatter={(value) => Number(value).toFixed(2)} />
 
                     {/*  AVG SCORE */}
                     <Line

@@ -5,7 +5,7 @@ import { fetchPotd, submitPotd, selectAnswer, resetPotd } from "../redux/potdSli
 import { Button } from "../components/ui/button.jsx";
 import { Card, CardContent, CardHeader } from "../components/ui/card.jsx";
 import { Badge } from "../components/ui/badge.jsx";
-import { Loader2, Target, AlertCircle } from "lucide-react";
+import { Loader2, Target, AlertCircle, XCircle, CheckCircle } from "lucide-react";
 import useAuth from "../hooks/useAuth.js";
 import Navbar from "@/components/Navbar.jsx";
 
@@ -181,7 +181,77 @@ const PotdPage = () => {
                 <p className="text-green-600 font-semibold">XP Earned: {result.xpEarned}</p>
                 <p className="text-sm text-gray-500 mt-2">Weak Area: {result.weakArea}</p>
               </Card>
-            </>
+
+              {/* Detailed Results */}
+              <Card className="max-w-4xl mx-auto">
+                <CardHeader>
+                  <h3 className="text-xl font-bold flex items-center gap-2">
+                    📋 Detailed Results
+                  </h3>
+                </CardHeader>
+                <CardContent className="space-y-4 p-6">
+                  {result.results?.map((r, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`p-6 rounded-2xl border-2 shadow-sm transition-all ${
+                        r.isCorrect 
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-green-200' 
+                          : 'bg-gradient-to-r from-red-50 to-pink-50 border-red-200 shadow-red-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-4 pb-4 border-b">
+                        <span className="text-2xl font-bold">Q{idx + 1}</span>
+                        {r.isCorrect ? (
+                          <CheckCircle className="h-8 w-8 text-green-600" />
+                        ) : (
+                          <XCircle className="h-8 w-8 text-red-600" />
+                        )}
+                        <Badge className={`${
+                          r.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                        }`}>
+                          {r.isCorrect ? 'Correct' : 'Wrong'}
+                        </Badge>
+                        <Badge variant="outline" className="ml-auto">
+                          {r.difficulty}
+                        </Badge>
+                      </div>
+
+                      <div className="space-y-3">
+                        <p className="text-gray-800 font-medium leading-relaxed">{r.question}</p>
+                        
+                        <div className="grid md:grid-cols-2 gap-4 p-4 bg-white/50 rounded-xl backdrop-blur-sm">
+                          <div>
+                            <strong className="text-sm font-semibold block mb-2 text-gray-700">Your Answer:</strong>
+                            <span className={`px-4 py-2 rounded-full text-sm font-bold border-2 ${
+                              r.isCorrect 
+                                ? 'bg-green-100 text-green-900 border-green-300' 
+                                : 'bg-red-100 text-red-900 border-red-300'
+                            }`}>
+                              {r.userAnswer || 'Not answered'}
+                            </span>
+                          </div>
+                          <div>
+                            <strong className="text-sm font-semibold block mb-2 text-gray-700">Correct Answer:</strong>
+                            <span className="px-4 py-2 rounded-full text-sm font-bold bg-blue-100 text-blue-900 border-2 border-blue-300">
+                              {r.correctAnswer}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="pt-4">
+                          <strong className="text-sm font-semibold block mb-3 text-gray-700">Explanation:</strong>
+                          <div className="bg-white p-5 rounded-xl border-l-4 border-indigo-500 shadow-inner">
+                            <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">
+                              {r.explanation}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </> 
           )}
         </div>
       </div>

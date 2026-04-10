@@ -1,41 +1,13 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import CodingPotd from "../models/CodingPotd.js";
 import User from "../models/user.model.js";
-import { askAi, extractJSON } from "../services/openRouter.service.js";
 import { addXP } from "../utils/xpManager.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import axios from "axios";
+import { getOrCreateTodayCpotd, generateTodayCpotd } from "../services/cpotd.service.js";
+
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
-const CPOTD_PROMPT = `YOUR SAME PROMPT HERE`;
-
-// ======================
-// ✅ SERVICE FUNCTION
-// ======================
-const generateCpotdService = async () => {
-  const today = getTodayDate();
-
-  let cpotd = await CodingPotd.findOne({ date: today });
-  if (cpotd) return cpotd;
-
-  const aiResponse = await askAi([
-    { role: "user", content: CPOTD_PROMPT },
-  ]);
-
-  const data = extractJSON(aiResponse);
-
-  if (!data.questions || data.questions.length !== 2) {
-    throw new Error("Expected exactly 2 coding problems");
-  }
-
-  cpotd = await CodingPotd.create({
-    date: today,
-    questions: data.questions,
-  });
-
-  return cpotd;
-};
 
 // ======================
 // ✅ CONTROLLERS
@@ -43,33 +15,35 @@ const generateCpotdService = async () => {
 
 // 🔥 Generate CPOTD (manual trigger)
 export const generateCpotd = asyncHandler(async (req, res) => {
-  const cpotd = await generateCpotdService();
+  const cpotd = await generateTodayCpotd();
 
   return res
     .status(201)
     .json(new ApiResponse(201, cpotd, "CPOTD generated"));
 });
 
+
 // 🔥 Get Today CPOTD (auto generate if not exists)
 export const getTodayCpotd = asyncHandler(async (req, res) => {
-  const cpotd = await generateCpotdService();
+  const cpotd = await getOrCreateTodayCpotd();
 
   return res.status(200).json(new ApiResponse(200, cpotd));
 });
+
 
 // 🔥 Submit CPOTD
 export const submitCpotd = asyncHandler(async (req, res) => {
   const { questionIndex, language, code } = req.body;
   const userId = req.user._id;
 
-  const today = getTodayDate();
-  const cpotd = await CodingPotd.findOne({ date: today });
+  const cpotd = await getOrCreateTodayCpotd();
 
   if (!cpotd || !cpotd.questions[questionIndex]) {
     return res.status(400).json({
       message: "Invalid CPOTD question",
     });
   }
+
 
   const question = cpotd.questions[questionIndex];
 

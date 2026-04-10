@@ -63,7 +63,7 @@ const CodingPotdPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
-const { getCurrentUser } = useAuth();
+  const { getCurrentUser } = useAuth();
 
   // ✅ fetch only once
   useEffect(() => {
@@ -105,26 +105,25 @@ const { getCurrentUser } = useAuth();
       );
     }
   };
-const handleSubmit = async () => {
-  if (isSubmitting) return;
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  const res = await dispatch(
-    submitCpotdCode({
-      questionIndex: currentQuestionIndex,
-      language,
-      code,
-    })
-  );
+    const res = await dispatch(
+      submitCpotdCode({
+        questionIndex: currentQuestionIndex,
+        language,
+        code,
+      }),
+    );
 
-  if (res?.payload) {
-    await getCurrentUser();      
-        
-  }
+    if (res?.payload) {
+      await getCurrentUser();
+    }
 
-  setIsSubmitting(false);
-};
+    setIsSubmitting(false);
+  };
 
   useEffect(() => {
     console.log("EXEC RESULT:", execResult);
@@ -258,44 +257,43 @@ const handleSubmit = async () => {
                   </div>
                 </CardContent>
               </Card>
-             <div className="flex gap-3">
+              <div className="flex gap-3">
+                {/* 🔙 BACK BUTTON */}
+                {currentQuestionIndex > 0 && (
+                  <Button
+                    onClick={() => {
+                      dispatch(setCurrentQuestion(currentQuestionIndex - 1));
+                      dispatch(clearSubmission());
+                    }}
+                    className="flex-1"
+                    variant="outline"
+                  >
+                    ← Previous Question
+                  </Button>
+                )}
 
-  {/* 🔙 BACK BUTTON */}
-  {currentQuestionIndex > 0 && (
-    <Button
-      onClick={() => {
-        dispatch(setCurrentQuestion(currentQuestionIndex - 1));
-        dispatch(clearSubmission());
-      }}
-      className="flex-1"
-      variant="outline"
-    >
-      ← Previous Question
-    </Button>
-  )}
+                {/* TRY AGAIN */}
+                <Button
+                  onClick={() => dispatch(clearSubmission())}
+                  className="flex-1"
+                  variant="outline"
+                >
+                  Try Again
+                </Button>
 
-  {/* TRY AGAIN */}
-  <Button
-    onClick={() => dispatch(clearSubmission())}
-    className="flex-1"
-    variant="outline"
-  >
-    Try Again
-  </Button>
-
-  {/* NEXT BUTTON */}
-  {currentQuestionIndex + 1 < questions.length && (
-    <Button
-      onClick={() => {
-        dispatch(setCurrentQuestion(currentQuestionIndex + 1));
-        dispatch(clearSubmission());
-      }}
-      className="flex-1"
-    >
-      Next Question →
-    </Button>
-  )}
-</div>
+                {/* NEXT BUTTON */}
+                {currentQuestionIndex + 1 < questions.length && (
+                  <Button
+                    onClick={() => {
+                      dispatch(setCurrentQuestion(currentQuestionIndex + 1));
+                      dispatch(clearSubmission());
+                    }}
+                    className="flex-1"
+                  >
+                    Next Question →
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -345,22 +343,24 @@ const handleSubmit = async () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
                             <h4 className="font-semibold mb-2">Input Format</h4>
-                            <pre className="bg-black/20 p-3 rounded text-xs">
+                            <pre className="bg-gray-300 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap break-words border">
                               {currentQuestion?.inputFormat}
                             </pre>
                           </div>
+
                           <div>
                             <h4 className="font-semibold mb-2">
                               Output Format
                             </h4>
-                            <pre className="bg-black/20 p-3 rounded text-xs">
+                            <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap break-words border">
                               {currentQuestion?.outputFormat}
                             </pre>
                           </div>
                         </div>
+
                         <div>
                           <h4 className="font-semibold mb-2">Constraints</h4>
-                          <pre className="bg-black/20 p-3 rounded text-xs">
+                          <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap break-words border">
                             {currentQuestion?.constraints}
                           </pre>
                         </div>
@@ -410,7 +410,7 @@ const handleSubmit = async () => {
               </div>
 
               {/* Right Panel - Editor (60%) */}
-              
+
               <div className="lg:col-span-7 space-y-6">
                 <div className="flex gap-4 items-center mb-4">
                   <select
@@ -447,7 +447,7 @@ const handleSubmit = async () => {
                 <Card className="border-0 bg-black/30 h-[500px]">
                   <CardContent className="h-full p-0 pt-2">
                     <Editor
-                     key={currentQuestionIndex}
+                      key={currentQuestionIndex}
                       height="100%"
                       theme="vs-dark"
                       language={language}
@@ -470,35 +470,37 @@ const handleSubmit = async () => {
                   </CardContent>
                 </Card>
                 <div className="flex gap-3 mt-4">
+                  {currentQuestionIndex > 0 && (
+                    <Button
+                      onClick={() =>
+                        dispatch(setCurrentQuestion(currentQuestionIndex - 1))
+                      }
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      ← Previous
+                    </Button>
+                  )}
 
-  {currentQuestionIndex > 0 && (
-    <Button
-      onClick={() => dispatch(setCurrentQuestion(currentQuestionIndex - 1))}
-      variant="outline"
-      className="flex-1"
-    >
-      ← Previous
-    </Button>
-  )}
+                  <Button
+                    onClick={handleRun}
+                    disabled={execLoading || isTimeUp}
+                    className="flex-1"
+                  >
+                    Run
+                  </Button>
 
-  <Button
-    onClick={handleRun}
-    disabled={execLoading || isTimeUp}
-    className="flex-1"
-  >
-    Run
-  </Button>
-
-  {currentQuestionIndex + 1 < questions.length && (
-    <Button
-      onClick={() => dispatch(setCurrentQuestion(currentQuestionIndex + 1))}
-      className="flex-1"
-    >
-      Next →
-    </Button>
-  )}
-
-</div>
+                  {currentQuestionIndex + 1 < questions.length && (
+                    <Button
+                      onClick={() =>
+                        dispatch(setCurrentQuestion(currentQuestionIndex + 1))
+                      }
+                      className="flex-1"
+                    >
+                      Next →
+                    </Button>
+                  )}
+                </div>
 
                 {!execLoading && (
                   <Card>

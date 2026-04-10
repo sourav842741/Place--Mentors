@@ -5,7 +5,7 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
-import { isValidYoutubeUrl, extractVideoId, fetchTranscript } from "../utils/youtubeHelper.js";
+import { isValidYoutubeUrl, extractVideoId, fetchTranscript, fetchTranscriptOrMetadata } from "../utils/youtubeHelper.js";
 
 
 // ================= HELPERS =================
@@ -122,49 +122,132 @@ export const generateYoutubeSummary = asyncHandler(async (req, res) => {
   }
 
   const videoInfo = contentResult.videoInfo;
-  console.log(`📹 Processing ${videoInfo.title} (${contentResult.source}, ${contentResult.text.length} chars)`);
 
-  // 🧠 PRO AI Prompt - Structured JSON Output
-  const messages = [
-    {
-      role: "system",
-      content: `You are a YouTube video summarizer. Analyze the transcript/metadata and return STRICT JSON only (no other text).
+  // 🧠 UPDATED PROMPT (HINGLISH + STRICT STRING)
+const messages = [
+  {
+    role: "system",
+    content: `
+You are a HIGH-INTELLIGENCE YouTube video summarizer.
 
-Required JSON format:
+Your goal is NOT just summarizing — but extracting deep understanding, insights, and structured knowledge.
+
+⚠️ OUTPUT RULE: RETURN STRICT JSON ONLY
+- No explanation
+- No markdown
+- No extra text
+- No trailing commas
+
+========================
+📦 REQUIRED FORMAT
+========================
 {
-  "english": "Bullet point summary in simple English (4-8 bullets, concise)",
-  "hindi": "Same summary translated to simple Hindi (4-8 bullets, conversational Hindi)",
+  "english": "• Point 1\\n• Point 2\\n• ... (MIN 10 points)",
+  "hinglish": "• Point 1 (Hinglish)\\n• Point 2\\n• ... (MIN 10 points)",
   "timestamps": [
-    {"time": "01:23", "label": "Introduction & overview"},
-    {"time": "05:45", "label": "Core concepts explained"}
+    {"time": "00:30", "label": "Intro"},
+    {"time": "02:15", "label": "Core concept"},
+    {"time": "05:40", "label": "Deep explanation"},
+    {"time": "08:10", "label": "Example"},
+    {"time": "10:00", "label": "Conclusion"}
   ],
   "highlights": [
-    "Key takeaway #1",
-    "Most important point #2", 
-    "Actionable insight #3"
+    "Power insight 1",
+    "Critical takeaway 2",
+    "Real-world tip 3",
+    "Hidden insight 4"
   ]
 }
 
-Rules:
-* English: Professional bullet points, 1-2 sentences each
-* Hindi: Natural conversational Hindi (use Devanagari script if possible)
-* Timestamps: 4-6 realistic timecodes (MM:SS format) with descriptive labels
-* Highlights: 3-5 most important points only
-* Use \\\\n for line breaks within bullets
-* Keep summaries focused on MAIN ideas & takeaways
-* If content is short, keep timestamps/highlights proportional`
-    },
-    {
-      role: "user",
-      content: `Video: ${videoInfo.title}
-Source: ${contentResult.source}
-Content: ${contentResult.text.substring(0, 25000)}`
-    }
-  ];
+========================
+🧠 DEEP THINKING RULES
+========================
+- Understand the FULL meaning of the video
+- Identify:
+  • main topic
+  • subtopics
+  • logic flow
+  • examples
+  • conclusions
+- Convert explanation into structured knowledge
+- Extract WHY + HOW, not just WHAT
+
+========================
+📝 SUMMARY RULES (VERY STRICT)
+========================
+- english MUST be ONE STRING
+- hinglish MUST be ONE STRING
+- MINIMUM 10 bullet points (STRICT)
+- MAXIMUM 15 bullet points
+- Each bullet:
+  • 10–18 words
+  • informative and meaningful
+  • NOT generic
+- Use "\\n" for line breaks
+- Use bullet symbol "• "
+
+========================
+🚀 DEPTH BOOST INSTRUCTIONS
+========================
+Each summary MUST include:
+- Concept explanation
+- Key logic behind concept
+- Example or application
+- Benefit or outcome
+- Any warning or mistake (if present)
+
+========================
+🗣️ HINGLISH RULE
+========================
+- Natural mix of Hindi + English
+- Casual tone
+- Example: "Yeh concept practical hai aur real-life me kaafi useful hota hai"
+- DO NOT use pure Hindi
+
+========================
+⏱️ TIMESTAMP RULES
+========================
+- Minimum 4, maximum 8 timestamps
+- Use mm:ss format
+- Labels must describe actual section meaning
+
+========================
+⭐ HIGHLIGHTS RULES
+========================
+- 4 to 6 powerful insights
+- Must be unique (not copy of summary)
+- Should feel like "important lessons"
+
+========================
+🚫 STRICTLY AVOID
+========================
+- Short or generic points
+- Repetition
+- Filling content just to reach count
+- Inventing info not in transcript
+
+========================
+🎯 FINAL GOAL
+========================
+Make the summary feel like:
+👉 A smart student took detailed notes
+👉 Easy to revise quickly
+👉 Valuable even without watching video
+`
+  },
+  {
+    role: "user",
+    content: `
+Video Title: ${videoInfo.title}
+
+Transcript:
+${contentResult.text.substring(0, 30000)}
+`
+  }
+];
 
   let aiResponse = await askAi(messages);
-  
-  // Fallback if JSON extraction fails
+
   let structuredSummary;
   try {
     structuredSummary = extractJSON(aiResponse) || {};
@@ -172,17 +255,17 @@ Content: ${contentResult.text.substring(0, 25000)}`
     structuredSummary = null;
   }
 
-  if (!structuredSummary || (!structuredSummary.english && !structuredSummary.hindi)) {
-    // Fallback: Generate basic summaries
-    const englishPrompt = `Summarize this YouTube content in 4-8 simple English bullet points:\n${contentResult.text.substring(0, 20000)}`;
-    const englishSummary = await askAi([{"role": "user", content: englishPrompt}]);
-    
-    const hindiPrompt = `Translate this summary to simple Hindi bullet points:\n${englishSummary}`;
-    const hindiSummary = await askAi([{"role": "user", content: hindiPrompt}]);
+  // 🔥 FALLBACK (also Hinglish)
+  if (!structuredSummary || !structuredSummary.english) {
+    const englishPrompt = `Summarize in 4-6 simple English bullet points:\n${contentResult.text.substring(0, 20000)}`;
+    const englishSummary = await askAi([{ role: "user", content: englishPrompt }]);
+
+    const hinglishPrompt = `Convert this into casual Hinglish bullet points (mix Hindi + English, not pure Hindi):\n${englishSummary}`;
+    const hinglishSummary = await askAi([{ role: "user", content: hinglishPrompt }]);
 
     structuredSummary = {
-      english: englishSummary?.trim() || "Summary generation failed. Video processed successfully.",
-      hindi: hindiSummary?.trim() || "सारांश निर्माण विफल। वीडियो सफलतापूर्वक संसाधित।",
+      english: englishSummary?.trim() || "Summary generated.",
+      hinglish: hinglishSummary?.trim() || "Summary generate ho gaya.",
       timestamps: [],
       highlights: []
     };
@@ -192,15 +275,15 @@ Content: ${contentResult.text.substring(0, 25000)}`
   user.credits -= 1;
   await user.save();
 
-  // PRO Response Format
+  // ✅ FINAL RESPONSE
   const responseData = {
     title: videoInfo.title,
     thumbnail: videoInfo.thumbnail,
     duration: videoInfo.duration,
     videoId,
     summary: {
-      english: structuredSummary.english || "",
-      hindi: structuredSummary.hindi || ""
+      english: String(structuredSummary.english || ""),
+      hinglish: String(structuredSummary.hinglish || "")
     },
     timestamps: structuredSummary.timestamps || [],
     highlights: structuredSummary.highlights || []
