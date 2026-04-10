@@ -16,8 +16,6 @@ import {
   Flame,
   Zap,
   Bell,
-  
-  
   MessageSquare,
   Brain,
 } from "lucide-react";
@@ -116,7 +114,6 @@ const user = useSelector((state) => state.user.user);
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
     { icon: Building2, label: "All Companies", path: "/companies" },
-
     { icon: BookOpen, label: "Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
@@ -379,55 +376,84 @@ const user = useSelector((state) => state.user.user);
         </div>
       </nav>
 
-      {/* DESKTOP SIDEBAR */}
-      <div className="hidden md:flex fixed top-0 left-0 w-64 h-screen bg-white border-r p-4 flex-col z-40">
-        <div className="text-xl font-bold mb-6">Place-Mentor</div>
+      {/* DESKTOP SIDEBAR - IMPROVED */}
+      <div className="hidden md:flex fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-background/80 backdrop-blur-lg border-r shadow-sm p-6 flex-col z-40 overflow-y-auto scrollbar-hide">
+      
 
-        {menuItems.map((item) => {
-          const isActive = location.pathname === item.path;
+        {/* MAIN Section */}
+        <div className="space-y-3 mb-8">
+          <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-1 mb-2 tracking-wider">Main</div>
+          {[menuItems[0], menuItems[1], menuItems[2], menuItems[3]].map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-100 hover:-translate-x-1 hover:shadow-md ${isActive 
+                  ? 'bg-blue-100 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]' 
+                  : 'text-foreground hover:text-blue-700'
+                }`}
+              >
+                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`} />
+                <span className="text-sm font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-          return (
-            <button
-              key={item.label}
-              onClick={() => navigate(item.path)}
-              className={`flex items-center gap-2 p-1.5 rounded-lg mb-2 cursor-pointer hover:bg-blue-100 ${
-                isActive ? "bg-blue-100 text-blue-600" : "text-gray-600"
-              }`}
-            >
-              <item.icon />
-              {item.label}
-            </button>
-          );
-        })}
+        {/* TOOLS Section */}
+        <div className="space-y-3">
+          <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-4 mb-2 tracking-wider">Tools</div>
+          {menuItems.slice(4).map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-50 hover:-translate-x-1 hover:shadow-md ${isActive 
+                  ? 'bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]' 
+                  : 'text-foreground hover:text-blue-700'
+                }`}
+              >
+                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`} />
+                <span className="text-sm font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Bottom */}
-        <div className="mt-auto">
-          <div className="bg-orange-100 p-3 rounded mb-4 flex gap-2 items-center">
-            <Flame className="text-orange-500" />
-            {user?.streakCount || 0} Days
+        {/* Bottom Section */}
+        <div className="mt-auto pt-8 space-y-4">
+          {/* Streak */}
+          <div className="p-3 rounded-xl bg-gradient-to-r from-orange-500/10 to-orange-400/10 border border-orange-200 flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200">
+            <Flame className="w-5 h-5 text-orange-500 flex-shrink-0" />
+            <div>
+              <span className="font-bold text-sm">{user?.streakCount || 0}</span>
+              <span className="text-sm text-muted-foreground ml-1">Day Streak</span>
+            </div>
           </div>
 
-          <div className="flex gap-3 items-center">
+          {/* User Card */}
+          <div className="p-3 rounded-xl bg-muted/50 backdrop-blur-sm flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200 border border-border/50">
             {user?.avatar && user.avatar !== "null" ? (
               <img
                 src={user.avatar}
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-10 h-10 rounded-xl object-cover ring-2 ring-muted/50"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-muted/50">
                 {getInitials(user?.fullName)}
               </div>
             )}
-
-            <div>
-              <div>{user?.fullName}</div>
-              <div className="text-sm text-gray-500">Level {user?.level}</div>
+            <div className="min-w-0 flex-1">
+              <div className="font-semibold text-sm truncate" title={user?.fullName}>{user?.fullName}</div>
+              <div className="text-xs text-muted-foreground">Level {user?.level}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR */}
+      {/* MOBILE SIDEBAR - UNCHANGED */}
       {mobileOpen && (
         <>
           <div

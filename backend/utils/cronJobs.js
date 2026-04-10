@@ -3,6 +3,7 @@ import CronState from "../models/cronState.model.js";
 import { fetchAdzunaJobs, saveJobsToDb } from "../services/adzuna.service.js";
 import { getOrCreateTodayPotd } from "../services/potd.service.js";
 import { getOrCreateTodayCpotd } from "../services/cpotd.service.js";
+import { fetchAndProcessNews } from "../services/news.service.js";
 
 const KEYWORDS = [
   "developer",
@@ -86,7 +87,27 @@ export const runFullCronCycle = async () => {
       console.error(`❌ [CRON-CPOTD] Error:`, e.message);
     }
 
-    console.log(`✅ [CRON] All systems healthy for ${today}`);
+    // 🔥 4. NEWS 4h cron
+    const NEWS_INTERVAL = 4* 60 * 60 * 1000; // 4 hours
+    let newsState = await CronState.findOne({ name: "news-cron" });
+
+    if (newsState && now - new Date(newsState.lastRun) < NEWS_INTERVAL) {
+      console.log("⏳ [CRON-NEWS] Skipped (4h not due)");
+    } else {
+      console.log("\n📰 [CRON-NEWS] Fetching + processing news...");
+      const newsCount = await fetchAndProcessNews();
+      console.log(`✅ [CRON-NEWS] Complete! (${newsCount} articles)`);
+
+      if (!newsState) {
+        await CronState.create({ name: "news-cron", lastRun: now });
+      } else {
+        newsState.lastRun = now;
+        await newsState.save();
+      }
+    }
+
+    console.log(`✅ [CRON] All systems healthy for ${today} (incl. NEWS)`);
+
 
   } catch (error) {
     console.error("❌ [CRON] Cycle failed:", error.message);

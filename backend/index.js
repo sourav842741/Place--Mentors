@@ -26,6 +26,7 @@ import companyRoutes from "./routes/company.routes.js";
 import doubtRouter from "./routes/doubt.routes.js";
 import cpotdRouter from "./routes/cpotd.routes.js";
 import potdRouter from "./routes/potd.routes.js";
+import newsRouter from "./routes/news.routes.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -81,6 +82,8 @@ app.use("/api/doubts", doubtRouter);
 app.use("/api/potd", potdRouter);
 
 app.use("/api/cpotd", cpotdRouter);
+
+app.use("/api/news", newsRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;

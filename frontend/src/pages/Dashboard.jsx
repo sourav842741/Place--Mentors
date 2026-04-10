@@ -1,4 +1,5 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Autoplay from "embla-carousel-autoplay";
 import * as React from "react";
@@ -14,7 +15,18 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Play, Briefcase, TrendingUp,Building2, Globe, Cpu, Code,ExternalLink,ArrowRight} from "lucide-react";
+import {
+  Play,
+  Briefcase,
+  TrendingUp,
+  Building2,
+  Globe,
+  Cpu,
+  Code,
+  ExternalLink,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -27,7 +39,9 @@ import SuccessStories from "@/components/SuccessStories";
 import PotdCard from "@/components/PotdCard";
 import CpotdCard from "@/components/CpotdCard";
 
-
+import { fetchNews, fetchNewsStats } from "../redux/newsSlice.js";
+import { Button } from "@/components/ui/button.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
@@ -37,134 +51,132 @@ export default function Dashboard() {
 
   const [weeklyData, setWeeklyData] = React.useState([]);
 
-
-
   const [unlockedBadges, setUnlockedBadges] = React.useState([]);
 
- 
-  const streak = user?.streakCount || 0;
+  // News
+  const dispatch = useDispatch();
+  const {
+    news,
+    loading: newsLoading,
+    error: newsError,
+    stats,
+    statsLoading,
+  } = useSelector((state) => state.news);
+  const [activeFilter, setActiveFilter] = React.useState("all");
 
+  const streak = user?.streakCount || 0;
 
   const totalXP = user?.xp || 0;
 
   //  XP required for current level
-const xp = user?.xp || 0;
-const level = user?.level || 1;
+  const xp = user?.xp || 0;
+  const level = user?.level || 1;
 
-const prevXP = ((level - 1) * level * 100) / 2;
-const currentXP = xp - prevXP;
-const maxXP = level * 100;
+  const prevXP = ((level - 1) * level * 100) / 2;
+  const currentXP = xp - prevXP;
+  const maxXP = level * 100;
 
+  const percent = Math.min(Math.max((currentXP / maxXP) * 100, 0), 100);
 
+  const companies = [
+    {
+      name: "Google",
+      role: "Software Engineer",
+      rating: "4.8",
+      logo: "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png",
+    },
+    {
+      name: "Microsoft",
+      role: "Cloud Architect",
+      rating: "4.7",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
+    },
+    {
+      name: "Amazon",
+      role: "SDE-II",
+      rating: "4.5",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+    },
+    {
+      name: "Apple",
+      role: "iOS Developer",
+      rating: "4.9",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+    },
+    {
+      name: "Meta",
+      role: "Product Manager",
+      rating: "4.6",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
+    },
+    {
+      name: "Netflix",
+      role: "UI/UX Designer",
+      rating: "4.7",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+    },
+    {
+      name: "Tesla",
+      role: "Hardware Engineer",
+      rating: "4.3",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg",
+    },
+    {
+      name: "Spotify",
+      role: "Data Scientist",
+      rating: "4.8",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
+    },
+    {
+      name: "Adobe",
+      role: "Product Designer",
+      rating: "4.6",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Adobe_Inc._logo_2020.svg",
+    },
+    {
+      name: "LinkedIn",
+      role: "Full Stack Developer",
+      rating: "4.5",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+    },
+    {
+      name: "Uber",
+      role: "Backend Engineer",
+      rating: "4.4",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png",
+    },
+    {
+      name: "Airbnb",
+      role: "Frontend Engineer",
+      rating: "4.7",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Belo.svg",
+    },
+    {
+      name: "NVIDIA",
+      role: "AI Researcher",
+      rating: "4.9",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg",
+    },
+    {
+      name: "Slack",
+      role: "DevOps Engineer",
+      rating: "4.6",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg",
+    },
+    {
+      name: "PayPal",
+      role: "Fintech Analyst",
+      rating: "4.4",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg",
+    },
+  ];
 
- const percent = Math.min(
-  Math.max((currentXP / maxXP) * 100, 0),
-  100
-);
-
-const companies = [
-  {
-    name: "Google",
-    role: "Software Engineer",
-    rating: "4.8",
-    logo: "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
-  },
-  {
-    name: "Microsoft",
-    role: "Cloud Architect",
-    rating: "4.7",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-  },
-  {
-    name: "Amazon",
-    role: "SDE-II",
-    rating: "4.5",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
-  },
-  {
-    name: "Apple",
-    role: "iOS Developer",
-    rating: "4.9",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-  },
-  {
-    name: "Meta",
-    role: "Product Manager",
-    rating: "4.6",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg"
-  },
-  {
-    name: "Netflix",
-    role: "UI/UX Designer",
-    rating: "4.7",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
-  },
-  {
-    name: "Tesla",
-    role: "Hardware Engineer",
-    rating: "4.3",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg"
-  },
-  {
-    name: "Spotify",
-    role: "Data Scientist",
-    rating: "4.8",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg"
-  },
-  {
-    name: "Adobe",
-    role: "Product Designer",
-    rating: "4.6",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Adobe_Inc._logo_2020.svg"
-  },
-  {
-    name: "LinkedIn",
-    role: "Full Stack Developer",
-    rating: "4.5",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
-  },
-  {
-    name: "Uber",
-    role: "Backend Engineer",
-    rating: "4.4",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
-  },
-  {
-    name: "Airbnb",
-    role: "Frontend Engineer",
-    rating: "4.7",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Belo.svg"
-  },
-  {
-    name: "NVIDIA",
-    role: "AI Researcher",
-    rating: "4.9",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg"
-  },
-  {
-    name: "Slack",
-    role: "DevOps Engineer",
-    rating: "4.6",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg"
-  },
-  {
-    name: "PayPal",
-    role: "Fintech Analyst",
-    rating: "4.4",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-  }
-];
-
-  const plugin = React.useRef(
-    Autoplay({ delay: 1500, stopOnInteraction: false }),
-  );
+  const plugin = Autoplay({ delay: 3000, stopOnInteraction: false });
 
   const playSound = () => {
     const audio = new Audio("/sounds/badge.mp3");
     audio.play();
   };
-
-
 
   // ================= FIXED TIME TRACK =================
   React.useEffect(() => {
@@ -230,15 +242,26 @@ const companies = [
     fetchWeekly();
   }, []);
 
+  // Fetch news + stats
+  React.useEffect(() => {
+    dispatch(fetchNewsStats());
+    dispatch(
+      fetchNews({
+        tag: activeFilter === "all" ? undefined : activeFilter,
+        limit: 50,
+      }),
+    );
+  }, [dispatch, activeFilter]);
+
   const calculateWeeklyChange = () => {
     if (!weeklyData || weeklyData.length === 0) return 0;
 
-  const currentAvg = Number(
-  (
-    weeklyData.reduce((sum, d) => sum + Number(d.avgScore), 0) /
-    weeklyData.length
-  ).toFixed(2)
-);
+    const currentAvg = Number(
+      (
+        weeklyData.reduce((sum, d) => sum + Number(d.avgScore), 0) /
+        weeklyData.length
+      ).toFixed(2),
+    );
 
     const previousAvg =
       weeklyData
@@ -259,7 +282,7 @@ const companies = [
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16 ">
         {/* 🔥 BADGE POPUP */}
         {unlockedBadges.length > 0 && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -292,7 +315,9 @@ const companies = [
                   Welcome back, {user?.fullName} 👋
                 </h1>
 
-                <p className="mt-2 text-lg text-gray-500 font-medium">Level {level} 🚀</p>
+                <p className="mt-2 text-lg text-gray-500 font-medium">
+                  Level {level} 🚀
+                </p>
 
                 <p className="text-lg text-gray-600 font-medium mt-1">
                   ⏱ Today: {weeklyData?.[weeklyData.length - 1]?.timeSpent || 0}{" "}
@@ -306,7 +331,9 @@ const companies = [
 
               {/* XP */}
               <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
-                <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">Progress</p>
+                <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
+                  Progress
+                </p>
 
                 <h2 className="text-3xl font-bold text-gray-900">
                   {currentXP} / {maxXP} XP
@@ -332,8 +359,12 @@ const companies = [
                     <Play className="w-6 h-6 text-gray-900" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Practice</h3>
-                    <p className="text-gray-500 font-medium">Daily quiz challenges</p>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Practice
+                    </h3>
+                    <p className="text-gray-500 font-medium">
+                      Daily quiz challenges
+                    </p>
                   </div>
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
@@ -359,12 +390,12 @@ const companies = [
 
             {/* 🔥 POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CpotdCard 
-                solved={user?.codingPotdCompleted || false} 
+              <CpotdCard
+                solved={user?.codingPotdCompleted || false}
                 onClick={() => navigate("/coding-potd")}
               />
-              <PotdCard 
-                solved={user?.potdCompleted || false} 
+              <PotdCard
+                solved={user?.potdCompleted || false}
                 onClick={() => navigate("/potd")}
               />
             </div>
@@ -374,14 +405,17 @@ const companies = [
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <TrendingUp size={20} className="text-gray-900" /> Weekly Performance
+                    <TrendingUp size={20} className="text-gray-900" /> Weekly
+                    Performance
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
                     Score & Time (last 7 days)
                   </p>
                 </div>
 
-                <div className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? 'bg-green-100 text-green-700' : percentChange >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                <div
+                  className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? "bg-green-100 text-green-700" : percentChange >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                >
                   {percentChange === null
                     ? "New Activity 🚀"
                     : `${percentChange >= 0 ? "+" : ""}${percentChange}%`}
@@ -398,7 +432,7 @@ const companies = [
                     <YAxis yAxisId="left" domain={[0, 10]} />
                     <YAxis yAxisId="right" orientation="right" />
 
-                  <Tooltip formatter={(value) => Number(value).toFixed(2)} />
+                    <Tooltip formatter={(value) => Number(value).toFixed(2)} />
 
                     {/*  AVG SCORE */}
                     <Line
@@ -426,103 +460,277 @@ const companies = [
               </div>
             </div>
 
-           
+            {/* 📰 TECH INTELLIGENCE FEED */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 md:p-8">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    📰 Tech Intelligence Feed
+                  </h3>
+                  <p className="text-gray-500">
+                    Latest news • Auto-refreshed every 4h
+                  </p>
+                </div>
+
+                {/* Stats Badges */}
+                {statsLoading ? (
+                  <div className="flex gap-2">
+                    <div className="w-16 h-6 bg-gray-200 rounded-full animate-pulse" />
+                    <div className="w-20 h-6 bg-gray-200 rounded-full animate-pulse" />
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      AI: {stats?.AI || 0}
+                    </Badge>
+                    <Badge variant="destructive" className="text-xs">
+                      Layoffs: {stats?.Layoff?.weeklyLayoffs || 0}W
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {["all", "AI", "Layoff", "Hiring"].map((t) => (
+                  <Button
+                    key={t}
+                    variant={activeFilter === t ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setActiveFilter(t)}
+                    className="text-xs"
+                  >
+                    {t === "all" ? "All" : t}
+                    {newsLoading && activeFilter === t && (
+                      <Loader2 className="w-4 h-4 ml-1 animate-spin" />
+                    )}
+                  </Button>
+                ))}
+              </div>
+
+              {newsLoading ? (
+                <div className="flex animate-pulse space-x-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <Card
+                      key={i}
+                      className="basis-80 h-64 bg-gray-200 rounded-2xl"
+                    />
+                  ))}
+                </div>
+              ) : news?.length === 0 ? (
+                <div className="text-center py-12">
+                  <TrendingUp className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <p className="text-gray-500">No news available</p>
+
+                  <Button
+                    onClick={() =>
+                      dispatch(
+                        fetchNews({
+                          tag:
+                            activeFilter === "all" ? undefined : activeFilter,
+                          limit: 50,
+                        }),
+                      )
+                    }
+                  >
+                    Refresh
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {/* News Carousel */}
+                  <Carousel
+                    opts={{
+                      align: "start",
+                      loop: true,
+                      dragFree: true,
+                    }}
+                    plugins={plugin ? [plugin] : []}
+                    className="[&_.embla__container]:gap-4"
+                  >
+                    <CarouselContent className="-ml-2">
+                      {news?.map((article, index) => (
+                        <CarouselItem
+                          key={index}
+                          className="basis-80 md:basis-96 pl-2"
+                        >
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block group"
+                          >
+                            <Card className="h-full p-6 hover:shadow-xl border-0 bg-gradient-to-br from-white to-gray-50 group-hover:from-blue-50 transition-all duration-300 shadow-sm hover:-translate-y-1">
+                              {/* Tag Badge */}
+                              <Badge
+                                className={`absolute top-4 right-4 text-xs px-3 py-1 font-semibold ${
+                                  article.tag === "AI"
+                                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                                    : article.tag === "Layoff"
+                                      ? "bg-gradient-to-r from-red-500 to-orange-500"
+                                      : article.tag === "Hiring"
+                                        ? "bg-green-500"
+                                        : "bg-indigo-500"
+                                }`}
+                              >
+                                {article.tag}
+                              </Badge>
+
+                              {/* Content */}
+                              <div className="space-y-3">
+                                <h4 className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                  {article.title}
+                                </h4>
+
+                                <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                                  {article.summary}
+                                </p>
+
+                                <div className="flex items-center justify-between pt-4 border-t">
+                                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                                    {article.company !== "Various" && (
+                                      <span className="font-semibold text-gray-900">
+                                        {article.company}
+                                      </span>
+                                    )}
+                                    <span>•</span>
+                                    <span>
+                                      {new Date(
+                                        article.publishedAt,
+                                      ).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "numeric",
+                                      })}
+                                    </span>
+                                  </div>
+
+                                  <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                                </div>
+                              </div>
+                            </Card>
+                          </a>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                </>
+              )}
+              {newsError && (
+                <p className="text-center text-sm text-red-500 mt-4">
+                  {newsError}
+                </p>
+              )}
+            </div>
+
             <div>
+              {/* COMPANIES */}
+              <h3 className="font-semibold mb-4">Recommended Companies</h3>
 
-               {/* COMPANIES */}
-  <h3 className="font-semibold mb-4">Recommended Companies</h3>
+              <div className="space-y-4 overflow-hidden">
+                {/* 🔵 ROW 1 (Left → Right) */}
+                <div className="flex gap-4 animate-scroll-left">
+                  {[...companies, ...companies].map((company, index) => (
+                    <div
+                      key={index}
+                      onClick={() =>
+                        navigate(`/company/${company.name.toLowerCase()}`)
+                      }
+                      className="min-w-[180px] cursor-pointer"
+                    >
+                      <Card
+                        className="flex items-center justify-between p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 transition-all cursor-pointer"
+                        onClick={() =>
+                          navigate(`/company/${company.name.toLowerCase()}`)
+                        }
+                      >
+                        {/* LEFT: Logo */}
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={company.logo}
+                            alt={company.name}
+                            className="h-12 w-12 rounded-lg object-contain bg-gray-100 p-2"
+                          />
 
- <div className="space-y-4 overflow-hidden">
+                          {/* CENTER: Text */}
+                          <div>
+                            <h3 className="font-semibold text-gray-900">
+                              {company.name}
+                            </h3>
 
-  {/* 🔵 ROW 1 (Left → Right) */}
-  <div className="flex gap-4 animate-scroll-left">
-    {[...companies, ...companies].map((company, index) => (
-      <div
-        key={index}
-        onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
-        className="min-w-[180px] cursor-pointer"
-      >
-        <Card
-  className="flex items-center justify-between p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 transition-all cursor-pointer"
-  onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
->
-  {/* LEFT: Logo */}
-  <div className="flex items-center gap-4">
-    <img
-      src={company.logo}
-      alt={company.name}
-      className="h-12 w-12 rounded-lg object-contain bg-gray-100 p-2"
-    />
+                            <p className="text-sm text-gray-500">
+                              {company.role}
+                            </p>
 
-    {/* CENTER: Text */}
-    <div>
-      <h3 className="font-semibold text-gray-900">{company.name}</h3>
-      
-      <p className="text-sm text-gray-500">
-        {company.role}
-      </p>
+                            {/* Rating */}
+                            <div className="flex items-center gap-1 text-sm text-yellow-500 mt-1">
+                              ⭐{" "}
+                              <span className="text-gray-700">
+                                {company.rating}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
 
-      {/* Rating */}
-      <div className="flex items-center gap-1 text-sm text-yellow-500 mt-1">
-        ⭐ <span className="text-gray-700">{company.rating}</span>
-      </div>
-    </div>
-  </div>
+                        {/* RIGHT: Redirect Icon */}
+                        <ExternalLink className="h-5 w-5 text-gray-400" />
+                      </Card>
+                    </div>
+                  ))}
+                </div>
 
-  {/* RIGHT: Redirect Icon */}
-  <ExternalLink className="h-5 w-5 text-gray-400" />
-</Card>
-      </div>
-    ))}
-  </div>
+                {/* 🔴 ROW 2 (Right → Left) */}
+                <div className="flex gap-4 animate-scroll-right">
+                  {[...companies, ...companies].map((company, index) => (
+                    <div
+                      key={index}
+                      onClick={() =>
+                        navigate(`/company/${company.name.toLowerCase()}`)
+                      }
+                      className="min-w-[280px] cursor-pointer"
+                    >
+                      <Card className="flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                        {/* LEFT */}
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={company.logo}
+                            alt={company.name}
+                            className="h-12 w-12 rounded-lg object-contain bg-gray-100 p-2"
+                          />
 
-  {/* 🔴 ROW 2 (Right → Left) */}
-  <div className="flex gap-4 animate-scroll-right">
-  {[...companies, ...companies].map((company, index) => (
-    <div
-      key={index}
-      onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
-      className="min-w-[280px] cursor-pointer"
-    >
-      <Card
-        className="flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition"
-      >
-        {/* LEFT */}
-        <div className="flex items-center gap-4">
-          <img
-            src={company.logo}
-            alt={company.name}
-            className="h-12 w-12 rounded-lg object-contain bg-gray-100 p-2"
-          />
+                          {/* TEXT */}
+                          <div>
+                            <h3 className="font-semibold text-gray-900">
+                              {company.name}
+                            </h3>
 
-          {/* TEXT */}
-          <div>
-            <h3 className="font-semibold text-gray-900">{company.name}</h3>
+                            <p className="text-sm text-gray-500">
+                              {company.role}
+                            </p>
 
-            <p className="text-sm text-gray-500">
-              {company.role}
-            </p>
+                            <div className="flex items-center gap-1 text-sm text-yellow-500 mt-1">
+                              ⭐{" "}
+                              <span className="text-gray-700">
+                                {company.rating}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
 
-            <div className="flex items-center gap-1 text-sm text-yellow-500 mt-1">
-              ⭐ <span className="text-gray-700">{company.rating}</span>
+                        {/* RIGHT ICON */}
+                        <ExternalLink className="h-5 w-5 text-gray-400" />
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* RIGHT ICON */}
-        <ExternalLink className="h-5 w-5 text-gray-400" />
-      </Card>
-    </div>
-  ))}
-</div>
-
-</div>
-</div>
-          </div>
         </main>
+        <SuccessStories />
       </div>
-      <SuccessStories/>
-      <Footer/>
+      
+      <Footer />
     </>
   );
 }

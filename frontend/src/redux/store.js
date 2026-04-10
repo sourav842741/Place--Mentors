@@ -8,6 +8,7 @@ import { notesApi } from "./notesSlice";
 import { compilerApi } from "./compilerSlice";
 import codingPotdSlice from "./codingPotdSlice";
 import youtubeSlice from "./youtubeSlice";
+import newsSlice from "./newsSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -22,6 +23,7 @@ getDefaultMiddleware().concat(notesApi.middleware, compilerApi.middleware),
         [notesApi.reducerPath]: notesApi.reducer,
         [compilerApi.reducerPath]: compilerApi.reducer,
         youtube: youtubeSlice,
+        news: newsSlice,
      }
 })
 
