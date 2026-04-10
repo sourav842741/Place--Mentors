@@ -1,19 +1,32 @@
 import User from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+
 export const getDailyLeaderboard = asyncHandler(async (req, res) => {
   const users = await User.find();
 
-  const today = new Date().toLocaleDateString("en-CA");
+  //  FIXED DATE (timezone safe)
+  const today = new Date().toISOString().split("T")[0];
 
   const leaderboard = users.map((user) => {
     const stats = Array.isArray(user.dailyStats) ? user.dailyStats : [];
 
-    const todayStat = stats.find((d) => d.date === today);
+    //  find today's data
+    let todayStat = stats.find((d) => d.date === today);
 
-   const totalTime = user.totalTimeSpent || 0;
+    //  fallback (IMPORTANT)
+    if (!todayStat && stats.length > 0) {
+      todayStat = stats.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      )[0];
+    }
+
+
+    //  USE CORRECT FIELDS (dailyStats, NOT totalTimeSpent)
+    const totalTime = todayStat?.timeSpent || 0;
     const totalQuizzes = todayStat?.quizzesGiven || 0;
     const avgAccuracy = todayStat?.avgScore || 0;
 
+    //  SCORE CALCULATION
     const score =
       totalTime * 0.5 +
       avgAccuracy * 2 +
@@ -25,20 +38,24 @@ export const getDailyLeaderboard = asyncHandler(async (req, res) => {
       score: Math.round(score),
       streak: user.streakCount || 0,
       accuracy: avgAccuracy,
-      timeSpent: user.totalTimeSpent || 0,
+      timeSpent: totalTime,
     };
   });
 
- const sorted = leaderboard.sort((a, b) => b.score - a.score);
+  //  REMOVE USERS WITH 0 SCORE (optional but recommended)
+  const filtered = leaderboard.filter((user) => user.score > 0);
 
-//  ADD RANK + USER IDENTIFY
-const finalLeaderboard = sorted.map((user, index) => ({
-  ...user,
-  rank: index + 1,
-}));
+  //  SORT
+  const sorted = filtered.sort((a, b) => b.score - a.score);
 
-res.status(200).json({
-  success: true,
-  leaderboard: finalLeaderboard,
-});
+  //  ADD RANK
+  const finalLeaderboard = sorted.map((user, index) => ({
+    ...user,
+    rank: index + 1,
+  }));
+
+  res.status(200).json({
+    success: true,
+    leaderboard: finalLeaderboard,
+  });
 });

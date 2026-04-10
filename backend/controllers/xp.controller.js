@@ -29,7 +29,7 @@ export const updateTimeSpent = asyncHandler(async (req, res) => {
 
   user.totalTimeSpent += minutes;
 
-  const today = new Date().toLocaleDateString("en-CA");
+const today = new Date().toISOString().split("T")[0];
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 
@@ -130,8 +130,9 @@ export const completeQuiz = asyncHandler(async (req, res) => {
   todayData.avgScore = Number(newAvg.toFixed(1));
   todayData.quizzesGiven = prevCount + 1;
 
-  //  add time spent (important)
-  todayData.timeSpent += 10;
+  if (!todayData.timeSpent) {
+  todayData.timeSpent = 10; 
+}
 
   await user.save();
 

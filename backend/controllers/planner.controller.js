@@ -208,18 +208,16 @@ export const syncCalendar = async (req, res) => {
   try {
     const { plannerId } = req.body;
     if (!plannerId) {
-      console.log("❌ Missing plannerId");
+      console.log(" Missing plannerId");
       return res.status(400).json({ message: "plannerId required" });
     }
 
     const user = await User.findById(req.user._id);
 
     if (!user.googleCalendarAccessToken) {
-      return res
-        .status(401)
-        .json({
-          message: "Google Calendar not authorized. Please connect first.",
-        });
+      return res.status(401).json({
+        message: "Google Calendar not authorized. Please connect first.",
+      });
     }
 
     const planner = await Planner.findOne({
@@ -247,11 +245,9 @@ export const syncCalendar = async (req, res) => {
     } catch (tokenError) {
       console.log(" Access token expired, refreshing...");
       if (!user.googleCalendarRefreshToken) {
-        return res
-          .status(401)
-          .json({
-            message: "Google Calendar authorization expired. Please reconnect.",
-          });
+        return res.status(401).json({
+          message: "Google Calendar authorization expired. Please reconnect.",
+        });
       }
 
       const refreshed = await auth.getAccessToken();
@@ -261,12 +257,9 @@ export const syncCalendar = async (req, res) => {
         console.log(" Token refreshed successfully");
       } else {
         console.log(" Refresh failed");
-        return res
-          .status(401)
-          .json({
-            message:
-              "Failed to refresh Google token. Please reconnect calendar.",
-          });
+        return res.status(401).json({
+          message: "Failed to refresh Google token. Please reconnect calendar.",
+        });
       }
     }
 
@@ -366,6 +359,7 @@ export const getCalendarAuthUrl = async (req, res) => {
 
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: "offline",
+      prompt: "consent",
       scope: ["https://www.googleapis.com/auth/calendar.events"],
       state: JSON.stringify({ userId: req.user._id }),
     });
@@ -396,13 +390,15 @@ export const calendarCallback = async (req, res) => {
     }
 
     user.googleCalendarAccessToken = tokens.access_token;
-    user.googleCalendarRefreshToken = tokens.refresh_token;
+    if (tokens.refresh_token) {
+      user.googleCalendarRefreshToken = tokens.refresh_token;
+    }
     await user.save();
 
     // Redirect to frontend
-    res.redirect(
-      `${process.env.FRONTEND_URL || "http://localhost:5173"}/ai-planner?calendar=connected`,
-    );
+   res.redirect(
+  `${process.env.FRONTEND_URL || "http://localhost:5173"}/planner-history?calendar=connected`,
+);
   } catch (error) {
     console.error("Callback error:", error);
     res.status(500).json({ message: "Auth failed" });
@@ -451,7 +447,7 @@ export const getMyPlanner = async (req, res) => {
     const planner = await Planner.findOne({ userId: req.user._id });
 
     if (!planner) {
-      return res.status(200).json(null); 
+      return res.status(200).json(null);
     }
 
     res.json(planner);
@@ -563,9 +559,7 @@ export const completeTask = async (req, res) => {
       todayStat.quizzesGiven += 1;
     }
 
-   
     await user.save();
-  
 
     await planner.save();
 
@@ -617,11 +611,9 @@ export const analyzeResume = async (req, res) => {
     fs.unlinkSync(filepath);
 
     if (resumeText.length < 100) {
-      return res
-        .status(400)
-        .json({
-          message: "PDF is empty or too short. Min 100 chars required.",
-        });
+      return res.status(400).json({
+        message: "PDF is empty or too short. Min 100 chars required.",
+      });
     }
 
     const messages = [

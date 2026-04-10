@@ -180,28 +180,13 @@ export default function Dashboard() {
   };
 
   // ================= FIXED TIME TRACK =================
-  React.useEffect(() => {
+  useEffect(() => {
     let interval;
 
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        interval = setInterval(async () => {
-          try {
-            await api.post("/api/xp/time", { minutes: 1 });
-
-            const res = await api.get("/api/dashboard/weekly", {
-              withCredentials: true,
-            });
-
-            const formatted = (res.data?.weeklyData || []).map((item) => ({
-              ...item,
-              date: new Date(item.date).toLocaleDateString("en-US", {
-                weekday: "short",
-              }),
-            }));
-
-            setWeeklyData(formatted);
-          } catch (err) {}
+        interval = setInterval(() => {
+          api.post("/api/xp/time", { minutes: 1 });
         }, 60000);
       } else {
         clearInterval(interval);
@@ -227,9 +212,7 @@ export default function Dashboard() {
         // date ko short form me convert (Mon, Tue...)
         const formatted = (res.data?.weeklyData || []).map((item) => ({
           ...item,
-          date: new Date(item.date).toLocaleDateString("en-US", {
-            weekday: "short",
-          }),
+          date: item.date, // ✅ FIX (NO conversion)
         }));
 
         setWeeklyData(formatted);
@@ -303,6 +286,13 @@ export default function Dashboard() {
   };
 
   const percentChange = calculateWeeklyChange();
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const todayData =
+    weeklyData.find((d) => d.date === today) ||
+    weeklyData[weeklyData.length - 1] ||
+    {};
   // ======================================================
 
   return (
@@ -346,8 +336,7 @@ export default function Dashboard() {
                 </p>
 
                 <p className="text-lg text-gray-600 font-medium mt-1">
-                  ⏱ Today: {weeklyData?.[weeklyData.length - 1]?.timeSpent || 0}{" "}
-                  min
+                  ⏱ Today: {todayData?.timeSpent || 0} min
                 </p>
 
                 <button className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 font-semibold shadow-sm hover:shadow-md transition-all">

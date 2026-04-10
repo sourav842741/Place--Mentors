@@ -7,7 +7,7 @@ import {
 } from "../services/doubtApi";
 import { socket } from "../socket";
 import { toast } from "sonner";
-import { ThumbsUp, Send, MessageCircle, Bell } from "lucide-react";
+import { ThumbsUp, Send, MessageCircle, Bell,Circle } from "lucide-react";
 import { useSelector } from "react-redux";
 import api from "../services/api";
 import { Input } from "../components/ui/input";
@@ -17,6 +17,7 @@ import { Badge } from "../components/ui/badge";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ReactMarkdown from "react-markdown";
+
 
 export default function DoubtChatPage() {
   const [question, setQuestion] = useState("");
@@ -213,7 +214,8 @@ export default function DoubtChatPage() {
               Community
             </h1>
             <div className="flex items-center gap-4 shrink-0">
-              <span className="text-sm text-gray-600">
+              <span className="flex items-center gap-2 text-sm text-gray-600">
+                <Circle className="w-3 h-3 text-green-500 fill-green-500" />
                 {onlineUsers} online
               </span>
               <div className="relative">
