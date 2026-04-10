@@ -58,7 +58,7 @@ function NoteDetail() {
           <ul className="grid gap-2">
             {items.map((item, idx) => (
               <li key={idx} className="text-sm flex gap-2 items-start">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0" />
+                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
                 <span>{item}</span>
               </li>
             ))}
@@ -86,7 +86,7 @@ function NoteDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-12">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
           <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-xl">Loading notes...</p>
@@ -97,7 +97,7 @@ function NoteDetail() {
 
   if (error || !note) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <Alert variant="destructive">
             <AlertDescription>
@@ -112,7 +112,7 @@ function NoteDetail() {
   return (
     <>
     <Navbar/>
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 ">
         {/* HEADER */}
         <div className="flex items-start justify-between">
@@ -189,7 +189,7 @@ function NoteDetail() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-500">
+                  <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-500">
                     <p className="text-lg italic font-medium">{note.questions.diagram}</p>
                   </div>
                 </CardContent>

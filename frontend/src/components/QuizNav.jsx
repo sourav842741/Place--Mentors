@@ -79,7 +79,7 @@ const { user } = useSelector((state) => state.user);
             </button>
 
             {showCreditPopup && (
-              <div className='absolute right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50'>
+              <div className='absolute -right-12.5 mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50'>
                 <p className='text-sm text-gray-600 mb-4'>
                   Need more credits to continue interviews?
                 </p>

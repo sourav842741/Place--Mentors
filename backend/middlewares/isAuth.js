@@ -4,7 +4,8 @@ import { ApiError } from "../utils/ApiError.js";
 
 const isAuth = async (req, res, next) => {
   try {
-let token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
+    let token =
+      req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found");
@@ -18,8 +19,8 @@ let token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', 
       throw new ApiError(401, "User not found");
     }
 
-    // 🔥 DAILY POTD RESET LOGIC
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    //  DAILY POTD RESET LOGIC
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
     if (user.lastPotdDate !== today) {
       user.potdCompleted = false;

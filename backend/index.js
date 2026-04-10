@@ -5,11 +5,9 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-
 import authRouter from "./routes/auth.routes.js";
 import xpRouter from "./routes/xp.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
-
 import dns from "dns";
 import interviewRouter from "./routes/interview.route.js";
 import paymentRouter from "./routes/payment.route.js";
@@ -35,10 +33,10 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// 🔥 HTTP SERVER
+//  HTTP SERVER
 const server = http.createServer(app);
 
-// 🔥 SOCKET.IO
+//  SOCKET.IO
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -46,7 +44,7 @@ const io = new Server(server, {
   },
 });
 
-// 🔥 pass io to routes
+//  pass io to routes
 app.use((req, res, next) => {
   req.io = io;
   next();
@@ -57,7 +55,7 @@ app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
@@ -94,7 +92,7 @@ io.on("connection", (socket) => {
   onlineUsers++;
   io.emit("online_users", onlineUsers);
 
-  // ✅ JOIN ROOM (user room + doubt room prefix)
+  //  JOIN ROOM (user room + doubt room prefix)
   socket.on("join", (userId) => {
     socket.join(userId);
     socket.join(`doubt-${userId}`);
@@ -103,24 +101,24 @@ io.on("connection", (socket) => {
     io.emit("online_users", onlineUsers);
   });
 
-  // 💬 CHAT
+  //  CHAT
   socket.on("send_message", (data) => {
     io.to(data.toUserId).emit("receive_message", data);
   });
 
-// 🔥 NEW REPLY - emit to doubt room (handle reply.doubt or data.doubtId)
+  //  NEW REPLY - emit to doubt room (handle reply.doubt or data.doubtId)
   socket.on("send_reply", (data) => {
-    const doubtId = data.doubtId || (data.doubt && data.doubt._id) || data.doubt;
+    const doubtId =
+      data.doubtId || (data.doubt && data.doubt._id) || data.doubt;
     if (doubtId) {
       io.to(`doubt-${doubtId}`).emit("new_reply", { doubtId });
       console.log(`Emitted new_reply to doubt-${doubtId}`);
     }
   });
 
-  // ✅ JOIN SPECIFIC DOUBT ROOM
+  //  JOIN SPECIFIC DOUBT ROOM
   socket.on("join_doubt", (doubtId) => {
     socket.join(`doubt-${doubtId}`);
-    console.log(`Socket ${socket.id} joined doubt-${doubtId}`);
   });
 
   socket.on("disconnect", () => {
@@ -145,27 +143,31 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDb();
-    
-    // 🔥 Startup recovery for missed POTD/CPOTD
-    console.log("🆕 [STARTUP] Checking POTD/CPOTD recovery...");
+
+    //  Startup recovery for missed POTD/CPOTD
+    console.log(" [STARTUP] Checking POTD/CPOTD recovery...");
     try {
-      await import("./services/potd.service.js").then(({ getOrCreateTodayPotd }) => getOrCreateTodayPotd());
-      console.log("✅ [STARTUP] POTD recovered");
+      await import("./services/potd.service.js").then(
+        ({ getOrCreateTodayPotd }) => getOrCreateTodayPotd(),
+      );
+      console.log(" [STARTUP] POTD recovered");
     } catch (e) {
-      console.error("❌ [STARTUP] POTD recovery failed:", e.message);
+      console.error(" [STARTUP] POTD recovery failed:", e.message);
     }
     try {
-      await import("./services/cpotd.service.js").then(({ getOrCreateTodayCpotd }) => getOrCreateTodayCpotd());
-      console.log("✅ [STARTUP] CPOTD recovered");
+      await import("./services/cpotd.service.js").then(
+        ({ getOrCreateTodayCpotd }) => getOrCreateTodayCpotd(),
+      );
+      console.log(" [STARTUP] CPOTD recovered");
     } catch (e) {
-      console.error("❌ [STARTUP] CPOTD recovery failed:", e.message);
+      console.error(" [STARTUP] CPOTD recovery failed:", e.message);
     }
-    
+
     cronJobs.startCronJobs();
 
     server.listen(port, () => {
       console.log(`Server running on port ${port}`);
-      console.log("🔄 Self-healing cron started (10min cycles)");
+      console.log(" Self-healing cron started (10min cycles)");
     });
   } catch (error) {
     console.error("DB connection failed:", error.message);
@@ -174,4 +176,3 @@ const startServer = async () => {
 };
 
 startServer();
-

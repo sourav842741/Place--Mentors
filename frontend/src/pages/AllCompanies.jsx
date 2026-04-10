@@ -65,13 +65,13 @@ const AllCompanies = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {Array(12).fill().map((_, i) => (
                 <div key={i} className="group bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl p-6 space-y-4 animate-pulse hover:shadow-2xl transition-all">
-                  <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl w-4/5"></div>
-                  <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-3/5"></div>
+                  <div className="h-8 bg-linear-to-r from-gray-200 to-gray-300 rounded-xl w-4/5"></div>
+                  <div className="h-4 bg-linear-to-r from-gray-200 to-gray-300 rounded-lg w-3/5"></div>
                   <div className="space-y-2">
-                    <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-2/3"></div>
-                    <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2"></div>
+                    <div className="h-3 bg-linear-to-r from-gray-200 to-gray-300 rounded w-2/3"></div>
+                    <div className="h-3 bg-linear-to-r from-gray-200 to-gray-300 rounded w-1/2"></div>
                   </div>
-                  <div className="h-10 bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl w-full"></div>
+                  <div className="h-10 bg-linear-to-r from-gray-200 to-gray-300 rounded-2xl w-full"></div>
                 </div>
               ))}
             </div>
@@ -85,7 +85,7 @@ const AllCompanies = () => {
   <>
     <Navbar />
 
-    <div className="pt-16 md:pl-64 p-6 md:p-10 bg-gradient-to-br mt-8 from-gray-50 to-gray-100 min-h-screen lg:mt-8 ml-5 sm:mt-8 ">
+    <div className="pt-16 md:pl-64 p-6 md:p-10 bg-linear-to-br mt-8 from-gray-50 to-gray-100 min-h-screen lg:mt-8 ml-5 sm:mt-8 ">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* HEADER */}
@@ -240,8 +240,9 @@ const AllCompanies = () => {
         </div>
 
       </div>
+      <SuccessStories/>
     </div>
-    <SuccessStories/>
+    
     <Footer/>
   </>
 );

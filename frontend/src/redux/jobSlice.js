@@ -143,7 +143,7 @@ const jobSlice = createSlice({
 
         jobsAdapter.setAll(state, action.payload.jobs);
 
-        // ✅ FIXED PAGINATION
+        //  FIXED PAGINATION
         state.pagination = {
           page: action.payload.page,
           pages: action.payload.pages,

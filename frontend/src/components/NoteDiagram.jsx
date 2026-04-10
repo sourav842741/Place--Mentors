@@ -35,7 +35,6 @@ const NoteDiagram = ({ diagramData, className = '' }) => {
 
         setLoading(false)
       } catch (err) {
-        console.error('Mermaid render error:', err)
         setError(true)
         setLoading(false)
       }
@@ -51,7 +50,7 @@ const NoteDiagram = ({ diagramData, className = '' }) => {
   return (
     <div className={`bg-gray-50 rounded-lg p-4 border ${className}`}>
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-6 bg-gradient-to-b from-blue-500 to-purple-600 rounded" />
+        <div className="w-2 h-6 bg-linear-to-b from-blue-500 to-purple-600 rounded" />
         <span className="font-semibold text-blue-900">Diagram</span>
       </div>
       

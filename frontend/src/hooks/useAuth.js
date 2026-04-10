@@ -42,10 +42,7 @@ const getCurrentUser = useCallback(async () => {
       withCredentials: true,
     });
 
-    // 🔥 SAFE DATA EXTRACTION
     const userData = res.data?.data || res.data;
-
-    console.log("UPDATED USER:", userData); // debug
 
     dispatch(setUserData(userData));
 

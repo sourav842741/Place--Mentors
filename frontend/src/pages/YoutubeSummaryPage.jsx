@@ -50,20 +50,7 @@ const YoutubeSummaryPage = () => {
   );
   const userCredits = useSelector((state) => state.user.user?.credits) || 0;
 
-  // 🐛 DEBUG LOGS - Remove after fix
   useEffect(() => {
-    console.log("🎥 COMPONENT RERENDER - data:", data);
-    console.log("🎥 Full youtube state:", {
-      loading,
-      data,
-      creditsLeft,
-      error,
-      apiResponse,
-    });
-    if (data) {
-      console.log("🎥 SUMMARY:", data.summary);
-      console.log("🎥 ENGLISH:", data.summary?.english);
-    }
   }, [data, loading, creditsLeft, error, apiResponse]);
 
   // Reusable video ID extractor
@@ -202,7 +189,7 @@ const YoutubeSummaryPage = () => {
     const currentSummary = summary?.[currentLang] || "";
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50">
+      <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-pink-50">
         <Navbar />
         <div className="pt-20 pb-8 px-4 md:px-8 max-w-7xl mx-auto space-y-8">
           {/* 🎬 VIDEO PLAYER + INFO */}
@@ -230,7 +217,7 @@ const YoutubeSummaryPage = () => {
                       <Clock className="w-3 h-3" />
                       {duration}
                     </Badge>
-                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <Badge className="bg-linear-to-r from-purple-500 to-pink-500 text-white">
                       PRO Summary
                     </Badge>
                   </div>
@@ -268,7 +255,7 @@ const YoutubeSummaryPage = () => {
             </div>
           </div>
 
-          {/* 📝 MAIN SUMMARY */}
+          {/*  MAIN SUMMARY */}
           <Card className="max-w-4xl mx-auto shadow-2xl border-0 bg-white/90 backdrop-blur-md">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-2xl">
@@ -287,7 +274,7 @@ const YoutubeSummaryPage = () => {
                   }}
                 />
               </div>
-              <div className="pt-6 border-t bg-gradient-to-r from-purple-50 to-pink-50 rounded-b-xl flex flex-wrap items-center gap-3 p-4">
+              <div className="pt-6 border-t bg-linear-to-r from-purple-50 to-pink-50 rounded-b-xl flex flex-wrap items-center gap-3 p-4">
                 <Button
                   variant="outline"
                   size="sm"
@@ -320,7 +307,7 @@ const YoutubeSummaryPage = () => {
 
           {/* ⏰ TIMESTAMPS */}
           {timestamps?.length > 0 && (
-            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-linear-to-r from-blue-50 to-indigo-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <Clock className="w-6 h-6 text-blue-600" />
@@ -334,7 +321,7 @@ const YoutubeSummaryPage = () => {
                       key={idx}
                       className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group"
                     >
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center font-mono text-white font-bold text-sm">
+                      <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center font-mono text-white font-bold text-sm">
                         {item.time}
                       </div>
                       <div className="flex-1 group-hover:text-blue-700">
@@ -357,7 +344,7 @@ const YoutubeSummaryPage = () => {
 
           {/* 🔥 HIGHLIGHTS */}
           {highlights?.length > 0 && (
-            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-gradient-to-r from-orange-50 to-red-50">
+            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-linear-to-r from-orange-50 to-red-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <FaStar className="w-6 h-6 text-orange-500" />
@@ -372,7 +359,7 @@ const YoutubeSummaryPage = () => {
                       className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-lg border hover:border-orange-200 transition-all hover:-translate-y-1 cursor-pointer"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center font-bold text-white text-sm mt-0.5">
+                        <div className="shrink-0 w-8 h-8 bg-linear-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center font-bold text-white text-sm mt-0.5">
                           {idx + 1}
                         </div>
                         <div className="flex-1 group-hover:text-orange-800">
@@ -395,7 +382,7 @@ const YoutubeSummaryPage = () => {
           )}
 
           {/* 🔄 NEW ANALYSIS CTA */}
-          <Card className="max-w-2xl mx-auto text-center bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200">
+          <Card className="max-w-2xl mx-auto text-center bg-linear-to-r from-emerald-50 to-green-50 border-emerald-200">
             <CardContent className="p-8 space-y-4">
               <FaVideo className="w-16 h-16 text-emerald-600 mx-auto" />
               <h3 className="text-2xl font-bold text-gray-800">New Video?</h3>
@@ -418,7 +405,7 @@ const YoutubeSummaryPage = () => {
                   onClick={() =>
                     inputRef.current?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
+                  className="flex-1 bg-linear-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
                 >
                   New Summary
                 </Button>
@@ -432,14 +419,14 @@ const YoutubeSummaryPage = () => {
 
   // INPUT FORM (pre-analysis state)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50">
+    <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-pink-50">
       <Navbar />
       <div className="pt-20 pb-8 px-4 md:px-8 max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-xl border">
             <FaStar className="w-8 h-8 text-purple-500" />
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               YouTube Pro Summarizer
             </h1>
           </div>
@@ -475,7 +462,7 @@ const YoutubeSummaryPage = () => {
                   onClick={generateSummary}
                   disabled={loading || userCredits < 1 || !isValidUrl}
                   size="lg"
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-xl h-12 font-semibold text-lg"
+                  className="flex-1 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-xl h-12 font-semibold text-lg"
                 >
                   {loading ? (
                     <>
@@ -520,7 +507,7 @@ const YoutubeSummaryPage = () => {
             {isFetchingMeta && (
               <Card className="max-w-4xl mx-auto mb-8 shadow-xl animate-in fade-in duration-500">
                 <CardContent className="p-0">
-                  <div className="w-full h-64 md:h-80 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse rounded-t-xl" />
+                  <div className="w-full h-64 md:h-80 bg-linear-to-br from-gray-200 to-gray-300 animate-pulse rounded-t-xl" />
                 </CardContent>
               </Card>
             )}

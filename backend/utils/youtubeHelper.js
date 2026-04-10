@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// 🎯 Extract Video ID
+//  Extract Video ID
 export const extractVideoId = (url) => {
   try {
     const regExp =
@@ -12,12 +12,12 @@ export const extractVideoId = (url) => {
   }
 };
 
-// ✅ Validate URL
+//  Validate URL
 export const isValidYoutubeUrl = (url) => {
   return extractVideoId(url) !== null;
 };
 
-// 📥 Fetch Full Video Info (title, duration, thumbnail) - NEW
+//  Fetch Full Video Info (title, duration, thumbnail) - NEW
 export const getFullVideoInfo = async (videoId) => {
   try {
     if (!process.env.YOUTUBE_API_KEY) {
@@ -70,7 +70,7 @@ export const getFullVideoInfo = async (videoId) => {
   }
 };
 
-// 📥 Fetch Video Metadata (text for AI) - Updated to use new info
+//  Fetch Video Metadata (text for AI) - Updated to use new info
 export const getVideoMetadata = async (videoId) => {
   try {
     const videoInfo = await getFullVideoInfo(videoId);
@@ -112,9 +112,9 @@ export const getVideoMetadata = async (videoId) => {
   }
 };
 
-// 🚀 Unified Content Fetch - Enhanced with Full Info
+//  Unified Content Fetch - Enhanced with Full Info
 export const fetchTranscriptOrMetadata = async (videoId) => {
-  console.log(`🔍 Fetching content for videoId: ${videoId}`);
+  
   
   // Always get full video info FIRST
   const videoInfo = await getFullVideoInfo(videoId);
@@ -122,7 +122,7 @@ export const fetchTranscriptOrMetadata = async (videoId) => {
   // 1. Try transcript first
   const transcriptResult = await fetchTranscript(videoId);
   if (transcriptResult.success) {
-    console.log("✅ Using transcript");
+   
     return {
       success: true,
       source: 'transcript',
@@ -133,10 +133,10 @@ export const fetchTranscriptOrMetadata = async (videoId) => {
   }
 
   // 2. Fallback to metadata
-  console.log("⚠️ No transcript, trying metadata...");
+  console.log(" No transcript, trying metadata...");
   const metadataResult = await getVideoMetadata(videoId);
   if (metadataResult && metadataResult.success) {
-    console.log("✅ Using metadata");
+    console.log(" Using metadata");
     return {
       success: true,
       source: 'metadata',
@@ -154,7 +154,7 @@ export const fetchTranscriptOrMetadata = async (videoId) => {
   };
 };
 
-// 📥 Fetch Transcript (BACKWARD COMPATIBLE)
+// Fetch Transcript (BACKWARD COMPATIBLE)
 export const fetchTranscript = async (videoId) => {
   try {
     const response = await axios.get(

@@ -31,7 +31,7 @@ export const generateAIResponse = async (prompt) => {
       throw new Error("Empty AI response");
     }
 
-    // 🔥 CLEAN JSON
+    //  CLEAN JSON
     const cleanText = content
       .replace(/```json/g, "")
       .replace(/```/g, "")

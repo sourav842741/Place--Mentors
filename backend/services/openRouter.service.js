@@ -3,8 +3,8 @@ import axios from "axios";
 export const askAi = async (messages) => {
   try {
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      console.error("❌ Messages invalid");
-      return ""; // ❗ don't throw
+      console.error(" Messages invalid");
+      return ""; 
     }
 
     const response = await axios.post(
@@ -24,18 +24,18 @@ export const askAi = async (messages) => {
     const content = response?.data?.choices?.[0]?.message?.content;
 
     if (!content || !content.trim()) {
-      console.error("❌ Empty AI response");
-      return ""; // ❗ safe return
+      console.error(" Empty AI response");
+      return ""; 
     }
 
     return content;
   } catch (error) {
     console.error(
-      "❌ OpenRouter Error:",
+      " OpenRouter Error:",
       error.response?.data || error.message
     );
 
-    return ""; // ✅ NEVER THROW → THIS FIXES YOUR 500
+    return ""; 
   }
 };
 
@@ -56,7 +56,7 @@ export const extractJSON = (response) => {
 
     return null;
   } catch (err) {
-    console.error("❌ JSON parse failed");
+    console.error(" JSON parse failed");
     return null;
   }
 };

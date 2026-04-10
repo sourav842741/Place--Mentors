@@ -6,9 +6,9 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 
 const boilerplates = {
-  javascript: `console.log("Hello World 👋");`,
+  javascript: `console.log("Hello World");`,
 
-  python: `print("Hello World 👋")`,
+  python: `print("Hello World")`,
 
   java: `import java.util.*;
 public class Main {
@@ -38,7 +38,7 @@ const CodeEditor = () => {
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState(boilerplates["javascript"]);
 
-  // 🔥 TERMINAL STATES
+  //  TERMINAL STATES
   const [terminalInput, setTerminalInput] = useState([]);
   const [currentLine, setCurrentLine] = useState("");
 
@@ -49,11 +49,11 @@ const CodeEditor = () => {
     setCode(boilerplates[lang]);
   };
 
-  // 🔥 RUN WITH JOINED INPUT
+  //  RUN WITH JOINED INPUT
  const handleRun = () => {
   const allInputs = [...terminalInput];
 
-  // 🔥 agar last line type karke Enter nahi dabaya
+  //  agar last line type karke Enter nahi dabaya
   if (currentLine.trim() !== "") {
     allInputs.push(currentLine);
   }
@@ -73,7 +73,7 @@ const CodeEditor = () => {
 
         {/* HEADER */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-[#0f172a]">
-          <h1 className="text-sm font-semibold">⚡ Code Compiler</h1>
+          <h1 className="text-sm font-semibold">Code Compiler</h1>
 
           <button
             onClick={handleRun}
@@ -122,7 +122,7 @@ const CodeEditor = () => {
           <div className="flex-1 flex flex-col">
 
             {/* EDITOR */}
-            <div className="flex-1 border-b border-gray-800 min-h-[300px]">
+            <div className="flex-1 border-b border-gray-800 min-h-75">
               <Editor
                 height="100%"
                 theme="vs-dark"
@@ -133,7 +133,7 @@ const CodeEditor = () => {
               />
             </div>
 
-            {/* 🔥 TERMINAL INPUT UI */}
+            {/*  TERMINAL INPUT UI */}
             <div className="bg-black text-green-400 p-3 font-mono text-sm border-t border-gray-800">
 
               <p className="text-gray-400 mb-2">Terminal Input (press Enter)</p>
@@ -149,7 +149,7 @@ const CodeEditor = () => {
                 onChange={(e) => setCurrentLine(e.target.value)}
                onKeyDown={(e) => {
   if (e.key === "Enter") {
-    setTerminalInput(prev => [...prev, currentLine]); // ✅ FIX
+    setTerminalInput(prev => [...prev, currentLine]); 
     setCurrentLine("");
   }
 }}
@@ -159,7 +159,7 @@ const CodeEditor = () => {
             </div>
 
             {/* OUTPUT */}
-            <div className="bg-[#020617] p-3 font-mono text-sm border-t border-gray-800 min-h-[120px]">
+            <div className="bg-[#020617] p-3 font-mono text-sm border-t border-gray-800 min-h-30">
               {isLoading && <p className="text-yellow-400">Running...</p>}
               {error && <p className="text-red-400">{error}</p>}
               {result?.output && (

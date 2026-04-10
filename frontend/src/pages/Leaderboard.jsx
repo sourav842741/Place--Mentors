@@ -58,7 +58,7 @@ export default function Leaderboard() {
             {/* Stats Cards */}
             <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-end">
               {/* TIME CARD */}
-              <div className="bg-white px-4 py-3 sm:px-5 sm:py-3 rounded-xl shadow-md border flex flex-col items-center hover:scale-105 transition-all duration-200 min-w-[120px]">
+              <div className="bg-white px-4 py-3 sm:px-5 sm:py-3 rounded-xl shadow-md border flex flex-col items-center hover:scale-105 transition-all duration-200 min-w-30">
                 <span className="text-xs text-gray-500">TOTAL TIME</span>
                 <span className="text-base sm:text-lg font-bold text-blue-600">
                   ⏱ {myTime} min
@@ -66,7 +66,7 @@ export default function Leaderboard() {
               </div>
 
               {/* RANK CARD */}
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-3 sm:px-5 sm:py-3 rounded-xl shadow-md text-white flex flex-col items-center hover:scale-105 transition-all duration-200 min-w-[100px]">
+              <div className="bg-linear-to-r from-blue-500 to-indigo-600 px-4 py-3 sm:px-5 sm:py-3 rounded-xl shadow-md text-white flex flex-col items-center hover:scale-105 transition-all duration-200 min-w-30">
                 <span className="text-xs opacity-80">MY RANK</span>
                 <span className="text-lg sm:text-xl font-bold">
                   #{myRank || "--"}
@@ -139,14 +139,14 @@ export default function Leaderboard() {
             </div>
           </div>
 
-          {/* 🔥 TABLE - Horizontal scroll on mobile */}
+          {/*  TABLE - Horizontal scroll on mobile */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-gray-50 to-gray-100">
+            <div className="p-4 sm:p-6 border-b bg-linear-to-r from-gray-50 to-gray-100">
               <h2 className="font-bold text-lg sm:text-xl text-gray-800">Top Performers</h2>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[500px] sm:min-w-[650px]">
+              <table className="w-full min-w-125 sm:min-w-162.5">
                 <thead className="bg-gray-50 sticky top-0">
                   <tr>
                     <th className="text-left p-3 sm:p-4 text-sm sm:text-base font-semibold text-gray-700">Rank</th>
@@ -179,7 +179,7 @@ export default function Leaderboard() {
                             `https://ui-avatars.com/api/?name=${user.name}&background=3b82f6&color=fff`
                           }
                           alt={user.name}
-                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0"
+                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shrink-0"
                         />
                         <span className="text-sm sm:text-base font-medium text-gray-900 min-w-0 truncate">
                           {user.name}

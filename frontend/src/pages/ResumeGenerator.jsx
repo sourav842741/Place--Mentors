@@ -41,7 +41,7 @@ const ResumePreview = ({ data, template }) => {
   const commonSection = (icon, title, content) => (
     <section className="mb-6 last:mb-0 space-y-3">
       <div className="flex items-center">
-        <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+        <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center mr-3 shrink-0">
           {icon}
         </div>
         <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
@@ -53,11 +53,11 @@ const ResumePreview = ({ data, template }) => {
   );
 
   return (
-    <div className="w-full lg:w-[794px] mx-auto bg-white shadow-2xl border rounded-2xl overflow-auto" style={{ minHeight: "1122px" }}>
+    <div className="w-full lg:w-198.5 mx-auto bg-white shadow-2xl border rounded-2xl overflow-auto" style={{ minHeight: "1122px" }}>
       {template === "modern" ? (
         <div className="flex flex-col lg:flex-row h-full">
           {/* Left Sidebar */}
-          <div className="w-full lg:w-2/5 bg-gradient-to-b from-gray-50 to-gray-100 p-8 lg:p-10 border-r border-gray-200">
+          <div className="w-full lg:w-2/5 bg-linear-to-b from-gray-50 to-gray-100 p-8 lg:p-10 border-r border-gray-200">
             {/* Name */}
             <div className="mb-8">
               <div className="flex items-center mb-4">
@@ -219,11 +219,11 @@ export default function ResumeGenerator() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8 lg:ml-64 mt-9">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8 lg:ml-64 mt-9">
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Hero */}
           <div className="text-center">
-            <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 to-slate-800 bg-clip-text text-transparent mb-6">
+            <h1 className="text-5xl lg:text-6xl font-bold bg-linear-to-r from-gray-900 to-slate-800 bg-clip-text text-transparent mb-6">
               Premium Resume Builder
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -337,7 +337,7 @@ export default function ResumeGenerator() {
                     <Button 
                       onClick={handleGenerateAI}
                       disabled={generateLoading}
-                      className="w-full h-14 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg font-semibold flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700"
+                      className="w-full h-14 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg font-semibold flex items-center gap-3 bg-linear-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700"
                     >
                       {generateLoading ? (
                         <>
@@ -365,7 +365,7 @@ export default function ResumeGenerator() {
                       <Button 
                         onClick={handleDownload}
                         disabled={downloadLoading || !formData.name.trim()}
-                        className="flex-1 h-14 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg font-semibold flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                        className="flex-1 h-14 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg font-semibold flex items-center gap-3 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
                       >
                         {downloadLoading ? (
                           <>
@@ -395,7 +395,7 @@ export default function ResumeGenerator() {
                       <CardTitle className="text-2xl">Live Preview</CardTitle>
                       <CardDescription>A4 sized professional preview</CardDescription>
                     </div>
-                    <div className="ml-auto text-xs bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 px-4 py-2 rounded-full font-medium">
+                    <div className="ml-auto text-xs bg-linear-to-r from-indigo-100 to-purple-100 text-indigo-800 px-4 py-2 rounded-full font-medium">
                       {selectedTemplate === "modern" ? "Modern Sidebar" : "Classic"}
                     </div>
                   </div>

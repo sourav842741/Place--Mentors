@@ -2,33 +2,31 @@ import Doubt from "../models/Doubt.js";
 import Reply from "../models/Reply.js";
 import { askAi } from "../services/openRouter.service.js";
 
-// 🔥 Ask Doubt (AI + Save)
+//  Ask Doubt (AI + Save)
 export const askDoubt = async (req, res) => {
   try {
     const { question } = req.body;
 
-    const aiAnswer = await askAi([
-      { role: "user", content: question }
-    ]);
+    const aiAnswer = await askAi([{ role: "user", content: question }]);
 
     const doubt = await Doubt.create({
       user: req.user?._id,
       question,
-      aiAnswer
+      aiAnswer,
     });
 
-    await doubt.populate('user', 'fullName avatar'); // Populate for emit
+    await doubt.populate("user", "fullName avatar"); // Populate for emit
 
     // Emit new doubt to all
-    req.io.emit('new_doubt');
-    
+    req.io.emit("new_doubt");
+
     res.json(doubt);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// 📥 Get all doubts
+//  Get all doubts
 export const getDoubts = async (req, res) => {
   const doubts = await Doubt.find()
     .populate("user", "fullName avatar")
@@ -37,7 +35,7 @@ export const getDoubts = async (req, res) => {
   res.json(doubts);
 };
 
-// 💬 Add Reply + SOCKET EMIT
+//  Add Reply + SOCKET EMIT
 export const addReply = async (req, res) => {
   try {
     const { answer } = req.body;
@@ -56,36 +54,28 @@ export const addReply = async (req, res) => {
       .populate("user", "fullName avatar")
       .lean();
 
-    console.log("DOUBT OWNER:", doubt.user._id.toString());
-    console.log("REPLY USER:", req.user._id.toString());
-
-    // 🔥 REALTIME REPLY (thread update)
+    //  REALTIME REPLY (thread update)
     req.io.to(`doubt-${req.params.id}`).emit("new_reply", {
       doubtId: req.params.id,
     });
 
-    console.log(`✅ Emitted new_reply to doubt-${req.params.id}`);
-
-    // 🔔 NOTIFICATION (MAIN FIX)
+    //  NOTIFICATION (MAIN FIX)
     if (doubt.user._id.toString() !== req.user._id.toString()) {
-      console.log("📢 Sending notification to:", doubt.user._id.toString());
-
       req.io.to(doubt.user._id.toString()).emit("notification", {
         message: `${req.user.fullName} replied to your doubt 💬`,
         time: new Date().toLocaleString(),
       });
     }
 
-    // ✅ SEND RESPONSE LAST
+    //  SEND RESPONSE LAST
     res.json(populatedReply);
-
   } catch (err) {
     console.error("Add reply error:", err);
     res.status(500).json({ message: err.message });
   }
 };
 
-// 📥 Get Replies
+//  Get Replies
 export const getReplies = async (req, res) => {
   const replies = await Reply.find({ doubt: req.params.id })
     .populate("user", "fullName avatar")
@@ -104,18 +94,17 @@ export const toggleUpvote = async (req, res) => {
 
     const userId = req.user._id;
 
-    // 🔥 FIX: old DB data
     if (!Array.isArray(reply.upvotes)) {
       reply.upvotes = [];
     }
 
     const already = reply.upvotes.some(
-      (id) => id.toString() === userId.toString()
+      (id) => id.toString() === userId.toString(),
     );
 
     if (already) {
       reply.upvotes = reply.upvotes.filter(
-        (id) => id.toString() !== userId.toString()
+        (id) => id.toString() !== userId.toString(),
       );
     } else {
       reply.upvotes.push(userId);
@@ -125,20 +114,19 @@ export const toggleUpvote = async (req, res) => {
 
     // Find doubt for room emit
     const doubtId = reply.doubt;
-    
+
     // Emit real-time upvote update to doubt room
     req.io.to(`doubt-${doubtId}`).emit("reply_upvote", {
       replyId: reply._id,
-      upvotesCount: reply.upvotes.length
+      upvotesCount: reply.upvotes.length,
     });
 
     res.json({
       success: true,
       upvotes: reply.upvotes.length,
     });
-
   } catch (err) {
-    console.error("🔥 ERROR:", err);
+    console.error(" ERROR:", err);
     res.status(500).json({ message: err.message });
   }
 };

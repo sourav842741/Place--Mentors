@@ -1,7 +1,8 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const paymentSchema = new mongoose.Schema({
-     userId: {
+const paymentSchema = new mongoose.Schema(
+  {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -16,8 +17,10 @@ const paymentSchema = new mongoose.Schema({
       enum: ["created", "paid", "failed"],
       default: "created",
     },
-},{timestamps:true})
+  },
+  { timestamps: true },
+);
 
-const Payment = mongoose.model("Payment",paymentSchema)
+const Payment = mongoose.model("Payment", paymentSchema);
 
-export default Payment
+export default Payment;

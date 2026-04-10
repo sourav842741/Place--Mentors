@@ -60,7 +60,7 @@ export const getCompanyByName = async (name, userId) => {
     };
 
   } catch (error) {
-    console.error("❌ Company service error:", error.message);
+    console.error(" Company service error:", error.message);
     
     // DO NOT deduct credits on error
     return {

@@ -37,7 +37,7 @@ const NotesForm = () => {
     try {
       const result = await generateNotes(form).unwrap();
       setCurrentNote(result.data);
-      console.log("API RESPONSE 👉", result);
+     
     } catch (err) {
       console.error("Generate error:", err);
     }
@@ -275,11 +275,11 @@ const NotesForm = () => {
             {renderSubTopics(currentNote.subTopics)}
 
             {/* NOTES */}
-            <Card className="max-h-[500px] overflow-auto rounded-2xl border border-gray-200 shadow-xl bg-white">
+            <Card className="max-h-125 overflow-auto rounded-2xl border border-gray-200 shadow-xl bg-white">
               <CardHeader>
                 <CardTitle className="text-xl font-bold flex items-center gap-2">
                   📖
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     Comprehensive Notes
                   </span>
                 </CardTitle>

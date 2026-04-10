@@ -11,14 +11,12 @@ export const generateNotes = async (req, res) => {
       examType,
       revisionMode = false,
       includeDiagram = false,
-      includeChart = false
+      includeChart = false,
     } = req.body;
 
     if (!topic) {
       return res.status(400).json({ message: "Topic is required" });
     }
-
-    console.log("REQ USER ID:", req.userId);
 
     const user = await UserModel.findById(req.userId);
 
@@ -31,7 +29,7 @@ export const generateNotes = async (req, res) => {
       await user.save();
 
       return res.status(403).json({
-        message: "Insufficient credits"
+        message: "Insufficient credits",
       });
     }
 
@@ -41,20 +39,20 @@ export const generateNotes = async (req, res) => {
       examType,
       revisionMode,
       includeDiagram,
-      includeChart
+      includeChart,
     });
 
-    // 🔥 AI CALL
+    //  AI CALL
     let aiResponse = await generateAIResponse(prompt);
 
-    // ❗ SAFETY CHECK
+    //  SAFETY CHECK
     if (!aiResponse || typeof aiResponse !== "object") {
       return res.status(500).json({
-        message: "Invalid AI response format"
+        message: "Invalid AI response format",
       });
     }
 
-    // 🔥 SANITIZE (VERY IMPORTANT)
+    //  SANITIZE (VERY IMPORTANT)
     if (aiResponse.subTopics) {
       const fixed = {};
       Object.keys(aiResponse.subTopics).forEach((key) => {
@@ -65,20 +63,20 @@ export const generateNotes = async (req, res) => {
       aiResponse.subTopics = fixed;
     }
 
-    // 🔥 DEFAULT FALLBACK (avoid crash)
+    //  DEFAULT FALLBACK (avoid crash)
     aiResponse.revisionPoints = aiResponse.revisionPoints || [];
     aiResponse.questions = aiResponse.questions || {
       short: [],
       long: [],
-      diagram: ""
+      diagram: "",
     };
     aiResponse.diagram = aiResponse.diagram || {
       type: "flowchart",
-      data: ""
+      data: "",
     };
     aiResponse.charts = aiResponse.charts || [];
 
-    // ✅ SAVE NOTE
+    //  SAVE NOTE
     const notes = await Notes.create({
       userId: user._id,
       topic,
@@ -87,10 +85,10 @@ export const generateNotes = async (req, res) => {
       revisionMode,
       includeDiagram,
       includeChart,
-      content: aiResponse
+      content: aiResponse,
     });
 
-    // ✅ UPDATE USER
+    //  UPDATE USER
     user.credits -= 10;
     if (user.credits <= 0) user.isCreditAvailable = false;
 
@@ -105,15 +103,14 @@ export const generateNotes = async (req, res) => {
     return res.status(200).json({
       data: aiResponse,
       noteId: notes._id,
-      creditsLeft: user.credits
+      creditsLeft: user.credits,
     });
-
   } catch (error) {
     console.error("GENERATE NOTES ERROR:", error);
 
     return res.status(500).json({
       error: "AI generation failed",
-      message: error.message
+      message: error.message,
     });
   }
 };

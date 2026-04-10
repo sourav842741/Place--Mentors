@@ -3,35 +3,28 @@ import User from "../models/user.model.js";
 import { addXP } from "../utils/xpManager.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import axios from "axios";
-import { getOrCreateTodayCpotd, generateTodayCpotd } from "../services/cpotd.service.js";
-
+import {
+  getOrCreateTodayCpotd,
+  generateTodayCpotd,
+} from "../services/cpotd.service.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
-
-// ======================
-// ✅ CONTROLLERS
-// ======================
-
-// 🔥 Generate CPOTD (manual trigger)
+//  Generate CPOTD (manual trigger)
 export const generateCpotd = asyncHandler(async (req, res) => {
   const cpotd = await generateTodayCpotd();
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, cpotd, "CPOTD generated"));
+  return res.status(201).json(new ApiResponse(201, cpotd, "CPOTD generated"));
 });
 
-
-// 🔥 Get Today CPOTD (auto generate if not exists)
+//  Get Today CPOTD (auto generate if not exists)
 export const getTodayCpotd = asyncHandler(async (req, res) => {
   const cpotd = await getOrCreateTodayCpotd();
 
   return res.status(200).json(new ApiResponse(200, cpotd));
 });
 
-
-// 🔥 Submit CPOTD
+//  Submit CPOTD
 export const submitCpotd = asyncHandler(async (req, res) => {
   const { questionIndex, language, code } = req.body;
   const userId = req.user._id;
@@ -44,13 +37,9 @@ export const submitCpotd = asyncHandler(async (req, res) => {
     });
   }
 
-
   const question = cpotd.questions[questionIndex];
 
-  const testCases = [
-    ...question.sampleTestCases,
-    ...question.hiddenTestCases,
-  ];
+  const testCases = [...question.sampleTestCases, ...question.hiddenTestCases];
 
   let passed = 0;
   const results = [];
@@ -59,12 +48,11 @@ export const submitCpotd = asyncHandler(async (req, res) => {
     const executionResult = await executeCodeWithInput(
       code,
       language,
-      testCases[i].input
+      testCases[i].input,
     );
 
     const passedTest =
-      executionResult.output.trim() ===
-      testCases[i].expectedOutput.trim();
+      executionResult.output.trim() === testCases[i].expectedOutput.trim();
 
     if (passedTest) passed++;
 
@@ -78,31 +66,28 @@ export const submitCpotd = asyncHandler(async (req, res) => {
     });
   }
 
- const score = Math.round((passed / testCases.length) * 100);
+  const score = Math.round((passed / testCases.length) * 100);
 
-const xp = question.difficulty === "easy" ? 50 : 100;
+  const xp = question.difficulty === "easy" ? 50 : 100;
 
-const percentage = passed / testCases.length;
+  const percentage = passed / testCases.length;
 
-let xpEarned = 0;
+  let xpEarned = 0;
 
-if (percentage >= 0.3) {
-  xpEarned = Math.floor(xp * percentage);
-}
+  if (percentage >= 0.3) {
+    xpEarned = Math.floor(xp * percentage);
+  }
 
-const isAccepted = percentage === 1;
+  const isAccepted = percentage === 1;
 
   const user = await User.findById(userId);
   if (user && isAccepted) {
-    // 🔥 MARK CPOTD COMPLETED
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     user.codingPotdCompleted = true;
     user.lastCodingPotdDate = today;
-    
-    console.log(`📊 CPOTD XP attempt: +${xpEarned}`);
+
     addXP(user, xpEarned, "cpotd");
     await user.save();
-    console.log(`✅ CPOTD completed & XP saved for ${user.email}`);
   }
 
   return res.status(200).json({
@@ -119,9 +104,7 @@ const isAccepted = percentage === 1;
   });
 });
 
-// ======================
-// ✅ CODE EXECUTION
-// ======================
+//  CODE EXECUTION
 
 const LANGUAGE_MAP = {
   javascript: 63,
@@ -142,7 +125,7 @@ const executeCodeWithInput = async (code, language, input) => {
       source_code: encodedCode,
       language_id: langId,
       stdin: encodedInput,
-    }
+    },
   );
 
   const result = response.data;

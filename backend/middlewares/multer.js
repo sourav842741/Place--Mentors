@@ -19,7 +19,7 @@ const isAllowedFile = (req, file, cb) => {
     "image/jpeg",
     "image/png",
     "image/jpg",
-    "application/pdf", // ✅ allow PDF
+    "application/pdf", 
   ];
 
   if (allowedTypes.includes(file.mimetype)) {

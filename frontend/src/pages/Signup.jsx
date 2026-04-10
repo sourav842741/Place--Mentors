@@ -30,7 +30,7 @@ export default function Signup() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ FILE SELECT (CLICK FIX)
+  //  FILE SELECT (CLICK FIX)
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
 

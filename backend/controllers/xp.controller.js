@@ -18,7 +18,7 @@ export const updateTimeSpent = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user._id);
 
-  // ✅ safe array check
+  //  safe array check
   if (!Array.isArray(user.dailyStats)) {
     user.dailyStats = [];
   }
@@ -41,7 +41,7 @@ export const updateTimeSpent = asyncHandler(async (req, res) => {
       quizzesGiven: 0,
     });
 
-    todayData = user.dailyStats[user.dailyStats.length - 1]; // 🔥 fix
+    todayData = user.dailyStats[user.dailyStats.length - 1];
   }
 
   todayData.timeSpent += minutes;
@@ -81,14 +81,14 @@ export const completeQuiz = asyncHandler(async (req, res) => {
     });
   }
 
-  // ✅ safe array
+  // safe array
   if (!Array.isArray(user.dailyStats)) {
     user.dailyStats = [];
   }
 
   // remove bad data
   user.dailyStats = user.dailyStats.filter(
-    (d) => d && typeof d === "object" && d.date
+    (d) => d && typeof d === "object" && d.date,
   );
 
   // ================= XP =================
@@ -98,7 +98,7 @@ export const completeQuiz = asyncHandler(async (req, res) => {
     xpEarned += 50;
   }
 
-  // 🔥 streak cap
+  // streak cap
   xpEarned += Math.min(user.streakCount || 0, 10) * 2;
 
   const oldLevel = user.level || 1;
@@ -119,20 +119,18 @@ export const completeQuiz = asyncHandler(async (req, res) => {
       quizzesGiven: 0,
     });
 
-    todayData = user.dailyStats[user.dailyStats.length - 1]; // 🔥 fix
+    todayData = user.dailyStats[user.dailyStats.length - 1];
   }
 
   const prevAvg = todayData.avgScore || 0;
   const prevCount = todayData.quizzesGiven || 0;
 
-  const newAvg =
-    (prevAvg * prevCount + score) / (prevCount + 1);
+  const newAvg = (prevAvg * prevCount + score) / (prevCount + 1);
 
-  // 🔥 better precision
   todayData.avgScore = Number(newAvg.toFixed(1));
   todayData.quizzesGiven = prevCount + 1;
 
-  // 🔥 add time spent (important)
+  //  add time spent (important)
   todayData.timeSpent += 10;
 
   await user.save();

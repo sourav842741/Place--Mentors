@@ -44,7 +44,7 @@ const COMPANY_RESOURCES = {
     ]
   }
 };
-// ✅ Safe JSON parse
+// Safe JSON parse
 const safeParseJSON = (text) => {
   try {
     if (typeof text === "object") return text;
@@ -57,7 +57,7 @@ const safeParseJSON = (text) => {
   }
 };
 
-// ✅ Validate + clean AI response
+//  Validate + clean AI response
 const validateCompanyData = (data, companyName) => {
   if (!data || typeof data !== "object") return null;
 
@@ -241,14 +241,14 @@ Company-specific data:
   try {
     const aiResponse = await generateAI(prompt);
 
-    // ✅ safe parse
+    //  safe parse
     let companyData = safeParseJSON(aiResponse);
 
     if (!companyData) {
       throw new Error("Invalid AI JSON");
     }
 
-    // ✅ validate
+    //  validate
     companyData = validateCompanyData(companyData, companyName);
 
     return {

@@ -7,7 +7,7 @@ const About = () => {
   return (
     <>
     <Navbar/>
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-64 md:ml-64 p-6 mt-17">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-64 md:ml-64 p-6 mt-17">
 
       <div className="max-w-6xl mx-auto space-y-12">
 
@@ -23,10 +23,10 @@ const About = () => {
           </p>
         </div>
 
-        {/* 🔹 FEATURES */}
+        {/*  FEATURES */}
         <div>
           <h2 className="text-2xl font-bold mb-6 text-gray-800">
-            ✨ Key Features
+             Key Features
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -76,7 +76,7 @@ const About = () => {
           </div>
         </div>
 
-        {/* 🔹 HOW IT WORKS */}
+        {/*  HOW IT WORKS */}
         <div>
           <h2 className="text-2xl font-bold mb-6 text-gray-800">
             ⚙️ How It Works
@@ -108,7 +108,7 @@ const About = () => {
           </div>
         </div>
 
-        {/* 🔹 TECH STACK */}
+        {/*  TECH STACK */}
         <div>
           <h2 className="text-2xl font-bold mb-6 text-gray-800">
             🛠 Tech Stack

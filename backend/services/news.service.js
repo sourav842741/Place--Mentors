@@ -6,22 +6,18 @@ import { askAi } from "./openRouter.service.js";
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
 if (!NEWS_API_KEY) {
-  throw new Error("❌ NEWS_API_KEY missing in .env");
+  throw new Error(" NEWS_API_KEY missing in .env");
 }
 
 // ================= FETCH RAW NEWS =================
 export const fetchNewsData = async () => {
   try {
-    console.log("📰 Fetching INDIA news... 🇮🇳");
-
     const queries = ["technology", "AI", "startup", "jobs"];
 
     let allNews = [];
 
     for (const q of queries) {
       const url = `https://newsdata.io/api/1/news?apikey=${NEWS_API_KEY}&q=${encodeURIComponent(q)}&country=in&language=en`;
-
-      console.log("🔗 Fetching:", q);
 
       const { data } = await axios.get(url);
 
@@ -31,23 +27,19 @@ export const fetchNewsData = async () => {
     }
 
     if (!allNews.length) {
-      console.log("⚠️ No India news found");
+      console.log(" No India news found");
       return [];
     }
 
-    // ✅ REMOVE DUPLICATES
+    //  REMOVE DUPLICATES
     const uniqueNews = Array.from(
-      new Map(allNews.map((item) => [item.link, item])).values()
+      new Map(allNews.map((item) => [item.link, item])).values(),
     );
 
-    console.log(`✅ India news fetched: ${uniqueNews.length}`);
+    console.log(` India news fetched: ${uniqueNews.length}`);
     return uniqueNews;
-
   } catch (error) {
-    console.error(
-      "❌ Newsdata.io error:",
-      error.response?.data || error.message
-    );
+    console.error(" Newsdata.io error:", error.response?.data || error.message);
     return [];
   }
 };
@@ -57,7 +49,7 @@ const processArticleAI = async (article) => {
   const { title, description, source_id, pubDate, link } = article;
 
   try {
-    // 🔥 SINGLE AI CALL (optimized)
+    //  SINGLE AI CALL (optimized)
     const prompt = `
 Return STRICT JSON:
 {
@@ -93,7 +85,7 @@ Description: ${description || ""}
       publishedAt: new Date(pubDate || Date.now()),
     };
   } catch (err) {
-    console.error("❌ AI error:", err.message);
+    console.error(" AI error:", err.message);
     return null;
   }
 };
@@ -107,7 +99,7 @@ export const fetchAndProcessNews = async () => {
     console.log("🤖 Processing news...");
 
     const processedNews = await Promise.all(
-      rawNews.map((article) => processArticleAI(article))
+      rawNews.map((article) => processArticleAI(article)),
     );
 
     const validNews = processedNews.filter(Boolean);
@@ -121,16 +113,16 @@ export const fetchAndProcessNews = async () => {
           update: { $set: news },
           upsert: true,
         },
-      }))
+      })),
     );
 
     console.log(
-      `✅ Stored ${validNews.length} news (${result.modifiedCount} updated)`
+      `Stored ${validNews.length} news (${result.modifiedCount} updated)`,
     );
 
     return validNews.length;
   } catch (error) {
-    console.error("❌ News service error:", error.message);
+    console.error(" News service error:", error.message);
     return 0;
   }
 };

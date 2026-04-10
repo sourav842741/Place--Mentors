@@ -65,12 +65,12 @@ const CodingPotdPage = () => {
   const navigate = useNavigate();
   const { getCurrentUser } = useAuth();
 
-  // ✅ fetch only once
+  //  fetch only once
   useEffect(() => {
     dispatch(fetchCpotd());
   }, [dispatch]);
 
-  // ✅ timer logic separate
+  //  timer logic separate
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch(setTimer(timer - 1));
@@ -86,13 +86,13 @@ const CodingPotdPage = () => {
 
   useEffect(() => {
     if (codeMap[currentQuestionIndex]) {
-      setCode(codeMap[currentQuestionIndex]); // 🔥 load saved code
+      setCode(codeMap[currentQuestionIndex]);
     } else {
-      setCode("// Write your code here"); // default
+      setCode("// Write your code here");
     }
 
-    setCustomInput(""); // input reset
-  }, [currentQuestionIndex]);
+    setCustomInput("");
+  }, [currentQuestionIndex, codeMap]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -139,7 +139,7 @@ const CodingPotdPage = () => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Coding Problem of the Day
             </h1>
             <div className="flex items-center justify-center gap-4 mb-4">
@@ -195,8 +195,8 @@ const CodingPotdPage = () => {
               <Card
                 className={`${
                   submissionResult.isAccepted
-                    ? "bg-gradient-to-r from-green-900/50 to-emerald-900/50 border-green-500"
-                    : "bg-gradient-to-r from-red-900/50 to-rose-900/50 border-red-500"
+                    ? "bg-linear-to-r from-green-900/50 to-emerald-900/50 border-green-500"
+                    : "bg-linear-to-r from-red-900/50 to-rose-900/50 border-red-500"
                 }`}
               >
                 <CardHeader>
@@ -343,7 +343,7 @@ const CodingPotdPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
                             <h4 className="font-semibold mb-2">Input Format</h4>
-                            <pre className="bg-gray-300 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap break-words border">
+                            <pre className="bg-gray-300 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                               {currentQuestion?.inputFormat}
                             </pre>
                           </div>
@@ -352,7 +352,7 @@ const CodingPotdPage = () => {
                             <h4 className="font-semibold mb-2">
                               Output Format
                             </h4>
-                            <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap break-words border">
+                            <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                               {currentQuestion?.outputFormat}
                             </pre>
                           </div>
@@ -360,7 +360,7 @@ const CodingPotdPage = () => {
 
                         <div>
                           <h4 className="font-semibold mb-2">Constraints</h4>
-                          <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap break-words border">
+                          <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                             {currentQuestion?.constraints}
                           </pre>
                         </div>
@@ -444,7 +444,7 @@ const CodingPotdPage = () => {
                   />
                 </div>
 
-                <Card className="border-0 bg-black/30 h-[500px]">
+                <Card className="border-0 bg-black/30 h-125">
                   <CardContent className="h-full p-0 pt-2">
                     <Editor
                       key={currentQuestionIndex}
@@ -453,11 +453,13 @@ const CodingPotdPage = () => {
                       language={language}
                       value={code}
                       onChange={(val) => {
-                        setCode(val);
+                        const safeCode = val || "";
+
+                        setCode(safeCode);
 
                         setCodeMap((prev) => ({
                           ...prev,
-                          [currentQuestionIndex]: val, // 🔥 save code per question
+                          [currentQuestionIndex]: safeCode,
                         }));
                       }}
                       options={{
@@ -472,11 +474,14 @@ const CodingPotdPage = () => {
                 <div className="flex gap-3 mt-4">
                   {currentQuestionIndex > 0 && (
                     <Button
-                      onClick={() =>
-                        dispatch(setCurrentQuestion(currentQuestionIndex - 1))
-                      }
-                      variant="outline"
-                      className="flex-1"
+                      onClick={() => {
+                        setCodeMap((prev) => ({
+                          ...prev,
+                          [currentQuestionIndex]: code,
+                        }));
+
+                        dispatch(setCurrentQuestion(currentQuestionIndex - 1));
+                      }}
                     >
                       ← Previous
                     </Button>

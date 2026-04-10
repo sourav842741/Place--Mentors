@@ -28,15 +28,15 @@ Return ONLY valid JSON: { "questions": [...] }
  */
 export const getOrCreateTodayCpotd = async () => {
   const today = getTodayDate();
-  console.log(`🔄 [CPOTD-SVC] Checking ${today}...`);
+  console.log(` [CPOTD-SVC] Checking ${today}...`);
 
   let cpotd = await CodingPotd.findOne({ date: today });
   if (cpotd) {
-    console.log(`✅ [CPOTD-SVC] Found existing for ${today}`);
+    console.log(` [CPOTD-SVC] Found existing for ${today}`);
     return cpotd;
   }
 
-  console.log(`🤖 [CPOTD-SVC] Generating for ${today}...`);
+  console.log(` [CPOTD-SVC] Generating for ${today}...`);
   try {
     const aiResponse = await askAi([{ role: "user", content: CPOTD_PROMPT }]);
     const data = extractJSON(aiResponse);
@@ -56,17 +56,17 @@ export const getOrCreateTodayCpotd = async () => {
       { upsert: true, new: true }
     );
 
-    console.log(`✅ [CPOTD-SVC] Generated & saved ${cpotd._id}`);
+    console.log(` [CPOTD-SVC] Generated & saved ${cpotd._id}`);
     return cpotd;
   } catch (error) {
-    console.error(`❌ [CPOTD-SVC] Generation failed:`, error.message);
+    console.error(` [CPOTD-SVC] Generation failed:`, error.message);
     throw error;
   }
 };
 
-/**
- * Manual trigger (idempotent)
- */
+
+  // Manual trigger (idempotent)
+
 export const generateTodayCpotd = async () => {
   return await getOrCreateTodayCpotd();
 };

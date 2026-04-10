@@ -35,7 +35,7 @@ const channelMap = {
   general: []
 };
 
-// 🔍 DETECT QUERY TYPE
+//  DETECT QUERY TYPE
 const detectType = (query) => {
   query = query.toLowerCase();
 
@@ -53,7 +53,7 @@ const detectType = (query) => {
   return "general";
 };
 
-// 🎥 MAIN FUNCTION
+//  MAIN FUNCTION
 export const getYoutubeVideo = async (query) => {
   try {
     const res = await axios.get(
@@ -66,18 +66,18 @@ export const getYoutubeVideo = async (query) => {
           maxResults: 5,
           type: "video",
           order: "viewCount",
-          videoDuration: "medium" // 🔥 removes shorts
+          videoDuration: "medium" 
         }
       }
     );
 
     const items = res.data?.items;
     if (!items || items.length === 0) {
-      console.log("❌ No videos found for:", query);
+      console.log(" No videos found for:", query);
       return null;
     }
 
-    // 🔥 REMOVE SHORTS
+    //  REMOVE SHORTS
     const filtered = items.filter(item => {
       const title = item.snippet.title.toLowerCase();
 
@@ -88,13 +88,13 @@ export const getYoutubeVideo = async (query) => {
 
     const finalList = filtered.length > 0 ? filtered : items;
 
-    // 🔥 DETECT TYPE
+    //  DETECT TYPE
     const type = detectType(query);
     const trustedChannels = channelMap[type];
 
     let selectedVideo = null;
 
-    // ✅ TRY TRUSTED CHANNEL MATCH
+    //  TRY TRUSTED CHANNEL MATCH
     if (trustedChannels.length > 0) {
       selectedVideo = finalList.find(item =>
         trustedChannels.some(name =>
@@ -103,7 +103,7 @@ export const getYoutubeVideo = async (query) => {
       );
     }
 
-    // 🔥 FALLBACK
+    //  FALLBACK
     if (!selectedVideo) {
       selectedVideo = finalList[0];
     }
@@ -111,7 +111,7 @@ export const getYoutubeVideo = async (query) => {
     const videoId = selectedVideo?.id?.videoId;
 
     if (!videoId) {
-      console.log("❌ No videoId found");
+      console.log(" No videoId found");
       return null;
     }
 
@@ -122,7 +122,7 @@ export const getYoutubeVideo = async (query) => {
     };
 
   } catch (error) {
-    console.log("❌ YouTube API Error:", error.response?.data || error.message);
+    console.log(" YouTube API Error:", error.response?.data || error.message);
     return null;
   }
 };

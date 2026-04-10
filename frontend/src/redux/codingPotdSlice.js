@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCpotdApi, submitCpotdApi } from "../services/cpotdApi";
 
-// 🔥 Fetch CPOTD
+//  Fetch CPOTD
 export const fetchCpotd = createAsyncThunk(
   "cpotd/fetch",
   async (_, { rejectWithValue }) => {
@@ -13,7 +13,7 @@ export const fetchCpotd = createAsyncThunk(
   }
 );
 
-// 🔥 Submit Code
+//  Submit Code
 export const submitCpotdCode = createAsyncThunk(
   "cpotd/submit",
   async (data, { rejectWithValue }) => {

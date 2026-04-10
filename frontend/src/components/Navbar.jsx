@@ -44,7 +44,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { socket } from "../socket";
 
 export default function Navbar() {
-const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.user);
   const isAuth = useSelector((state) => state.user.isAuth);
   const credits = useSelector((state) => state.user.user?.credits ?? 0);
   const loading = useSelector((state) => state.user.loading);
@@ -88,20 +88,14 @@ const user = useSelector((state) => state.user.user);
   };
 
   const handleLogout = async () => {
-    console.log("Logout clicked");
-
     try {
       await api.get("/api/auth/signout", {
         withCredentials: true,
       });
 
-      console.log("API called");
-
       dispatch(logoutUser());
       navigate("/");
-    } catch (err) {
-      console.log("Logout error", err);
-    }
+    } catch (err) {}
   };
 
   const getInitials = (name) => {
@@ -123,7 +117,7 @@ const user = useSelector((state) => state.user.user);
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
     { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
-   { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
+    { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
   ];
 
@@ -148,12 +142,12 @@ const user = useSelector((state) => state.user.user);
             >
               <div
                 className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-blue-600 text-white font-bold rounded-lg 
-  transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
+                transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
               >
                 PM
               </div>
 
-              {/* 🔥 TEXT */}
+              {/*  TEXT */}
               <span className="font-bold text-base sm:text-lg tracking-wide">
                 Place
                 <span className="text-blue-600 group-hover:text-blue-500 transition">
@@ -175,7 +169,7 @@ const user = useSelector((state) => state.user.user);
         <div className="flex items-center gap-3">
           {/* DESKTOP-ONLY ELEMENTS */}
           <div className="hidden md:flex items-center gap-3">
-            {/* 🔔 NOTIFICATION BELL */}
+            {/*  NOTIFICATION BELL */}
             {isAuth && (
               <div className="relative">
                 <Button
@@ -333,9 +327,7 @@ const user = useSelector((state) => state.user.user);
                   <>
                     <DropdownMenuLabel className="p-2 flex items-center gap-2">
                       <BsCoin className="text-yellow-500 h-4 w-4" />
-                      <span className="font-semibold">
-                        {credits} Credits
-                      </span>
+                      <span className="font-semibold">{credits} Credits</span>
                     </DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={() => navigate("/pricing")}
@@ -378,44 +370,54 @@ const user = useSelector((state) => state.user.user);
 
       {/* DESKTOP SIDEBAR - IMPROVED */}
       <div className="hidden md:flex fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-background/80 backdrop-blur-lg border-r shadow-sm p-6 flex-col z-40 overflow-y-auto scrollbar-hide">
-      
-
         {/* MAIN Section */}
         <div className="space-y-3 mb-8">
-          <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-1 mb-2 tracking-wider">Main</div>
-          {[menuItems[0], menuItems[1], menuItems[2], menuItems[3]].map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <button
-                key={item.label}
-                onClick={() => navigate(item.path)}
-                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-100 hover:-translate-x-1 hover:shadow-md ${isActive 
-                  ? 'bg-blue-100 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]' 
-                  : 'text-foreground hover:text-blue-700'
-                }`}
-              >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`} />
-                <span className="text-sm font-medium">{item.label}</span>
-              </button>
-            );
-          })}
+          <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-1 mb-2 tracking-wider">
+            Main
+          </div>
+          {[menuItems[0], menuItems[1], menuItems[2], menuItems[3]].map(
+            (item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => navigate(item.path)}
+                  className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-100 hover:-translate-x-1 hover:shadow-md ${
+                    isActive
+                      ? "bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]"
+                      : "text-foreground hover:text-blue-700"
+                  }`}
+                >
+                  <item.icon
+                    className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground group-hover:text-blue-600 transition-colors"}`}
+                  />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </button>
+              );
+            },
+          )}
         </div>
 
         {/* TOOLS Section */}
         <div className="space-y-3">
-          <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-4 mb-2 tracking-wider">Tools</div>
+          <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-4 mb-2 tracking-wider">
+            Tools
+          </div>
           {menuItems.slice(4).map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-50 hover:-translate-x-1 hover:shadow-md ${isActive 
-                  ? 'bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]' 
-                  : 'text-foreground hover:text-blue-700'
+                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-50 hover:-translate-x-1 hover:shadow-md ${
+                  isActive
+                    ? "bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]"
+                    : "text-foreground hover:text-blue-700"
                 }`}
               >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`} />
+                <item.icon
+                  className={`w-5 h-5 shrink-0 ${isActive ? "text-blue-600" : "text-muted-foreground group-hover:text-blue-600 transition-colors"}`}
+                />
                 <span className="text-sm font-medium">{item.label}</span>
               </button>
             );
@@ -425,11 +427,15 @@ const user = useSelector((state) => state.user.user);
         {/* Bottom Section */}
         <div className="mt-auto pt-8 space-y-4">
           {/* Streak */}
-          <div className="p-3 rounded-xl bg-gradient-to-r from-orange-500/10 to-orange-400/10 border border-orange-200 flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200">
-            <Flame className="w-5 h-5 text-orange-500 flex-shrink-0" />
+          <div className="p-3 rounded-xl bg-linear-to-r from-orange-500/10 to-orange-400/10 border border-orange-200 flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200">
+            <Flame className="w-5 h-5 text-orange-500 shrink-0" />
             <div>
-              <span className="font-bold text-sm">{user?.streakCount || 0}</span>
-              <span className="text-sm text-muted-foreground ml-1">Day Streak</span>
+              <span className="font-bold text-sm">
+                {user?.streakCount || 0}
+              </span>
+              <span className="text-sm text-muted-foreground ml-1">
+                Day Streak
+              </span>
             </div>
           </div>
 
@@ -446,8 +452,15 @@ const user = useSelector((state) => state.user.user);
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <div className="font-semibold text-sm truncate" title={user?.fullName}>{user?.fullName}</div>
-              <div className="text-xs text-muted-foreground">Level {user?.level}</div>
+              <div
+                className="font-semibold text-sm truncate"
+                title={user?.fullName}
+              >
+                {user?.fullName}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Level {user?.level}
+              </div>
             </div>
           </div>
         </div>

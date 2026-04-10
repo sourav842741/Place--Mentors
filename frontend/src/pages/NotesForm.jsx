@@ -28,8 +28,6 @@ const handleSubmit = async (e) => {
 
   const res = await dispatch(generateNotes(form));
 
-  console.log("API RESPONSE 👉", res.payload);
-
   // ❌ ERROR HANDLE
   if (res?.error) {
     let message = "Something went wrong";

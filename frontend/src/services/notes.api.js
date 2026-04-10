@@ -1,18 +1,18 @@
 import api from "./api";
 
-// ✅ Generate Notes
+//  Generate Notes
 export const generateNotesAPI = (data) =>
   api.post("/api/notes/generate-notes", data);
 
-// ✅ Get all notes
+//  Get all notes
 export const getMyNotesAPI = () =>
   api.get("/api/notes/getnotes");
 
-// ✅ Get single note
+//  Get single note
 export const getSingleNoteAPI = (id) =>
   api.get(`/api/notes/${id}`);
 
-// ✅ Generate PDF
+//  Generate PDF
 export const generatePDFAPI = (data) =>
   api.post("/api/pdf/generate-pdf", data, {
     responseType: "blob",

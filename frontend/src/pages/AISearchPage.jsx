@@ -21,14 +21,14 @@ const AISearchPage = () => {
 
     const data = await getCompany(query);
 
-    // 🔥 CREDIT UPDATE FIX (IMPORTANT)
+    //  CREDIT UPDATE FIX (IMPORTANT)
     const credits = data?.credits ?? data?.data?.credits;
 
     if (credits !== undefined) {
       dispatch(updateCredits(credits));
     }
 
-    // 🔥 NAVIGATE
+    //  NAVIGATE
     if (data?.name || data?.data?.name) {
       const companyName = data?.name || data?.data?.name;
       navigate(`/company/${companyName.toLowerCase()}`);
@@ -39,7 +39,7 @@ const AISearchPage = () => {
     <>
       <Navbar />
 
-      <div className="pt-20 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
+      <div className="pt-20 min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
 
         {/* Card */}
         <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border p-6 md:p-8 text-center space-y-6">

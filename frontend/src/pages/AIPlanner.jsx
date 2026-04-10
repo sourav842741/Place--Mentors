@@ -455,7 +455,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
                                 )}
                               </div>
 
-                              {/* 🔗 RESOURCE LINK */}
+                              {/*  RESOURCE LINK */}
                               {task.link && (
                                 <a
                                   href={task.link}
@@ -466,14 +466,14 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
                                 </a>
                               )}
 
-                              {/* 🔍 YOUTUBE SEARCH */}
+                              {/*  YOUTUBE SEARCH */}
                               {task.youtubeQuery && (
                                 <p className="text-xs text-gray-400 mt-1">
                                   🔍 {task.youtubeQuery}
                                 </p>
                               )}
 
-                              {/* 🎥 VIDEO */}
+                              {/*  VIDEO */}
                               {task.videoUrl && (
                                 <iframe
                                   src={task.videoUrl.replace(
@@ -484,7 +484,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
                                 />
                               )}
 
-                              {/* ✅ COMPLETE */}
+                              {/*  COMPLETE */}
                               <div className="mt-3 flex justify-end">
                                 {task.completed ? (
                                   <span className="text-green-500 text-sm">
@@ -507,7 +507,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
                   })}
                 </div>
               ) : (
-                // 🟡 SIMPLE VIEW (without id)
+                //  SIMPLE VIEW (without id)
                 <div className="flex flex-col items-center justify-center text-center py-20">
                   {/* ICON */}
                   <div className="bg-linear-to-r from-purple-100 to-blue-100 p-6 rounded-full mb-6 shadow-inner">

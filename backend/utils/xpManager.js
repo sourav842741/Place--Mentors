@@ -18,10 +18,10 @@ export const addXP = (user, amount, source = "general") => {
   user.currentLevelXP = remainingXP;
   user.nextLevelXP = xpNeeded;
 
-  console.log(`✅ ${source} XP: +${amount} (Total: ${user.xp}, Level: ${level})`);
+
 };
 
-// 🔥 POTD specific (already handled in controller, but available)
+//  POTD specific 
 export const calculatePotdXP = (correctAnswers, questions) => {
   let xp = 0;
   questions.forEach((q, i) => {

@@ -91,6 +91,10 @@ const userSchema = new mongoose.Schema(
     xp: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
 
+    // AI COACH FIELDS
+    lastMotivation: { type: String, default: "" },
+    lastMotivationDate: { type: Date, default: null },
+
       currentLevelXP: {
   type: Number,
   default: 0,
@@ -126,7 +130,7 @@ nextLevelXP: {
         },
       },
     ],
-    // 🔥 Company Preparation Tracking
+    //  Company Preparation Tracking
 prepCompanies: [
   {
     type: mongoose.Schema.Types.ObjectId,
@@ -148,7 +152,7 @@ prepCompanies: [
       default: 100,
     },
 
-    // 🔥 POTD TRACKING
+    //  POTD TRACKING
     potdCompleted: { type: Boolean, default: false },
     codingPotdCompleted: { type: Boolean, default: false },
     lastPotdDate: { type: String, default: null }, // YYYY-MM-DD

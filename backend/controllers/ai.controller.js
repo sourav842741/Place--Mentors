@@ -1,9 +1,9 @@
 import puppeteer from "puppeteer";
 import { askAi, extractJSON } from "../services/openRouter.service.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
-import {asyncHandler} from "../utils/asyncHandler.js";
-import {ApiError} from "../utils/ApiError.js";
-import {ApiResponse} from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
 import { isValidYoutubeUrl, extractVideoId, fetchTranscript, fetchTranscriptOrMetadata } from "../utils/youtubeHelper.js";
 
@@ -123,7 +123,7 @@ export const generateYoutubeSummary = asyncHandler(async (req, res) => {
 
   const videoInfo = contentResult.videoInfo;
 
-  // 🧠 UPDATED PROMPT (HINGLISH + STRICT STRING)
+  //  UPDATED PROMPT (HINGLISH + STRICT STRING)
 const messages = [
   {
     role: "system",
@@ -255,7 +255,7 @@ ${contentResult.text.substring(0, 30000)}
     structuredSummary = null;
   }
 
-  // 🔥 FALLBACK (also Hinglish)
+  //  FALLBACK (also Hinglish)
   if (!structuredSummary || !structuredSummary.english) {
     const englishPrompt = `Summarize in 4-6 simple English bullet points:\n${contentResult.text.substring(0, 20000)}`;
     const englishSummary = await askAi([{ role: "user", content: englishPrompt }]);
@@ -275,7 +275,7 @@ ${contentResult.text.substring(0, 30000)}
   user.credits -= 1;
   await user.save();
 
-  // ✅ FINAL RESPONSE
+  //  FINAL RESPONSE
   const responseData = {
     title: videoInfo.title,
     thumbnail: videoInfo.thumbnail,
@@ -297,6 +297,111 @@ ${contentResult.text.substring(0, 30000)}
     })
   );
 });
+
+export const getMotivation = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId).select(
+      "level streakCount xp lastMotivation lastMotivationDate"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // XP calculation
+    const level = user.level || 1;
+    const xp = user.xp || 0;
+
+    const prevXP = ((level - 1) * level * 100) / 2;
+    const currentXP = xp - prevXP;
+    const maxXP = level * 100;
+
+    const percent = Math.min(
+      Math.max((currentXP / maxXP) * 100, 0),
+      100
+    ).toFixed(0);
+
+    const streak = user.streakCount || 0;
+
+    // Weak area detection
+    let weakArea = "finishing";
+    if (streak < 3) weakArea = "consistency";
+    else if (parseFloat(percent) < 40) weakArea = "focus";
+    else if (parseFloat(percent) < 80) weakArea = "discipline";
+
+    // Daily same message check
+    const today = new Date().toDateString();
+
+    if (
+      user.lastMotivationDate &&
+      user.lastMotivationDate.toDateString() === today &&
+      user.lastMotivation
+    ) {
+      return res.json({ message: user.lastMotivation });
+    }
+
+    // AI prompt
+    const messages = [
+      {
+        role: "system",
+        content: `You are strict AI COACH. Generate EXACTLY 2 lines:
+Line 1: MUST mention Level ${level}, Streak ${streak} OR ${percent}% + 1 emoji (8-10 words)
+Line 2: Target "${weakArea}" issue specifically + 1 emoji (8-10 words)
+Hinglish OK. Energetic. Use \\n separator. No extra text.`
+      },
+      { role: "user", content: "Give me motivation." }
+    ];
+
+    let aiResponse = "";
+    try {
+      aiResponse = await askAi(messages);
+    } catch (err) {
+      console.error("AI ERROR:", err);
+    }
+
+    // ================= CLEANING LOGIC =================
+    let cleanMessage = (aiResponse || "").toString().trim();
+
+    // Fix escaped newline
+    cleanMessage = cleanMessage.replace(/\\n/g, "\n");
+
+    // Split lines
+    let lines = cleanMessage
+      .split(/[\n\r]+/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    // Remove duplicates
+    lines = [...new Set(lines)];
+
+    // Ensure exactly 2 lines
+    if (lines.length === 0) {
+      cleanMessage = `${percent}% done — keep going 🚀\nDon't break your streak 💪`;
+    } else if (lines.length === 1) {
+      cleanMessage = `${lines[0]}\n${lines[0]}`;
+    } else {
+      cleanMessage = `${lines[0]}\n${lines[1]}`;
+    }
+
+    // Save FINAL message
+    user.lastMotivation = cleanMessage;
+    user.lastMotivationDate = new Date();
+    await user.save();
+
+    // Response
+    return res.json({
+      message: cleanMessage
+    });
+
+  } catch (error) {
+    console.error("Motivation Error:", error);
+    return res.status(500).json({
+      message: "Something went wrong"
+    });
+  }
+};
 
 export const generateResumePDF = async (req, res) => {
   try {

@@ -128,9 +128,9 @@ export const generateQuestion = async (req, res) => {
     }
 
     const messages = [
-  {
-    role: "system",
-    content: `
+      {
+        role: "system",
+        content: `
 You are an experienced professional interviewer with deep industry knowledge.
 
 Your goal is to simulate a real interview conversation that feels natural, practical, and role-specific.
@@ -173,12 +173,12 @@ Advanced Requirements:
 Context:
 Use the candidate details provided in the next message to generate highly relevant and personalized interview questions.
 `,
-  },
-  {
-    role: "user",
-    content: userPrompt,
-  },
-];
+      },
+      {
+        role: "user",
+        content: userPrompt,
+      },
+    ];
 
     const aiResponse = await askAi(messages);
 
@@ -422,7 +422,7 @@ export const finishInterview = async (req, res) => {
           quizzesGiven: 0,
         });
 
-        todayData = user.dailyStats[user.dailyStats.length - 1]; // 🔥 IMPORTANT
+        todayData = user.dailyStats[user.dailyStats.length - 1]; //  IMPORTANT
       }
 
       const prevAvg = todayData.avgScore || 0;
@@ -432,12 +432,12 @@ export const finishInterview = async (req, res) => {
 
       todayData.avgScore = Math.round(newAvg);
       todayData.quizzesGiven = prevCount + 1;
- 
-      // 🔥 interview time add
-const duration =
-  (new Date() - new Date(interview.createdAt)) / (1000 * 60);
 
-todayData.timeSpent += Math.round(duration);
+      //  interview time add
+      const duration =
+        (new Date() - new Date(interview.createdAt)) / (1000 * 60);
+
+      todayData.timeSpent += Math.round(duration);
 
       console.log("AFTER UPDATE:", user.dailyStats);
 
@@ -463,7 +463,7 @@ todayData.timeSpent += Math.round(duration);
       })),
     });
   } catch (error) {
-    console.error("FINISH INTERVIEW ERROR:", error); 
+    console.error("FINISH INTERVIEW ERROR:", error);
 
     return res.status(500).json({
       message: "Failed to finish interview",
@@ -474,7 +474,7 @@ todayData.timeSpent += Math.round(duration);
 
 export const getMyInterviews = async (req, res) => {
   try {
-    const interviews = await Interview.find({ userId: req.user._id }) 
+    const interviews = await Interview.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
       .select("role experience mode finalScore status createdAt");
 

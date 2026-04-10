@@ -46,17 +46,13 @@ const youtubeSlice = createSlice({
         state.error = null;
       })
       .addCase(generateYoutubeSummary.fulfilled, (state, action) => {
-        console.log("✅ YOUTUBE FULFILLED - Raw payload:", action.payload);
-        console.log("✅ Extracted data:", action.payload.data);
-        console.log("✅ Credits left from API:", action.payload.data?.creditsLeft || action.payload.creditsLeft);
-        
         state.loading = false;
-        state.data = action.payload.data.data; // 🔥 FIX (actual data)
-state.creditsLeft = action.payload.data.creditsLeft; 
-        state.apiResponse = action.payload; // Backup full response
+        state.data = action.payload.data.data;
+        state.creditsLeft = action.payload.data.creditsLeft; 
+        state.apiResponse = action.payload;
         
-        toast.success("Pro Summary generated! ✨");
-        console.log("✅ Final state - creditsLeft:", state.creditsLeft);
+        toast.success("Pro Summary generated!");
+
       })
       .addCase(generateYoutubeSummary.rejected, (state, action) => {
         state.loading = false;

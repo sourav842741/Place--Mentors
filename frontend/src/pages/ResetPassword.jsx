@@ -93,7 +93,7 @@ export default function ResetPassword() {
     <>
       {loading && <FullScreenLoader />}
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50 to-blue-50 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-white via-orange-50 to-blue-50 px-4">
 
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 space-y-6 border">
 

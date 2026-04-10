@@ -41,7 +41,7 @@ className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm 
           <div className="flex items-center gap-2 text-white font-semibold bg-black backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/30 hover:bg-black/30 transition-all">
             {solved ? (
               <>
-                ✅ Completed
+                 Completed
                 <CheckCircle className="w-5 h-5" />
               </>
             ) : (

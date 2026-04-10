@@ -31,7 +31,7 @@ export const getDailyLeaderboard = asyncHandler(async (req, res) => {
 
  const sorted = leaderboard.sort((a, b) => b.score - a.score);
 
-// 🔥 ADD RANK + USER IDENTIFY
+//  ADD RANK + USER IDENTIFY
 const finalLeaderboard = sorted.map((user, index) => ({
   ...user,
   rank: index + 1,

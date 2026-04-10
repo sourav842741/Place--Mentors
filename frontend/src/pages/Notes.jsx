@@ -9,13 +9,13 @@ function Notes() {
   const { data: notes, isLoading, error } = useGetMyNotesQuery()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 lg:mt-12 md:ml-9">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-12 lg:mt-12 md:ml-9">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* HERO */}
         <div className="text-center pb-12">
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-xl border">
             <Sparkles className="h-6 w-6 text-purple-600" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               AI Exam Notes
             </h1>
             <Sparkles className="h-6 w-6 text-purple-600" />

@@ -43,9 +43,7 @@ export default function DoubtChatPage() {
   }, []);
 
   useEffect(() => {
-    socket.on("notification", (data) => {
-      console.log("🚨 FINAL NOTIFICATION:", data);
-    });
+    socket.on("notification", (data) => {});
 
     return () => socket.off("notification");
   }, []);
@@ -58,7 +56,6 @@ export default function DoubtChatPage() {
     }
 
     const joinRoom = () => {
-      console.log("🔥 JOIN ROOM:", user._id, "Socket:", socket.id);
       socket.emit("join", user._id);
     };
 
@@ -72,7 +69,6 @@ export default function DoubtChatPage() {
     };
 
     const handleNotification = (data) => {
-      console.log("🔥 NOTIFICATION RECEIVED:", data);
       setNotifications((prev) => [data, ...prev]);
       toast.success(data.message);
     };
@@ -86,8 +82,8 @@ export default function DoubtChatPage() {
     socket.on("online_users", handleOnlineUsers);
     socket.on("new_doubt", fetchDoubts);
 
-    socket.on("connect", () => console.log("🟢 Connected"));
-    socket.on("disconnect", () => console.log("🔴 Disconnected"));
+    socket.on("connect", () => {});
+    socket.on("disconnect", () => {});
 
     return () => {
       socket.off("connect", joinRoom);
@@ -107,8 +103,6 @@ export default function DoubtChatPage() {
 
   useEffect(() => {
     const handleRealtimeUpvote = ({ replyId, upvotesCount }) => {
-      console.log("🔥 SOCKET UPVOTE:", replyId, upvotesCount);
-
       setRepliesMap((prev) => {
         const updated = { ...prev };
 
@@ -149,7 +143,7 @@ export default function DoubtChatPage() {
       const res = await askDoubtApi(question);
       setDoubts([res.data, ...doubts]);
       setQuestion("");
-      toast.success("Doubt posted 🚀");
+      toast.success("Doubt posted");
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -218,9 +212,9 @@ export default function DoubtChatPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
               Community
             </h1>
-            <div className="flex items-center gap-4 flex-shrink-0">
+            <div className="flex items-center gap-4 shrink-0">
               <span className="text-sm text-gray-600">
-                🟢 {onlineUsers} online
+                {onlineUsers} online
               </span>
               <div className="relative">
                 {showNotif && (
@@ -251,7 +245,7 @@ export default function DoubtChatPage() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask your programming doubt or interview question..."
-                className="w-full resize-none mb-4 min-h-[100px] border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full resize-none mb-4 min-h-25 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <Button
                 onClick={handleAsk}
@@ -280,7 +274,7 @@ export default function DoubtChatPage() {
                   onClick={() => toggleOpen(d._id)}
                 >
                   <h3
-                    className="font-semibold text-gray-900 line-clamp-2 break-words mb-2"
+                    className="font-semibold text-gray-900 line-clamp-2 wrap-break-word mb-2"
                     title={d.question}
                   >
                     {d.question}
@@ -309,7 +303,7 @@ export default function DoubtChatPage() {
                         >
                           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                             <div className="flex items-start gap-3 min-w-0 flex-1">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
+                              <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden">
                                 {r.user?.avatar ? (
                                   <img
                                     src={r.user.avatar}
@@ -317,7 +311,7 @@ export default function DoubtChatPage() {
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (
-                                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
+                                  <div className="w-full h-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
                                     {(r.user?.fullName || "U")
                                       .split(" ")
                                       .map((n) => n[0])
@@ -327,17 +321,17 @@ export default function DoubtChatPage() {
                                 )}
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className="font-medium text-sm text-gray-900 break-words">
+                                <p className="font-medium text-sm text-gray-900 wrap-break-word">
                                   {r.user?.fullName}
                                 </p>
-                                <p className="text-sm text-gray-700 break-words mt-1 leading-relaxed">
+                                <p className="text-sm text-gray-700 wrap-break-word mt-1 leading-relaxed">
                                   {r.answer}
                                 </p>
                               </div>
                             </div>
                             <button
                               onClick={() => handleUpvote(r._id, d._id)}
-                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors whitespace-nowrap flex-shrink-0"
+                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors whitespace-nowrap shrink-0"
                             >
                               <ThumbsUp size={16} />
                               {r.upvotesCount || r.upvotes?.length || 0}
@@ -365,7 +359,7 @@ export default function DoubtChatPage() {
                       <Button
                         onClick={() => handleReply(d._id)}
                         size="icon"
-                        className="h-12 w-12 bg-gray-800 hover:bg-gray-900 text-white shadow-md border-0 flex-shrink-0"
+                        className="h-12 w-12 bg-gray-800 hover:bg-gray-900 text-white shadow-md border-0 shrink-0"
                       >
                         <Send className="h-4 w-4" />
                       </Button>
@@ -387,7 +381,7 @@ export default function DoubtChatPage() {
                 trending.map((t) => (
                   <p
                     key={t._id}
-                    className="text-sm text-gray-700 mb-2 line-clamp-2 break-words hover:text-blue-600 cursor-pointer p-2 -m-2 rounded-lg transition-colors"
+                    className="text-sm text-gray-700 mb-2 line-clamp-2 wrap-break-word hover:text-blue-600 cursor-pointer p-2 -m-2 rounded-lg transition-colors"
                   >
                     {t.question}
                   </p>

@@ -1,5 +1,3 @@
-// controllers/planner.controller.js
-
 import Planner from "../models/planner.model.js";
 import User from "../models/user.model.js";
 import { askAi, extractJSON } from "../services/openRouter.service.js";
@@ -52,7 +50,7 @@ export const createPlanner = async (req, res) => {
 
 Your job is to create a HIGHLY PRACTICAL, REALISTIC, and STRUCTURED daily study plan that feels like a personal mentor guiding the student step-by-step.
 
-⚠️ CORE RULES:
+ CORE RULES:
 - Plan must be PRACTICAL (not overloaded, not generic)
 - Tasks must be CLEAR, ACTIONABLE, and BEGINNER-FRIENDLY (based on level)
 - Maintain PROGRESSION (easy → medium → hard across days)
@@ -62,7 +60,7 @@ Your job is to create a HIGHLY PRACTICAL, REALISTIC, and STRUCTURED daily study 
 
 ----------------------------------------
 
-📅 DAILY STRUCTURE (MANDATORY for EVERY DAY):
+ DAILY STRUCTURE (MANDATORY for EVERY DAY):
 
 1. THEORY (30–60 min)
    - Explain concept in SIMPLE terms
@@ -166,7 +164,7 @@ Make it:
       }
     }
 
-    // 🎥 FIXED: attach video to ANY task having youtubeQuery
+    // FIXED: attach video to ANY task having youtubeQuery
     for (let day of parsed.plan) {
       for (let task of day.tasks) {
         if (task.youtubeQuery) {
@@ -453,7 +451,7 @@ export const getMyPlanner = async (req, res) => {
     const planner = await Planner.findOne({ userId: req.user._id });
 
     if (!planner) {
-      return res.status(200).json(null); // ✅ FIX
+      return res.status(200).json(null); 
     }
 
     res.json(planner);

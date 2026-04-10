@@ -91,7 +91,7 @@ const SuccessStories = () => {
       </div>
 
       {/* Scrollable Stories */}
-      <div className="max-h-[320px] overflow-y-auto space-y-3 pr-2">
+      <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
         {successStoriesData.map((story, index) => (
           <Card
             key={index}

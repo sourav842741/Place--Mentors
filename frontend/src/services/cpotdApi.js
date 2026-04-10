@@ -1,4 +1,3 @@
-// services/cpotdApi.js
 
 import api from "./api";
 

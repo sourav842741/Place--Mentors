@@ -70,37 +70,30 @@ const CompanyPage = () => {
       <div className="pt-16 md:pl-64 p-4 md:p-6 mt-6 bg-gray-50 min-h-screen lg:mt-16 ml-5 sm:mt-5">
         <div className="max-w-7xl mx-auto">
           {/* Header + Search */}
- <div className="mb-8 p-6 bg-white rounded-2xl shadow-sm border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="mb-8 p-6 bg-white rounded-2xl shadow-sm border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/companies")}
+                className="rounded-xl shadow-sm hover:shadow-md transition"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
 
-  <div className="flex items-center gap-4">
-    <Button
-      variant="outline"
-      onClick={() => navigate("/companies")}
-      className="rounded-xl shadow-sm hover:shadow-md transition"
-    >
-      <ArrowLeft className="h-4 w-4 mr-2" />
-      Back
-    </Button>
-
-    <div>
-      <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
-        {company?.overview?.name || "Company Details"}
-      </h1>
-      <p className="text-sm text-gray-500">
-        {company?.overview?.tagline || "Preparation guide"}
-      </p>
-    </div>
-  </div>
-
-
-</div>
-
-         
+              <div>
+                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+                  {company?.overview?.name || "Company Details"}
+                </h1>
+                <p className="text-sm text-gray-500">
+                  {company?.overview?.tagline || "Preparation guide"}
+                </p>
+              </div>
+            </div>
+          </div>
 
           {company && (
             <>
-             
-
               {/* Sections Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
                 {/* 1. Overview */}
@@ -157,7 +150,7 @@ const CompanyPage = () => {
                           >
                             <Badge
                               variant="secondary"
-                              className="mt-0.5 flex-shrink-0"
+                              className="mt-0.5 shrink-0"
                             >
                               Round {i + 1}
                             </Badge>
@@ -250,7 +243,7 @@ const CompanyPage = () => {
                       </p>
                     )}
 
-                    {/* 🔥 Roadmap + Daily Plan (YAHIN ADD KARNA HAI) */}
+                    {/*  Roadmap + Daily Plan (YAHIN ADD KARNA HAI) */}
                     {(company?.preparation?.roadmap ||
                       company?.preparation?.dailyPlanGuide) && (
                       <div className="p-4 bg-purple-50 rounded-lg space-y-3">
@@ -280,7 +273,7 @@ const CompanyPage = () => {
                   </CardContent>
                 </Card>
 
-                {/* 🔥 Cutoff Section */}
+                {/*  Cutoff Section */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -590,7 +583,7 @@ const CompanyPage = () => {
                           </div>
                         )}
 
-                        {/* 🔥 NEW: Aptitude section */}
+                        {/*  NEW: Aptitude section */}
                         {company?.resources?.aptitude && (
                           <div>
                             <h4 className="font-semibold mb-2">Aptitude</h4>
@@ -722,7 +715,7 @@ const CompanyPage = () => {
           )}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

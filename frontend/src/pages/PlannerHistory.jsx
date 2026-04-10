@@ -239,7 +239,7 @@ export default function PlannerHistory() {
           </div>
         </main>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

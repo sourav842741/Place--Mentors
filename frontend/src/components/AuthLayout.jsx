@@ -3,7 +3,7 @@ export default function AuthLayout({ children }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 relative overflow-hidden">
 
-      {/* 🔥 LIGHT BACKGROUND GLOW */}
+      {/*  LIGHT BACKGROUND GLOW */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-0 w-72 h-72 bg-orange-300/30 blur-3xl rounded-full"></div>
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-300/30 blur-3xl rounded-full"></div>
@@ -50,7 +50,7 @@ export default function AuthLayout({ children }) {
   );
 }
 
-// 🔥 FEATURE CARD
+//  FEATURE CARD
 function Feature({ title, desc }) {
   return (
     <div className="flex items-start gap-4 group">

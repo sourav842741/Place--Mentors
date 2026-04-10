@@ -1,12 +1,13 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
 import { addXP } from "../utils/xpManager.js";
-import { getOrCreateTodayPotd, generateTodayPotd } from "../services/potd.service.js";
-
+import {
+  getOrCreateTodayPotd,
+  generateTodayPotd,
+} from "../services/potd.service.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-// 🔥 AI Prompt
 const POTD_PROMPT = `
 You are an expert aptitude test generator.
 
@@ -60,7 +61,6 @@ Ensure:
 Now generate.
 `;
 
-
 // ================= GENERATE POTD =================
 export const generatePotd = asyncHandler(async (req, res) => {
   const potd = await generateTodayPotd();
@@ -71,8 +71,6 @@ export const generatePotd = asyncHandler(async (req, res) => {
     data: potd,
   });
 });
-
-
 
 // ================= GET TODAY POTD =================
 export const getTodayPotd = asyncHandler(async (req, res) => {
@@ -85,15 +83,10 @@ export const getTodayPotd = asyncHandler(async (req, res) => {
   });
 });
 
-
-
 // ================= SUBMIT POTD =================
 export const submitPotd = asyncHandler(async (req, res) => {
   const { answers } = req.body;
   const today = getTodayDate();
-
-  // ✅ safety log
-  console.log("📩 Answers:", answers);
 
   const potd = await getOrCreateTodayPotd();
   if (!potd) {
@@ -103,7 +96,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
     });
   }
 
-  // ✅ validation
+  //  validation
   if (!answers || !Array.isArray(answers) || answers.length !== 15) {
     return res.status(400).json({
       success: false,
@@ -116,14 +109,14 @@ export const submitPotd = asyncHandler(async (req, res) => {
 
   const results = [];
 
-  // ✅ category stats safe
+  //  category stats safe
   const categoryStats = {
     aptitude: { correct: 0, total: 0 },
     reasoning: { correct: 0, total: 0 },
     verbal: { correct: 0, total: 0 },
   };
 
-  // ✅ normalize function
+  //  normalize function
   const normalizeCategory = (cat = "") => {
     const c = cat.toLowerCase();
 
@@ -135,7 +128,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   };
 
   potd.questions.forEach((q, index) => {
-    // ✅ flexible answer handling
+    // flexible answer handling
     const userAnswer =
       typeof answers[index] === "object"
         ? answers[index]?.selected
@@ -145,16 +138,12 @@ export const submitPotd = asyncHandler(async (req, res) => {
 
     const category = normalizeCategory(q.category);
 
-    // ✅ XP + score
+    //  XP + score
     if (isCorrect) {
       score++;
 
       const xp =
-        q.difficulty === "easy"
-          ? 5
-          : q.difficulty === "medium"
-          ? 10
-          : 20;
+        q.difficulty === "easy" ? 5 : q.difficulty === "medium" ? 10 : 20;
 
       xpEarned += xp;
       categoryStats[category].correct++;
@@ -172,7 +161,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
     });
   });
 
-  // ✅ weak area calculation
+  //  weak area calculation
   let weakArea = "aptitude";
   let lowestAccuracy = 1;
 
@@ -185,7 +174,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
     }
   });
 
-  // ✅ user safety
+  //  user safety
   if (!req.user?._id) {
     return res.status(401).json({
       success: false,
@@ -202,16 +191,14 @@ export const submitPotd = asyncHandler(async (req, res) => {
     });
   }
 
-  // 🔥 MARK POTD COMPLETED
+  //  MARK POTD COMPLETED
   const todayDate = new Date().toISOString().split("T")[0];
   user.potdCompleted = true;
   user.lastPotdDate = todayDate;
 
-  console.log(`📊 POTD XP attempt: +${xpEarned}`);
-
   addXP(user, xpEarned, "potd");
 
-  // ✅ daily stats
+  //  daily stats
   user.dailyStats = user.dailyStats || [];
 
   const todayStat = user.dailyStats.find((s) => s.date === today);
@@ -230,8 +217,6 @@ export const submitPotd = asyncHandler(async (req, res) => {
   }
 
   await user.save();
-
-  console.log(`✅ POTD completed & XP saved for ${user.email}`);
 
   return res.status(200).json({
     success: true,

@@ -21,7 +21,7 @@ export default function Profile() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const [badges, setBadges] = useState([]); // 🔥 ADD
+  const [badges, setBadges] = useState([]); //  ADD
 
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [skills, setSkills] = useState(user?.skills?.join(", ") || "");
@@ -34,7 +34,7 @@ export default function Profile() {
 
   const [loading, setLoading] = useState(false);
 
-  // 🔥 FETCH BADGES
+  //  FETCH BADGES
   useEffect(() => {
     const fetchBadges = async () => {
       try {

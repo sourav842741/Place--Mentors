@@ -45,13 +45,14 @@ import { Badge } from "@/components/ui/badge.jsx";
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
-  console.log("🔥 USER FRONTEND:", user);
 
   const navigate = useNavigate();
 
   const [weeklyData, setWeeklyData] = React.useState([]);
 
   const [unlockedBadges, setUnlockedBadges] = React.useState([]);
+  const [motivation, setMotivation] = React.useState("");
+  const [loadingMotivation, setLoadingMotivation] = React.useState(true);
 
   // News
   const dispatch = useDispatch();
@@ -200,9 +201,7 @@ export default function Dashboard() {
             }));
 
             setWeeklyData(formatted);
-          } catch (err) {
-            console.log("Time sync error");
-          }
+          } catch (err) {}
         }, 60000);
       } else {
         clearInterval(interval);
@@ -234,13 +233,40 @@ export default function Dashboard() {
         }));
 
         setWeeklyData(formatted);
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     };
 
     fetchWeekly();
   }, []);
+
+  // Fetch motivation message
+  React.useEffect(() => {
+    const fetchMotivation = async () => {
+      try {
+        setLoadingMotivation(true);
+
+        const res = await api.get("/api/ai/motivation", {
+          withCredentials: true,
+        });
+
+        console.log("MOTIVATION API:", res.data);
+
+        const message = res.data.message || "Keep pushing forward! 🚀";
+
+        setMotivation(message);
+      } catch (err) {
+        console.error("Motivation fetch error:", err);
+        setMotivation("Stay consistent, you're doing great! 💪");
+      } finally {
+        setLoadingMotivation(false);
+      }
+    };
+
+    if (user?._id) {
+      // Only if logged in
+      fetchMotivation();
+    }
+  }, [user?._id]);
 
   // Fetch news + stats
   React.useEffect(() => {
@@ -329,7 +355,6 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              {/* XP */}
               <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
                 <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
                   Progress
@@ -339,11 +364,23 @@ export default function Dashboard() {
                   {currentXP} / {maxXP} XP
                 </h2>
 
-                <div className="w-full bg-gray-200 rounded-full h-3 mt-4 shadow-inner">
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
                   <div
-                    className="bg-black h-3 rounded-full shadow-md transition-all duration-1000 ease-out"
+                    className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
                     style={{ width: `${percent}%` }}
                   ></div>
+                </div>
+
+                {/*  MOTIVATION INSIDE */}
+                <div className="mt-4">
+                  {loadingMotivation ? (
+                    <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
+                  ) : (
+                    <p className="text-sm md:text-base font-medium text-gray-700 leading-relaxed whitespace-pre-line">
+                      {motivation}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -388,7 +425,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* 🔥 POTD SECTION */}
+            {/*  POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CpotdCard
                 solved={user?.codingPotdCompleted || false}
@@ -417,13 +454,13 @@ export default function Dashboard() {
                   className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? "bg-green-100 text-green-700" : percentChange >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
                 >
                   {percentChange === null
-                    ? "New Activity 🚀"
+                    ? "New Activity "
                     : `${percentChange >= 0 ? "+" : ""}${percentChange}%`}
                 </div>
               </div>
 
               {/* CHART */}
-              <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] min-h-[250px]">
+              <div className="w-full h-62.5 sm:h-75 md:h-87.5 min-h-62.5">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyData}>
                     <XAxis dataKey="date" />
@@ -560,14 +597,14 @@ export default function Dashboard() {
                             rel="noopener noreferrer"
                             className="block group"
                           >
-                            <Card className="h-full p-6 hover:shadow-xl border-0 bg-gradient-to-br from-white to-gray-50 group-hover:from-blue-50 transition-all duration-300 shadow-sm hover:-translate-y-1">
+                            <Card className="h-full p-6 hover:shadow-xl border-0 bg-linear-to-br from-white to-gray-50 group-hover:from-blue-50 transition-all duration-300 shadow-sm hover:-translate-y-1">
                               {/* Tag Badge */}
                               <Badge
                                 className={`absolute top-4 right-4 text-xs px-3 py-1 font-semibold ${
                                   article.tag === "AI"
-                                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                                    ? "bg-linear-to-r from-purple-500 to-pink-500"
                                     : article.tag === "Layoff"
-                                      ? "bg-gradient-to-r from-red-500 to-orange-500"
+                                      ? "bg-linear-to-r from-red-500 to-orange-500"
                                       : article.tag === "Hiring"
                                         ? "bg-green-500"
                                         : "bg-indigo-500"
@@ -636,7 +673,7 @@ export default function Dashboard() {
                       onClick={() =>
                         navigate(`/company/${company.name.toLowerCase()}`)
                       }
-                      className="min-w-[180px] cursor-pointer"
+                      className="min-w-45 cursor-pointer"
                     >
                       <Card
                         className="flex items-center justify-between p-4 border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 transition-all cursor-pointer"
@@ -687,7 +724,7 @@ export default function Dashboard() {
                       onClick={() =>
                         navigate(`/company/${company.name.toLowerCase()}`)
                       }
-                      className="min-w-[280px] cursor-pointer"
+                      className="min-w-70 cursor-pointer"
                     >
                       <Card className="flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition">
                         {/* LEFT */}
@@ -729,7 +766,7 @@ export default function Dashboard() {
         </main>
         <SuccessStories />
       </div>
-      
+
       <Footer />
     </>
   );

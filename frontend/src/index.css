@@ -115,7 +115,7 @@ html {
 
 /* ================= ANIMATIONS ================= */
 
-/* 🔥 SCALE POPUP */
+/*  SCALE POPUP */
 @keyframes scaleUp {
 0% { transform: scale(0.5); opacity: 0; }
 70% { transform: scale(1.1); }
@@ -126,7 +126,7 @@ html {
 animation: scaleUp 0.4s ease;
 }
 
-/* ✨ BADGE GLOW */
+/*  BADGE GLOW */
 @keyframes glowPulse {
 0% { box-shadow: 0 0 10px rgba(255,215,0,0.2); }
 50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
@@ -137,7 +137,7 @@ animation: scaleUp 0.4s ease;
 animation: glowPulse 2s infinite;
 }
 
-/* 🚀 ULTRA SMOOTH CAROUSEL */
+/*  ULTRA SMOOTH CAROUSEL */
 @keyframes scroll-left {
 0% {
 transform: translate3d(0, 0, 0);
@@ -170,13 +170,13 @@ backface-visibility: hidden;
 transform: translateZ(0);
 }
 
-/* 🛑 HOVER STOP */
+/*  HOVER STOP */
 .animate-scroll-left:hover,
 .animate-scroll-right:hover {
 animation-play-state: paused;
 }
 
-/* 💎 CARD HOVER */
+/*  CARD HOVER */
 .card-hover {
 transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -186,7 +186,7 @@ transform: translateY(-5px) scale(1.02);
 box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* 🎯 BUTTON PRESS */
+/*  BUTTON PRESS */
 .button-smooth {
 transition: all 0.2s ease;
 }
@@ -195,7 +195,7 @@ transition: all 0.2s ease;
 transform: scale(0.96);
 }
 
-/* 🌊 FADE IN */
+/*  FADE IN */
 @keyframes fade-in {
 from {
 opacity: 0;

@@ -11,7 +11,7 @@ export const compilerApi = createApi({
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }
-      headers.set('Content-Type', 'application/json') // ✅ IMPORTANT
+      headers.set('Content-Type', 'application/json') //  IMPORTANT
       return headers
     },
   }),

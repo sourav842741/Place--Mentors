@@ -29,7 +29,6 @@ const useCompany = () => {
         fetchCompany({ name: name.trim(), userId: user._id })
       );
 
-      // 🔥 ERROR HANDLE
     if (res?.error) {
   let message = "Something went wrong";
 
@@ -47,7 +46,6 @@ const useCompany = () => {
   return null;
 }
 
-      // 🔥 SUCCESS RETURN
       const data = res.payload;
 
       dispatch(fetchCompanies());

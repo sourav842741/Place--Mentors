@@ -1,39 +1,45 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../services/api.js';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../services/api.js";
 
 export const fetchPotd = createAsyncThunk(
-  'potd/fetchPotd',
+  "potd/fetchPotd",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/potd');
+      const response = await api.get("/api/potd");
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data.message || 'Failed to fetch POTD');
+      return rejectWithValue(
+        error.response.data.message || "Failed to fetch POTD",
+      );
     }
-  }
+  },
 );
 
 export const submitPotd = createAsyncThunk(
-  'potd/submitPotd',
+  "potd/submitPotd",
   async (userAnswers, { rejectWithValue }) => {
     try {
-      const response = await api.post('/api/potd/submit', { answers: userAnswers });
+      const response = await api.post("/api/potd/submit", {
+        answers: userAnswers,
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data.message || 'Submission failed');
+      return rejectWithValue(
+        error.response.data.message || "Submission failed",
+      );
     }
-  }
+  },
 );
 
 const potdSlice = createSlice({
-  name: 'potd',
+  name: "potd",
   initialState: {
     questions: [],
     userAnswers: {},
     result: null,
     loading: false,
     error: null,
-    submitted: false
+    submitted: false,
   },
   reducers: {
     selectAnswer: (state, action) => {
@@ -48,7 +54,7 @@ const potdSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.submitted = false;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -57,10 +63,10 @@ const potdSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-     .addCase(fetchPotd.fulfilled, (state, action) => {
-  state.loading = false;
-  state.questions = action.payload.data?.questions || [];
-})
+      .addCase(fetchPotd.fulfilled, (state, action) => {
+        state.loading = false;
+        state.questions = action.payload.data?.questions || [];
+      })
       .addCase(fetchPotd.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
@@ -70,16 +76,16 @@ const potdSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-    .addCase(submitPotd.fulfilled, (state, action) => {
-  state.loading = false;
-  state.result = action.payload.data;
-  state.submitted = true;
-})
+      .addCase(submitPotd.fulfilled, (state, action) => {
+        state.loading = false;
+        state.result = action.payload.data;
+        state.submitted = true;
+      })
       .addCase(submitPotd.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
-  }
+  },
 });
 
 export const { selectAnswer, resetPotd } = potdSlice.actions;

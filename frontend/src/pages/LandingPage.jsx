@@ -25,13 +25,10 @@ export default function LandingPage() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-orange-50 to-blue-50 text-gray-900">
-
-      {/* 🔥 NAVBAR */}
+    <div className="min-h-screen bg-linear-to-br from-white via-orange-50 to-blue-50 text-gray-900">
+      {/*  NAVBAR */}
       <nav className="flex justify-between items-center px-6 py-4 bg-white/80 backdrop-blur border-b sticky top-0 z-50">
-        <h1 className="text-2xl font-bold text-orange-500">
-          PlaceMentor 
-        </h1>
+        <h1 className="text-2xl font-bold text-orange-500">PlaceMentor</h1>
 
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => navigate("/login")}>
@@ -46,7 +43,7 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* 🔥 HERO */}
+      {/*  HERO */}
       <section className="text-center py-24 px-6">
         <h1 className="text-5xl font-bold leading-tight">
           Crack Your Dream Job with{" "}
@@ -54,8 +51,8 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-gray-600 mt-4 max-w-xl mx-auto">
-          One platform for DSA, AI interviews, resume tools,
-          job tracking & coding practice.
+          One platform for DSA, AI interviews, resume tools, job tracking &
+          coding practice.
         </p>
 
         <div className="mt-8 flex justify-center gap-4">
@@ -77,38 +74,79 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 🔥 FEATURES GRID */}
+      {/*  FEATURES GRID */}
       <section className="max-w-6xl mx-auto px-6 pb-20 grid md:grid-cols-3 gap-6">
-
-        <Feature icon={<Brain />} title="AI Planner" desc="Personal roadmap for placement prep" />
-        <Feature icon={<Users />} title="Mock Interviews" desc="Practice real interview scenarios" />
-        <Feature icon={<FileText />} title="Resume Analyzer" desc="AI feedback on your resume" />
-        <Feature icon={<FileText />} title="Resume Generator" desc="Create ATS-friendly resumes" />
-        <Feature icon={<Briefcase />} title="Job Tracker" desc="Track all applications easily" />
-        <Feature icon={<Code />} title="Code Editor" desc="Practice coding with Monaco editor" />
-        <Feature icon={<Trophy />} title="Leaderboard" desc="Compete with other students" />
-        <Feature icon={<BookOpen />} title="AI Notes" desc="Generate notes instantly" />
-        <Feature icon={<BarChart />} title="Analytics" desc="Track your progress" />
-
+        <Feature
+          icon={<Brain />}
+          title="AI Planner"
+          desc="Personal roadmap for placement prep"
+        />
+        <Feature
+          icon={<Users />}
+          title="Mock Interviews"
+          desc="Practice real interview scenarios"
+        />
+        <Feature
+          icon={<FileText />}
+          title="Resume Analyzer"
+          desc="AI feedback on your resume"
+        />
+        <Feature
+          icon={<FileText />}
+          title="Resume Generator"
+          desc="Create ATS-friendly resumes"
+        />
+        <Feature
+          icon={<Briefcase />}
+          title="Job Tracker"
+          desc="Track all applications easily"
+        />
+        <Feature
+          icon={<Code />}
+          title="Code Editor"
+          desc="Practice coding with Monaco editor"
+        />
+        <Feature
+          icon={<Trophy />}
+          title="Leaderboard"
+          desc="Compete with other students"
+        />
+        <Feature
+          icon={<BookOpen />}
+          title="AI Notes"
+          desc="Generate notes instantly"
+        />
+        <Feature
+          icon={<BarChart />}
+          title="Analytics"
+          desc="Track your progress"
+        />
       </section>
 
-      {/* 🔥 EXTRA FEATURES SECTION */}
+      {/*  EXTRA FEATURES SECTION */}
       <section className="bg-white py-20">
         <h2 className="text-3xl font-bold text-center mb-12">
           Everything you need to get placed 💼
         </h2>
 
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 px-6">
-
-          <BigCard title="Company Insights" desc="Explore companies, roles & hiring trends" />
-          <BigCard title="AI Search" desc="Search anything related to placements instantly" />
-          <BigCard title="Interview Reports" desc="Detailed feedback after mock interviews" />
+          <BigCard
+            title="Company Insights"
+            desc="Explore companies, roles & hiring trends"
+          />
+          <BigCard
+            title="AI Search"
+            desc="Search anything related to placements instantly"
+          />
+          <BigCard
+            title="Interview Reports"
+            desc="Detailed feedback after mock interviews"
+          />
           <BigCard title="Planner History" desc="Track your learning journey" />
-
         </div>
       </section>
 
-      {/* 🔥 HOW IT WORKS */}
+      {/*  HOW IT WORKS */}
       <section className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-10">How it works</h2>
 
@@ -119,11 +157,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 🔥 CTA */}
+      {/*  CTA */}
       <section className="text-center py-20 bg-orange-100">
-        <h2 className="text-3xl font-bold">
-          Start your journey today 🚀
-        </h2>
+        <h2 className="text-3xl font-bold">Start your journey today 🚀</h2>
 
         <Button
           className="mt-6 bg-orange-500 text-white hover:bg-orange-600"
@@ -133,7 +169,7 @@ export default function LandingPage() {
         </Button>
       </section>
 
-      {/* 🔥 FOOTER */}
+      {/*  FOOTER */}
       <footer className="text-center py-6 text-gray-500">
         © {new Date().getFullYear()} PlaceMentor. All rights reserved.
       </footer>

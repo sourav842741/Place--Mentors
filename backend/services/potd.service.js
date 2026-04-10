@@ -25,43 +25,44 @@ Return ONLY valid JSON: { "questions": [...] }
  */
 export const getOrCreateTodayPotd = async () => {
   const today = getTodayDate();
-  console.log(`🔄 [POTD-SVC] Checking ${today}...`);
+  console.log(` [POTD-SVC] Checking ${today}...`);
 
   // Atomic check & create
   let potd = await Potd.findOne({ date: today });
   if (potd) {
-    console.log(`✅ [POTD-SVC] Found existing for ${today}`);
+    console.log(` [POTD-SVC] Found existing for ${today}`);
     return potd;
   }
 
-  console.log(`🤖 [POTD-SVC] Generating for ${today}...`);
+  console.log(` [POTD-SVC] Generating for ${today}...`);
   try {
     const aiResponse = await askAi([{ role: "user", content: POTD_PROMPT }]);
     const data = extractJSON(aiResponse);
 
     if (!data.questions || data.questions.length !== 15) {
-      throw new Error(`Invalid AI response: expected 15 questions, got ${data.questions?.length || 0}`);
+      throw new Error(
+        `Invalid AI response: expected 15 questions, got ${data.questions?.length || 0}`,
+      );
     }
 
     // Atomic upsert
     potd = await Potd.findOneAndUpdate(
       { date: today },
-      { 
+      {
         date: today,
         questions: data.questions,
-        generatedAt: new Date()
+        generatedAt: new Date(),
       },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     );
 
-  console.log(`✅ [POTD-SVC] Generated & saved ${potd._id}`);
+    console.log(` [POTD-SVC] Generated & saved ${potd._id}`);
     return potd;
   } catch (error) {
-    console.error(`❌ [POTD-SVC] Generation failed:`, error.message);
+    console.error(` [POTD-SVC] Generation failed:`, error.message);
     throw error;
   }
 };
-
 
 /**
  * Manual force-generate (still idempotent)
@@ -69,4 +70,3 @@ export const getOrCreateTodayPotd = async () => {
 export const generateTodayPotd = async () => {
   return await getOrCreateTodayPotd(); // Same logic for simplicity/compat
 };
-
