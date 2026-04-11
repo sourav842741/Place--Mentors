@@ -49,13 +49,14 @@ const processArticleAI = async (article) => {
   const { title, description, source_id, pubDate, link } = article;
 
   try {
-    //  SINGLE AI CALL (optimized)
     const prompt = `
-Return STRICT JSON:
+Return ONLY valid JSON. No extra text.
+
+Format:
 {
   "tag": "AI | Layoff | Hiring | Tech",
-  "company": "Company name",
-  "summary": "2 sentence summary"
+  "company": "string",
+  "summary": "max 2 sentences"
 }
 
 Title: ${title}
@@ -64,28 +65,25 @@ Description: ${description || ""}
 
     const aiRes = await askAi([{ role: "user", content: prompt }]);
 
-    let parsed = {};
+    const parsed = extractJSON(aiRes) || {};
 
-    try {
-      parsed = JSON.parse(aiRes);
-    } catch {
-      parsed = {};
-    }
+    const validTags = ["AI", "Layoff", "Hiring", "Tech"];
 
     return {
       title: title || "Untitled",
       summary:
-        parsed.summary?.substring(0, 200) ||
-        description?.substring(0, 150) ||
+        parsed.summary?.slice(0, 200) ||
+        description?.slice(0, 150) ||
+        title?.slice(0, 100) ||
         "No summary",
-      tag: parsed.tag || "Tech",
-      company: parsed.company || "Various",
+      tag: validTags.includes(parsed.tag) ? parsed.tag : "Tech",
+      company: parsed.company?.trim() || source_id || "Various",
       source: source_id || "Unknown",
-      url: link || "#",
+      url: link || `${title}-${Date.now()}`,
       publishedAt: new Date(pubDate || Date.now()),
     };
   } catch (err) {
-    console.error(" AI error:", err.message);
+    console.error("AI error:", err.message);
     return null;
   }
 };

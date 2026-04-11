@@ -23,9 +23,7 @@ Requirements:
 Return ONLY valid JSON: { "questions": [...] }
 `;
 
-/**
- * Get or create today's CPOTD (idempotent)
- */
+
 export const getOrCreateTodayCpotd = async () => {
   const today = getTodayDate();
   console.log(` [CPOTD-SVC] Checking ${today}...`);
@@ -38,23 +36,52 @@ export const getOrCreateTodayCpotd = async () => {
 
   console.log(` [CPOTD-SVC] Generating for ${today}...`);
   try {
-    const aiResponse = await askAi([{ role: "user", content: CPOTD_PROMPT }]);
-    const data = extractJSON(aiResponse);
+  let questions = [];
 
-    if (!data.questions || data.questions.length !== 2) {
-      throw new Error(`Expected 2 coding problems, got ${data.questions?.length || 0}`);
-    }
+//  retry logic
+for (let i = 0; i < 3; i++) {
+  const aiResponse = await askAi([{ role: "user", content: CPOTD_PROMPT }]);
+  const data = extractJSON(aiResponse);
 
-    // Atomic upsert
-    cpotd = await CodingPotd.findOneAndUpdate(
-      { date: today },
-      {
-        date: today,
-        questions: data.questions,
-        generatedAt: new Date()
-      },
-      { upsert: true, new: true }
-    );
+  if (data?.questions && data.questions.length === 2) {
+    questions = data.questions;
+    break;
+  }
+
+  console.log(`[CPOTD] Retry ${i + 1}: got ${data?.questions?.length || 0}`);
+}
+
+// 🔥 fallback (kabhi fail nahi hoga)
+if (questions.length < 2) {
+  const needed = 2 - questions.length;
+
+  console.log(`Filling ${needed} missing coding problems...`);
+
+  const extraRes = await askAi([
+    {
+      role: "user",
+      content: `Generate ONLY ${needed} coding problems in same JSON format. Return JSON only.`,
+    },
+  ]);
+
+  const extraData = extractJSON(extraRes);
+
+  questions = [...questions, ...(extraData?.questions || [])];
+}
+
+
+questions = questions.slice(0, 2);
+
+// Atomic upsert
+cpotd = await CodingPotd.findOneAndUpdate(
+  { date: today },
+  {
+    date: today,
+    questions: questions,
+    generatedAt: new Date(),
+  },
+  { upsert: true, returnDocument: "after" } 
+);
 
     console.log(` [CPOTD-SVC] Generated & saved ${cpotd._id}`);
     return cpotd;

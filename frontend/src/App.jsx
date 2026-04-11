@@ -35,6 +35,7 @@ import CodingPotdPage from "./pages/CodingPotdPage.jsx";
 import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
 import InstallPopup from "./components/InstallPopup";
 
+
 function App() {
   const { getCurrentUser } = useAuth();
 
@@ -44,12 +45,13 @@ function App() {
 
   return (
     <>
-      <InstallPopup />
+     
       {/*  Toaster must be inside */}
       <Toaster position="top-right" richColors />
 
       <Routes>
         {/* Public Routes */}
+         <Route path="/install" element={<InstallPopup />} />
         <Route path="/" element={<LandingPage/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

@@ -8,58 +8,7 @@ import {
 
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-const POTD_PROMPT = `
-You are an expert aptitude test generator.
 
-Generate EXACTLY 15 MCQ questions in STRICT JSON format.
-
-## Rules:
-- Total 15 questions
-- 5 aptitude, 5 reasoning, 5 verbal
-- Difficulty:
-  - 5 easy
-  - 5 medium
-  - 5 hard
-
-## VERY IMPORTANT:
-- Return ONLY valid JSON
-- No explanation outside JSON
-
-Each question MUST have:
-- question (string)
-- options (array of 4 strings)
-- answer (must exactly match one option)
-- explanation (short)
-- category (MUST be EXACTLY one of: "aptitude", "reasoning", "verbal")
-- difficulty (MUST be EXACTLY one of: "easy", "medium", "hard")
-
-## DO NOT USE:
-- "Aptitude"
-- "Verbal Ability"
-- "Reasoning Skills"
-- Any variation
-
-## Output format:
-{
-  "questions": [
-    {
-      "question": "string",
-      "options": ["A", "B", "C", "D"],
-      "answer": "A",
-      "explanation": "short explanation",
-      "category": "aptitude",
-      "difficulty": "easy"
-    }
-  ]
-}
-
-Ensure:
-- EXACTLY 15 questions
-- Each category appears exactly 5 times
-- Each difficulty appears exactly 5 times
-
-Now generate.
-`;
 
 // ================= GENERATE POTD =================
 export const generatePotd = asyncHandler(async (req, res) => {
