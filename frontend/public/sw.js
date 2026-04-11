@@ -1,4 +1,9 @@
-const CACHE_NAME = "mentor-v2";
+const CACHE_VERSION = 'mentor-v2'; 
+const CACHE_NAME = CACHE_VERSION + '-static-v1';
+const API_CACHE_NAME = CACHE_VERSION + '-api-v1';
+
+
+
 
 const STATIC_ASSETS = [
   "/",
@@ -6,73 +11,115 @@ const STATIC_ASSETS = [
   "/manifest.json",
   "/favicon.svg",
   "/offline.html",
-  "/icons/android-chrome-192x192.png"
+  "/icons/android-chrome-192x192.png",
+  "/icons/android-chrome-512x512.png"
 ];
 
-// INSTALL
+//  INSTALL - Cache static assets
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
+     
       return cache.addAll(STATIC_ASSETS);
     })
   );
 });
 
-// ACTIVATE (delete only old caches)
+//  ACTIVATE - Delete ALL old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    caches.keys().then((keys) => {
+      return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (key !== CACHE_NAME && key !== API_CACHE_NAME) {
+           
             return caches.delete(key);
           }
         })
-      )
-    )
+      );
+    })
   );
   self.clients.claim();
 });
 
-// FETCH
+// 🌐 FETCH - Smart Strategies
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // ❌ IMPORTANT: Skip non-GET (fix POST error)
+// Skip non-GET
   if (request.method !== "GET") return;
 
-  // API calls → network first
-  if (url.pathname.startsWith("/api")) {
+  // Handle navigation requests first
+  if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => {
-        return new Response("Offline", { status: 503 });
-      })
+      fetch(request).catch(() => caches.match('/index.html'))
     );
     return;
   }
 
-  // Static → cache first
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      return (
-        cached ||
-        fetch(request)
-          .then((res) => {
-            const resClone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => {
+  // Only same-origin requests after navigation
+  if (url.origin !== self.location.origin) return;
+
+
+  //  API Calls: Network-first → Cache fallback (24h)
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then((netRes) => {
+          // Cache successful API responses (24h max-age)
+          if (netRes.ok) {
+            const resClone = netRes.clone();
+            caches.open(API_CACHE_NAME).then((cache) => {
               cache.put(request, resClone);
             });
-            return res;
-          })
-          .catch(() => caches.match("/offline.html"))
-      );
+          }
+          return netRes;
+        })
+        .catch(() => {
+          // Fallback to cache
+          return caches.match(request).then((cached) => {
+            if (cached) {
+              console.log(' API cache hit:', url.pathname);
+              return cached;
+            }
+            return caches.match('/offline.html');
+          });
+        })
+    );
+    return;
+  }
+
+  // Static Assets: Cache-first (stale-while-revalidate)
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) {
+        // Update cache in background
+        fetch(request).then((netRes) => {
+          const resClone = netRes.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, resClone);
+          });
+        }).catch(() => {}); 
+        return cached;
+      }
+
+      // Cache miss → network
+      return fetch(request)
+        .then((netRes) => {
+          const resClone = netRes.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, resClone);
+          });
+          return netRes;
+        })
+        .catch(() => caches.match('/offline.html'));
     })
   );
 });
 
-// PUSH
+// 🔔 PUSH Notifications (unchanged)
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {
     title: "Place Mentor 🚀",
@@ -87,8 +134,9 @@ self.addEventListener("push", (event) => {
   );
 });
 
-// CLICK
+// 👆 Notification Click
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil(clients.openWindow("/"));
 });
+

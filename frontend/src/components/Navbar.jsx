@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { installApp, canInstall } from "../lib/pwa";
+
 import {
   Menu,
   Moon,
@@ -120,6 +120,7 @@ export default function Navbar() {
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
     { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
+     { icon: BookOpen, label: "DSA Resources", path: "/resources" },
   ];
 
   const isLoading = loading;
@@ -157,8 +158,6 @@ export default function Navbar() {
               </span>
             </div>
 
-
-
             {/* Desktop Links */}
             <div className="hidden md:flex gap-6 lg:ml-21">
               <Link to="/dashboard">Dashboard</Link>
@@ -166,24 +165,12 @@ export default function Navbar() {
               <Link to="/code-editor">Code Compiler</Link>
             </div>
           </div>
-          
         </div>
 
         {/* RIGHT */}
         <div className="flex items-center gap-3">
           {/* DESKTOP-ONLY ELEMENTS */}
           <div className="hidden md:flex items-center gap-3">
-              {/* INSTALL BUTTON */}
-  {canInstall() && (
-    <button
-      onClick={installApp}
-      className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition"
-    >
-      Install 🚀
-    </button>
-  )}
-
-            
             {/*  NOTIFICATION BELL */}
             {isAuth && (
               <div className="relative">
@@ -201,7 +188,6 @@ export default function Navbar() {
                   )}
                 </Button>
 
-                
                 {showNotif && (
                   <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto">
                     <h3 className="font-semibold mb-2 pb-2 border-b">
@@ -227,7 +213,6 @@ export default function Navbar() {
                 )}
               </div>
             )}
-  
 
             {/* CREDIT */}
             {isAuth && (

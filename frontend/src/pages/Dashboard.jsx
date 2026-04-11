@@ -42,6 +42,7 @@ import CpotdCard from "@/components/CpotdCard";
 import { fetchNews, fetchNewsStats } from "../redux/newsSlice.js";
 import { Button } from "@/components/ui/button.jsx";
 import { Badge } from "@/components/ui/badge.jsx";
+import ContactUs from "@/components/ContactUs";
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
@@ -753,7 +754,9 @@ export default function Dashboard() {
             </div>
           </div>
         </main>
+         <ContactUs/>
         <SuccessStories />
+       
       </div>
 
       <Footer />

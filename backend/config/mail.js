@@ -169,3 +169,36 @@ export const sendWelcomeMail = async (email, name) => {
     html: baseTemplate(content),
   });
 };
+
+// ================= CONTACT FORM =================
+export const sendContactMail = async (name, senderEmail, message) => {
+  const content = `
+    <h2 style="color:#10b981;">New Contact Message 📧</h2>
+    <p style="color:#555;font-size:14px;margin-bottom:20px;">
+      You received a new message from the Contact Us form:
+    </p>
+
+    <div style="background:#f8fafc;padding:20px;border-radius:12px;border-left:4px solid #10b981;margin:20px 0;">
+      <p style="color:#374151;font-weight:600;margin:0 0 8px 0;"><strong>Name:</strong> ${name}</p>
+      <p style="color:#374151;font-weight:600;margin:0 0 8px 0;"><strong>Email:</strong> <a href="mailto:${senderEmail}" style="color:#4f46e5;">${senderEmail}</a></p>
+      <div style="margin-top:15px;">
+        <p style="color:#6b7280;font-weight:500;margin:0 0 10px 0;"><strong>Message:</strong></p>
+        <p style="color:#374151;line-height:1.6;margin:0;white-space:pre-wrap;">${message}</p>
+      </div>
+    </div>
+
+    <p style="color:#6b7280;font-size:13px;">
+      Reply directly to ${senderEmail} to respond.
+    </p>
+  `;
+
+  await transporter.sendMail({
+    from: `"PlaceMentor Contact" <${process.env.EMAIL}>`,
+    to: process.env.EMAIL,
+    subject: "New Contact Message from PlaceMentor",
+    html: baseTemplate(content),
+  });
+};
+
+export { transporter };
+

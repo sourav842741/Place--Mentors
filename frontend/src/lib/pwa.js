@@ -56,22 +56,3 @@ export const registerSW = async () => {
   }
 };
 
-self.addEventListener("fetch", (event) => {
-  // ❌ POST ignore karo
-  if (event.request.method !== "GET") return;
-
-  event.respondWith(
-    fetch(event.request)
-      .then((res) => {
-        return caches.open("mentor-v2").then((cache) => {
-          cache.put(event.request, res.clone());
-          return res;
-        });
-      })
-      .catch(() => {
-        return caches.match(event.request).then((res) => {
-          return res || caches.match("/offline.html");
-        });
-      })
-  );
-});

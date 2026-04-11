@@ -7,10 +7,9 @@ import { Provider } from "react-redux";
 import store from "./redux/store.js";
 import { initializePWA, registerSW } from "./lib/pwa.js";
 
-// ✅ Initialize PWA features
 initializePWA();
 
-// ✅ Register Service Worker (safe way)
+// 🔥 TEMP ENABLE SW IN DEV
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     registerSW();

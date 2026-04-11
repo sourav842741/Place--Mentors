@@ -34,6 +34,8 @@ import PotdPage from "./pages/PotdPage.jsx";
 import CodingPotdPage from "./pages/CodingPotdPage.jsx";
 import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
 import InstallPopup from "./components/InstallPopup";
+import NotFoundPage from "./components/NotFoundPage";
+import Resources from "./pages/Resources";
 
 
 function App() {
@@ -45,19 +47,22 @@ function App() {
 
   return (
     <>
-     
+    
+      <InstallPopup /> 
       {/*  Toaster must be inside */}
       <Toaster position="top-right" richColors />
 
       <Routes>
+
+
         {/* Public Routes */}
-         <Route path="/install" element={<InstallPopup />} />
         <Route path="/" element={<LandingPage/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="*" element={<NotFoundPage/>} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
@@ -87,6 +92,7 @@ function App() {
           <Route path="/potd" element={<PotdPage />} />
           <Route path="/coding-potd" element={<CodingPotdPage />} />
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
+          <Route path="/resources" element={<Resources />} />
         </Route>
       </Routes>
     </>
