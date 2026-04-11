@@ -15,4 +15,6 @@ export const completePotd = () => api.post('/api/potd/complete');
 export const getCpotdStatus = () => api.get('/api/cpotd/status');
 export const completeCpotd = () => api.post('/api/cpotd/complete');
 
+// Streak APIs
+export const getStreak = () => api.get('/api/dashboard/streak');
 

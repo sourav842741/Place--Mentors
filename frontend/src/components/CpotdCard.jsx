@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Code, CheckCircle, ArrowRight, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCountdown } from "@/hooks/useCountdown";
@@ -70,84 +71,106 @@ export default function CpotdCard() {
     }
   };
 
-  const locked = status.locked;
+  const locked = status.locked && !status.solved;
 
   if (isLoading) {
-    return <div className="animate-pulse bg-gray-200 h-80 rounded-2xl" />;
+    return (
+      <div className="flex flex-col justify-between h-[400px] p-6 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm animate-pulse">
+        <div className="flex items-center gap-3">
+          <div className="w-16 h-16 bg-gray-200 rounded-2xl" />
+          <div className="space-y-2">
+            <div className="h-6 bg-gray-200 rounded w-32" />
+            <div className="h-4 bg-gray-200 rounded w-24" />
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="h-4 bg-gray-200 rounded" />
+          <div className="h-4 bg-gray-200 rounded w-3/4" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="w-8 h-8 bg-gray-200 rounded-full" />
+          <div className="w-32 h-10 bg-gray-200 rounded-full" />
+        </div>
+      </div>
+    );
   }
 
   return (
     <Card
-      onClick={() => navigate("/coding-potd")} 
-      className={`relative bg-white border-2 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.01] cursor-pointer ${
+      onClick={() => navigate("/coding-potd")}
+      className={`flex flex-col justify-between h-[400px] p-6 bg-white border-2 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer ${
         locked
-          ? "border-orange-300"
-          : "border-gray-200 hover:border-black/50"
+          ? "border-orange-200 bg-orange-50/50"
+          : status.solved
+          ? "border-green-200 bg-green-50/50"
+          : "border-gray-200 hover:border-blue-300"
       }`}
     >
-      <CardContent className="relative p-8 pb-12">
-        {/* HEADER */}
-        <div className="flex items-center gap-4 mb-4">
-          <div className="p-3 bg-gray-100 rounded-2xl shadow-sm">
-            <Code className="w-8 h-8 text-gray-900" />
+      <CardContent className="flex flex-col justify-between flex-1 p-0 h-full">
+        {/* TOP SECTION */}
+        <div className="flex items-start gap-4 mb-6">
+          <div className="p-3 bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-200 rounded-2xl shrink-0">
+            <Code className="w-7 h-7 text-blue-600" />
           </div>
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900">
-              Coding POTD
-            </h3>
-            <p className="text-gray-500 text-lg font-medium">
-              Daily DSA Challenge
-            </p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl font-bold text-gray-900 mb-1 leading-tight">Coding POTD</h3>
+            <p className="text-sm text-gray-500 font-medium">Daily DSA Challenge</p>
           </div>
         </div>
 
-        <p className="text-gray-600 text-sm mb-6">
+        {/* DESCRIPTION */}
+        <p className="text-gray-600 text-base leading-relaxed flex-1 min-h-[80px] mb-6">
           Solve today's hand-picked coding problem and earn XP + badges!
         </p>
 
-        {/* STATUS ICON */}
-        {locked ? (
-          <div className="absolute top-4 right-4 p-3 bg-orange-100 rounded-full">
-            <Clock className="w-6 h-6 text-orange-700" />
-          </div>
-        ) : status.solved ? (
-          <div className="absolute top-4 right-4 p-3 bg-green-100 rounded-full">
-            <CheckCircle className="w-6 h-6 text-green-700" />
-          </div>
-        ) : null}
+        {/* TOP-RIGHT STATUS ICON */}
+        <div className="absolute top-6 right-6">
+          {locked ? (
+            <div className="p-2.5 bg-orange-100 border border-orange-200 rounded-2xl">
+              <Clock className="w-5 h-5 text-orange-600" />
+            </div>
+          ) : status.solved ? (
+            <div className="p-2.5 bg-green-100 border border-green-200 rounded-2xl">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            </div>
+          ) : null}
+        </div>
 
-        {/* BUTTON */}
-        <div className="flex items-center justify-between absolute bottom-6 left-6 right-6">
-          <span className="text-3xl">💻</span>
-
+        {/* BOTTOM SECTION */}
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-2xl">💻</span>
           <button
-            disabled={isLoading}
+            disabled={locked}
             onClick={(e) => {
               e.stopPropagation();
-
               if (!locked) {
                 handleStart(e);
               } else {
                 navigate("/cpotd");
               }
             }}
-            className={`flex items-center gap-2 font-semibold px-6 py-3 rounded-xl ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 ${
               locked
-                ? "bg-gray-400 text-gray-600"
-                : "bg-black text-white hover:bg-gray-800"
+                ? "bg-gray-100 text-gray-600 border border-gray-200 cursor-not-allowed"
+                : status.solved
+                ? "bg-green-100 hover:bg-green-200 text-green-800 border border-green-200"
+                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg border-0"
             }`}
           >
             {locked ? (
               <>
-                {status.solved && "✅ "}
-                ⏳ {remaining > 0 ? formattedTime : "Loading..."}
+                ⏳ {formattedTime}
               </>
             ) : status.solved ? (
-              <>✅ Completed</>
+              <>
+                ✅ Completed
+                <CheckCircle className="w-4 h-4" />
+              </>
             ) : (
               <>
-                Start Today's Challenge
-                <ArrowRight className="w-5 h-5" />
+                Start →
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>

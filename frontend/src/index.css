@@ -126,16 +126,6 @@ html {
 animation: scaleUp 0.4s ease;
 }
 
-/*  BADGE GLOW */
-@keyframes glowPulse {
-0% { box-shadow: 0 0 10px rgba(255,215,0,0.2); }
-50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
-100% { box-shadow: 0 0 10px rgba(255,215,0,0.2); }
-}
-
-.badge-glow {
-animation: glowPulse 2s infinite;
-}
 
 /*  ULTRA SMOOTH CAROUSEL */
 @keyframes scroll-left {

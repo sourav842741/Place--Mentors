@@ -1,27 +1,29 @@
 import { useState, useEffect } from "react";
 
 export function useCountdown(initialMs) {
-  const [remaining, setRemaining] = useState(0);
+  const [remaining, setRemaining] = useState(initialMs || 0);
 
-  //  FIX: jab bhi new time aaye → reset ho
   useEffect(() => {
-    if (initialMs > 0) {
-      setRemaining(initialMs);
+    if (!initialMs || initialMs <= 0) {
+      setRemaining(0);
+      return;
     }
-  }, [initialMs]);
 
-  useEffect(() => {
-    if (remaining <= 0) return;
+    const start = Date.now();
 
     const interval = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1000) return 0;
-        return prev - 1000;
-      });
+      const elapsed = Date.now() - start;
+      const left = Math.max(initialMs - elapsed, 0);
+
+      setRemaining(left);
+
+      if (left === 0) {
+        clearInterval(interval);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remaining]);
+  }, [initialMs]); // ✅ only depends on initialMs
 
   const h = Math.floor(remaining / (1000 * 60 * 60));
   const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));

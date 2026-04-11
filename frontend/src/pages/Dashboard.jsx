@@ -43,6 +43,8 @@ import { fetchNews, fetchNewsStats } from "../redux/newsSlice.js";
 import { Button } from "@/components/ui/button.jsx";
 import { Badge } from "@/components/ui/badge.jsx";
 import ContactUs from "@/components/ContactUs";
+import StreakCalendar from "@/components/StreakCalendar.jsx";
+import { fetchStreak } from "../redux/streakSlice.js";
 
 export default function Dashboard() {
   const { user } = useSelector((state) => state.user);
@@ -255,6 +257,7 @@ export default function Dashboard() {
   // Fetch news + stats
   React.useEffect(() => {
     dispatch(fetchNewsStats());
+    dispatch(fetchStreak());
     dispatch(
       fetchNews({
         tag: activeFilter === "all" ? undefined : activeFilter,
@@ -416,14 +419,14 @@ export default function Dashboard() {
             </div>
 
             {/*  POTD SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <CpotdCard
                 onClick={() => navigate("/coding-potd")}
               />
               <PotdCard
                 onClick={() => navigate("/potd")}
               />
-
+              <StreakCalendar />
             </div>
 
             <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">

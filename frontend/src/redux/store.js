@@ -9,6 +9,7 @@ import { compilerApi } from "./compilerSlice";
 import codingPotdSlice from "./codingPotdSlice";
 import youtubeSlice from "./youtubeSlice";
 import newsSlice from "./newsSlice";
+import streakSlice from "./streakSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -24,7 +25,9 @@ getDefaultMiddleware().concat(notesApi.middleware, compilerApi.middleware),
         [compilerApi.reducerPath]: compilerApi.reducer,
         youtube: youtubeSlice,
         news: newsSlice,
+        streak: streakSlice,
      }
 })
 
 export default store
+

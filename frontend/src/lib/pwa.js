@@ -49,7 +49,7 @@ export const registerSW = async () => {
   if ("serviceWorker" in navigator) {
     try {
       const reg = await navigator.serviceWorker.register("/sw.js");
-      console.log("✅ SW Registered:", reg);
+     
     } catch (error) {
       console.log("❌ SW Failed:", error);
     }
