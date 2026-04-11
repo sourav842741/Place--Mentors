@@ -85,6 +85,7 @@ export const submitCpotd = asyncHandler(async (req, res) => {
     const today = new Date().toISOString().split("T")[0];
     user.codingPotdCompleted = true;
     user.lastCodingPotdDate = today;
+    user.lastCodingPotdAt = new Date();
 
     addXP(user, xpEarned, "cpotd");
     await user.save();
@@ -130,7 +131,7 @@ const executeCodeWithInput = async (code, language, input) => {
 
   const result = response.data;
 
-  const decode = (data) =>
+const decode = (data) =>
     data ? Buffer.from(data, "base64").toString("utf-8") : "";
 
   return {
@@ -142,3 +143,54 @@ const executeCodeWithInput = async (code, language, input) => {
     error: decode(result.stderr),
   };
 };
+
+// ================= CPOTD STATUS =================
+export const getCpotdStatus = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  const now = new Date();
+  const limit = 24 * 60 * 60 * 1000;
+
+  const locked =
+    user.lastCodingPotdAt &&
+    now - user.lastCodingPotdAt < limit;
+
+  const remaining = locked
+    ? limit - (now - user.lastCodingPotdAt)
+    : 0;
+
+ res.json({
+  success: true,
+  data: {
+    locked,
+    remaining,
+    solved: user.codingPotdCompleted, 
+  },
+});
+});
+
+// ================= COMPLETE CPOTD (cooldown timer) =================
+export const completeCpotd = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  user.codingPotdCompleted = true;
+  user.lastCodingPotdAt = new Date();
+  user.lastCodingPotdDate = new Date().toISOString().split("T")[0];
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Coding POTD marked complete, cooldown started",
+    data: {
+      locked: true,
+      unlockAt: new Date(Date.now() + 24*60*60*1000).toISOString(),
+    },
+  });
+});
+

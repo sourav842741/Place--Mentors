@@ -8,8 +8,6 @@ import {
 
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-
-
 // ================= GENERATE POTD =================
 export const generatePotd = asyncHandler(async (req, res) => {
   const potd = await generateTodayPotd();
@@ -144,6 +142,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   const todayDate = new Date().toISOString().split("T")[0];
   user.potdCompleted = true;
   user.lastPotdDate = todayDate;
+  user.lastPotdAt = new Date();
 
   addXP(user, xpEarned, "potd");
 
@@ -179,6 +178,50 @@ export const submitPotd = asyncHandler(async (req, res) => {
       weakArea,
       xpEarned,
       results,
+    },
+  });
+});
+
+// ================= POTD STATUS =================
+export const getPotdStatus = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  const now = new Date();
+  const limit = 24 * 60 * 60 * 1000;
+
+  const diff = user.lastPotdAt ? now - user.lastPotdAt : null;
+
+  const locked = user.lastPotdAt && diff < limit;
+
+  const remaining = locked ? limit - diff : 0;
+
+  res.json({
+    success: true,
+    data: { locked, remaining, solved: user.potdCompleted },
+  });
+});
+
+// ================= COMPLETE POTD (cooldown timer) =================
+export const completePotd = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  user.potdCompleted = true;
+  user.lastPotdAt = new Date();
+  user.lastPotdDate = new Date().toISOString().split("T")[0]; // keep compatibility
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "POTD marked complete, cooldown started",
+    data: {
+      locked: true,
+      unlockAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     },
   });
 });

@@ -37,6 +37,7 @@ import Navbar from "@/components/Navbar.jsx";
 
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import Footer from "@/components/Footer.jsx";
 
 const CodingPotdPage = () => {
   const dispatch = useDispatch();
@@ -548,6 +549,7 @@ const CodingPotdPage = () => {
           )}
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

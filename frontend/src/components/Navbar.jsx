@@ -109,7 +109,7 @@ export default function Navbar() {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
     { icon: Building2, label: "All Companies", path: "/companies" },
-    { icon: BookOpen, label: "Practice", path: "/quiz" },
+    { icon: BookOpen, label: "Interview Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
@@ -119,8 +119,9 @@ export default function Navbar() {
     { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
     { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
-    { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
      { icon: BookOpen, label: "DSA Resources", path: "/resources" },
+    { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
+    
   ];
 
   const isLoading = loading;
@@ -291,7 +292,8 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <DropdownMenuItem onClick={() => navigate("/profile")} className="border-2 focus:bg-blue-500 cursor-pointer">
+                
                   Profile
                 </DropdownMenuItem>
 
@@ -304,7 +306,7 @@ export default function Navbar() {
                     </Badge>
                   )}
                 </DropdownMenuLabel>
-                <div className="px-2 py-1 max-h-48 overflow-y-auto">
+                <div className="px-2 py-1 max-h-48 overflow-y-auto ">
                   {notifications.map((n, i) => (
                     <div
                       key={i}
@@ -328,13 +330,13 @@ export default function Navbar() {
                 {/* Credits Section */}
                 {isAuth && (
                   <>
-                    <DropdownMenuLabel className="p-2 flex items-center gap-2">
-                      <BsCoin className="text-yellow-500 h-4 w-4" />
+                    <DropdownMenuLabel className="p-2 flex items-center gap-2 border-2">
+                      <BsCoin className="text-yellow-600 h-4 w-4" />
                       <span className="font-semibold">{credits} Credits</span>
                     </DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={() => navigate("/pricing")}
-                      className="focus:bg-orange-50 px-2 py-1.5"
+                      className="focus:bg-blue-500 px-2 py-1.5"
                     >
                       Buy More Credits
                     </DropdownMenuItem>
@@ -353,7 +355,7 @@ export default function Navbar() {
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onClick={handleLogout} className="focus:bg-blue-500 hover:cursor-pointer">
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>

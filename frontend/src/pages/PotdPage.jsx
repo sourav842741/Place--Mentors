@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import useAuth from "../hooks/useAuth.js";
 import Navbar from "@/components/Navbar.jsx";
+import Footer from "@/components/Footer.jsx";
 
 const PotdPage = () => {
   const dispatch = useDispatch();
@@ -295,6 +296,7 @@ const PotdPage = () => {
           )}
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

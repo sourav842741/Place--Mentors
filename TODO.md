@@ -1,32 +1,23 @@
-# Contact Us API Integration - TODO
+# POTD 24h Cooldown Implementation TODO
 
-## ✅ Contact Us API COMPLETE
+## Backend Changes
+- [✅] 1. Update backend/models/user.model.js: Add lastPotdAt and lastCodingPotdAt Date fields
+- [✅] 2. Update backend/controllers/potd.controller.js: Add getPotdStatus and completePotd functions
+- [✅] 3. Update backend/controllers/cpotd.controller.js: Add getCpotdStatus and completeCpotd functions
+- [✅] 4. Update backend/routes/potd.routes.js: Add GET /status and POST /complete routes
+- [✅] 5. Update backend/routes/cpotd.routes.js: Add GET /status and POST /complete routes
 
-All steps done:
-- [x] Step 1: Create `backend/controllers/contact.controller.js`
-- [x] Step 2: Update `backend/config/mail.js` (add sendContactMail function)
-- [x] Step 3: Create `backend/routes/contact.routes.js`
-- [x] Step 4: Edit `backend/index.js` (add import and route mount)
-- [x] Step 5: Ready to test
+## Frontend Changes
+- [✅] 6. Create frontend/src/hooks/useCountdown.js: Reusable countdown hook
+- [✅] 7. Update frontend/src/services/api.js: Add potdStatus, potdComplete, cpotdStatus, cpotdComplete functions
+- [✅] 8. Update frontend/src/components/PotdCard.jsx: Add cooldown logic, timer UI, API integration
+- [✅] 9. Update frontend/src/components/CpotdCard.jsx: Add cooldown logic, timer UI, API integration
+- [ ] 10. Update frontend/src/pages/Dashboard.jsx: Refetch user or handle status in cards
 
-## Test Instructions:
-1. Add to `backend/.env`:
-   ```
-   EMAIL=yourgmail@gmail.com
-   EMAIL_PASS=your_gmail_app_password
-   ```
-   (Google Account → Security → 2-Step Verification → App passwords)
+## Testing & Final
+- [ ] 11. Test backend endpoints
+- [ ] 12. Test frontend timer/live updates
+- [ ] 13. Mark complete ✅
 
-2. Run: `cd backend && npm run dev`
-
-3. Test POST `http://localhost:5000/api/contact`:
-   ```bash
-   curl -X POST http://localhost:5000/api/contact \
-     -H "Content-Type: application/json" \
-     -d '{"name":"Test User","email":"test@example.com","message":"Hello!"}'
-   ```
-
-4. Check your Gmail inbox for "New Contact Message from PlaceMentor"
-
-Frontend ContactUs form now works! 🚀
+**Current Step: 10/13**
 

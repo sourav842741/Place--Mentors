@@ -213,7 +213,7 @@ export default function Dashboard() {
         // date ko short form me convert (Mon, Tue...)
         const formatted = (res.data?.weeklyData || []).map((item) => ({
           ...item,
-          date: item.date, // ✅ FIX (NO conversion)
+          date: item.date, //  FIX (NO conversion)
         }));
 
         setWeeklyData(formatted);
@@ -233,7 +233,7 @@ export default function Dashboard() {
           withCredentials: true,
         });
 
-        console.log("MOTIVATION API:", res.data);
+       
 
         const message = res.data.message || "Keep pushing forward! 🚀";
 
@@ -418,13 +418,12 @@ export default function Dashboard() {
             {/*  POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CpotdCard
-                solved={user?.codingPotdCompleted || false}
                 onClick={() => navigate("/coding-potd")}
               />
               <PotdCard
-                solved={user?.potdCompleted || false}
                 onClick={() => navigate("/potd")}
               />
+
             </div>
 
             <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">

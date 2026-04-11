@@ -157,6 +157,8 @@ prepCompanies: [
     codingPotdCompleted: { type: Boolean, default: false },
     lastPotdDate: { type: String, default: null }, // YYYY-MM-DD
     lastCodingPotdDate: { type: String, default: null }, // YYYY-MM-DD
+    lastPotdAt: { type: Date, default: null },
+    lastCodingPotdAt: { type: Date, default: null },
 
     googleCalendarAccessToken: String,
     googleCalendarRefreshToken: String,
