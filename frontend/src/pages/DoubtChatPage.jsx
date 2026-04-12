@@ -204,218 +204,226 @@ export default function DoubtChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
-      <Navbar />
-      <div className="lg:ml-64 mt-16 px-3 sm:px-4 md:px-6">
-        {/* Header */}
-        <div className="bg-white border-b shadow-sm mb-6 p-4 md:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-              Community
-            </h1>
-            <div className="flex items-center gap-4 shrink-0">
-              <span className="flex items-center gap-2 text-sm text-gray-600">
-                <Circle className="w-3 h-3 text-green-500 fill-green-500" />
-                {onlineUsers} online
-              </span>
-              <div className="relative">
-                {showNotif && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-4 z-50 max-h-64 overflow-y-auto">
-                    {notifications.map((n, i) => (
-                      <div
-                        key={i}
-                        className="border-b py-3 text-sm last:border-b-0"
-                      >
-                        <p className="font-medium text-gray-900">{n.message}</p>
-                        <span className="text-xs text-gray-500">{n.time}</span>
-                      </div>
-                    ))}
+    <div className="min-h-screen 
+bg-gray-100 dark:bg-gray-950 
+overflow-x-hidden transition-colors duration-300 lg:ml-5 mt-5">
+
+  <Navbar />
+
+  <div className="md:pl-64 mt-16 px-3 sm:px-4 md:px-6">
+
+    {/* Header */}
+    <div className="bg-white dark:bg-gray-900 
+    border-b border-gray-200 dark:border-white/10 
+    shadow-sm mb-6 p-4 md:p-6 transition">
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
+
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+          Community
+        </h1>
+
+        <div className="flex items-center gap-4 shrink-0">
+
+          <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+            <Circle className="w-3 h-3 text-green-500 fill-green-500" />
+            {onlineUsers} online
+          </span>
+
+          <div className="relative">
+            {showNotif && (
+              <div className="absolute right-0 mt-2 w-80 
+              bg-white dark:bg-gray-900 
+              border border-gray-200 dark:border-white/10 
+              shadow-lg rounded-xl p-4 z-50 max-h-64 overflow-y-auto">
+
+                {notifications.map((n, i) => (
+                  <div
+                    key={i}
+                    className="border-b border-gray-200 dark:border-gray-700 py-3 text-sm last:border-b-0"
+                  >
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {n.message}
+                    </p>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {n.time}
+                    </span>
                   </div>
-                )}
+                ))}
+
               </div>
-            </div>
+            )}
           </div>
+
+        </div>
+      </div>
+    </div>
+
+    {/* Main */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+
+      {/* CENTER */}
+      <div className="lg:col-span-2 order-1 lg:order-2 space-y-4">
+
+        {/* Ask Box */}
+        <div className="bg-white dark:bg-gray-900 
+        border border-gray-200 dark:border-white/10 
+        rounded-2xl shadow-sm p-4 md:p-6">
+
+          <Textarea
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask your programming doubt or interview question..."
+            className="w-full resize-none mb-4 min-h-[100px] 
+            border border-gray-200 dark:border-white/10 
+            bg-white dark:bg-gray-800 
+            text-gray-900 dark:text-white 
+            rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+
+          <Button
+            onClick={handleAsk}
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 rounded-xl cursor-pointer"
+          >
+            {loading ? "Asking..." : "Ask Community + AI"}
+          </Button>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
-          {/* Main Content Area */}
-          <div className="lg:col-span-2 order-1 lg:order-2 space-y-4">
-            {/* Ask Doubt Box */}
-            <div className="bg-white border rounded-2xl shadow-sm p-4 md:p-6">
-              <Textarea
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Ask your programming doubt or interview question..."
-                className="w-full resize-none mb-4 min-h-25 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <Button
-                onClick={handleAsk}
-                disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 text-sm md:text-base rounded-xl shadow-md transition-all h-12 flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-                    Asking...
-                  </>
-                ) : (
-                  "Ask Community + AI"
-                )}
-              </Button>
+        {/* Doubts */}
+        {doubts.map((d) => (
+          <div
+            key={d._id}
+            className="bg-white dark:bg-gray-900 
+            border border-gray-200 dark:border-white/10 
+            rounded-xl shadow-sm overflow-hidden"
+          >
+
+            <div
+              className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              onClick={() => toggleOpen(d._id)}
+            >
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                {d.question}
+              </h3>
+
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <MessageCircle size={16} />
+                {repliesMap[d._id]?.length || 0} replies
+              </div>
             </div>
 
-            {/* Doubts List */}
-            {doubts.map((d) => (
-              <div
-                key={d._id}
-                className="bg-white border rounded-xl shadow-sm overflow-hidden"
-              >
-                <div
-                  className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => toggleOpen(d._id)}
-                >
-                  <h3
-                    className="font-semibold text-gray-900 line-clamp-2 wrap-break-word mb-2"
-                    title={d.question}
-                  >
-                    {d.question}
-                  </h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <MessageCircle size={16} />
-                    {repliesMap[d._id]?.length || 0} replies
+            {openId === d._id && (
+              <div className="border-t border-gray-200 dark:border-gray-700 p-4 md:p-6 space-y-4">
+
+                {/* AI Answer */}
+                <div className="bg-green-50 dark:bg-green-900/20 
+                border border-green-200 dark:border-green-800 
+                rounded-lg p-4">
+
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
                   </div>
                 </div>
 
-                {openId === d._id && (
-                  <div className="border-t p-4 md:p-6 space-y-4">
-                    {/* AI Answer */}
-                    <div className="bg-green-50 border rounded-lg p-4">
-                      <div className="prose prose-sm max-w-none">
-                        <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
+                {/* Replies */}
+                <div className="space-y-3">
+
+                  {repliesMap[d._id]?.map((r) => (
+                    <div
+                      key={r._id}
+                      className="bg-gray-50 dark:bg-gray-800 
+                      hover:bg-gray-100 dark:hover:bg-gray-700 
+                      border border-gray-200 dark:border-white/10 
+                      rounded-lg p-3 md:p-4 transition"
+                    >
+
+                      <div className="flex justify-between items-center">
+
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          {r.answer}
+                        </p>
+
+                        <button className="text-blue-600 hover:text-blue-700 text-sm">
+                          👍 {r.upvotesCount || 0}
+                        </button>
+
                       </div>
-                    </div>
 
-                    {/* Replies */}
-                    <div className="space-y-3">
-                      {repliesMap[d._id]?.map((r) => (
-                        <div
-                          key={r._id}
-                          className="bg-gray-50 hover:bg-gray-100 border rounded-lg p-3 md:p-4 transition-colors"
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                            <div className="flex items-start gap-3 min-w-0 flex-1">
-                              <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden">
-                                {r.user?.avatar ? (
-                                  <img
-                                    src={r.user.avatar}
-                                    alt="avatar"
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
-                                    {(r.user?.fullName || "U")
-                                      .split(" ")
-                                      .map((n) => n[0])
-                                      .join("")
-                                      .toUpperCase()}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="font-medium text-sm text-gray-900 wrap-break-word">
-                                  {r.user?.fullName}
-                                </p>
-                                <p className="text-sm text-gray-700 wrap-break-word mt-1 leading-relaxed">
-                                  {r.answer}
-                                </p>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => handleUpvote(r._id, d._id)}
-                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors whitespace-nowrap shrink-0"
-                            >
-                              <ThumbsUp size={16} />
-                              {r.upvotesCount || r.upvotes?.length || 0}
-                            </button>
-                          </div>
-                        </div>
-                      )) || (
-                        <div className="text-center py-12 text-gray-500">
-                          <MessageCircle className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                          <p className="text-sm font-medium">
-                            Be the first to reply!
-                          </p>
-                        </div>
-                      )}
                     </div>
+                  ))}
 
-                    {/* Reply Input */}
-                    <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
-                      <Input
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        placeholder="Write your reply..."
-                        className="flex-1 h-12"
-                      />
-                      <Button
-                        onClick={() => handleReply(d._id)}
-                        size="icon"
-                        className="h-12 w-12 bg-gray-800 hover:bg-gray-900 text-white shadow-md border-0 shrink-0"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                </div>
+
+                {/* Reply */}
+                <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+
+                  <Input
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Write your reply..."
+                    className="flex-1 bg-white dark:bg-gray-800 border dark:border-white/10 text-gray-900 dark:text-white"
+                  />
+
+                  <Button className="bg-gray-800 hover:bg-gray-900 text-white">
+                    <Send className="h-4 w-4" />
+                  </Button>
+
+                </div>
+
               </div>
+            )}
+
+          </div>
+        ))}
+
+      </div>
+
+      {/* SIDEBAR */}
+      <div className="space-y-4">
+
+        <div className="bg-white dark:bg-gray-900 
+        border border-gray-200 dark:border-white/10 
+        rounded-xl shadow-sm p-4">
+
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-3">
+            🔥 Trending
+          </h2>
+
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            No trending doubts yet
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 
+        border border-gray-200 dark:border-white/10 
+        rounded-xl shadow-sm p-4">
+
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-3">
+            Topics
+          </h2>
+
+          <div className="flex flex-wrap gap-2">
+            {topics.map((topic) => (
+              <Badge
+                key={topic}
+                className="bg-gray-200 dark:bg-gray-700 
+                text-gray-700 dark:text-gray-300"
+              >
+                {topic}
+              </Badge>
             ))}
           </div>
 
-          {/* Sidebar */}
-          <div className="order-2 lg:order-2 space-y-4 w-full lg:w-auto">
-            {/* Trending */}
-            <div className="bg-white border rounded-xl shadow-sm p-3 md:p-4 sticky top-6">
-              <h2 className="font-semibold text-gray-900 mb-3 text-lg">
-                🔥 Trending
-              </h2>
-              {trending.length > 0 ? (
-                trending.map((t) => (
-                  <p
-                    key={t._id}
-                    className="text-sm text-gray-700 mb-2 line-clamp-2 wrap-break-word hover:text-blue-600 cursor-pointer p-2 -m-2 rounded-lg transition-colors"
-                  >
-                    {t.question}
-                  </p>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500 italic">
-                  No trending doubts yet
-                </p>
-              )}
-            </div>
-
-            {/* Topics */}
-            <div className="bg-white border rounded-xl shadow-sm p-3 md:p-4">
-              <h2 className="font-semibold text-gray-900 mb-3 text-lg">
-                Topics
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {topics.map((topic) => (
-                  <Badge
-                    key={topic}
-                    variant="secondary"
-                    className="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs px-2.5 py-1.5 cursor-pointer transition-colors"
-                  >
-                    {topic}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
+
       </div>
-      <Footer />
+
     </div>
+
+  </div>
+
+  <Footer />
+</div>
   );
 }

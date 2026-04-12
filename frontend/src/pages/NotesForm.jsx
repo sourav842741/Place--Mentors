@@ -44,9 +44,9 @@ const handleSubmit = async (e) => {
     return;
   }
 
-  // 🔥 FINAL FIX (IMPORTANT LINE)
+  //  FINAL FIX (IMPORTANT LINE)
   const credits =
-    res?.payload?.creditsLeft ||   // ✅ THIS IS YOUR REAL FIELD
+    res?.payload?.creditsLeft ||   //  THIS IS YOUR REAL FIELD
     res?.payload?.credits ||
     res?.payload?.data?.credits;
 

@@ -67,7 +67,7 @@ const CompanyPage = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 mt-6 bg-gray-50 min-h-screen lg:mt-16 ml-5 sm:mt-5">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 mt-6 bg-gray-50 dark:bg-gray-950 min-h-screen lg:mt-16 ml-5 sm:mt-5 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           {/* Header + Search */}
           <div className="mb-8 p-6 bg-white rounded-2xl shadow-sm border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -82,7 +82,7 @@ const CompanyPage = () => {
               </Button>
 
               <div>
-                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 ">
                   {company?.overview?.name || "Company Details"}
                 </h1>
                 <p className="text-sm text-gray-500">
@@ -110,22 +110,22 @@ const CompanyPage = () => {
                         {company?.overview?.name || "N/A"}
                       </h3>
                       {company?.overview?.tagline && (
-                        <p className="text-2xl font-light italic text-gray-600 mt-2">
+                        <p className="text-2xl font-light italic text-gray-600 mt-2 dark:text-white">
                           {company?.overview?.tagline}
                         </p>
                       )}
                     </div>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed dark:text-white">
                       {company?.overview?.description ||
                         "No description available"}
                     </p>
 
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed dark:text-white">
                       {company?.overview?.industry ||
                         "No description available"}
                     </p>
 
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed dark:text-white">
                       {company?.overview?.headquarters ||
                         "No description available"}
                     </p>
@@ -301,7 +301,7 @@ const CompanyPage = () => {
                           </div>
                         </div>
 
-                        <div className="p-3 bg-blue-50 rounded-lg text-sm">
+                        <div className="p-3 bg-blue-50 rounded-lg text-sm dark:text-black">
                           <span className="font-semibold">Note: </span>
                           {company.cutoff.note || "N/A"}
                         </div>
@@ -685,7 +685,7 @@ const CompanyPage = () => {
                                   .map((q, i) => (
                                     <div
                                       key={i}
-                                      className="p-3 bg-gray-50 rounded-lg text-sm"
+                                      className="p-3 bg-gray-50 rounded-lg text-sm dark:text-black"
                                     >
                                       Q{i + 1}: {q}
                                     </div>

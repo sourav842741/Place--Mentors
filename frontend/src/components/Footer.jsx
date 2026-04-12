@@ -5,7 +5,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-white border-t mt-10 lg:ml-64 md:ml-64">
+    <footer className="bg-white dark:bg-gray-900 border-t dark:border-gray-800 mt-10 lg:ml-64 md:ml-64 transition-colors duration-300">
       
       <div className="max-w-7xl mx-auto px-4 py-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
 
@@ -14,7 +14,7 @@ const Footer = () => {
           <h2 className="text-xl font-bold text-indigo-600">
             Practice Mentor
           </h2>
-          <p className="text-sm text-gray-600 mt-3">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 transition-colors">
             AI-powered placement preparation platform.
           </p>
         </div>

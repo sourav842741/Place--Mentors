@@ -25,7 +25,7 @@ export default function LandingPage() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-white via-orange-50 to-blue-50 text-gray-900">
+    <div className="min-h-screen bg-linear-to-br from-white via-orange-50 to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       {/*  NAVBAR */}
       <nav className="flex justify-between items-center px-6 py-4 bg-white/80 backdrop-blur border-b sticky top-0 z-50">
         <h1 className="text-2xl font-bold text-orange-500">PlaceMentor</h1>

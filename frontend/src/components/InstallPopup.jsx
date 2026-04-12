@@ -21,7 +21,7 @@ export default function InstallPopup() {
       <div className="bg-white shadow-2xl border rounded-2xl p-4 w-80">
         
         {/* Title */}
-        <h3 className="font-semibold text-lg mb-1">
+        <h3 className="font-semibold text-lg mb-1 dark:text-black">
           Install Place Mentor 🚀
         </h3>
 

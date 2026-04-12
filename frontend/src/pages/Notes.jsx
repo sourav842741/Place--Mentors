@@ -9,7 +9,7 @@ function Notes() {
   const { data: notes, isLoading, error } = useGetMyNotesQuery()
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-12 lg:mt-12 md:ml-9">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 dark:from-gray-950 dark:to-gray-950 py-12 lg:mt-12 md:ml-9 transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* HERO */}
         <div className="text-center pb-12">

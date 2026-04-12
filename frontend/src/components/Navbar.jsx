@@ -54,7 +54,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [dark, setDark] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -83,10 +83,36 @@ export default function Navbar() {
     document.body.style.overflow = mobileOpen ? "hidden" : "auto";
   }, [mobileOpen]);
 
-  const toggleDark = () => {
-    document.documentElement.classList.toggle("dark");
-    setDark(!dark);
-  };
+  // Sync dark mode state
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const dark = document.documentElement.classList.contains("dark");
+      setIsDark(dark);
+    };
+
+    window.addEventListener("storage", handleThemeChange);
+    handleThemeChange(); // Initial check
+
+    return () => window.removeEventListener("storage", handleThemeChange);
+  }, []);
+
+ const toggleDark = () => {
+  const isNowDark = document.documentElement.classList.toggle("dark");
+  setIsDark(isNowDark);
+  localStorage.setItem("theme", isNowDark ? "dark" : "light");
+};
+
+useEffect(() => {
+  const savedTheme = localStorage.getItem("theme");
+
+  if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark");
+    setIsDark(true);
+  } else {
+    document.documentElement.classList.remove("dark");
+    setIsDark(false);
+  }
+}, []);
 
   const handleLogout = async () => {
     try {
@@ -110,7 +136,6 @@ export default function Navbar() {
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
     { icon: Building2, label: "All Companies", path: "/companies" },
     { icon: BookOpen, label: "Interview Practice", path: "/quiz" },
-    { icon: BookOpen, label: "Profile", path: "/profile" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
     { icon: Calendar, label: "Planner History", path: "/planner-history" },
@@ -128,12 +153,12 @@ export default function Navbar() {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 h-16 bg-white shadow-md flex items-center justify-between z-50">
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 shadow-md dark:shadow-black/20 transition-colors duration-300 flex items-center justify-between z-50">
         {/* LEFT */}
         <div className="w-full flex items-center justify-between px-4 md:px-6">
           {" "}
           <button
-            className="md:hidden p-2 hover:bg-gray-100 rounded"
+            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
             onClick={() => setMobileOpen(true)}
           >
             <Menu />
@@ -144,16 +169,16 @@ export default function Navbar() {
               className="flex items-center gap-2 cursor-pointer group"
             >
               <div
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-blue-600 text-white font-bold rounded-lg 
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-blue-600 dark:bg-blue-400 text-white font-bold rounded-lg 
                 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
               >
                 PM
               </div>
 
               {/*  TEXT */}
-              <span className="font-bold text-base sm:text-lg tracking-wide">
+              <span className="font-bold text-base sm:text-lg tracking-wide text-gray-900 dark:text-white">
                 Place
-                <span className="text-blue-600 group-hover:text-blue-500 transition">
+                <span className="text-blue-600 group-hover:text-blue-500 dark:text-blue-400 dark:group-hover:text-blue-300 transition-colors">
                   Mentor
                 </span>
               </span>
@@ -170,6 +195,15 @@ export default function Navbar() {
 
         {/* RIGHT */}
         <div className="flex items-center gap-3">
+          {/* 🌙 DARK MODE BUTTON */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleDark}
+            className="transition"
+          >
+            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+          </Button>
           {/* DESKTOP-ONLY ELEMENTS */}
           <div className="hidden md:flex items-center gap-3">
             {/*  NOTIFICATION BELL */}
@@ -233,7 +267,7 @@ export default function Navbar() {
 
                   <span
                     key={credits}
-                    className="text-xs sm:text-sm md:text-base font-semibold"
+                    className="text-xs sm:text-sm md:text-base font-semibold dark:text-black"
                   >
                     {isLoading ? "..." : credits}
                   </span>
@@ -476,15 +510,17 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR - UNCHANGED */}
+      {/* MOBILE SIDEBAR */}
       {mobileOpen && (
         <>
+          {/* BACKDROP */}
           <div
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setMobileOpen(false)}
           />
 
-          <div className="fixed top-0 left-0 w-64 h-full bg-white z-50 p-4">
+          {/* SIDEBAR */}
+          <div className="fixed top-0 left-0 w-64 h-full bg-white dark:bg-gray-900 z-50 p-4">
             <div className="flex justify-between mb-4">
               <span className="font-bold">Menu</span>
               <button onClick={() => setMobileOpen(false)}>
@@ -499,7 +535,7 @@ export default function Navbar() {
                   navigate(item.path);
                   setMobileOpen(false);
                 }}
-                className="flex gap-3 p-3 w-full text-left"
+                className="flex gap-3 p-3 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
               >
                 <item.icon />
                 {item.label}

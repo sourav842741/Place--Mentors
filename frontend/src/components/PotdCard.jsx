@@ -75,31 +75,31 @@ export default function PotdCard() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-between h-[400px] p-6 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm animate-pulse">
+      <div className="flex flex-col justify-between h-[400px] p-6 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm animate-pulse transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-2xl" />
+          <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-2xl" />
           <div className="space-y-2">
-            <div className="h-6 bg-gray-200 rounded w-32" />
-            <div className="h-4 bg-gray-200 rounded w-24" />
+            <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-32" />
+            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-24" />
           </div>
         </div>
         <div className="space-y-3">
-          <div className="h-4 bg-gray-200 rounded" />
-          <div className="h-4 bg-gray-200 rounded w-3/4" />
-          <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
         </div>
         <div className="flex justify-between items-center">
-          <div className="w-8 h-8 bg-gray-200 rounded-full" />
-          <div className="w-32 h-10 bg-gray-200 rounded-full" />
+          <div className="w-8 h-8 bg-gray-200 dark:bg-gray-800 rounded-full" />
+          <div className="w-32 h-10 bg-gray-200 dark:bg-gray-800 rounded-full" />
         </div>
       </div>
     );
   }
 
   return (
-    <Card
+      <Card
       onClick={() => navigate("/potd")}
-      className={`flex flex-col justify-between h-[400px] p-6 bg-white border-2 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer ${
+      className={`flex flex-col justify-between h-[400px] p-6 bg-white dark:bg-gray-900 dark:border-white/10 border-2 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-colors ${
         locked
           ? "border-orange-200 bg-orange-50/50"
           : status.solved
@@ -114,13 +114,13 @@ export default function PotdCard() {
             <Brain className="w-7 h-7 text-purple-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-bold text-gray-900 mb-1 leading-tight">Quiz POTD</h3>
-            <p className="text-sm text-gray-500 font-medium">Daily MCQ Challenge</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 leading-tight">Quiz POTD</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Daily MCQ Challenge</p>
           </div>
         </div>
 
         {/* DESCRIPTION */}
-        <p className="text-gray-600 text-base leading-relaxed flex-1 min-h-[80px] mb-6">
+        <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed flex-1 min-h-[80px] mb-6">
           Test your interview knowledge with today's quiz and earn XP + badges!
         </p>
 
@@ -145,7 +145,7 @@ export default function PotdCard() {
             onClick={handleStart}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 ${
               locked
-                ? "bg-gray-100 text-gray-600 border border-gray-200 cursor-not-allowed"
+                ? "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 cursor-not-allowed"
                 : status.solved
                 ? "bg-green-100 hover:bg-green-200 text-green-800 border border-green-200"
                 : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border-0"

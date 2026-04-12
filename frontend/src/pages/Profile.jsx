@@ -102,8 +102,8 @@ export default function Profile() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-950 p-6">
-        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-lg overflow-hidden">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-950 p-6 transition-colors duration-300">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 dark:border-white/10 rounded-3xl shadow-lg overflow-hidden transition-colors">
 
           {/* COVER */}
           <div className="relative h-52 bg-gradient-to-r from-blue-500 to-purple-500">
@@ -135,8 +135,8 @@ export default function Profile() {
             {/* INFO + BACK BUTTON */}
             <div className="mt-4 flex justify-between items-center flex-wrap gap-3">
               <div>
-                <h2 className="text-2xl font-bold">{user?.fullName}</h2>
-                <p className="text-gray-500 text-sm">{user?.email}</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user?.fullName}</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">{user?.email}</p>
               </div>
 
               <Button

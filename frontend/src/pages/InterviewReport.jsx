@@ -25,9 +25,16 @@ function InterviewReport() {
 
   if (!report || Object.keys(report).length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">Loading Report...</p>
-      </div>
+     <div className="min-h-screen flex flex-col items-center justify-center 
+bg-white dark:bg-gray-950 transition-colors duration-300">
+
+  <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+
+  <p className="text-gray-500 dark:text-gray-400 text-lg">
+    Loading Report...
+  </p>
+
+</div>
     );
   }
 

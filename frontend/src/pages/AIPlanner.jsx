@@ -228,14 +228,14 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
 
   if (!user)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen ">
         Loading...
       </div>
     );
 
   if (isLoading)
     return (
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center  dark:bg-gray-950">
         <div className="text-center">
           <RefreshCw className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-500" />
           <p className="text-lg">Loading your plan...</p>
@@ -246,7 +246,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
   if (error)
     return (
       <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center">
-        <Card className="max-w-md">
+      <Card className="max-w-md bg-white dark:bg-gray-900 border dark:border-white/10">
           <CardContent className="p-8 text-center">
             <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
             <h3 className="text-xl font-bold mb-2">Error</h3>
@@ -263,7 +263,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
     <>
       <Navbar />
 
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-17">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-17  dark:bg-gray-950">
         <main className="flex-1">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
@@ -394,110 +394,99 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
               id ? (
                 //  DETAIL VIEW 
                 <div className="space-y-10">
-                  {planner.plan.map((day, dayIdx) => {
-                    const isCurrent = planner.currentDay === day.day;
+                   {planner.plan.map((day, dayIdx) => {
+    const isCurrent = planner.currentDay === day.day;
 
-                    return (
-                      <div key={dayIdx} className="space-y-4">
-                        {/* DAY TITLE */}
-                        <h2 className="text-2xl font-bold">
-                          Day {day.day}: {day.title}
-                        </h2>
+    return (
+      <div key={dayIdx} className="space-y-4">
+        
+        {/* DAY TITLE */}
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+          Day {day.day}: {day.title}
+        </h2>
 
-                        {/* BIG VIDEO */}
-                        {/* {day.tasks.find(t => t.videoUrl)?.videoUrl && (
-              <div className="rounded-2xl overflow-hidden shadow-xl">
-                <iframe
-                  src={day.tasks
-                    .find(t => t.videoUrl)
-                    .videoUrl.replace("watch?v=", "embed/")}
-                  className="w-full h-[350px] md:h-[450px]"
-                  allowFullScreen
-                />
+        {/* TASKS */}
+        <div className="space-y-4">
+          {day.tasks.map((task, taskIdx) => (
+            <div
+              key={taskIdx}
+              className={`p-4 rounded-xl border transition ${
+                isCurrent
+                  ? "bg-white dark:bg-gray-900 shadow-md border-gray-200 dark:border-white/10"
+                  : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-white/10"
+              }`}
+            >
+
+              {/* TITLE */}
+              <h4 className="font-semibold text-lg text-gray-800 dark:text-white">
+                {task.title}
+              </h4>
+
+              {/* TYPE */}
+              <p className="text-xs text-blue-600 font-medium uppercase">
+                {task.type}
+              </p>
+
+              {/* DESCRIPTION */}
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                {task.explanation || "No explanation"}
+              </p>
+
+              {/* META */}
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex gap-2 flex-wrap">
+                <span>⏰ {task.time}</span>
+                <span>•</span>
+                <span>{task.difficulty}</span>
+
+                {task.platform && (
+                  <>
+                    <span>•</span>
+                    <span>{task.platform}</span>
+                  </>
+                )}
               </div>
-            )} */}
 
-                        {/* TASKS */}
-                        <div className="space-y-4">
-                          {day.tasks.map((task, taskIdx) => (
-                            <div
-                              key={taskIdx}
-                              className={`p-4 rounded-xl border ${
-                                isCurrent ? "bg-white shadow-md" : "bg-gray-50"
-                              }`}
-                            >
-                              {/* TITLE */}
-                              <h4 className="font-semibold text-lg">
-                                {task.title}
-                              </h4>
+              {/* RESOURCE LINK */}
+              {task.link && (
+                <a
+                  href={task.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 text-sm underline mt-2 inline-block"
+                >
+                  Open Resource
+                </a>
+              )}
 
-                              {/* TYPE */}
-                              <p className="text-xs text-blue-600 font-medium uppercase">
-                                {task.type}
-                              </p>
+              {/* YOUTUBE SEARCH */}
+              {task.youtubeQuery && (
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                  🔍 {task.youtubeQuery}
+                </p>
+              )}
 
-                              {/* DESCRIPTION */}
-                              <p className="text-sm text-gray-600 mt-1">
-                                {task.explanation || "No explanation"}
-                              </p>
+              {/* VIDEO */}
+              {task.videoUrl && (
+                <iframe
+                  src={task.videoUrl.replace("watch?v=", "embed/")}
+                  className="w-full h-[300px] md:h-[400px] mt-3 rounded-xl"
+                />
+              )}
 
-                              {/* META */}
-                              <div className="text-xs text-gray-500 mt-2 flex gap-2 flex-wrap">
-                                <span>⏰ {task.time}</span>
-                                <span>•</span>
-                                <span>{task.difficulty}</span>
-
-                                {task.platform && (
-                                  <>
-                                    <span>•</span>
-                                    <span>{task.platform}</span>
-                                  </>
-                                )}
-                              </div>
-
-                              {/*  RESOURCE LINK */}
-                              {task.link && (
-                                <a
-                                  href={task.link}
-                                  target="_blank"
-                                  className="text-blue-500 text-sm underline mt-2 inline-block"
-                                >
-                                  Open Resource
-                                </a>
-                              )}
-
-                              {/*  YOUTUBE SEARCH */}
-                              {task.youtubeQuery && (
-                                <p className="text-xs text-gray-400 mt-1">
-                                  🔍 {task.youtubeQuery}
-                                </p>
-                              )}
-
-                              {/*  VIDEO */}
-                              {task.videoUrl && (
-                                <iframe
-                                  src={task.videoUrl.replace(
-                                    "watch?v=",
-                                    "embed/",
-                                  )}
-                                  className="w-full h-75 md:h-100 mt-3 rounded-xl"
-                                />
-                              )}
-
-                              {/*  COMPLETE */}
-                              <div className="mt-3 flex justify-end">
-                                {task.completed ? (
-                                  <span className="text-green-500 text-sm">
-                                    Completed
-                                  </span>
-                                ) : (
-                                  <input
-                                    type="checkbox"
-                                    onChange={() =>
-                                      handleCompleteTask(dayIdx, taskIdx)
-                                    }
-                                  />
-                                )}
+              {/* COMPLETE */}
+              <div className="mt-3 flex justify-end">
+                {task.completed ? (
+                  <span className="text-green-500 text-sm">
+                    Completed
+                  </span>
+                ) : (
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      handleCompleteTask(dayIdx, taskIdx)
+                    }
+                  />
+                )}
                               </div>
                             </div>
                           ))}

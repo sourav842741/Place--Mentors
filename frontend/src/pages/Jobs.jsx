@@ -240,7 +240,7 @@ const JobsPage = () => {
           <div className="text-center space-y-4">
             <Briefcase className="h-16 w-16 text-gray-400 mx-auto" />
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">
+              <h3 className="text-xl font-bold text-gray-900 mb-1 dark:text-white">
                 Select a job to view details
               </h3>
               <p className="text-gray-500">
@@ -319,7 +319,7 @@ const JobsPage = () => {
           <Separator />
 
           <div
-            className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
+            className="prose prose-sm max-w-none text-gray-800 leading-relaxed dark:text-white"
             dangerouslySetInnerHTML={{ __html: selectedJob.description || "" }}
           />
 
@@ -377,14 +377,14 @@ const JobsPage = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-8 mt-17">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-8 mt-17 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950  text-white transition-colors duration-300">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Hero */}
           <div className="text-center mb-12">
             <h1 className="text-4xl lg:text-5xl font-bold bg-linear-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
               Find Your Dream Job
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed dark:text-white">
               Discover 5,000+ remote and office jobs matched to your skills.
               AI-powered recommendations.
             </p>
@@ -548,7 +548,7 @@ const JobsPage = () => {
             {/* Jobs List */}
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {view === "matched" ? "AI Matched Jobs" : "Latest Jobs"}
                 </h2>
                 {pagination && (
@@ -560,30 +560,29 @@ const JobsPage = () => {
               <JobList />
               {pagination && !loading && (
                 <div className="flex justify-center gap-2 mt-8 pt-8 border-t">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      if (currentPage > 1) {
-                        setCurrentPage((prev) => prev - 1);
-                      }
-                    }}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      if (currentPage < pagination.pages) {
-                        setCurrentPage((prev) => prev + 1);
-                      }
-                    }}
-                    disabled={currentPage >= pagination.pages}
-                  >
-                    Next
-                  </Button>
+                 <Button
+  variant="outline"
+  size="sm"
+  onClick={() => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  }}
+  className="dark:bg-gray-900 dark:text-white dark:border-white/10"
+>
+  Previous
+</Button>
+<Button
+  size="sm"
+  onClick={() => {
+    if (currentPage < pagination.pages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }}
+  className="dark:bg-gray-900 dark:text-white"
+>
+  Next
+</Button>
                 </div>
               )}
             </div>

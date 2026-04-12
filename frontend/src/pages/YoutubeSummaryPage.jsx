@@ -189,384 +189,385 @@ const YoutubeSummaryPage = () => {
     const currentSummary = summary?.[currentLang] || "";
 
     return (
-      <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-pink-50">
-        <Navbar />
-        <div className="pt-20 pb-8 px-4 md:px-8 max-w-7xl mx-auto space-y-8">
-          {/* 🎬 VIDEO PLAYER + INFO */}
-          <Card className="max-w-4xl mx-auto shadow-2xl border-0 bg-white/90 backdrop-blur-md">
-            <CardContent className="p-0 overflow-hidden rounded-3xl">
-              <div className="aspect-video">
-                <iframe
-                  src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full rounded-t-3xl"
-                  title={title}
-                />
-              </div>
-              <div className="p-8 space-y-4">
-                <div className="flex items-start justify-between">
-                  <h2 className="text-2xl md:text-3xl font-bold line-clamp-2 pr-8">
-                    {title}
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant="secondary"
-                      className="flex items-center gap-1"
-                    >
-                      <Clock className="w-3 h-3" />
-                      {duration}
-                    </Badge>
-                    <Badge className="bg-linear-to-r from-purple-500 to-pink-500 text-white">
-                      PRO Summary
-                    </Badge>
-                  </div>
-                </div>
-                <img
-                  src={thumbnail}
-                  alt="Thumbnail"
-                  className="w-24 h-16 object-cover rounded-lg border shadow-md absolute -mt-20 ml-6"
-                />
-              </div>
-            </CardContent>
-          </Card>
+      <div className="min-h-screen 
+bg-gradient-to-br from-indigo-50 via-white to-pink-50 
+dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 
+transition-colors duration-300">
 
-          {/* 🌐 LANGUAGE TOGGLE */}
-          <div className="max-w-4xl mx-auto flex justify-center">
-            <div className="inline-flex bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border">
-             <Button
-  variant={currentLang === "english" ? "default" : "ghost"}
-  size="sm"
-  onClick={() => setCurrentLang("english")}
-  className="gap-2 font-medium"
->
-  <Languages className="w-4 h-4" />
-  English 🇬🇧
-</Button>
+  <Navbar />
 
-<Button
-  variant={currentLang === "hinglish" ? "default" : "ghost"}
-  size="sm"
-  onClick={() => setCurrentLang("hinglish")}
-  className="gap-2 font-medium"
->
-  Hinglish 🇮🇳
-</Button>
+  <div className="pt-20 pb-8 px-4 md:px-8 max-w-7xl mx-auto space-y-8">
+
+    {/* VIDEO PLAYER */}
+    <Card className="max-w-4xl mx-auto shadow-2xl 
+    bg-white/90 dark:bg-gray-900/90 
+    backdrop-blur-md border dark:border-white/10">
+
+      <CardContent className="p-0 overflow-hidden rounded-3xl">
+
+        <div className="aspect-video">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+            allowFullScreen
+            className="w-full h-full"
+            title={title}
+          />
+        </div>
+
+        <div className="p-8 space-y-4">
+
+          <div className="flex items-start justify-between flex-wrap gap-4">
+
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+              {title}
+            </h2>
+
+            <div className="flex items-center gap-2">
+
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {duration}
+              </Badge>
+
+              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                PRO Summary
+              </Badge>
+
             </div>
+
           </div>
 
-          {/*  MAIN SUMMARY */}
-          <Card className="max-w-4xl mx-auto shadow-2xl border-0 bg-white/90 backdrop-blur-md">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-2xl">
-                <FaStar className="w-8 h-8 text-yellow-500" />
-                AI Video Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`prose prose-lg max-w-none ${expanded ? "max-h-none" : "max-h-96 overflow-hidden"}`}
-              >
-                <div
-                  className="leading-relaxed"
-                  dangerouslySetInnerHTML={{
-                    __html: currentSummary.replace(/\n/g, "<br>"),
-                  }}
-                />
-              </div>
-              <div className="pt-6 border-t bg-linear-to-r from-purple-50 to-pink-50 rounded-b-xl flex flex-wrap items-center gap-3 p-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={copySummary}
-                  className="flex items-center gap-2"
-                >
-                  <Copy className="w-4 h-4" />
-                  Copy {currentLang.toUpperCase()}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setExpanded(!expanded)}
-                  className="flex items-center gap-1"
-                >
-                  {expanded ? (
-                    <Minimize2 className="w-4 h-4" />
-                  ) : (
-                    <Maximize2 className="w-4 h-4" />
-                  )}
-                  {expanded ? "Show Less" : "Show More"}
-                </Button>
-                <div className="ml-auto flex items-center gap-2 text-sm text-gray-600">
-                  <Star className="w-4 h-4 text-yellow-500" />
-                  <span>{creditsLeft} credits left</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* ⏰ TIMESTAMPS */}
-          {timestamps?.length > 0 && (
-            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-linear-to-r from-blue-50 to-indigo-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Clock className="w-6 h-6 text-blue-600" />
-                  Key Timestamps ({timestamps.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-2 max-h-64 overflow-y-auto">
-                  {timestamps.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group"
-                    >
-                      <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center font-mono text-white font-bold text-sm">
-                        {item.time}
-                      </div>
-                      <div className="flex-1 group-hover:text-blue-700">
-                        {item.label}
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => copySection(item.label, "Timestamp")}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* 🔥 HIGHLIGHTS */}
-          {highlights?.length > 0 && (
-            <Card className="max-w-4xl mx-auto shadow-xl border-0 bg-linear-to-r from-orange-50 to-red-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <FaStar className="w-6 h-6 text-orange-500" />
-                  🔥 Key Highlights ({highlights.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-3">
-                  {highlights.map((highlight, idx) => (
-                    <div
-                      key={idx}
-                      className="group p-4 bg-white rounded-xl shadow-sm hover:shadow-lg border hover:border-orange-200 transition-all hover:-translate-y-1 cursor-pointer"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="shrink-0 w-8 h-8 bg-linear-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center font-bold text-white text-sm mt-0.5">
-                          {idx + 1}
-                        </div>
-                        <div className="flex-1 group-hover:text-orange-800">
-                          {highlight}
-                        </div>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="ml-auto mt-2 opacity-0 group-hover:opacity-100 p-1"
-                        onClick={() => copySection(highlight, "Highlight")}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* 🔄 NEW ANALYSIS CTA */}
-          <Card className="max-w-2xl mx-auto text-center bg-linear-to-r from-emerald-50 to-green-50 border-emerald-200">
-            <CardContent className="p-8 space-y-4">
-              <FaVideo className="w-16 h-16 text-emerald-600 mx-auto" />
-              <h3 className="text-2xl font-bold text-gray-800">New Video?</h3>
-              <p className="text-gray-600">
-                Paste another YouTube link for instant PRO summary
-              </p>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    dispatch(clearSummary());
-                    setUrl("");
-                    setCurrentLang("english");
-                  }}
-                  className="flex-1"
-                >
-                  Clear All
-                </Button>
-                <Button
-                  onClick={() =>
-                    inputRef.current?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="flex-1 bg-linear-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-                >
-                  New Summary
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
+
+      </CardContent>
+    </Card>
+
+    {/* LANGUAGE */}
+    <div className="max-w-4xl mx-auto flex justify-center">
+      <div className="inline-flex bg-white/80 dark:bg-gray-900/80 
+      backdrop-blur-sm rounded-2xl p-1 shadow-lg border dark:border-white/10">
+
+        <Button
+          variant={currentLang === "english" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setCurrentLang("english")}
+          className="gap-2 font-medium"
+        >
+          <Languages className="w-4 h-4" />
+          English 🇬🇧
+        </Button>
+
+        <Button
+          variant={currentLang === "hinglish" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setCurrentLang("hinglish")}
+          className="gap-2 font-medium"
+        >
+          Hinglish 🇮🇳
+        </Button>
+
       </div>
+    </div>
+
+    {/* SUMMARY */}
+    <Card className="max-w-4xl mx-auto shadow-2xl border-0 
+    bg-white/90 dark:bg-gray-900/90 
+    backdrop-blur-md border dark:border-white/10">
+
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white">
+          <FaStar className="w-8 h-8 text-yellow-500" />
+          AI Video Summary
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+
+        <div className={`prose dark:prose-invert max-w-none ${expanded ? "" : "max-h-96 overflow-hidden"}`}>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: currentSummary.replace(/\n/g, "<br>"),
+            }}
+          />
+        </div>
+
+        <div className="pt-6 mt-6 border-t 
+        bg-gradient-to-r from-purple-50 to-pink-50 
+        dark:from-gray-800 dark:to-gray-700 
+        rounded-xl flex flex-wrap items-center gap-3 p-4">
+
+          <Button onClick={copySummary} size="sm" variant="outline">
+            Copy
+          </Button>
+
+          <Button onClick={() => setExpanded(!expanded)} size="sm" variant="ghost">
+            {expanded ? "Show Less" : "Show More"}
+          </Button>
+
+          <div className="ml-auto text-sm text-gray-600 dark:text-gray-400">
+            ⭐ {creditsLeft} credits left
+          </div>
+
+        </div>
+
+      </CardContent>
+    </Card>
+
+    {/* TIMESTAMPS */}
+    {timestamps?.length > 0 && (
+      <Card className="max-w-4xl mx-auto shadow-xl 
+      bg-gradient-to-r from-blue-50 to-indigo-50 
+      dark:from-gray-800 dark:to-gray-900">
+
+        <CardHeader>
+          <CardTitle className="text-gray-900 dark:text-white">
+            ⏰ Key Timestamps
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="space-y-2">
+
+          {timestamps.map((item, idx) => (
+            <div key={idx} className="p-3 bg-white dark:bg-gray-900 rounded-lg flex justify-between">
+              <span>{item.time}</span>
+              <span>{item.label}</span>
+            </div>
+          ))}
+
+        </CardContent>
+      </Card>
+    )}
+
+    {/* HIGHLIGHTS */}
+    {highlights?.length > 0 && (
+      <Card className="max-w-4xl mx-auto shadow-xl 
+      bg-gradient-to-r from-orange-50 to-red-50 
+      dark:from-gray-800 dark:to-gray-900">
+
+        <CardHeader>
+          <CardTitle className="text-gray-900 dark:text-white">
+            🔥 Highlights
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="grid md:grid-cols-2 gap-3">
+
+          {highlights.map((h, i) => (
+            <div key={i} className="p-4 bg-white dark:bg-gray-900 rounded-lg">
+              {h}
+            </div>
+          ))}
+
+        </CardContent>
+      </Card>
+    )}
+
+    {/* CTA */}
+    <Card className="max-w-2xl mx-auto text-center 
+    bg-gradient-to-r from-emerald-50 to-green-50 
+    dark:from-gray-800 dark:to-gray-900">
+
+      <CardContent className="p-8">
+
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+          New Video?
+        </h3>
+
+        <Button
+          onClick={() => {
+            dispatch(clearSummary());
+            setUrl("");
+          }}
+          className="mt-4 bg-gradient-to-r from-emerald-500 to-green-600"
+        >
+          New Summary
+        </Button>
+
+      </CardContent>
+    </Card>
+
+  </div>
+</div>
     );
   }
 
   // INPUT FORM (pre-analysis state)
   return (
-    <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-pink-50">
+   <div className="min-h-screen 
+bg-gradient-to-br from-indigo-50 via-white to-pink-50 
+dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 
+transition-colors duration-300">
       <Navbar />
       <div className="pt-20 pb-8 px-4 md:px-8 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-xl border">
-            <FaStar className="w-8 h-8 text-purple-500" />
-            <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              YouTube Pro Summarizer
-            </h1>
-          </div>
-          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
-            Instant AI summaries in English + Hindi with timestamps & highlights
-            (1 credit)
-          </p>
+
+  {/* Header */}
+  <div className="text-center mb-12">
+    <div className="inline-flex items-center gap-2 
+    bg-white/80 dark:bg-gray-900/80 
+    backdrop-blur-sm px-6 py-3 rounded-2xl shadow-xl 
+    border border-gray-200 dark:border-white/10">
+
+      <FaStar className="w-8 h-8 text-purple-500" />
+
+      <h1 className="text-3xl md:text-4xl font-bold 
+      bg-gradient-to-r from-gray-900 to-gray-700 
+      dark:from-white dark:to-gray-300 
+      bg-clip-text text-transparent">
+        YouTube Pro Summarizer
+      </h1>
+    </div>
+
+    <p className="mt-4 text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+      Instant AI summaries in English + Hindi with timestamps & highlights (1 credit)
+    </p>
+  </div>
+
+  {/* Input Section */}
+  <Card
+    ref={inputRef}
+    className="max-w-2xl mx-auto mb-8 shadow-2xl border-0 
+    bg-white/70 dark:bg-gray-900/70 
+    backdrop-blur-sm border dark:border-white/10"
+  >
+    <CardHeader className="pb-4">
+      <CardTitle className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white">
+        <FaPlayCircle className="w-8 h-8 text-red-500" />
+        Paste YouTube URL
+      </CardTitle>
+    </CardHeader>
+
+    <CardContent>
+      <div className="space-y-4">
+
+        <Input
+          ref={inputRef}
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          onPaste={handlePaste}
+          placeholder="https://www.youtube.com/watch?v=..."
+          className="h-14 text-lg 
+          bg-white dark:bg-gray-800 
+          text-gray-900 dark:text-white 
+          border border-gray-200 dark:border-white/10"
+        />
+
+        <div className="flex gap-3 pt-2">
+
+          <Button
+            onClick={generateSummary}
+            disabled={loading || userCredits < 1 || !isValidUrl}
+            size="lg"
+            className="flex-1 
+            bg-gradient-to-r from-purple-600 to-pink-600 
+            hover:from-purple-700 hover:to-pink-700 
+            shadow-xl h-12 font-semibold text-lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                AI Processing...
+              </>
+            ) : (
+              <>
+                <FaStar className="w-5 h-5 mr-2" />
+                Generate PRO Summary
+              </>
+            )}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => inputRef.current?.select()}
+            className="h-12 px-6"
+            disabled={loading}
+          >
+            Paste
+          </Button>
+
         </div>
 
-        {/* Input Section */}
-        <Card
-          ref={inputRef}
-          className="max-w-2xl mx-auto mb-8 shadow-2xl border-0 bg-white/70 backdrop-blur-sm"
-        >
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-2xl">
-              <FaPlayCircle className="w-8 h-8 text-red-500" />
-              Paste YouTube URL
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Input
-                ref={inputRef}
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onPaste={handlePaste}
-                placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
-                className="h-14 text-lg"
-              />
-              <div className="flex gap-3 pt-2">
-                <Button
-                  onClick={generateSummary}
-                  disabled={loading || userCredits < 1 || !isValidUrl}
-                  size="lg"
-                  className="flex-1 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-xl h-12 font-semibold text-lg"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      AI Processing...
-                    </>
-                  ) : (
-                    <>
-                      <FaStar className="w-5 h-5 mr-2" />
-                      Generate PRO Summary
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => inputRef.current?.select()}
-                  className="h-12 px-6"
-                  disabled={loading}
-                >
-                  Paste
-                </Button>
-              </div>
-              {userCredits < 1 && (
-                <p className="text-sm text-orange-600 text-center p-3 bg-orange-50 rounded-lg">
-                  💰 No credits left.{" "}
-                  <button
-                    onClick={() => navigate("/pricing")}
-                    className="font-semibold underline"
-                  >
-                    Buy Credits
-                  </button>
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Preview & Error States */}
-        {url && (
-          <>
-            {isFetchingMeta && (
-              <Card className="max-w-4xl mx-auto mb-8 shadow-xl animate-in fade-in duration-500">
-                <CardContent className="p-0">
-                  <div className="w-full h-64 md:h-80 bg-linear-to-br from-gray-200 to-gray-300 animate-pulse rounded-t-xl" />
-                </CardContent>
-              </Card>
-            )}
-
-            {isValidUrl && thumbnail && !isFetchingMeta && !data && (
-              <Card className="max-w-4xl mx-auto mb-8 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <CardContent className="p-0 overflow-hidden rounded-xl">
-                  <div className="relative">
-                    <img
-                      src={thumbnail}
-                      alt="Preview"
-                      className="w-full h-64 md:h-80 object-cover transition-transform hover:scale-105 duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
-                      <Play className="w-20 h-20 text-white drop-shadow-2xl" />
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{videoTitle}</h3>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{duration}</span>
-                      <code className="bg-gray-100 px-2 py-1 rounded font-mono text-xs">
-                        {extractVideoId(url)}
-                      </code>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {metaError && (
-              <Card className="max-w-2xl mx-auto bg-red-50 border-2 border-red-200">
-                <CardContent className="p-6 text-red-800 text-center">
-                  <FaVideo className="w-12 h-12 mx-auto mb-4 text-red-400" />
-                  <h3 className="font-bold text-lg mb-2">Invalid URL</h3>
-                  <p className="text-sm mb-4">
-                    Use: youtube.com/watch?v=ID or youtu.be/ID
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </>
+        {userCredits < 1 && (
+          <p className="text-sm text-orange-600 dark:text-orange-400 text-center p-3 
+          bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+            💰 No credits left.{" "}
+            <button
+              onClick={() => navigate("/pricing")}
+              className="font-semibold underline"
+            >
+              Buy Credits
+            </button>
+          </p>
         )}
 
-        {error && !loading && (
-          <Card className="max-w-2xl mx-auto bg-red-50 border-red-200">
-            <CardContent className="p-6 text-red-800">
-              <p className="font-medium">{error}</p>
-              <Button
-                onClick={() => dispatch(clearSummary())}
-                variant="outline"
-                className="mt-3"
-              >
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
-        )}
       </div>
+    </CardContent>
+  </Card>
+
+  {/* Loading Preview */}
+  {isFetchingMeta && (
+    <Card className="max-w-4xl mx-auto mb-8 shadow-xl 
+    bg-white dark:bg-gray-900 border dark:border-white/10">
+      <CardContent className="p-0">
+        <div className="w-full h-64 md:h-80 
+        bg-gradient-to-br from-gray-200 to-gray-300 
+        dark:from-gray-800 dark:to-gray-700 
+        animate-pulse rounded-t-xl" />
+      </CardContent>
+    </Card>
+  )}
+
+  {/* Video Preview */}
+  {isValidUrl && thumbnail && !isFetchingMeta && !data && (
+    <Card className="max-w-4xl mx-auto mb-8 shadow-xl 
+    bg-white dark:bg-gray-900 border dark:border-white/10">
+      <CardContent className="p-0 overflow-hidden rounded-xl">
+
+        <div className="relative">
+          <img
+            src={thumbnail}
+            alt="Preview"
+            className="w-full h-64 md:h-80 object-cover transition-transform hover:scale-105 duration-300"
+          />
+
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
+            <Play className="w-20 h-20 text-white drop-shadow-2xl" />
+          </div>
+        </div>
+
+        <div className="p-6">
+          <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+            {videoTitle}
+          </h3>
+
+          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+            <span>{duration}</span>
+            <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono text-xs">
+              {extractVideoId(url)}
+            </code>
+          </div>
+        </div>
+
+      </CardContent>
+    </Card>
+  )}
+
+  {/* Error */}
+  {error && !loading && (
+    <Card className="max-w-2xl mx-auto 
+    bg-red-50 dark:bg-red-900/20 
+    border border-red-200 dark:border-red-800">
+      <CardContent className="p-6 text-red-800 dark:text-red-300 text-center">
+        <FaVideo className="w-12 h-12 mx-auto mb-4 text-red-400" />
+        <h3 className="font-bold text-lg mb-2">Invalid URL</h3>
+        <p className="text-sm mb-4">
+          Use: youtube.com/watch?v=ID or youtu.be/ID
+        </p>
+      </CardContent>
+    </Card>
+  )}
+
+</div>
     </div>
   );
 };

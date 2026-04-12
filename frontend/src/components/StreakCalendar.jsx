@@ -89,7 +89,7 @@ const StreakCalendar = () => {
       return 'ring-2 ring-blue-400 ring-offset-2 bg-blue-100 border-blue-300';
     }
 
-    return 'bg-gray-100 border-gray-200';
+    return 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-white/10';
   };
 
   if (loading) {
@@ -115,7 +115,7 @@ const StreakCalendar = () => {
           <Flame className="h-5 w-5 text-orange-500" />
           Streak Calendar
         </CardTitle>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Solve one problem a day to keep your streak
         </p>
       </CardHeader>
@@ -143,7 +143,7 @@ const StreakCalendar = () => {
               Best: {bestStreak}
             </Badge>
 
-            <div className="flex items-center gap-1 text-sm text-gray-500">
+            <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
               <Clock className="w-4 h-4" />
               {remainingTime}
             </div>
@@ -152,7 +152,7 @@ const StreakCalendar = () => {
 
         {/* Calendar */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+          <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 dark:text-gray-400">
             <CalendarDays className="w-4 h-4" />
             {currentMonth}
           </div>
@@ -160,7 +160,7 @@ const StreakCalendar = () => {
           <div className="grid grid-cols-7 gap-1">
 
             {['S', 'M', 'T', 'W', 'Th', 'F', 'S'].map((day, i) => (
-              <div key={i} className="text-xs font-semibold text-gray-500 text-center">
+              <div key={i} className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">
                 {day}
               </div>
             ))}

@@ -31,18 +31,14 @@ const newsSchema = new mongoose.Schema({
   publishedAt: {
     type: Date,
     required: true,
-    index: true,
-     expires: 60 * 60 * 24
+    index: true
   }
 }, {
   timestamps: true
 });
 
-
-
-// Latest first
+// Indexes
 newsSchema.index({ publishedAt: -1 });
 newsSchema.index({ tag: 1 });
 
 export default mongoose.model('News', newsSchema);
-

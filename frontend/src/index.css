@@ -5,11 +5,13 @@
 
 /* ================= GLOBAL SETTINGS ================= */
 html {
-scroll-behavior: smooth;
+  scroll-behavior: smooth;
+  transition: color 0.3s, background-color 0.3s;
 }
 
 body {
--webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  transition: color 0.3s, background-color 0.3s;
 }
 
 /* ================= THEME ================= */
@@ -209,3 +211,7 @@ animation: fade-in 0.5s ease-in-out;
   scrollbar-width: none;
 }
 
+
+.prose {
+  background: transparent !important;
+}

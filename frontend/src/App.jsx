@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import { useEffect } from "react";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -44,6 +45,10 @@ function App() {
   useEffect(() => {
     getCurrentUser();
   }, []);
+
+
+  
+
 
   return (
     <>

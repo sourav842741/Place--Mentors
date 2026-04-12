@@ -53,7 +53,7 @@ export default function ResumeAnalyzer() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-15">
+     <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 dark:bg-gray-950 min-h-screen transition-colors duration-300 lg:mt-14">
         <div className="flex-1">
           <div className="max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-8">
@@ -63,7 +63,7 @@ export default function ResumeAnalyzer() {
                 </h1>
                 <p className="text-gray-600 mt-2">Upload your PDF resume for FAANG-level feedback (20 credits)</p>
               </div>
-              <Button onClick={() => navigate('/dashboard')} variant="outline" className="bg-yellow-200">
+              <Button onClick={() => navigate('/dashboard')} variant="outline" className="bg-yellow-200 dark:bg-gray-950 cursor-pointer">
                 Dashboard
               </Button>
             </div>
@@ -183,7 +183,7 @@ export default function ResumeAnalyzer() {
                     </Card>
 
                     <div className="flex gap-3 pt-4">
-                      <Button className="flex-1" onClick={() => setShowResult(false)}>
+                      <Button className="flex-1 " onClick={() => setShowResult(false)}>
                         Analyze Again
                       </Button>
                       <Button 

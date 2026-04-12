@@ -68,7 +68,7 @@ const JobDetailsPage = () => {
   // Loading Skeleton
   if (loading) {
     return (
-      <div className="pt-16 md:pl-64 min-h-screen bg-linear-to-br from-slate-50 to-indigo-50">
+      <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
         <Navbar />
         <div className="max-w-4xl mx-auto p-6 space-y-8">
           <Skeleton className="h-12 w-64" />
@@ -93,7 +93,7 @@ const JobDetailsPage = () => {
   // Error / Not found
   if (!job) {
     return (
-      <div className="pt-16 md:pl-64 min-h-screen bg-linear-to-br from-slate-50 to-indigo-50 flex items-center justify-center">
+      <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300 flex items-center justify-center">
         <Navbar />
         <div className="text-center p-12 max-w-md">
           <Briefcase className="h-20 w-20 text-gray-400 mx-auto mb-6" />
@@ -126,7 +126,7 @@ const JobDetailsPage = () => {
 
   return (
     <>
-      <div className="pt-16 md:pl-64 min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
         <Navbar />
 
         <div className="max-w-6xl mx-auto p-4 md:p-8">
@@ -235,15 +235,15 @@ const JobDetailsPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Job Description */}
-              <Card className="shadow-lg">
+              <Card className="shadow-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-xl font-bold flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
                     <FileText className="h-6 w-6" />
                     Job Description
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="prose prose-lg max-w-none p-0 pt-2 prose-headings:font-bold prose-headings:text-gray-900">
+
+                <CardContent className="prose prose-lg max-w-none text-gray-800 dark:text-gray-300 prose-headings:text-gray-900 dark:prose-headings:text-white">
                   <div
                     dangerouslySetInnerHTML={{ __html: job.description || "" }}
                   />
@@ -284,18 +284,22 @@ const JobDetailsPage = () => {
                     About {job.company}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 text-sm">
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl">
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl">
                     <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
                       <Users className="h-6 w-6 text-indigo-600" />
                     </div>
+
                     <div>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-gray-900 dark:text-white">
                         {job.company}
                       </p>
-                      <p className="text-gray-600">{job.location}</p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {job.location}
+                      </p>
                     </div>
                   </div>
+
                   <Button className="w-full bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700">
                     Visit Company
                   </Button>

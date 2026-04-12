@@ -47,63 +47,84 @@ const NotesList = ({ notes, isLoading }) => {
   }
 
   return (
-    <div className="space-y-6 px-4 sm:px-6 md:px-10 lg:px-20 py-6 bg-gray-50 min-h-screen">
-      <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm border md:ml-16">
-        <BookOpen className="h-5 w-5 text-blue-600" />
-        <h2 className="text-xl font-bold">Notes History</h2>
-        <Badge variant="secondary">{notes.length}</Badge>
-      </div>
+   <div className="space-y-6 px-4 sm:px-6 md:px-10 lg:px-20 py-6 
+bg-gray-50 dark:bg-gray-950 min-h-screen">
 
-      <div className="grid gap-4">
-        {notes.map((note, index) => (
-          <Card
-            key={note._id}
-            className="rounded-xl border bg-white shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 md:ml-16"
-            onClick={() => navigate(`/notes/${note._id}`)}
-          >
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg leading-tight">
-                {note.topic}
-              </CardTitle>
-              <CardDescription className="flex flex-wrap gap-1 text-sm">
-                <span>
-                  {note.classLevel} | {note.examType}
-                </span>
-                <div className="flex items-center gap-1 ml-auto">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(note.createdAt).toLocaleDateString()}
-                </div>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center justify-between pt-0 pb-4">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                {note.revisionMode && (
-                  <Badge variant="outline" className="text-xs">
-                    <Star className="h-3 w-3 mr-1" />
-                    Revision
-                  </Badge>
-                )}
-                {note.includeDiagram && (
-                  <Badge variant="outline" className="text-xs">
-                    <SwitchCamera className="h-3 w-3 mr-1" />
-                    Diagram
-                  </Badge>
-                )}
-                {note.includeChart && (
-                  <Badge variant="outline" className="text-xs">
-                    <BarChart3 className="h-3 w-3 mr-1" />
-                    Charts
-                  </Badge>
-                )}
-              </div>
-              <Button variant="ghost" size="sm">
-                View
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
+  <div className="flex items-center gap-3 
+  bg-white dark:bg-gray-900 
+  p-4 rounded-xl shadow-sm border border-gray-200 dark:border-white/10 md:ml-16">
+
+    <BookOpen className="h-5 w-5 text-blue-600" />
+
+    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+      Notes History
+    </h2>
+
+    <Badge variant="secondary">{notes.length}</Badge>
+  </div>
+
+  <div className="grid gap-4">
+    {notes.map((note) => (
+      <Card
+        key={note._id}
+        className="rounded-xl border 
+        bg-white dark:bg-gray-900 
+        border-gray-200 dark:border-white/10 
+        shadow-sm hover:shadow-lg 
+        transition-all duration-300 cursor-pointer hover:-translate-y-1 md:ml-16"
+        onClick={() => navigate(`/notes/${note._id}`)}
+      >
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg leading-tight text-gray-900 dark:text-white">
+            {note.topic}
+          </CardTitle>
+
+          <CardDescription className="flex flex-wrap gap-1 text-sm text-gray-500 dark:text-gray-400">
+            <span>
+              {note.classLevel} | {note.examType}
+            </span>
+
+            <div className="flex items-center gap-1 ml-auto">
+              <Calendar className="h-3 w-3" />
+              {new Date(note.createdAt).toLocaleDateString()}
+            </div>
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="flex items-center justify-between pt-0 pb-4">
+
+          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            {note.revisionMode && (
+              <Badge variant="outline" className="text-xs">
+                <Star className="h-3 w-3 mr-1" />
+                Revision
+              </Badge>
+            )}
+
+            {note.includeDiagram && (
+              <Badge variant="outline" className="text-xs">
+                <SwitchCamera className="h-3 w-3 mr-1" />
+                Diagram
+              </Badge>
+            )}
+
+            {note.includeChart && (
+              <Badge variant="outline" className="text-xs">
+                <BarChart3 className="h-3 w-3 mr-1" />
+                Charts
+              </Badge>
+            )}
+          </div>
+
+          <Button variant="ghost" size="sm">
+            View
+          </Button>
+
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+</div>
   );
 };
 

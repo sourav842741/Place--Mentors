@@ -284,10 +284,10 @@ export default function Resources() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 dark:text-white">
             📚 DSA Resources
           </h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto dark:text-white">
             Premium DSA sheets and YouTube playlists curated for cracking interviews
           </p>
         </div>

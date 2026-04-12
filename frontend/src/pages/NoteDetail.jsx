@@ -112,120 +112,179 @@ function NoteDetail() {
   return (
     <>
     <Navbar/>
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 ">
-        {/* HEADER */}
-        <div className="flex items-start justify-between">
-          <Link 
-            to="/notes" 
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+ <div className="min-h-screen 
+bg-gradient-to-br from-slate-50 to-blue-50 
+dark:from-gray-950 dark:to-gray-900 
+py-12 transition-colors duration-300 lg:mt-15">
+
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+    {/* HEADER */}
+    <div className="flex items-start justify-between flex-wrap gap-4">
+
+      <Link
+        to="/notes"
+        className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+      >
+        <ArrowLeft className="h-5 w-5" />
+        Back to Library
+      </Link>
+
+      <div className="text-right">
+        <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+          Generated on {new Date(createdAt).toLocaleDateString()}
+        </div>
+
+        <Button
+          onClick={handlePDFDownload}
+          disabled={pdfLoading}
+          className="gap-2"
+        >
+          {pdfLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4" />
+          )}
+          Download PDF
+        </Button>
+      </div>
+
+    </div>
+
+    {/* TITLE */}
+    <Card className="shadow-2xl 
+    bg-white dark:bg-gray-900 
+    border border-gray-200 dark:border-white/10">
+
+      <CardHeader>
+        <CardTitle className="text-3xl font-bold flex items-center gap-3 text-gray-900 dark:text-white">
+          <BookOpen className="h-10 w-10 text-blue-600" />
+          {topic}
+        </CardTitle>
+      </CardHeader>
+
+    </Card>
+
+    {/* SUBTOPICS */}
+    {renderSubTopics(note.subTopics)}
+
+    {/* NOTES */}
+    <Card className="shadow-lg 
+    bg-white dark:bg-gray-900 
+    border border-gray-200 dark:border-white/10 ">
+
+      <CardHeader>
+        <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white">
+          📖 Comprehensive Notes
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="p-0">
+       <div className="prose prose-lg max-w-none p-8 lg:p-12 
+dark:prose-invert 
+!bg-transparent 
+prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800 
+prose-code:bg-gray-100 dark:prose-code:bg-gray-800 ">
+
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
           >
-            <ArrowLeft className="h-5 w-5" />
-            Back to Library
-          </Link>
-          
-          <div className="text-right">
-            <div className="text-sm text-gray-500 mb-1">
-              Generated on {new Date(createdAt).toLocaleDateString()}
-            </div>
-            <Button 
-              onClick={handlePDFDownload} 
-              disabled={pdfLoading}
-              className="gap-2"
-            >
-              {pdfLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              Download PDF
-            </Button>
-          </div>
+            {note.notes || "No notes content available."}
+          </ReactMarkdown>
+
         </div>
+      </CardContent>
 
-        <Card className="shadow-2xl border-0">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold flex items-center gap-3">
-              <BookOpen className="h-10 w-10 text-blue-600" />
-              {topic}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+    </Card>
 
-        {/* SUBTOPICS */}
-        {renderSubTopics(note.subTopics)}
+    {/* GRID */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        {/* NOTES */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2">
-              📖 Comprehensive Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="prose prose-lg max-w-none p-8 lg:p-12 prose-headings:font-bold prose-h2:text-xl">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                {note.notes || 'No notes content available.'}
-              </ReactMarkdown>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-6">
+        {renderList("🎯 Revision Points", note.revisionPoints)}
+        {renderList("❓ Short Questions", note.questions?.short)}
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* REVISION & SHORT */}
-          <div className="space-y-6">
-            {renderList('🎯 Revision Points', note.revisionPoints)}
-            {renderList('❓ Short Questions', note.questions?.short)}
-          </div>
+      <div className="space-y-6">
+        {renderList("📝 Long Questions", note.questions?.long)}
 
-          {/* LONG & DIAGRAM */}
-          <div className="space-y-6">
-            {renderList('📝 Long Questions', note.questions?.long)}
-            {note.questions?.diagram && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    🎨 Diagram Question
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-500">
-                    <p className="text-lg italic font-medium">{note.questions.diagram}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-
-        {/* DIAGRAM */}
-        {note.diagram?.data && (
-          <NoteDiagram diagramData={note.diagram.data} />
-        )}
-
-        {/* CHARTS */}
-        {note.charts?.length > 0 && (
-          <Card>
+        {note.questions?.diagram && (
+          <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">
             <CardHeader>
-              <CardTitle>📊 Visual Aids & Charts</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                🎨 Diagram Question
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                {note.charts.map((chart, idx) => (
-                  <div key={idx} className="p-4 bg-gray-50 rounded-lg border">
-                    <h4 className="font-semibold mb-2">Chart {idx + 1}</h4>
-                    <p>{chart}</p>
-                  </div>
-                ))}
+
+            <CardContent className="pt-0">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 
+              dark:from-gray-800 dark:to-gray-700 
+              p-6 rounded-xl border-l-4 border-blue-500">
+
+                <p className="text-lg italic font-medium text-gray-800 dark:text-gray-200">
+                  {note.questions.diagram}
+                </p>
+
               </div>
-              <p className="text-sm text-gray-500 mt-4 italic">
-                Interactive charts coming soon...
-              </p>
             </CardContent>
+
           </Card>
         )}
+
       </div>
+
     </div>
+
+    {/* DIAGRAM */}
+    {note.diagram?.data && (
+      <NoteDiagram diagramData={note.diagram.data} />
+    )}
+
+    {/* CHARTS */}
+    {note.charts?.length > 0 && (
+      <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">
+
+        <CardHeader>
+          <CardTitle className="text-gray-900 dark:text-white">
+            📊 Visual Aids & Charts
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+
+          <div className="grid md:grid-cols-2 gap-4">
+
+            {note.charts.map((chart, idx) => (
+              <div
+                key={idx}
+                className="p-4 
+                bg-gray-50 dark:bg-gray-800 
+                rounded-lg border border-gray-200 dark:border-white/10"
+              >
+                <h4 className="font-semibold mb-2 text-gray-900 dark:text-white">
+                  Chart {idx + 1}
+                </h4>
+
+                <p className="text-gray-700 dark:text-gray-300">
+                  {chart}
+                </p>
+              </div>
+            ))}
+
+          </div>
+
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 italic">
+            Interactive charts coming soon...
+          </p>
+
+        </CardContent>
+
+      </Card>
+    )}
+
+  </div>
+</div>
     <Footer/>
     </>
   )

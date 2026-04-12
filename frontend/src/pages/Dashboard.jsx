@@ -302,12 +302,12 @@ export default function Dashboard() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16 ">
+      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16  dark:bg-gray-950 transition-colors duration-300">
         {/* 🔥 BADGE POPUP */}
         {unlockedBadges.length > 0 && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-            <div className="bg-white rounded-3xl p-8 text-center animate-scaleUp shadow-2xl max-w-md mx-4">
-              <h2 className="text-2xl font-bold mb-4">
+            <div className="bg-white rounded-3xl p-8 text-center animate-scaleUp shadow-2xl max-w-md mx-4  dark:bg-gray-900 ">
+              <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                 🎉 New Badge Unlocked!
               </h2>
               {unlockedBadges.map((badge, i) => (
@@ -330,16 +330,16 @@ export default function Dashboard() {
           <div className="p-2 md:p-6 space-y-4 md:space-y-6">
             {/* TOP */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default">
-                <h1 className="text-3xl font-bold text-gray-900">
+              <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default  dark:bg-gray-900  dark:border-white/10">
+                <h1 className="text-3xl font-bold  text-gray-900 dark:text-white">
                   Welcome back, {user?.fullName} 👋
                 </h1>
 
-                <p className="mt-2 text-lg text-gray-500 font-medium">
+                <p className="mt-2 text-lg  text-gray-500 dark:text-gray-400 font-medium">
                   Level {level} 🚀
                 </p>
 
-                <p className="text-lg text-gray-600 font-medium mt-1">
+                <p className="text-lg  text-gray-600 dark:text-gray-400 font-medium mt-1">
                   ⏱ Today: {todayData?.timeSpent || 0} min
                 </p>
 
@@ -348,17 +348,17 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all  dark:bg-gray-900  dark:border-white/10">
                 <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
                   Progress
                 </p>
 
-                <h2 className="text-3xl font-bold text-gray-900">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                   {currentXP} / {maxXP} XP
                 </h2>
 
                 {/* Progress Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-3 mt-4 overflow-hidden">
+                <div className="w-full  bg-gray-100 dark:bg-gray-800 rounded-full h-3 mt-4 overflow-hidden ">
                   <div
                     className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
                     style={{ width: `${percent}%` }}
@@ -370,7 +370,7 @@ export default function Dashboard() {
                   {loadingMotivation ? (
                     <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
                   ) : (
-                    <p className="text-sm md:text-base font-medium text-gray-700 leading-relaxed whitespace-pre-line">
+                    <p className="text-sm md:text-base font-medium text-gray-600 leading-relaxed whitespace-pre-line dark:text-white">
                       {motivation}
                     </p>
                   )}
@@ -382,17 +382,17 @@ export default function Dashboard() {
             <div className="grid md:grid-cols-2 gap-6">
               <div
                 onClick={() => navigate("/quiz")}
-                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200"
+                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gray-100 rounded-xl shadow-sm">
-                    <Play className="w-6 h-6 text-gray-900" />
+                  <div className="p-3  bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm">
+                    <Play className="w-6 h-6 text-gray-900 dark:text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                       Practice
                     </h3>
-                    <p className="text-gray-500 font-medium">
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">
                       Daily quiz challenges
                     </p>
                   </div>
@@ -402,15 +402,15 @@ export default function Dashboard() {
 
               <div
                 onClick={() => navigate("/jobs")}
-                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200 group"
+                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gray-100 rounded-xl shadow-sm">
-                    <Briefcase className="w-6 h-6 text-gray-900" />
+                  <div className="p-3  bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm">
+                    <Briefcase className="w-6 h-6 text-gray-900 dark:text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Jobs</h3>
-                    <p className="text-gray-500 font-medium">Latest openings</p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Jobs</h3>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">Latest openings</p>
                   </div>
                 </div>
 
@@ -429,7 +429,7 @@ export default function Dashboard() {
               <StreakCalendar />
             </div>
 
-            <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all  dark:bg-gray-900  dark:border-white/10">
               {/* HEADER */}
               <div className="flex justify-between items-center mb-6">
                 <div>
@@ -453,7 +453,7 @@ export default function Dashboard() {
 
               {/* CHART */}
               <div className="w-full h-62.5 sm:h-75 md:h-87.5 min-h-62.5">
-                <ResponsiveContainer width="100%" height="100%">
+               <ResponsiveContainer width="100%" height="100%" className="bg-white dark:bg-gray-900 rounded-xl">
                   <LineChart data={weeklyData}>
                     <XAxis dataKey="date" />
 
@@ -490,7 +490,7 @@ export default function Dashboard() {
             </div>
 
             {/* 📰 TECH INTELLIGENCE FEED */}
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 md:p-8">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 md:p-8  dark:bg-gray-900  dark:border-white/10">
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -589,7 +589,7 @@ export default function Dashboard() {
                             rel="noopener noreferrer"
                             className="block group"
                           >
-                            <Card className="h-full p-6 hover:shadow-xl border-0 bg-linear-to-br from-white to-gray-50 group-hover:from-blue-50 transition-all duration-300 shadow-sm hover:-translate-y-1">
+                            <Card className="h-full p-6 hover:shadow-xl border-0 bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 group-hover:from-blue-50 transition-all duration-300 shadow-sm hover:-translate-y-1">
                               {/* Tag Badge */}
                               <Badge
                                 className={`absolute top-4 right-4 text-xs px-3 py-1 font-semibold ${
@@ -611,14 +611,14 @@ export default function Dashboard() {
                                   {article.title}
                                 </h4>
 
-                                <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
                                   {article.summary}
                                 </p>
 
                                 <div className="flex items-center justify-between pt-4 border-t">
                                   <div className="flex items-center gap-2 text-xs text-gray-500">
                                     {article.company !== "Various" && (
-                                      <span className="font-semibold text-gray-900">
+                                      <span className="font-semibold text-gray-900 dark:text-white">
                                         {article.company}
                                       </span>
                                     )}
@@ -634,7 +634,7 @@ export default function Dashboard() {
                                     </span>
                                   </div>
 
-                                  <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                                  <ExternalLink className="h-4 w-4 text-gray-500 dark:text-gray-400 group-hover:text-blue-500 transition-colors" />
                                 </div>
                               </div>
                             </Card>

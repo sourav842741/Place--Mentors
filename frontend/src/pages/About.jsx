@@ -6,8 +6,9 @@ const About = () => {
 
   return (
     <>
-    <Navbar/>
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-64 md:ml-64 p-6 mt-17">
+<Navbar/>
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-900 lg:ml-64 md:ml-64 p-6 mt-17 transition-colors">
+
 
       <div className="max-w-6xl mx-auto space-y-12">
 

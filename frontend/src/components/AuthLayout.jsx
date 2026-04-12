@@ -1,7 +1,7 @@
 
 export default function AuthLayout({ children }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950 px-4 relative overflow-hidden transition-colors duration-300">
 
       {/*  LIGHT BACKGROUND GLOW */}
       <div className="absolute inset-0 -z-10">
@@ -11,7 +11,7 @@ export default function AuthLayout({ children }) {
 
       {/* LEFT FORM */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
+        <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:border-white/10 border border-gray-200 rounded-2xl p-6 shadow-md transition-colors">
           {children}
         </div>
       </div>

@@ -6,8 +6,28 @@ import { askAi } from "./openRouter.service.js";
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
 if (!NEWS_API_KEY) {
-  throw new Error(" NEWS_API_KEY missing in .env");
+  throw new Error("NEWS_API_KEY missing in .env");
 }
+
+// ================= JSON EXTRACTOR =================
+const extractJSON = (text) => {
+  try {
+    if (!text) return null;
+
+    const raw = typeof text === "string" ? text : JSON.stringify(text);
+
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+
+    if (start === -1 || end === -1) return null;
+
+    const jsonString = raw.slice(start, end + 1);
+    return JSON.parse(jsonString);
+  } catch (err) {
+    console.error("JSON parse error:", err.message);
+    return null;
+  }
+};
 
 // ================= FETCH RAW NEWS =================
 export const fetchNewsData = async () => {
@@ -27,19 +47,38 @@ export const fetchNewsData = async () => {
     }
 
     if (!allNews.length) {
-      console.log(" No India news found");
+      console.log("No India news found");
       return [];
     }
 
-    //  REMOVE DUPLICATES
+    // REMOVE DUPLICATES
     const uniqueNews = Array.from(
-      new Map(allNews.map((item) => [item.link, item])).values(),
+      new Map(allNews.map((item) => [item.link, item])).values()
     );
 
-    console.log(` India news fetched: ${uniqueNews.length}`);
-    return uniqueNews;
+    console.log(`India news fetched: ${uniqueNews.length}`);
+
+    // ================= TODAY + YESTERDAY FILTER =================
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const todayStr = today.toISOString().split("T")[0];
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+    const filteredNews = uniqueNews.filter((item) => {
+      if (!item.pubDate) return false;
+
+      const itemDate = new Date(item.pubDate).toISOString().split("T")[0];
+
+      return itemDate === todayStr || itemDate === yesterdayStr;
+    });
+
+    console.log(`Filtered (today + yesterday): ${filteredNews.length}`);
+
+    return filteredNews;
   } catch (error) {
-    console.error(" Newsdata.io error:", error.response?.data || error.message);
+    console.error("Newsdata.io error:", error.response?.data || error.message);
     return [];
   }
 };
@@ -50,7 +89,9 @@ const processArticleAI = async (article) => {
 
   try {
     const prompt = `
-Return ONLY valid JSON. No extra text.
+Return ONLY valid JSON.
+Do NOT add explanation.
+Do NOT add markdown.
 
 Format:
 {
@@ -65,7 +106,12 @@ Description: ${description || ""}
 
     const aiRes = await askAi([{ role: "user", content: prompt }]);
 
-    const parsed = extractJSON(aiRes) || {};
+    const content =
+      typeof aiRes === "string"
+        ? aiRes
+        : aiRes?.choices?.[0]?.message?.content || "";
+
+    const parsed = extractJSON(content) || {};
 
     const validTags = ["AI", "Layoff", "Hiring", "Tech"];
 
@@ -92,17 +138,23 @@ Description: ${description || ""}
 export const fetchAndProcessNews = async () => {
   try {
     const rawNews = await fetchNewsData();
-    if (!rawNews.length) return 0;
+    if (!rawNews.length) {
+      console.log("No latest news found");
+      return 0;
+    }
 
     console.log("🤖 Processing news...");
 
     const processedNews = await Promise.all(
-      rawNews.map((article) => processArticleAI(article)),
+      rawNews.map((article) => processArticleAI(article))
     );
 
     const validNews = processedNews.filter(Boolean);
 
-    if (!validNews.length) return 0;
+    if (!validNews.length) {
+      console.log("No valid news after AI processing");
+      return 0;
+    }
 
     const result = await News.bulkWrite(
       validNews.map((news) => ({
@@ -111,16 +163,16 @@ export const fetchAndProcessNews = async () => {
           update: { $set: news },
           upsert: true,
         },
-      })),
+      }))
     );
 
     console.log(
-      `Stored ${validNews.length} news (${result.modifiedCount} updated)`,
+      `Stored ${validNews.length} news (${result.modifiedCount} updated)`
     );
 
     return validNews.length;
   } catch (error) {
-    console.error(" News service error:", error.message);
+    console.error("News service error:", error.message);
     return 0;
   }
 };
