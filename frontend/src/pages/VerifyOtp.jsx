@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
+
 import AuthLayout from "../components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -17,7 +19,29 @@ export default function VerifyOtp() {
 
   const [otp, setOtp] = useState(Array(4).fill(""));
   const [loading, setLoading] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
   const inputsRef = useRef([]);
+
+  // ✅ LOAD THEME
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setIsDark(false);
+    }
+  }, []);
+
+  // ✅ TOGGLE THEME
+  const toggleTheme = () => {
+    const isNowDark = document.documentElement.classList.toggle("dark");
+    setIsDark(isNowDark);
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
+  };
 
   useEffect(() => {
     if (!email) {
@@ -46,7 +70,7 @@ export default function VerifyOtp() {
     }
   };
 
-  // ================= PASTE SUPPORT =================
+  // ================= PASTE =================
   const handlePaste = (e) => {
     const paste = e.clipboardData.getData("text").slice(0, 4);
     if (!/^\d+$/.test(paste)) return;
@@ -83,20 +107,16 @@ export default function VerifyOtp() {
       if (avatar) formData.append("avatar", avatar);
       if (coverImage) formData.append("coverImage", coverImage);
 
-      const res = await api.post(
-        "/api/auth/signup/verify-otp",
-        formData
-      );
+      const res = await api.post("/api/auth/signup/verify-otp", formData);
 
       if (res.data.success) {
-         dispatch(setUserData(res.data.data));
+        dispatch(setUserData(res.data.data));
         toast.success("Signup Successful 🎉");
         navigate("/dashboard");
       } else {
         toast.error(res.data.message || "Invalid OTP");
       }
     } catch (err) {
-      console.error(err);
       toast.error("Something went wrong ❌");
     } finally {
       setLoading(false);
@@ -105,33 +125,52 @@ export default function VerifyOtp() {
 
   return (
     <>
-      {/* FULL SCREEN LOADER */}
+      {/* LOADER */}
       {loading && <FullScreenLoader />}
 
       <AuthLayout>
-       <div className="w-full max-w-md mx-auto text-gray-900 space-y-6">
 
-          <h2 className="text-3xl font-bold">Verify Email</h2>
-          <p className="text-sm text-white">
+        {/* 🌙 THEME BUTTON */}
+        <div className="absolute top-5 right-5">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="hover:bg-gray-200 dark:hover:bg-gray-800"
+          >
+            {isDark ? <Sun /> : <Moon />}
+          </Button>
+        </div>
+
+        <div className="w-full max-w-md mx-auto space-y-6 
+          bg-white dark:bg-gray-900 
+          p-6 rounded-2xl shadow-md border 
+          border-gray-200 dark:border-gray-700
+        ">
+
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Verify Email
+          </h2>
+
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Enter the 4-digit OTP sent to your email
           </p>
 
-          {/* OTP INPUTS */}
-          <div
-            className="flex justify-between gap-3"
-            onPaste={handlePaste}
-          >
+          {/* OTP */}
+          <div className="flex justify-between gap-3" onPaste={handlePaste}>
             {otp.map((digit, index) => (
               <input
                 key={index}
                 maxLength={1}
                 value={digit}
                 ref={(el) => (inputsRef.current[index] = el)}
-                onChange={(e) =>
-                  handleChange(e.target.value, index)
-                }
+                onChange={(e) => handleChange(e.target.value, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-               className="w-14 h-14 text-center text-lg rounded-xl bg-white text-black border border-gray-300 focus:border-orange-500 focus:outline-none transition"
+                className="w-14 h-14 text-center text-lg rounded-xl 
+                bg-gray-100 dark:bg-gray-800 
+                text-black dark:text-white 
+                border border-gray-300 dark:border-gray-700 
+                focus:border-orange-500 focus:outline-none transition"
               />
             ))}
           </div>
@@ -140,7 +179,7 @@ export default function VerifyOtp() {
           <Button
             onClick={handleVerifyOtp}
             disabled={loading}
-            className="w-full bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-2"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -158,14 +197,14 @@ export default function VerifyOtp() {
   );
 }
 
-// ================= SPINNER =================
+// 🔄 Spinner
 function Spinner() {
   return (
     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
   );
 }
 
-// ================= FULL SCREEN LOADER =================
+// 🔄 Full Loader
 function FullScreenLoader() {
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">

@@ -16,15 +16,23 @@ const useAuth = () => {
     const navigate = useNavigate();
 
   // ================= LOGIN =================
-  const login = async (form) => {
-    try {
-      const res = await api.post("/api/auth/signin", form);
-      dispatch(setUserData(res.data.data));
-      return { success: true };
-    } catch (err) {
-      return { success: false, message: err.response?.data?.message };
-    }
-  };
+ const login = async (form) => {
+  try {
+    const res = await api.post("/api/auth/signin", form);
+
+  
+
+    dispatch(setUserData(res.data.data));
+
+    return res.data; 
+  } catch (err) {
+    console.error(" LOGIN ERROR:", err);
+    return {
+      success: false,
+      message: err.response?.data?.message || "Login failed",
+    };
+  }
+};
 
   // ================= LOGOUT =================
  const logout = async () => {

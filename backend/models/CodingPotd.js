@@ -46,6 +46,10 @@ const cpotdSchema = new mongoose.Schema({
     unique: true
   },
   questions: [codingQuestionSchema],
+  isManual: {
+    type: Boolean,
+    default: false
+  },
   generatedAt: {
     type: Date,
     default: Date.now,

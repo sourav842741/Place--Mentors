@@ -1,17 +1,29 @@
-
 export default function AuthLayout({ children }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950 px-4 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen flex items-center justify-center 
+      bg-gray-100 dark:bg-gray-950 
+      px-4 relative overflow-hidden transition-colors duration-300
+    ">
 
-      {/*  LIGHT BACKGROUND GLOW */}
+      {/* 🌈 BACKGROUND GLOW */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-orange-300/30 blur-3xl rounded-full"></div>
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-300/30 blur-3xl rounded-full"></div>
+        {/* LIGHT */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-orange-300/30 blur-3xl rounded-full dark:hidden"></div>
+        <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-300/30 blur-3xl rounded-full dark:hidden"></div>
+
+        {/* DARK */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full hidden dark:block"></div>
+        <div className="absolute bottom-0 right-0 w-72 h-72 bg-purple-500/20 blur-3xl rounded-full hidden dark:block"></div>
       </div>
 
       {/* LEFT FORM */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:border-white/10 border border-gray-200 rounded-2xl p-6 shadow-md transition-colors">
+        <div className="w-full max-w-md 
+          bg-white dark:bg-gray-900 
+          border border-gray-200 dark:border-gray-700 
+          rounded-2xl p-6 shadow-md 
+          transition-colors duration-300
+        ">
           {children}
         </div>
       </div>
@@ -21,7 +33,9 @@ export default function AuthLayout({ children }) {
 
         <div className="max-w-md space-y-10">
 
-          <h1 className="text-4xl font-bold leading-tight text-gray-900">
+          <h1 className="text-4xl font-bold leading-tight 
+            text-gray-900 dark:text-white
+          ">
             Welcome to <span className="text-orange-500">PlaceMentor</span>
           </h1>
 
@@ -50,22 +64,29 @@ export default function AuthLayout({ children }) {
   );
 }
 
-//  FEATURE CARD
+
+// 🔥 FEATURE CARD
 function Feature({ title, desc }) {
   return (
     <div className="flex items-start gap-4 group">
 
-      {/* ICON BOX */}
-      <div className="bg-orange-100 p-3 rounded-xl group-hover:scale-110 transition">
+      {/* ICON */}
+      <div className="bg-orange-100 dark:bg-orange-500/20 
+        p-3 rounded-xl 
+        group-hover:scale-110 transition
+      ">
         <div className="w-6 h-6 bg-orange-500 rounded-md"></div>
       </div>
 
       {/* TEXT */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600 text-sm">{desc}</p>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {title}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          {desc}
+        </p>
       </div>
     </div>
   );
 }
-

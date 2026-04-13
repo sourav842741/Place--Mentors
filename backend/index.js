@@ -26,6 +26,7 @@ import cpotdRouter from "./routes/cpotd.routes.js";
 import potdRouter from "./routes/potd.routes.js";
 import newsRouter from "./routes/news.routes.js";
 import contactRouter from "./routes/contact.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -84,6 +85,7 @@ app.use("/api/cpotd", cpotdRouter);
 
 app.use("/api/news", newsRouter);
 app.use("/api/contact", contactRouter);
+app.use("/api/admin", adminRoutes);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;

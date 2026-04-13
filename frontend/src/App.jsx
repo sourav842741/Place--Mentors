@@ -35,9 +35,14 @@ import PotdPage from "./pages/PotdPage.jsx";
 import CodingPotdPage from "./pages/CodingPotdPage.jsx";
 import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
 import InstallPopup from "./components/InstallPopup";
+import AdminRoute from "./components/admin/AdminRoute";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import Users from "./pages/admin/Users";
+import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
+import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import NotFoundPage from "./components/NotFoundPage";
 import Resources from "./pages/Resources";
-
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -46,32 +51,33 @@ function App() {
     getCurrentUser();
   }, []);
 
-
-  
-
-
   return (
     <>
-    
-      <InstallPopup /> 
-      {/*  Toaster must be inside */}
+      <InstallPopup />
       <Toaster position="top-right" richColors />
 
       <Routes>
-
-
         {/* Public Routes */}
-        <Route path="/" element={<LandingPage/>} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="*" element={<NotFoundPage/>} />
+
+        {/* Admin Routes */}
+        <Route element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<Users />} />
+            <Route path="/admin/create-potd" element={<AdminCreatePotd />} />
+            <Route path="/admin/create-cpotd" element={<AdminCreateCpotd />} />
+          </Route>
+        </Route>
+
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-      
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
@@ -99,6 +105,8 @@ function App() {
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
           <Route path="/resources" element={<Resources />} />
         </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

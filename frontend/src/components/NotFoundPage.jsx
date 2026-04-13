@@ -1,31 +1,44 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const NotFoundPage = () => {
+  const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    if (user?.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white font-serif px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-gray-900 font-serif px-4">
       <div className="text-center max-w-2xl w-full">
         
-        {/* 404 Text */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-gray-800">
+        {/* 404 */}
+        <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-800 dark:text-white">
           404
         </h1>
 
-        <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 mt-2">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-800 dark:text-white mt-2">
           Page Not Found !!
         </h1>
 
-        {/* GIF Section */}
+        {/* GIF */}
         <div
-          className="bg-cover bg-center w-full h-52 sm:h-64 md:h-80 lg:h-96 flex items-center justify-center mt-4 rounded-lg"
+          className="bg-cover bg-center w-full h-56 sm:h-72 md:h-96 flex items-center justify-center mt-4 rounded-xl shadow-lg"
           style={{
             backgroundImage:
               "url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)",
           }}
         ></div>
 
-        {/* Text Content */}
-        <div className="mt-4">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700">
+        {/* Text */}
+        <div className="mt-6">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-300">
             Looks like you're lost
           </h2>
 
@@ -33,13 +46,13 @@ const NotFoundPage = () => {
             The page you are looking for is not available!
           </p>
 
-          {/* Button */}
-          <a
-            href="/dashboard"
-            className="mt-5 inline-block px-5 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-white bg-green-600 rounded-lg hover:bg-green-700 transition"
+          {/* 🔥 BUTTON */}
+          <button
+            onClick={handleRedirect}
+            className="mt-6 px-6 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition shadow-lg"
           >
             Go to Home
-          </a>
+          </button>
         </div>
       </div>
     </div>

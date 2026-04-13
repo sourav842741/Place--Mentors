@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
 import useAuth from "../hooks/useAuth";
 
@@ -17,8 +17,29 @@ export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   const inputsRef = useRef([]);
+
+  // ✅ LOAD THEME
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setIsDark(false);
+    }
+  }, []);
+
+  // ✅ TOGGLE THEME
+  const toggleTheme = () => {
+    const isNowDark = document.documentElement.classList.toggle("dark");
+    setIsDark(isNowDark);
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
+  };
 
   useEffect(() => {
     if (!email) {
@@ -81,8 +102,7 @@ export default function ResetPassword() {
       } else {
         toast.error(res.message || "Invalid OTP");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Server error");
     } finally {
       setLoading(false);
@@ -93,9 +113,28 @@ export default function ResetPassword() {
     <>
       {loading && <FullScreenLoader />}
 
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-white via-orange-50 to-blue-50 px-4">
+      {/* 🌙 THEME BUTTON */}
+      <div className="absolute top-5 right-5">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          className="hover:bg-gray-200 dark:hover:bg-gray-800"
+        >
+          {isDark ? <Sun /> : <Moon />}
+        </Button>
+      </div>
 
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 space-y-6 border">
+      <div className="min-h-screen flex items-center justify-center 
+        bg-gradient-to-br from-white via-orange-50 to-blue-50 
+        dark:from-gray-900 dark:via-gray-900 dark:to-gray-950
+        px-4"
+      >
+        <div className="w-full max-w-md 
+          bg-white dark:bg-gray-900 
+          rounded-2xl shadow-lg p-6 space-y-6 border 
+          border-gray-200 dark:border-gray-700
+        ">
 
           {/* BACK */}
           <p
@@ -107,10 +146,10 @@ export default function ResetPassword() {
 
           {/* HEADING */}
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Reset Password
             </h2>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
               Enter OTP and new password
             </p>
           </div>
@@ -119,7 +158,7 @@ export default function ResetPassword() {
           <Input
             value={email}
             disabled
-            className="bg-gray-100 border-gray-300 text-gray-500"
+            className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-500"
           />
 
           {/* OTP */}
@@ -130,11 +169,13 @@ export default function ResetPassword() {
                 maxLength={1}
                 value={digit}
                 ref={(el) => (inputsRef.current[index] = el)}
-                onChange={(e) =>
-                  handleChange(e.target.value, index)
-                }
+                onChange={(e) => handleChange(e.target.value, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-14 h-14 text-center text-lg rounded-xl bg-gray-50 border border-gray-300 focus:border-orange-500 focus:outline-none transition"
+                className="w-14 h-14 text-center text-lg rounded-xl 
+                bg-gray-100 dark:bg-gray-800 
+                text-black dark:text-white 
+                border border-gray-300 dark:border-gray-700 
+                focus:border-orange-500 focus:outline-none transition"
               />
             ))}
           </div>
@@ -146,12 +187,12 @@ export default function ResetPassword() {
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="bg-gray-50 border-gray-300 pr-10"
+              className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white pr-10"
             />
 
             <span
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-2.5 cursor-pointer text-gray-500"
+              className="absolute right-3 top-2.5 cursor-pointer text-gray-500 dark:text-gray-400"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </span>
@@ -172,12 +213,13 @@ export default function ResetPassword() {
   );
 }
 
+// 🔄 LOADER
 function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 bg-white/70 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-gray-700 text-sm">Resetting password...</p>
+        <p className="text-white text-sm">Resetting password...</p>
       </div>
     </div>
   );

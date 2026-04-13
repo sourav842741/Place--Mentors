@@ -84,8 +84,12 @@ export const getOrCreateTodayCpotd = async () => {
   console.log(` [CPOTD-SVC] Checking ${today}...`);
 
   let cpotd = await CodingPotd.findOne({ date: today });
+  if (cpotd?.isManual) {
+    console.log(` [CPOTD-SVC] Manual override found for ${today}`);
+    return cpotd;
+  }
   if (cpotd) {
-    console.log(` [CPOTD-SVC] Found existing for ${today}`);
+    console.log(` [CPOTD-SVC] Found existing auto for ${today}`);
     return cpotd;
   }
 
@@ -94,7 +98,7 @@ export const getOrCreateTodayCpotd = async () => {
   try {
     let questions = [];
 
-    // 🔁 Retry AI 3 times
+    //  Retry AI 3 times
     for (let i = 0; i < 3; i++) {
       const aiResponse = await askAi([
         { role: "user", content: CPOTD_PROMPT },
@@ -112,7 +116,7 @@ export const getOrCreateTodayCpotd = async () => {
       );
     }
 
-    // 🔁 AI fallback try
+    //  AI fallback try
     if (questions.length < 2) {
       const needed = 2 - questions.length;
 
@@ -134,7 +138,7 @@ export const getOrCreateTodayCpotd = async () => {
       }
     }
 
-    // 🔥 FINAL HARD FALLBACK (GUARANTEED)
+    //  FINAL HARD FALLBACK (GUARANTEED)
     if (questions.length < 2) {
       const needed = 2 - questions.length;
 
@@ -145,10 +149,10 @@ export const getOrCreateTodayCpotd = async () => {
       questions = [...questions, ...extraFallback];
     }
 
-    // ✅ FINAL SAFETY
+    //  FINAL SAFETY
     questions = questions.slice(0, 2);
 
-    // 🔥 Atomic upsert
+    //  Atomic upsert
     cpotd = await CodingPotd.findOneAndUpdate(
       { date: today },
       {
@@ -167,7 +171,7 @@ export const getOrCreateTodayCpotd = async () => {
   }
 };
 
-// 🔁 Manual trigger
+//  Manual trigger
 export const generateTodayCpotd = async () => {
   return await getOrCreateTodayCpotd();
 };

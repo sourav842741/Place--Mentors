@@ -4,7 +4,7 @@ import { askAi, extractJSON } from "./openRouter.service.js";
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
 /**
- * 🔥 FULL STRUCTURED FALLBACK (15 QUESTIONS)
+ *  FULL STRUCTURED FALLBACK (15 QUESTIONS)
  * 5 aptitude + 5 reasoning + 5 verbal
  */
 const FULL_FALLBACK_QUESTIONS = [
@@ -148,21 +148,28 @@ Return ONLY JSON.
 `;
 
 /**
- * ✅ MAIN FUNCTION
+ * MAIN FUNCTION
  */
 export const getOrCreateTodayPotd = async () => {
   const today = getTodayDate();
   console.log(` [POTD-SVC] Checking ${today}...`);
 
   let potd = await Potd.findOne({ date: today });
-  if (potd) return potd;
+  if (potd?.isManual) {
+    console.log(` [POTD-SVC] Manual override found for ${today}`);
+    return potd;
+  }
+  if (potd) {
+    console.log(` [POTD-SVC] Found existing auto for ${today}`);
+    return potd;
+  }
 
   console.log(` [POTD-SVC] Generating for ${today}...`);
 
   try {
     let questions = [];
 
-    // 🔁 AI TRY (3 times)
+    //  AI TRY (3 times)
     for (let i = 0; i < 3; i++) {
       const aiResponse = await askAi([
         { role: "user", content: POTD_PROMPT },
@@ -178,7 +185,7 @@ export const getOrCreateTodayPotd = async () => {
       console.log(`Retry ${i + 1}`);
     }
 
-    // 🔁 PARTIAL AI FILL
+    //  PARTIAL AI FILL
     if (questions.length < 15 && questions.length > 0) {
       try {
         const extraRes = await askAi([
@@ -193,16 +200,16 @@ export const getOrCreateTodayPotd = async () => {
       } catch {}
     }
 
-    // 🔥 FINAL HARD FALLBACK
+    //  FINAL HARD FALLBACK
     if (questions.length < 15) {
       console.log("Using full fallback set");
       questions = FULL_FALLBACK_QUESTIONS;
     }
 
-    // ✅ FINAL SAFETY
+    //  FINAL SAFETY
     questions = questions.slice(0, 15);
 
-    // 🔥 SAVE
+    //  SAVE
     potd = await Potd.findOneAndUpdate(
       { date: today },
       {
@@ -222,7 +229,7 @@ export const getOrCreateTodayPotd = async () => {
 };
 
 /**
- * 🔁 Manual trigger
+ *  Manual trigger
  */
 export const generateTodayPotd = async () => {
   return await getOrCreateTodayPotd();

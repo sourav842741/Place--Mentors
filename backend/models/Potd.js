@@ -43,6 +43,10 @@ const potdSchema = new mongoose.Schema(
       unique: true,
     },
     questions: [questionSchema],
+    isManual: {
+      type: Boolean,
+      default: false
+    },
     generatedAt: {
       type: Date,
       default: Date.now,
