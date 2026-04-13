@@ -379,6 +379,158 @@ const AdminDashboard = () => {
         )}
       </div>
 
+      {/* NEW: Advanced Metrics */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <TrendingUp className="w-7 h-7" />
+          Advanced Metrics
+        </h2>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array(3)
+              .fill(0)
+              .map((_, i) => (
+                <Skeleton key={i} className="h-32 w-full rounded-2xl" />
+              ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Retention & Growth */}
+            <Card className="group hover:shadow-2xl border-0 bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950/50">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 text-emerald-600">
+                  <Activity className="w-5 h-5" />
+                  <span>Retention</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-emerald-700 dark:text-emerald-300 mb-1">
+                  {data?.advancedMetrics?.retentionRate7d || 0}%
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  7-day active / total
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-2xl border-0 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-950/50">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 text-purple-600">
+                  <TrendingUp className="w-5 h-5" />
+                  <span>Growth</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className={`text-3xl font-black mb-1 ${
+                    (Number(data?.advancedMetrics?.growthRate) || 0) >= 0
+                      ? "text-emerald-700 dark:text-emerald-300"
+                      : "text-orange-600 dark:text-orange-400"
+                  }`}
+                >
+                  {(Number(data?.advancedMetrics?.growthRate) || 0) > 0
+                    ? "+"
+                    : ""}
+                  {(Number(data?.advancedMetrics?.growthRate) || 0).toFixed(1)}%
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Today vs yesterday
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-2xl border-0 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 text-orange-600">
+                  <Award className="w-5 h-5" />
+                  <span>Streak</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-orange-600 dark:text-orange-400 mb-1">
+                  {data?.advancedMetrics?.avgStreak || 0} days
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Avg user streak
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-2xl border-0 bg-gradient-to-br from-red-50 to-rose-100 col-span-1 md:col-span-2 lg:col-span-3">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 text-red-600">
+                  <Users className="w-5 h-5" />
+                  <span>Inactive</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-black text-red-600 dark:text-red-400 mb-1">
+                  {data?.advancedMetrics?.inactiveUsers7Days?.toLocaleString() ||
+                    0}
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Inactive 7 days
+                </p>
+              </CardContent>
+            </Card>
+
+            {data?.advancedMetrics?.topWeakSkills?.length > 0 && (
+              <Card className="group hover:shadow-2xl border-0 bg-gradient-to-br from-indigo-50 to-blue-100 dark:from-indigo-950/50 col-span-1 md:col-span-2 lg:col-span-3">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2 text-indigo-600">
+                    <Target className="w-5 h-5" />
+                    <span>Top Weak Skills</span>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {data.advancedMetrics.topWeakSkills.map((skill, i) => (
+                      <div
+                        key={i}
+                        className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 text-sm rounded-full font-medium"
+                      >
+                        {skill.skill} ({skill.count})
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </motion.div>
+
+      {/* NEW: AI Insights */}
+      {!loading && data?.insights && (
+        <Card className="border-0 shadow-2xl bg-gradient-to-br from-blue-50/80 to-indigo-100/80 dark:from-blue-950/40 dark:to-indigo-900/40 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="w-6 h-6 text-blue-600 animate-pulse" />
+              AI-Powered Insights
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 p-6">
+            {data.insights.map((insight, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="p-4 rounded-2xl bg-white/60 dark:bg-black/20 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 hover:shadow-lg transition-all group"
+              >
+                <p className="text-gray-900 dark:text-white font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {insight}
+                </p>
+              </motion.div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Charts */}
       {!loading && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

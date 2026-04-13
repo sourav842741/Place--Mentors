@@ -1,63 +1,60 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
-import Potd from "../models/Potd.js";
-import CodingPotd from "../models/CodingPotd.js";
 
 const getTodayDateStr = () => new Date().toISOString().split("T")[0];
-const startOfToday = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
-};
-const endOfToday = () => {
-  const today = new Date();
-  today.setHours(23, 59, 59, 999);
-  return today;
-};
 
 export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
   const todayDateStr = getTodayDateStr();
-  const todayStart = startOfToday();
-  const todayEnd = endOfToday();
 
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+  const yesterdayEnd = new Date(todayEnd);
+  yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  // ================= MAIN PARALLEL QUERIES =================
   const [
-    // User Metrics
     totalUsers,
     activeUsersToday,
     newUsersToday,
     totalOnlineUsers,
 
-    // POTD users today
     potdUsersToday,
-
-    // Today's dailyStats avg
     todayDailyStats,
 
-    // Leaderboard
     topUsers,
-    { maxXp: highestXP },
-    { maxStreak: highestStreakUser },
+    highestXpAgg,
+    highestStreakAgg,
 
-    // Platform totals
     totalXpResult,
     totalPotdCompleted,
     totalCpotdCompleted,
 
-    // Today's CPOTD users
     cpotdUsersToday,
 
-    // Bonus 7 days (optional)
     userGrowth7d,
-    xpTrend7d
+    xpTrend7d,
+
+    yesterdayNewUsersAgg,
+    active7dUsersAgg
   ] = await Promise.all([
-    // A. USER METRICS
+
+    // USERS
     User.countDocuments({}),
     User.countDocuments({ lastLoginDate: { $gte: todayStart } }),
     User.countDocuments({ createdAt: { $gte: todayStart } }),
     User.countDocuments({ isOnline: true }),
 
-    // B. POTD
+    // POTD
     User.countDocuments({ potdCompleted: true, lastPotdDate: todayDateStr }),
 
     User.aggregate([
@@ -67,109 +64,102 @@ export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
       {
         $group: {
           _id: null,
-          avgScore: { $avg: "$dailyStats.avgScore" },
-          count: { $sum: 1 }
+          avgScore: { $avg: "$dailyStats.avgScore" }
         }
       }
     ]),
 
-    // D. LEADERBOARD
+    // LEADERBOARD
     User.aggregate([
       { $match: { role: "user" } },
       { $sort: { xp: -1 } },
-      { $limit: 10 },
-      {
-        $project: {
-          fullName: 1,
-          email: 1,
-          xp: 1,
-          streakCount: 1,
-          level: 1
-        }
-      }
-    ]),
-    User.aggregate([
-      { $match: { role: "user" } },
-      { $group: { _id: null, maxXp: { $max: "$xp" } } }
-    ]),
-    User.aggregate([
-      { $match: { role: "user" } },
-      { $group: { _id: null, maxStreak: { $max: "$streakCount" } } }
+      { $limit: 10 }
     ]),
 
-    // E. PLATFORM
-    User.aggregate([
-      { $group: { _id: null, totalXp: { $sum: "$xp" }, avgXp: { $avg: "$xp" } } }
-    ]),
-    User.countDocuments({ lastPotdDate: { $exists: true, $ne: null } }),
-    User.countDocuments({ lastCodingPotdDate: { $exists: true, $ne: null } }),
+    User.aggregate([{ $group: { _id: null, maxXp: { $max: "$xp" } } }]),
+    User.aggregate([{ $group: { _id: null, maxStreak: { $max: "$streakCount" } } }]),
 
-    // C. CPOTD
+    // PLATFORM
+    User.aggregate([{ $group: { _id: null, totalXp: { $sum: "$xp" }, avgXp: { $avg: "$xp" } } }]),
+    User.countDocuments({ lastPotdDate: { $exists: true } }),
+    User.countDocuments({ lastCodingPotdDate: { $exists: true } }),
+
+    // CPOTD
     User.countDocuments({ codingPotdCompleted: true, lastCodingPotdDate: todayDateStr }),
 
-    // BONUS: Last 7 days user growth
+    // TRENDS
     User.aggregate([
-      {
-        $match: {
-          createdAt: {
-            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-          }
-        }
-      },
+      { $match: { createdAt: { $gte: sevenDaysAgo } } },
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
           count: { $sum: 1 }
         }
-      },
-      { $sort: { _id: 1 } }
+      }
     ]),
 
-    // BONUS: XP trend
     User.aggregate([
-      {
-        $match: {
-          "dailyStats.date": {
-            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
-          }
-        }
-      },
       { $unwind: "$dailyStats" },
-      {
-        $match: {
-          "dailyStats.date": {
-            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
-          }
-        }
-      },
       {
         $group: {
           _id: "$dailyStats.date",
-          totalXp: { $sum: "$dailyStats.timeSpent" } // Proxy XP with time
+          totalXp: { $sum: "$dailyStats.timeSpent" }
         }
-      },
-      { $sort: { _id: 1 } }
+      }
+    ]),
+
+    // NEW
+    User.aggregate([
+      { $match: { createdAt: { $gte: yesterdayStart, $lte: yesterdayEnd } } },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]),
+
+    User.aggregate([
+      { $match: { lastLoginDate: { $gte: sevenDaysAgo } } },
+      { $group: { _id: null, count: { $sum: 1 } } }
     ])
   ]);
 
-  const avgScore = todayDailyStats[0]?.avgScore || 0;
-  const completionRate = totalUsers > 0 ? ((potdUsersToday / totalUsers) * 100).toFixed(2) : 0;
-  const mostActiveUser = topUsers[0] || {};
+  // ================= SAFE EXTRACTION =================
+  const highestXP = highestXpAgg[0]?.maxXp || 0;
+  const highestStreak = highestStreakAgg[0]?.maxStreak || 0;
 
-  // mostWeakArea: most common skill (assumption approved)
-  const skillsAgg = await User.aggregate([
+  const yesterdayUsers = yesterdayNewUsersAgg[0]?.count || 0;
+  const active7dUsers = active7dUsersAgg[0]?.count || 0;
+
+  const avgScore = todayDailyStats[0]?.avgScore || 0;
+  const completionRate = totalUsers ? ((potdUsersToday / totalUsers) * 100) : 0;
+
+  // ================= ADVANCED =================
+  const retentionRate7d = totalUsers ? ((active7dUsers / totalUsers) * 100) : 0;
+  const inactiveUsers7Days = totalUsers - active7dUsers;
+
+  const growthRate = yesterdayUsers
+    ? ((newUsersToday - yesterdayUsers) / yesterdayUsers) * 100
+    : 0;
+
+  const avgStreakAgg = await User.aggregate([
+    { $group: { _id: null, avg: { $avg: "$streakCount" } } }
+  ]);
+
+  const avgStreak = avgStreakAgg[0]?.avg || 0;
+
+  const topWeakSkillsAgg = await User.aggregate([
     { $unwind: "$skills" },
     { $group: { _id: "$skills", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 1 }
+    { $limit: 5 }
   ]);
-  const mostWeakArea = skillsAgg[0]?._id || "N/A";
 
-  // CPOTD successRate=100%, avgXP from today's completers
-  const todayCpotdUsers = await User.find({ codingPotdCompleted: true, lastCodingPotdDate: todayDateStr }).select("xp");
-  const avgXPFromCoding = todayCpotdUsers.reduce((sum, u) => sum + u.xp, 0) / (todayCpotdUsers.length || 1);
-  const cpotdSuccessRate = 100; // Assumption
+  // ================= INSIGHTS =================
+  const insights = [
+    `📈 Growth ${growthRate >= 0 ? "up" : "down"} ${Math.abs(growthRate.toFixed(1))}%`,
+    `🎯 Retention ${retentionRate7d.toFixed(1)}%`,
+    `🔥 Avg streak ${avgStreak.toFixed(1)} days`,
+    `⚠️ Inactive users ${inactiveUsers7Days}`
+  ];
 
+  // ================= RESPONSE =================
   const analytics = {
     userMetrics: {
       totalUsers,
@@ -177,36 +167,40 @@ export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
       newUsersToday,
       totalOnlineUsers
     },
+
     potdAnalytics: {
       totalAttemptsToday: potdUsersToday,
       averageScore: parseFloat(avgScore.toFixed(2)),
-      completionRate: parseFloat(completionRate),
-      mostWeakArea
+      completionRate: parseFloat(completionRate.toFixed(2))
     },
-    cpotdAnalytics: {
-      totalSubmissionsToday: cpotdUsersToday,
-      successRate: cpotdSuccessRate,
-      avgXPFromCoding: parseFloat(avgXPFromCoding.toFixed(2))
-    },
+
     leaderboard: {
       topUsers,
-      highestXP: highestXP || 0,
-      mostActiveUser: { ...mostActiveUser, highestStreak: highestStreakUser?.maxStreak || 0 }
+      highestXP,
+      highestStreak
     },
+
     platformMetrics: {
-      totalXPDistributed: totalXpResult[0]?.totalXp || 0,
-      avgXPPerUser: parseFloat((totalXpResult[0]?.avgXp || 0).toFixed(2)),
-      totalPotdCompleted,
-      totalCodingPotdCompleted: totalCpotdCompleted
+      totalXPDistributed: totalXpResult[0]?.totalXp || 0
     },
-    trends: { // Bonus
+
+    trends: {
       last7DaysUserGrowth: userGrowth7d,
       last7DaysXPTrend: xpTrend7d
-    }
+    },
+
+    advancedMetrics: {
+      retentionRate7d: parseFloat(retentionRate7d.toFixed(2)),
+      avgStreak: parseFloat(avgStreak.toFixed(1)),
+      inactiveUsers7Days,
+      growthRate: parseFloat(growthRate.toFixed(2)),
+      topWeakSkills: topWeakSkillsAgg
+    },
+
+    insights
   };
 
   res.status(200).json(
     new ApiResponse(200, analytics, "Admin analytics fetched successfully")
   );
 });
-
