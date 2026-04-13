@@ -136,7 +136,7 @@ const CodingPotdPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 md:ml-64 pt-16 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 md:ml-64 pt-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
@@ -300,7 +300,7 @@ const CodingPotdPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Left Panel - Problem (40%) */}
               <div className="lg:col-span-5 space-y-6">
-                <Card className="border-0 bg-white/10 backdrop-blur-sm">
+               <Card className="border-0 bg-white dark:bg-gray-800 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <Badge
@@ -344,7 +344,7 @@ const CodingPotdPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
                             <h4 className="font-semibold mb-2">Input Format</h4>
-                            <pre className="bg-gray-300 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
+                            <pre className="bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-200 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                               {currentQuestion?.inputFormat}
                             </pre>
                           </div>
@@ -353,7 +353,7 @@ const CodingPotdPage = () => {
                             <h4 className="font-semibold mb-2">
                               Output Format
                             </h4>
-                            <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
+                            <pre className="bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-200 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                               {currentQuestion?.outputFormat}
                             </pre>
                           </div>
@@ -361,7 +361,7 @@ const CodingPotdPage = () => {
 
                         <div>
                           <h4 className="font-semibold mb-2">Constraints</h4>
-                          <pre className="bg-gray-200 text-white-300 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
+                          <pre className="bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-200 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                             {currentQuestion?.constraints}
                           </pre>
                         </div>
@@ -373,7 +373,7 @@ const CodingPotdPage = () => {
                               <h5 className="font-medium mb-2">
                                 Sample Input {i + 1}
                               </h5>
-                              <pre className="bg-black/20 p-3 rounded mb-2 text-xs">
+                              <pre className="bg-gray-100 dark:bg-black/40 p-3 rounded mb-2 text-xs">
                                 {tc.input}
                               </pre>
                               <h5 className="font-medium mb-2">
@@ -417,7 +417,7 @@ const CodingPotdPage = () => {
                   <select
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
-                    className="bg-white/10 border-white/30 px-3 py-2 rounded-md text-sm"
+                    className="bg-white dark:bg-gray-800 text-black dark:text-white border px-3 py-2 rounded-md text-sm"
                   >
                     <option value="javascript">JavaScript</option>
                     <option value="python">Python 3</option>
@@ -445,7 +445,7 @@ const CodingPotdPage = () => {
                   />
                 </div>
 
-                <Card className="border-0 bg-black/30 h-125">
+                <Card className="border-0 bg-white dark:bg-black/40 h-125">
                   <CardContent className="h-full p-0 pt-2">
                     <Editor
                       key={currentQuestionIndex}

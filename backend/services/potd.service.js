@@ -3,132 +3,227 @@ import { askAi, extractJSON } from "./openRouter.service.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
+/**
+ * 🔥 FULL STRUCTURED FALLBACK (15 QUESTIONS)
+ * 5 aptitude + 5 reasoning + 5 verbal
+ */
+const FULL_FALLBACK_QUESTIONS = [
+  // ===== APTITUDE =====
+  {
+    question: "If 12 men can complete a work in 8 days, how many days will 6 men take?",
+    options: ["16", "12", "10", "8"],
+    answer: "16",
+    explanation: "Work inversely proportional to men",
+    category: "aptitude",
+    difficulty: "easy",
+  },
+  {
+    question: "A train travels 60 km in 1 hour. What is its speed in m/s?",
+    options: ["16.66", "20", "10", "25"],
+    answer: "16.66",
+    explanation: "60 km/h = 16.66 m/s",
+    category: "aptitude",
+    difficulty: "easy",
+  },
+  {
+    question: "Find compound interest on 1000 at 10% for 2 years.",
+    options: ["210", "200", "220", "215"],
+    answer: "210",
+    explanation: "CI = 210",
+    category: "aptitude",
+    difficulty: "medium",
+  },
+  {
+    question: "If ratio of A:B is 3:4 and sum is 28, find A.",
+    options: ["12", "16", "8", "20"],
+    answer: "12",
+    explanation: "A = 12",
+    category: "aptitude",
+    difficulty: "medium",
+  },
+  {
+    question: "Pipe A fills tank in 10h, B in 20h. Together?",
+    options: ["6.66h", "5h", "10h", "15h"],
+    answer: "6.66h",
+    explanation: "Time = 20/3",
+    category: "aptitude",
+    difficulty: "hard",
+  },
+
+  // ===== REASONING =====
+  {
+    question: "Find next: 2, 4, 8, 16, ?",
+    options: ["18", "32", "24", "30"],
+    answer: "32",
+    explanation: "×2 pattern",
+    category: "reasoning",
+    difficulty: "easy",
+  },
+  {
+    question: "Odd one out: Apple, Mango, Carrot, Banana",
+    options: ["Apple", "Mango", "Carrot", "Banana"],
+    answer: "Carrot",
+    explanation: "Vegetable",
+    category: "reasoning",
+    difficulty: "easy",
+  },
+  {
+    question: "If CAT = 24, DOG = ?",
+    options: ["26", "27", "28", "29"],
+    answer: "26",
+    explanation: "Letter sum logic",
+    category: "reasoning",
+    difficulty: "medium",
+  },
+  {
+    question: "Find missing: 3, 9, 27, ?, 243",
+    options: ["54", "81", "72", "90"],
+    answer: "81",
+    explanation: "×3 pattern",
+    category: "reasoning",
+    difficulty: "medium",
+  },
+  {
+    question: "Clock shows 3:15, angle?",
+    options: ["0°", "7.5°", "15°", "30°"],
+    answer: "7.5°",
+    explanation: "Hour hand shift",
+    category: "reasoning",
+    difficulty: "hard",
+  },
+
+  // ===== VERBAL =====
+  {
+    question: "Synonym of 'Happy'",
+    options: ["Sad", "Joyful", "Angry", "Tired"],
+    answer: "Joyful",
+    explanation: "Meaning same",
+    category: "verbal",
+    difficulty: "easy",
+  },
+  {
+    question: "Antonym of 'Fast'",
+    options: ["Quick", "Rapid", "Slow", "Speed"],
+    answer: "Slow",
+    explanation: "Opposite",
+    category: "verbal",
+    difficulty: "easy",
+  },
+  {
+    question: "Choose correct: He ___ going to school.",
+    options: ["is", "are", "am", "be"],
+    answer: "is",
+    explanation: "He → is",
+    category: "verbal",
+    difficulty: "medium",
+  },
+  {
+    question: "Meaning of 'Eloquent'",
+    options: ["Silent", "Fluent", "Angry", "Weak"],
+    answer: "Fluent",
+    explanation: "Good speaker",
+    category: "verbal",
+    difficulty: "medium",
+  },
+  {
+    question: "Error: She don't like coffee.",
+    options: ["She", "don't", "like", "coffee"],
+    answer: "don't",
+    explanation: "Should be doesn't",
+    category: "verbal",
+    difficulty: "hard",
+  },
+];
+
 const POTD_PROMPT = `
 You are an expert aptitude test generator.
 
 Generate EXACTLY 15 MCQ questions in STRICT JSON format.
 
-## Rules:
-- Total 15 questions
+Rules:
 - 5 aptitude, 5 reasoning, 5 verbal
-- Difficulty:
-  - 5 easy
-  - 5 medium
-  - 5 hard
+- 5 easy, 5 medium, 5 hard
 
-## VERY IMPORTANT:
-- Return ONLY valid JSON
-- No explanation outside JSON
-
-Each question MUST have:
-- question (string)
-- options (array of 4 strings)
-- answer (must exactly match one option)
-- explanation (short)
-- category (MUST be EXACTLY one of: "aptitude", "reasoning", "verbal")
-- difficulty (MUST be EXACTLY one of: "easy", "medium", "hard")
-
-## DO NOT USE:
-- "Aptitude"
-- "Verbal Ability"
-- "Reasoning Skills"
-- Any variation
-
-## Output format:
-{
-  "questions": [
-    {
-      "question": "string",
-      "options": ["A", "B", "C", "D"],
-      "answer": "A",
-      "explanation": "short explanation",
-      "category": "aptitude",
-      "difficulty": "easy"
-    }
-  ]
-}
-
-Ensure:
-- EXACTLY 15 questions
-- Each category appears exactly 5 times
-- Each difficulty appears exactly 5 times
-
-Now generate.
+Return ONLY JSON.
 `;
 
 /**
- * Get or create today's POTD (idempotent, self-healing)
+ * ✅ MAIN FUNCTION
  */
 export const getOrCreateTodayPotd = async () => {
   const today = getTodayDate();
   console.log(` [POTD-SVC] Checking ${today}...`);
 
-  // Atomic check & create
   let potd = await Potd.findOne({ date: today });
-  if (potd) {
-    console.log(` [POTD-SVC] Found existing for ${today}`);
-    return potd;
-  }
+  if (potd) return potd;
 
   console.log(` [POTD-SVC] Generating for ${today}...`);
+
   try {
- let questions = [];
+    let questions = [];
 
-for (let i = 0; i < 3; i++) {
-  const aiResponse = await askAi([{ role: "user", content: POTD_PROMPT }]);
-  const data = extractJSON(aiResponse);
+    // 🔁 AI TRY (3 times)
+    for (let i = 0; i < 3; i++) {
+      const aiResponse = await askAi([
+        { role: "user", content: POTD_PROMPT },
+      ]);
 
-  if (data.questions && data.questions.length === 15) {
-    questions = data.questions;
-    break;
-  }
+      const data = extractJSON(aiResponse);
 
-  console.log(`Retry ${i + 1}: got ${data.questions?.length}`);
-}
+      if (data?.questions?.length === 15) {
+        questions = data.questions;
+        break;
+      }
 
-//  fallback (kabhi fail nahi hoga)
-if (questions.length < 15) {
-  const needed = 15 - questions.length;
+      console.log(`Retry ${i + 1}`);
+    }
 
-  console.log(`Filling ${needed} missing questions...`);
+    // 🔁 PARTIAL AI FILL
+    if (questions.length < 15 && questions.length > 0) {
+      try {
+        const extraRes = await askAi([
+          {
+            role: "user",
+            content: `Generate ${15 - questions.length} more MCQs JSON only.`,
+          },
+        ]);
 
-  const extraRes = await askAi([
-    {
-      role: "user",
-      content: `Generate ONLY ${needed} MCQ questions in same JSON format. Return JSON only.`,
-    },
-  ]);
+        const extraData = extractJSON(extraRes);
+        questions = [...questions, ...(extraData?.questions || [])];
+      } catch {}
+    }
 
-  const extraData = extractJSON(extraRes);
+    // 🔥 FINAL HARD FALLBACK
+    if (questions.length < 15) {
+      console.log("Using full fallback set");
+      questions = FULL_FALLBACK_QUESTIONS;
+    }
 
-  questions = [...questions, ...(extraData.questions || [])];
-}
+    // ✅ FINAL SAFETY
+    questions = questions.slice(0, 15);
 
-// final safety
-questions = questions.slice(0, 15);
+    // 🔥 SAVE
+    potd = await Potd.findOneAndUpdate(
+      { date: today },
+      {
+        date: today,
+        questions,
+        generatedAt: new Date(),
+      },
+      { upsert: true, returnDocument: "after" }
+    );
 
-    // Atomic upsert
-  potd = await Potd.findOneAndUpdate(
-  { date: today },
-  {
-    date: today,
-    questions: questions,   
-    generatedAt: new Date(),
-  },
-  { upsert: true, returnDocument: "after" }  
-);
-
-    console.log(` [POTD-SVC] Generated & saved ${potd._id}`);
+    console.log(` [POTD-SVC] Saved ${potd._id}`);
     return potd;
   } catch (error) {
-    console.error(` [POTD-SVC] Generation failed:`, error.message);
+    console.error(error.message);
     throw error;
   }
 };
 
 /**
- * Manual force-generate (still idempotent)
+ * 🔁 Manual trigger
  */
 export const generateTodayPotd = async () => {
-  return await getOrCreateTodayPotd(); // Same logic for simplicity/compat
+  return await getOrCreateTodayPotd();
 };

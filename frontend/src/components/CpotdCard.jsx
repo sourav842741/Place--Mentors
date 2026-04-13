@@ -75,7 +75,7 @@ export default function CpotdCard() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-between h-[400px] p-6 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm animate-pulse transition-colors">
+      <div className="flex flex-col justify-between h-100 p-6 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm animate-pulse transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-2xl" />
           <div className="space-y-2">
@@ -99,7 +99,7 @@ export default function CpotdCard() {
   return (
       <Card
       onClick={() => navigate("/coding-potd")}
-      className={`flex flex-col justify-between h-[400px] p-6 bg-white dark:bg-gray-900 dark:border-white/10 border-2 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-colors ${
+      className={`flex flex-col justify-between h-100 p-6 bg-white dark:bg-gray-900 dark:border-white/10 border-2 rounded-2xl shadow-sm  duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-colors ${
         locked
           ? "border-orange-200 bg-orange-50/50"
           : status.solved
@@ -110,7 +110,7 @@ export default function CpotdCard() {
       <CardContent className="flex flex-col justify-between flex-1 p-0 h-full">
         {/* TOP SECTION */}
         <div className="flex items-start gap-4 mb-6">
-          <div className="p-3 bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-200 rounded-2xl shrink-0">
+          <div className="p-3 bg-linear-to-br from-blue-500/10 to-blue-600/10 border border-blue-200 rounded-2xl shrink-0">
             <Code className="w-7 h-7 text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
@@ -120,7 +120,7 @@ export default function CpotdCard() {
         </div>
 
         {/* DESCRIPTION */}
-        <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed flex-1 min-h-[80px] mb-6">
+        <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed flex-1 min-h-20 mb-6">
           Solve today's hand-picked coding problem and earn XP + badges!
         </p>
 
@@ -155,7 +155,7 @@ export default function CpotdCard() {
                 ? "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 cursor-not-allowed"
                 : status.solved
                 ? "bg-green-100 hover:bg-green-200 text-green-800 border border-green-200"
-                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg border-0"
+                : "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg border-0"
             }`}
           >
             {locked ? (
@@ -169,7 +169,7 @@ export default function CpotdCard() {
               </>
             ) : (
               <>
-                Start →
+                Start 
                 <ArrowRight className="w-4 h-4" />
               </>
             )}

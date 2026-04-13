@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'mentor-v3'; // 🔥 CHANGE VERSION WHENEVER UPDATE
+const CACHE_VERSION = "mentor-v4"; // 🔥 version update
 const CACHE_NAME = `${CACHE_VERSION}-static`;
 const API_CACHE_NAME = `${CACHE_VERSION}-api`;
 
@@ -10,20 +10,18 @@ const STATIC_ASSETS = [
   "/favicon.svg",
   "/offline.html",
   "/icons/android-chrome-192x192.png",
-  "/icons/android-chrome-512x512.png"
+  "/icons/android-chrome-512x512.png",
 ];
 
 // 🔹 INSTALL
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
 });
 
-// 🔹 ACTIVATE (delete old cache)
+// 🔹 ACTIVATE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -44,57 +42,77 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
+  // ❌ Only GET
   if (request.method !== "GET") return;
 
-  // ✅ NAVIGATION (SPA fix)
+  // ✅ NAVIGATION (SPA fallback)
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match("/index.html"))
+      fetch(request)
+        .then((res) => res)
+        .catch(() => caches.match("/index.html"))
     );
     return;
   }
 
-  // ❌ skip external
+  // ❌ skip external requests
   if (url.origin !== self.location.origin) return;
 
-  // 🔥 API → network first
+  // 🔥 API → NETWORK FIRST
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(
       fetch(request)
         .then((res) => {
-          if (res.ok) {
-            const clone = res.clone();
-            caches.open(API_CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
-            });
-          }
+          if (!res || !res.ok) return res;
+
+          const clone = res.clone(); // ✅ clone BEFORE use
+
+          caches.open(API_CACHE_NAME).then((cache) => {
+            cache.put(request, clone).catch(() => {});
+          });
+
           return res;
         })
-        .catch(() => caches.match(request).then((c) => c || caches.match("/offline.html")))
+        .catch(() =>
+          caches.match(request).then((cached) => {
+            return cached || caches.match("/offline.html");
+          })
+        )
     );
     return;
   }
 
-  // 🔥 STATIC → cache first
+  // 🔥 STATIC → CACHE FIRST
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) {
-        // background update
+        // 🔄 background update (safe clone handling)
         fetch(request)
           .then((res) => {
+            if (!res || !res.ok) return;
+
+            const clone = res.clone(); // ✅ FIXED
+
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, res.clone());
+              cache.put(request, clone).catch(() => {});
             });
           })
           .catch(() => {});
+
         return cached;
       }
 
+      // 🌐 network fetch
       return fetch(request)
         .then((res) => {
+          if (!res || !res.ok) return res;
+
+          const clone = res.clone(); // ✅ FIXED
+
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, res.clone());
+            cache.put(request, clone).catch(() => {});
           });
+
           return res;
         })
         .catch(() => caches.match("/offline.html"));
