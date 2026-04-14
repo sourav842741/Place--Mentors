@@ -18,6 +18,10 @@ export const useFriends = () => {
             received: [],
             sent: []
           },
+          challenges: {
+            sent: [],
+            received: []
+          },
           suggestedUsers: []
         };
 
@@ -31,10 +35,16 @@ export const useFriends = () => {
             received: [],
             sent: []
           },
+          challenges: {
+            sent: [],
+            received: []
+          },
           suggestedUsers: []
         };
       }
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };
 

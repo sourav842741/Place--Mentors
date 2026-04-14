@@ -1,16 +1,27 @@
-import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
-import { useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { socket } from "./socket";
+import useAuth from "./hooks/useAuth";
+
+import {
+  battleStart,
+  battleWinner,
+  battleDraw,
+  battleFailed,
+  battleResult,
+  updateOpponentCode,
+} from "./redux/battleSlice";
+
+// Pages
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyOtp from "./pages/VerifyOtp";
-import useAuth from "./hooks/useAuth";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Jobs from "./pages/Jobs";
-import { Toaster } from "sonner";
 import Profile from "./pages/Profile";
 import QuizPage from "./pages/QuizPage";
 import Pricing from "./pages/Pricing";
@@ -34,31 +45,143 @@ import DoubtChatPage from "./pages/DoubtChatPage";
 import PotdPage from "./pages/PotdPage.jsx";
 import CodingPotdPage from "./pages/CodingPotdPage.jsx";
 import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
-import InstallPopup from "./components/InstallPopup";
+import Resources from "./pages/Resources";
+import UsersPage from "./pages/UsersPage";
+import BattlePage from "./pages/BattlePage.jsx";
+
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/admin/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
+import InstallPopup from "./components/InstallPopup";
+import NotFoundPage from "./components/NotFoundPage";
+import { Toaster } from "sonner";
+
+// Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Users from "./pages/admin/Users";
 import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
 import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
-import NotFoundPage from "./components/NotFoundPage";
-import Resources from "./pages/Resources";
-import UsersPage from "./pages/UsersPage";
+import NotificationPopup from "./components/NotificationPopup.jsx";
 
 function App() {
   const { getCurrentUser } = useAuth();
+  const { user } = useSelector((state) => state.user);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  //  Load user
   useEffect(() => {
     getCurrentUser();
   }, []);
+
+  //  SOCKET JOIN (VERY IMPORTANT)
+  useEffect(() => {
+    if (user?._id) {
+      socket.emit("join", user._id);
+    }
+  }, [user]);
+
+  //  CENTRALIZED NOTIFICATION LISTENERS (GLOBAL)
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupData, setPopupData] = useState(null);
+  const [popupType, setPopupType] = useState("");
+
+  useEffect(() => {
+    const handleFriendRequest = (data) => {
+      setPopupData(data.requester);
+      setPopupType("friend");
+      setShowPopup(true);
+    };
+
+    const handleChallenge = (data) => {
+      setPopupData(data.challenger || data);
+      setPopupType("challenge");
+      setShowPopup(true);
+    };
+
+    socket.on("friend_request_received", handleFriendRequest);
+    socket.on("challenge_received", handleChallenge);
+
+    return () => {
+      socket.off("friend_request_received", handleFriendRequest);
+      socket.off("challenge_received", handleChallenge);
+    };
+  }, []);
+
+  const closePopup = () => {
+    setShowPopup(false);
+    setPopupData(null);
+    setPopupType("");
+  };
+
+  //  CENTRALIZED BATTLE SOCKET LISTENERS
+  useEffect(() => {
+    const handleBattleStart = (data) => {
+      dispatch(battleStart(data));
+
+      navigate(`/battle/${data.roomId}`, {
+        state: {
+          problem: data.problem,
+          opponent: data.opponent,
+          timeLimit: data.timeLimit,
+        },
+      });
+    };
+
+    const handleBattleWinner = (data) => {
+      dispatch(battleWinner(data));
+    };
+
+    const handleBattleDraw = () => {
+      dispatch(battleDraw());
+    };
+
+    const handleBattleFailed = () => {
+      dispatch(battleFailed());
+    };
+
+    const handleOpponentCodeChange = (data) => {
+      dispatch(updateOpponentCode(data));
+    };
+
+    const handleBattleResult = (data) => {
+      dispatch(battleResult(data));
+    };
+
+    socket.on("battle:start", handleBattleStart);
+    socket.on("battle:winner", handleBattleWinner);
+    socket.on("battle:draw", handleBattleDraw);
+    socket.on("battle:failed", handleBattleFailed);
+    socket.on("opponent_code_change", handleOpponentCodeChange);
+    socket.on("battle:result", handleBattleResult);
+
+    return () => {
+      socket.off("battle:start", handleBattleStart);
+      socket.off("battle:winner", handleBattleWinner);
+      socket.off("battle:draw", handleBattleDraw);
+      socket.off("battle:failed", handleBattleFailed);
+      socket.off("opponent_code_change", handleOpponentCodeChange);
+      socket.off("battle:result", handleBattleResult);
+    };
+  }, [dispatch, navigate]);
 
   return (
     <>
       <InstallPopup />
       <Toaster position="top-right" richColors />
 
+      {showPopup && (
+        <NotificationPopup
+          type={popupType}
+          data={popupData}
+          onClose={closePopup}
+        />
+      )}
+
       <Routes>
-        {/* Public Routes */}
+        {/* PUBLIC */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -66,7 +189,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Admin Routes */}
+        {/* ADMIN */}
         <Route element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -76,11 +199,10 @@ function App() {
           </Route>
         </Route>
 
-
-        {/* Protected Routes */}
+        {/* PROTECTED */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/jobs" element={<Jobs />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/jobs" element={<Jobs />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -91,7 +213,6 @@ function App() {
           <Route path="/planner-history" element={<PlannerHistory />} />
           <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
           <Route path="/resume-generator" element={<ResumeGenerator />} />
-          <Route path="/ai-planner/:id" element={<AIPlanner />} />
           <Route path="/jobs/:id" element={<JobDetailsPage />} />
           <Route path="/companies" element={<AllCompanies />} />
           <Route path="/company/:name?" element={<CompanyPage />} />
@@ -106,8 +227,10 @@ function App() {
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/users" element={<UsersPage />} />
+          <Route path="/battle/:roomId" element={<BattlePage />} />
         </Route>
 
+        {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>

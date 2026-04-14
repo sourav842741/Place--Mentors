@@ -171,7 +171,7 @@ prepCompanies: [
       }
     ],
     
-   friendRequests: {
+friendRequests: {
   sent: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "User",
@@ -182,6 +182,22 @@ prepCompanies: [
     ref: "User",
     default: []
   }
+},
+challenges: {
+  sent: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: []
+  },
+  received: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: []
+  }
+},
+lastFriendRequestTime: {
+  type: Date,
+  default: null
 },
   },
 

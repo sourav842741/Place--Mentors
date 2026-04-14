@@ -7,6 +7,10 @@ const initialState = {
     sent: [],
     received: [],
   },
+  challenges: {
+    sent: [],
+    received: [],
+  },
   isAuth: false,
   loading: true,
 };
@@ -57,6 +61,9 @@ const userSlice = createSlice({
     updateFriends: (state, action) => {
       state.friends = action.payload;
     },
+    updateChallenges: (state, action) => {
+      state.challenges = action.payload;
+    },
   },
 });
 
@@ -68,5 +75,6 @@ export const {
   loadFriends,
   updateFriendRequests,
   updateFriends,
+  updateChallenges,
 } = userSlice.actions;
 export default userSlice.reducer;

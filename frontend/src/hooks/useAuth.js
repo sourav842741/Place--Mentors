@@ -6,7 +6,7 @@ import { auth, provider } from "../utils/firebase";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-
+import { socket } from "../socket";
 
 
 
@@ -53,6 +53,12 @@ const getCurrentUser = useCallback(async () => {
     const userData = res.data?.data || res.data;
 
     dispatch(setUserData(userData));
+
+    // Join socket room
+    if (userData._id) {
+      socket.emit("join", userData._id);
+      console.log("Socket joined room for user", userData._id);
+    }
 
   } catch (err) {
     console.error(err);

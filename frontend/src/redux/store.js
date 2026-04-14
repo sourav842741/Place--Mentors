@@ -13,6 +13,7 @@ import streakSlice from "./streakSlice";
 import adminSlice from "./adminSlice";
 import adminUserSlice from "./adminUserSlice";
 import adminCreateSlice from "./adminCreateSlice";
+import battleSlice from "./battleSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -32,6 +33,8 @@ const store = configureStore({
     admin: adminSlice,
     adminUsers: adminUserSlice,
     adminCreate: adminCreateSlice,
+    battle: battleSlice,
+    challenges: userSlice, // extend userSlice with challenges
   },
 });
 

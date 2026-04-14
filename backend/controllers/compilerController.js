@@ -1,13 +1,64 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import axios from "axios";
 
-const LANGUAGE_MAP = {
-  javascript: 63,
-  python: 71,
-  "c++": 54,
-  java: 62,
-};
+import { executeCodeWithInput, executeCode } from "../utils/codeExecutor.js";
 
+
+export const runCodeTests = asyncHandler(async (req, res) => {
+  const { code, language, testCases } = req.body;
+
+  if (!code || !language || !testCases || !Array.isArray(testCases)) {
+    return res.status(400).json({
+      success: false,
+      message: "Code, language, and testCases array required",
+    });
+  }
+
+  const results = [];
+  let allPassed = true;
+
+  for (let i = 0; i < testCases.length; i++) {
+    const tc = testCases[i];
+    try {
+     const result = await executeCodeWithInput(code, language, tc.input);
+
+
+
+const got = result.output !== undefined && result.output !== null
+  ? result.output
+  : "No output";
+      const passed = String(got).trim() === String(tc.expectedOutput).trim();
+      
+      if (!passed) allPassed = false;
+      
+      results.push({
+        testCase: i + 1,
+        input: tc.input,
+        expectedOutput: tc.expectedOutput,
+        got,
+        passed
+      });
+    } catch (error) {
+      allPassed = false;
+      results.push({
+        testCase: i + 1,
+        input: tc.input,
+        expectedOutput: tc.expectedOutput,
+        got: `Error: ${error.message}`,
+        passed: false
+      });
+    }
+  }
+
+  res.status(200).json({
+    success: true,
+    results,
+    allPassed,
+    totalPassed: results.filter(r => r.passed).length,
+    totalTests: results.length
+  });
+});
+
+// Legacy /run endpoint
 export const runCode = asyncHandler(async (req, res) => {
   const { code, language, input = "" } = req.body;
 
@@ -18,53 +69,15 @@ export const runCode = asyncHandler(async (req, res) => {
     });
   }
 
-  const langId = LANGUAGE_MAP[language.toLowerCase()];
-
-  if (!langId) {
-    return res.status(400).json({
-      success: false,
-      message: "Unsupported language",
-    });
-  }
-
   try {
-    const encodedCode = Buffer.from(code).toString("base64");
-    const encodedInput = Buffer.from(input).toString("base64"); // 🔥 FIX: Encode input
-
-    const response = await axios.post(
-      "https://ce.judge0.com/submissions/?base64_encoded=true&wait=true",
-      {
-        source_code: encodedCode,
-        language_id: langId,
-        stdin: encodedInput,
-      },
-    );
-
-    const result = response.data;
-
-    const decode = (data) =>
-      data ? Buffer.from(data, "base64").toString("utf-8") : "";
-
-    const output =
-      decode(result.stdout) ||
-      decode(result.stderr) ||
-      decode(result.compile_output) ||
-      "No output";
-
-    res.status(200).json({
-      success: true,
-      output,
-      status: result.status?.description,
-      time: result.time,
-      memory: result.memory || "N/A",
-    });
+    const result = await executeCode(code, language, input);
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Compiler error:", error.response?.data || error.message);
-
+    console.error("Compiler error:", error.message);
     res.status(500).json({
       success: false,
       message: "Compilation failed",
-      error: error.response?.data || error.message,
+      error: error.message,
     });
   }
 });

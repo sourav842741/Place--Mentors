@@ -1,92 +1,74 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  useFriends,
-  useSendFriendRequest,
   useAcceptFriendRequest,
   useRejectFriendRequest,
 } from "../hooks/useFriends";
+import { useMutation } from "@tanstack/react-query";
+import api from "../services/api";
 import { loadFriends } from "../redux/userSlice";
-import { Users, UserPlus, User } from "lucide-react";
+import { Users, User } from "lucide-react";
+import { toast } from "sonner";
 
-//  FRIEND CARD (CLEAN UI)
 const FriendCard = ({
   friend,
   isRequest = false,
   onAccept,
   onReject,
-  onSend,
+  onChallenge,
+  loading = false,
 }) => {
   return (
-    <Card className="w-full p-4 rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg transition-all duration-300">
-
+    <Card className="w-full p-4 rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg transition">
       <div className="flex items-center gap-4">
-        <Avatar className="h-12 w-12 ring-2 ring-blue-500/20">
+        <Avatar className="h-12 w-12">
           <AvatarImage src={friend.avatar} />
-          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold">
-            {friend.fullName?.charAt(0)?.toUpperCase()}
-          </AvatarFallback>
+          <AvatarFallback>{friend.fullName?.[0]}</AvatarFallback>
         </Avatar>
 
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm truncate">
-            {friend.fullName}
-          </h3>
-
+        <div className="flex-1">
+          <h3 className="font-semibold text-sm">{friend.fullName}</h3>
           <p className="text-xs text-gray-500">
             XP: {friend.xp?.toLocaleString()}
           </p>
-
-          <div className="flex gap-2 mt-1 flex-wrap">
-            <span className="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
-              Lv {friend.level}
-            </span>
-
-            <span className="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full">
-              {friend.streakCount}🔥
-            </span>
-          </div>
         </div>
       </div>
 
-      {/* ACTIONS */}
-      <div className="mt-4">
+      <div className="mt-4 flex gap-2 flex-wrap">
         {isRequest && (
-          <div className="flex gap-2">
+          <>
             <Button
               size="sm"
-              className="flex-1 bg-green-500 hover:bg-green-600 text-xs"
+              disabled={loading}
+              className="flex-1 bg-green-500 hover:bg-green-600"
               onClick={onAccept}
             >
-              Accept
+              {loading ? "Accepting..." : "Accept"}
             </Button>
 
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 text-xs"
+              disabled={loading}
+              className="flex-1"
               onClick={onReject}
             >
               Reject
             </Button>
-          </div>
+          </>
         )}
 
-        {!isRequest && onSend && (
+        {!isRequest && onChallenge && (
           <Button
             size="sm"
-            className="w-full text-xs bg-gradient-to-r from-blue-500 to-purple-500"
-            onClick={onSend}
+            disabled={loading}
+            className="w-full bg-red-500 hover:bg-red-600 text-white"
+            onClick={onChallenge}
           >
-            <UserPlus className="w-4 h-4 mr-1" />
-            Add Friend
+            {loading ? "Sending..." : "⚔️ Challenge"}
           </Button>
         )}
       </div>
@@ -94,35 +76,49 @@ const FriendCard = ({
   );
 };
 
-//  MAIN COMPONENT
-export default function FriendsSection() {
+export default function FriendsSection({ friendsData }) {
   const dispatch = useDispatch();
-  const { friends, friendRequests } = useSelector((state) => state.user);
 
-  const { data, isLoading } = useFriends();
+  const friends = friendsData?.friends || [];
+  const friendRequests = friendsData?.friendRequests || {
+    received: [],
+    sent: [],
+  };
 
-  const sendFriendRequest = useSendFriendRequest();
-  const acceptFriendRequest = useAcceptFriendRequest();
-  const rejectFriendRequest = useRejectFriendRequest();
+  const [loadingId, setLoadingId] = useState(null);
+  const [challengeLoadingId, setChallengeLoadingId] = useState(null);
 
-  useEffect(() => {
-    if (data) {
-      dispatch(loadFriends(data));
-    }
-  }, [data, dispatch]);
+  const acceptFriend = useAcceptFriendRequest();
+  const rejectFriend = useRejectFriendRequest();
 
-  if (isLoading) {
-    return <div className="mt-10 text-center">Loading...</div>;
+  //  SEND CHALLENGE
+  const sendChallenge = useMutation({
+    mutationFn: async (friendId) => {
+      setChallengeLoadingId(friendId);
+      return await api.post(`/api/friends/challenge/${friendId}`);
+    },
+    onSuccess: () => {
+      toast.success("⚔️ Challenge sent!");
+      setChallengeLoadingId(null);
+    },
+    onError: () => {
+      toast.error("Failed to send challenge");
+      setChallengeLoadingId(null);
+    },
+  });
+
+  if (!friendsData) {
+    return <div className="text-center mt-10">Loading...</div>;
   }
 
   return (
-    <div className="mt-10 space-y-8">
+    <div className="space-y-8 mt-6">
 
       {/* HEADER */}
       <div className="flex items-center gap-3">
         <Users className="w-6 h-6 text-blue-500" />
         <div>
-          <h2 className="text-xl font-semibold">Friends</h2>
+          <h2 className="text-lg font-semibold">Friends</h2>
           <p className="text-sm text-gray-500">
             {friends.length} friends • {friendRequests.received.length} requests
           </p>
@@ -131,13 +127,18 @@ export default function FriendsSection() {
 
       {/* FRIEND LIST */}
       {friends.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {friends.map((friend) => (
-            <FriendCard key={friend._id} friend={friend} />
+            <FriendCard
+              key={friend._id}
+              friend={friend}
+              loading={challengeLoadingId === friend._id}
+              onChallenge={() => sendChallenge.mutate(friend._id)}
+            />
           ))}
         </div>
       ) : (
-        <div className="text-center text-gray-400 py-6">
+        <div className="text-center text-gray-400">
           No friends yet 😅
         </div>
       )}
@@ -145,43 +146,64 @@ export default function FriendsSection() {
       {/* REQUESTS */}
       {friendRequests.received.length > 0 && (
         <>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
+          <h3 className="flex items-center gap-2 font-semibold">
             <User /> Requests
           </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {friendRequests.received.map((req) => (
               <FriendCard
                 key={req._id}
                 friend={req}
                 isRequest
-                onAccept={() =>
-                  acceptFriendRequest.mutate(req._id)
-                }
-                onReject={() =>
-                  rejectFriendRequest.mutate(req._id)
-                }
-              />
-            ))}
-          </div>
-        </>
-      )}
+                loading={loadingId === req._id}
+                onAccept={() => {
+                  setLoadingId(req._id);
 
-      {/* SUGGESTED USERS */}
-      {data?.suggestedUsers?.length > 0 && (
-        <>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <UserPlus /> Add Friends
-          </h3>
+                  acceptFriend.mutate(req._id, {
+                    onSuccess: () => {
+                      toast.success("Friend accepted ✅");
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-            {data.suggestedUsers.map((user) => (
-              <FriendCard
-                key={user._id}
-                friend={user}
-                onSend={() =>
-                  sendFriendRequest.mutate(user._id)
-                }
+                      // 🔥 UI update instantly
+                      dispatch(loadFriends({
+                        friends: [...friends, req],
+                        friendRequests: {
+                          ...friendRequests,
+                          received: friendRequests.received.filter(
+                            (r) => r._id !== req._id
+                          ),
+                        },
+                      }));
+
+                      setLoadingId(null);
+                    },
+                    onError: () => {
+                      toast.error("Failed to accept");
+                      setLoadingId(null);
+                    },
+                  });
+                }}
+                onReject={() => {
+                  setLoadingId(req._id);
+
+                  rejectFriend.mutate(req._id, {
+                    onSuccess: () => {
+                      toast("Friend rejected");
+
+                      dispatch(loadFriends({
+                        friends,
+                        friendRequests: {
+                          ...friendRequests,
+                          received: friendRequests.received.filter(
+                            (r) => r._id !== req._id
+                          ),
+                        },
+                      }));
+
+                      setLoadingId(null);
+                    },
+                  });
+                }}
               />
             ))}
           </div>
