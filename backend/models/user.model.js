@@ -162,10 +162,28 @@ prepCompanies: [
 
     googleCalendarAccessToken: String,
     googleCalendarRefreshToken: String,
+
+    // FRIENDS SYSTEM
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
+    
+   friendRequests: {
+  sent: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: []
   },
-
-
-  
+  received: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: []
+  }
+},
+  },
 
   { timestamps: true },
 );

@@ -43,6 +43,7 @@ import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
 import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import NotFoundPage from "./components/NotFoundPage";
 import Resources from "./pages/Resources";
+import UsersPage from "./pages/UsersPage";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -104,6 +105,7 @@ function App() {
           <Route path="/coding-potd" element={<CodingPotdPage />} />
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/users" element={<UsersPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

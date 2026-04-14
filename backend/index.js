@@ -27,6 +27,8 @@ import potdRouter from "./routes/potd.routes.js";
 import newsRouter from "./routes/news.routes.js";
 import contactRouter from "./routes/contact.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import friendRouter from "./routes/friend.routes.js";
+import userRouter from "./routes/user.routes.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -86,24 +88,35 @@ app.use("/api/cpotd", cpotdRouter);
 app.use("/api/news", newsRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRoutes);
+app.use("/api/friends", friendRouter);
+app.use("/api/users", userRouter);
 
-// ================= SOCKET EVENTS =================
-let onlineUsers = 0;
-const connectedSockets = new Map();
+  // ================= SOCKET EVENTS =================
+  let onlineUsers = 0;
+  const connectedSockets = new Map();
 
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-  onlineUsers++;
-  io.emit("online_users", onlineUsers);
-
-  //  JOIN ROOM (user room + doubt room prefix)
-  socket.on("join", (userId) => {
-    socket.join(userId);
-    socket.join(`doubt-${userId}`);
-    connectedSockets.set(userId, socket.id);
-    console.log(`User ${userId} joined rooms`);
+  io.on("connection", (socket) => {
+    console.log("User connected:", socket.id);
+    onlineUsers++;
     io.emit("online_users", onlineUsers);
-  });
+
+    // FRIENDS EVENTS
+    socket.on("friend_request_received", () => {
+      console.log("Friend request received event");
+    });
+    
+    socket.on("friend_request_accepted", () => {
+      console.log("Friend request accepted event");
+    });
+
+    //  JOIN ROOM (user room + doubt room prefix)
+    socket.on("join", (userId) => {
+      socket.join(userId);
+      socket.join(`doubt-${userId}`);
+      connectedSockets.set(userId, socket.id);
+      console.log(`User ${userId} joined rooms`);
+      io.emit("online_users", onlineUsers);
+    });
 
   //  CHAT
   socket.on("send_message", (data) => {

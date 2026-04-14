@@ -2,6 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
+  friends: [],
+  friendRequests: {
+    sent: [],
+    received: [],
+  },
   isAuth: false,
   loading: true,
 };
@@ -29,15 +34,39 @@ const userSlice = createSlice({
     },
 
     updateCredits: (state, action) => {
-  if (state.user) {
-    state.user = {
-      ...state.user,
-      credits: action.payload,
-    };
-  }
-},
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          credits: action.payload,
+        };
+      }
+    },
+
+    loadFriends: (state, action) => {
+      state.friends = action.payload.friends || [];
+      state.friendRequests = action.payload.friendRequests || {
+        sent: [],
+        received: [],
+      };
+    },
+
+    updateFriendRequests: (state, action) => {
+      state.friendRequests = action.payload;
+    },
+
+    updateFriends: (state, action) => {
+      state.friends = action.payload;
+    },
   },
 });
 
-export const { setUserData, logoutUser, setLoading, updateCredits} = userSlice.actions;
+export const {
+  setUserData,
+  logoutUser,
+  setLoading,
+  updateCredits,
+  loadFriends,
+  updateFriendRequests,
+  updateFriends,
+} = userSlice.actions;
 export default userSlice.reducer;

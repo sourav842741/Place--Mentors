@@ -5,9 +5,22 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store.js";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { initializePWA, registerSW } from "./lib/pwa.js";
 
 initializePWA();
+
+// 🔥 React Query setup
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 2, // cache 2 min
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // 🔥 TEMP ENABLE SW IN DEV
 if ("serviceWorker" in navigator) {
@@ -18,10 +31,12 @@ if ("serviceWorker" in navigator) {
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </QueryClientProvider>
   </StrictMode>
 );
