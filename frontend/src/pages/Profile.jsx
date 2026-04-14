@@ -184,7 +184,7 @@ export default function Profile() {
                   onClick={() => navigate("/users")}
                   className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl"
                 >
-                  👥 Friends
+                  👥 Add Friends
                 </Button>
               </div>
             </div>
