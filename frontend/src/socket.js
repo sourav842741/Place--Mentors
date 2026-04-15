@@ -15,7 +15,7 @@ import {
 } from "./redux/userSlice";
 
 // SOCKET INIT
-export const socket = io("http://localhost:5000", {
+export const socket = io("https://place-mentor-x5d5.onrender.com", {
   withCredentials: true,
   autoConnect: true,
 });
