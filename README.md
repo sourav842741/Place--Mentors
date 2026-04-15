@@ -122,11 +122,11 @@ graph TB
 
 | 🖥️ **Dashboard** | ⚔️ **Coding Battle** |
 |---|---|
-| ![Dashboard](https://via.placeholder.com/500x300/1e3a8a/ffffff?text=%F0%9F%92%BB+Dashboard) | ![Battle](https://via.placeholder.com/500x300/059669/ffffff?text=%E2%9A%94%EF%B8%8F+Live+Battle) |
+| ![Dashboard](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/dashboard.png) | ![Battle](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/battle.png) |
 
 | 🤖 **AI Planner** | 🏆 **Leaderboard** |
 |---|---|
-| ![AI Planner](https://via.placeholder.com/500x300/7c3aed/ffffff?text=%F0%9F%A4%96+AI+Planner) | ![Leaderboard](https://via.placeholder.com/500x300/f59e0b/000000?text=%F0%9F%8F%86+Leaderboard) |
+| ![AI Planner](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/ai-planner.png) | ![Leaderboard](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/leaderboard.png) |
 
 </div>
 
@@ -325,6 +325,6 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 </div>
 
-![Footer](https://via.placeholder.com/1200x100/0f172a/ffffff?text=Place+Mentors+%E2%80%A2+Crack+Placements+with+AI+%F0%9F%A4%97)
+![Footer](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/footer.png)
 
 
