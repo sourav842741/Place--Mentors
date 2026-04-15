@@ -2,6 +2,8 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+
+
 import { socket } from "./socket";
 import useAuth from "./hooks/useAuth";
 
@@ -63,13 +65,25 @@ import Users from "./pages/admin/Users";
 import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
 import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import NotificationPopup from "./components/NotificationPopup.jsx";
+import SplashScreen from "./components/SplashScreen";
 
 function App() {
   const { getCurrentUser } = useAuth();
-  const { user } = useSelector((state) => state.user);
+  const { user,loading } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+  if (!loading && user) {
+    const seen = sessionStorage.getItem("seenSplash");
+
+    if (!seen && window.location.pathname !== "/splash") {
+      sessionStorage.setItem("seenSplash", "true");
+      navigate("/splash");
+    }
+  }
+}, [user, loading]);
 
   //  Load user
   useEffect(() => {
@@ -184,10 +198,12 @@ function App() {
         {/* PUBLIC */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/splash" element={<SplashScreen/>} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
 
         {/* ADMIN */}
         <Route element={<AdminRoute />}>

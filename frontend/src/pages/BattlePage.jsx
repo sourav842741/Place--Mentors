@@ -28,11 +28,13 @@ import {
   updateMyLanguage,
   setTyping,
   battleResult,
+  battleDraw,
   updateOpponentCode,
 } from "../redux/battleSlice";
 import useAuth from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import Footer from "@/components/Footer";
 
 const BattlePage = () => {
   const { roomId } = useParams();
@@ -100,6 +102,20 @@ const finalOpponent = opponent || location.state?.opponent;
     return () => clearInterval(timerRef.current);
   }, [status, dispatch]);
 
+  // 🔥 FORCE DRAW SAFETY (IMPORTANT)
+useEffect(() => {
+  if (safeTime === 0 && status === "running") {
+    console.log("FORCE DRAW TRIGGER (frontend)");
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    dispatch(battleDraw());
+  }
+}, [safeTime, status, dispatch]);
+
   //  BATTLE RESULT LISTENER (Room-specific)
   useEffect(() => {
   const handleBattleResult = (data) => {
@@ -116,14 +132,38 @@ const finalOpponent = opponent || location.state?.opponent;
     dispatch(setTyping(isTyping));
   };
 
+  const handleBattleData = (data) => {
+    dispatch({
+      type: "battle/battleStart",
+      payload: {
+        roomId: data.roomId,
+        problem: data.problem,
+        timeLimit: data.remainingTime || 900,
+        opponent: data.opponent || null,
+      },
+    });
+  };
+
+const handleDraw = () => {
+  if (timerRef.current) {
+    clearInterval(timerRef.current);
+    timerRef.current = null; 
+  }
+  dispatch(battleDraw());
+};
+
   socket.on("battle:result", handleBattleResult);
   socket.on("opponent_code_change", handleOpponentCodeChange);
-  socket.on("opponent_typing", handleTyping); 
+  socket.on("opponent_typing", handleTyping);
+  socket.on("battle:data", handleBattleData);
+  socket.on("battle:draw", handleDraw);
 
   return () => {
     socket.off("battle:result", handleBattleResult);
     socket.off("opponent_code_change", handleOpponentCodeChange);
-    socket.off("opponent_typing", handleTyping); 
+    socket.off("opponent_typing", handleTyping);
+    socket.off("battle:data", handleBattleData);
+    socket.off("battle:draw", handleDraw);
   };
 }, [dispatch, roomId]);
 
@@ -708,6 +748,7 @@ shadow-md hover:shadow-xl transition-all duration-300">
           )}
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

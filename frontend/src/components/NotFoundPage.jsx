@@ -7,7 +7,12 @@ const NotFoundPage = () => {
   const navigate = useNavigate();
 
   const handleRedirect = () => {
-    if (user?.role === "admin") {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (user.role === "admin") {
       navigate("/admin/dashboard");
     } else {
       navigate("/dashboard");
@@ -17,7 +22,6 @@ const NotFoundPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-gray-900 font-serif px-4">
       <div className="text-center max-w-2xl w-full">
-        
         {/* 404 */}
         <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-800 dark:text-white">
           404
@@ -46,12 +50,16 @@ const NotFoundPage = () => {
             The page you are looking for is not available!
           </p>
 
-          {/* 🔥 BUTTON */}
+          {/*  BUTTON */}
           <button
             onClick={handleRedirect}
             className="mt-6 px-6 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition shadow-lg"
           >
-            Go to Home
+            {!user
+              ? "Go to Login"
+              : user.role === "admin"
+                ? "Go to Admin Dashboard"
+                : "Go to Dashboard"}
           </button>
         </div>
       </div>

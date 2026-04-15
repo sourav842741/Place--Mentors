@@ -164,26 +164,30 @@ export default function Navbar() {
             <Menu />
           </button>
           <div className="flex items-center gap-6">
-            <div
-              onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2 cursor-pointer group"
-            >
-              <div
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-blue-600 dark:bg-blue-400 text-white font-bold rounded-lg 
-                transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
-              >
-                PM
+            <div  onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-2 cursor-pointer group">
+              {/* ICON */}
+              <div className="relative w-9 h-9 flex items-center justify-center">
+                {/* Glow */}
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 blur-md opacity-70 animate-pulse"></div>
+
+                {/* Icon */}
+                <div
+                  className="relative bg-gray-900 text-white font-bold rounded-lg w-full h-full flex items-center justify-center 
+    transition-all duration-500 group-hover:scale-110 group-hover:rotate-6"
+                >
+                  PM
+                </div>
               </div>
 
-              {/*  TEXT */}
-              <span className="font-bold text-base sm:text-lg tracking-wide text-gray-900 dark:text-white">
+              {/* TEXT */}
+              <span className="font-bold text-lg tracking-wide text-gray-900 dark:text-white">
                 Place
-                <span className="text-blue-600 group-hover:text-blue-500 dark:text-blue-400 dark:group-hover:text-blue-300 transition-colors">
+                <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent animate-pulse">
                   Mentor
                 </span>
               </span>
             </div>
-
             {/* Desktop Links */}
             <div className="hidden md:flex gap-6 lg:ml-21">
               <Link to="/dashboard">Dashboard</Link>

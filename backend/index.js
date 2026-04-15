@@ -411,9 +411,25 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
     // Re-emit battle state for refresh
     try {
       const battle = await Battle.findOne({ roomId });
-      if (battle) {
-        io.to(roomId).emit("battle:data", battle);
-      }
+     if (battle) {
+  const TOTAL_TIME = 900000; // 15 min in ms
+
+  const now = Date.now();
+
+  const startedAt = new Date(battle.createdAt).getTime();
+
+  const elapsed = now - startedAt;
+
+  const remainingTime = Math.max(
+    0,
+    Math.floor((TOTAL_TIME - elapsed) / 1000)
+  );
+
+  io.to(roomId).emit("battle:data", {
+    ...battle.toObject(),
+    remainingTime, 
+  });
+}
     } catch (error) {
       console.error("Battle rejoin error:", error);
     }
@@ -423,7 +439,7 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
     socket.to(roomId).emit("opponent_code_change", { code, language });
   });
 
-  // 🔥 TYPING EVENTS ADD KAR
+  //  TYPING EVENTS ADD KAR
 socket.on("typing:start", ({ roomId, userId }) => {
   socket.to(roomId).emit("opponent_typing", true);
 });

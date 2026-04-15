@@ -70,7 +70,7 @@ export default function Login() {
         if (user.role === "admin") {
           navigate("/admin/dashboard");
         } else {
-          navigate("/dashboard");
+         navigate("/splash");
         }
       } else {
         toast.error(res?.message || "Login failed");

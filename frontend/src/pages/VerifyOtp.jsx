@@ -112,7 +112,7 @@ export default function VerifyOtp() {
       if (res.data.success) {
         dispatch(setUserData(res.data.data));
         toast.success("Signup Successful 🎉");
-        navigate("/dashboard");
+         navigate("/splash");
       } else {
         toast.error(res.data.message || "Invalid OTP");
       }
