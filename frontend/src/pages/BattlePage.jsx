@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate,useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -53,6 +53,11 @@ const BattlePage = () => {
     isOpponentTyping,
     myLanguage,
   } = battle;
+
+  const location = useLocation();
+
+// 🔥 FINAL FIX
+const finalOpponent = opponent || location.state?.opponent;
 
   const safeTime = Number(timeLeft) || 0;
 
@@ -430,35 +435,67 @@ const BattlePage = () => {
                 </Card>
 
                 {/* OPPONENT CARD - Top right style */}
-                {opponent && (
-                  <Card className="mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-xl flex items-center gap-2">
-                        👤 Opponent
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-4 p-2">
-                        <img
-                          src={opponent.avatar || "/default-avatar.png"}
-                          className="w-16 h-16 rounded-full ring-2 ring-white/50"
-                        />
-                        <div>
-                          <h3 className="font-bold">{opponent.fullName}</h3>
-                          <div className="flex gap-2 text-sm opacity-90 mt-1">
-                            <span>Lv. {opponent.level || 1}</span>
-                            <span>XP: {opponent.xp || 0}</span>
-                            <span>Streak: {opponent.streakCount || 0}🔥</span>
-                          </div>
-                          {isOpponentTyping && (
-                            <p className="text-yellow-200 text-sm mt-1 animate-pulse flex items-center gap-1">
-                              ✍️ Typing...
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+               {finalOpponent && (
+                 <Card className="mt-6 border border-gray-200 dark:border-white/10 
+bg-white dark:bg-gray-900/70 backdrop-blur-xl 
+shadow-md hover:shadow-xl transition-all duration-300">
+
+  <CardHeader className="pb-2">
+    <CardTitle className="text-lg flex items-center gap-2 text-gray-800 dark:text-white">
+      👤 Opponent
+    </CardTitle>
+  </CardHeader>
+
+  <CardContent>
+    <div className="flex items-center gap-4 p-2">
+
+      {/* Avatar */}
+      <div className="relative">
+        <img
+          src={finalOpponent?.avatar || "/default-avatar.png"}
+          className="w-14 h-14 rounded-full object-cover 
+          ring-2 ring-blue-500/70 shadow-md"
+        />
+
+        {/* Online dot (optional) */}
+        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></span>
+      </div>
+
+      <div className="flex-1">
+
+        {/* Name */}
+        <h3 className="font-semibold text-gray-900 dark:text-white">
+          {finalOpponent?.fullName || "Opponent"}
+        </h3>
+
+        {/* Stats */}
+        <div className="flex flex-wrap gap-3 text-xs mt-1 text-gray-600 dark:text-gray-300">
+
+          <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">
+            ⚡ Lv. {finalOpponent?.level || 1}
+          </span>
+
+          <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">
+            🧠 XP: {finalOpponent?.xp || 0}
+          </span>
+
+          <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">
+            🔥 {finalOpponent?.streakCount || 0}
+          </span>
+
+        </div>
+
+        {/* Typing */}
+        {isOpponentTyping && (
+          <p className="text-blue-500 text-xs mt-2 animate-pulse flex items-center gap-1">
+            ✍️ Typing...
+          </p>
+        )}
+
+      </div>
+    </div>
+  </CardContent>
+</Card>
                 )}
               </div>
 
