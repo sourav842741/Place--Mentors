@@ -130,7 +130,7 @@ graph TB
 
 </div>
 
-## 📹 Video Demo 
+# 📹 Video Demo 
 ### Explore the project in action—click the image below to watch the full demo.
 
 [![Watch Video](https://github.com/sourav842741/Place--Mentors/blob/7a08c705439501743281285d9eb4b8c40d3743de/Screenshot%202026-04-15%20181718.png)](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view)
