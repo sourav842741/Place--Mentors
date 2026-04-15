@@ -227,7 +227,7 @@ function App() {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/ai-planner" element={<AIPlanner />} />
           <Route path="/planner-history" element={<PlannerHistory />} />
-          <Route path="/planner/:id" element={<AIPlanner />} />
+          <Route path="/ai-planner/:id" element={<AIPlanner />} />
           <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
           <Route path="/resume-generator" element={<ResumeGenerator />} />
           <Route path="/jobs/:id" element={<JobDetailsPage />} />
