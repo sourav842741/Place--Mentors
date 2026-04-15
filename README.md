@@ -130,8 +130,10 @@ graph TB
 
 </div>
 
-**📹 Video Demo:** [Watch on YouTube](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view?usp=sharing)
+## 📹 Video Demo
 
+<iframe src="https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/preview" 
+width="100%" height="480" allow="autoplay"></iframe>
 **🎮 Live Demo Links:**
 - [Dashboard](https://place-mentor-frontend.onrender.com/dashboard)
 - [Coding Battles](https://place-mentor-frontend.onrender.com/coding-potd)
