@@ -96,23 +96,23 @@ export default function Navbar() {
     return () => window.removeEventListener("storage", handleThemeChange);
   }, []);
 
- const toggleDark = () => {
-  const isNowDark = document.documentElement.classList.toggle("dark");
-  setIsDark(isNowDark);
-  localStorage.setItem("theme", isNowDark ? "dark" : "light");
-};
+  const toggleDark = () => {
+    const isNowDark = document.documentElement.classList.toggle("dark");
+    setIsDark(isNowDark);
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
+  };
 
-useEffect(() => {
-  const savedTheme = localStorage.getItem("theme");
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
 
-  if (savedTheme === "dark") {
-    document.documentElement.classList.add("dark");
-    setIsDark(true);
-  } else {
-    document.documentElement.classList.remove("dark");
-    setIsDark(false);
-  }
-}, []);
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setIsDark(false);
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -213,25 +213,47 @@ useEffect(() => {
                   variant="ghost"
                   size="icon"
                   className="relative"
-                  onClick={() => setShowNotif(!showNotif)}
+                  onClick={() => {
+                    if (showNotif) {
+                      setShowNotif(false);
+                      setNotifications([]);
+                    } else {
+                      setShowNotif(true);
+                    }
+                  }}
                 >
                   <Bell size={20} />
                   {notifications.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs font-bold bg-red-500 border-2 border-white">
+                    <Badge
+                      className="absolute -top-1 -right-1 
+h-5 w-5 p-0 
+flex items-center justify-center 
+text-[10px] font-bold 
+bg-red-500 text-white 
+border-2 border-white dark:border-gray-900 
+rounded-full"
+                    >
                       {notifications.length}
                     </Badge>
                   )}
                 </Button>
 
                 {showNotif && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white border shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto">
-                    <h3 className="font-semibold mb-2 pb-2 border-b">
+                  <div
+                    className="absolute right-0 mt-2 w-80 
+bg-white dark:bg-gray-900 
+border border-gray-200 dark:border-white/10 
+shadow-lg rounded-xl p-3 z-50 max-h-96 overflow-y-auto"
+                  >
+                    <h3 className="font-semibold mb-2 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">
                       Notifications
                     </h3>
                     {notifications.map((n, i) => (
                       <div
                         key={i}
-                        className="py-2 border-b last:border-b-0 text-sm hover:bg-gray-50 p-2 rounded"
+                        className="py-2 border-b border-gray-200 dark:border-gray-700 
+text-sm hover:bg-gray-50 dark:hover:bg-gray-800 
+p-2 rounded"
                       >
                         <p>{n.message}</p>
                         <span className="text-xs text-gray-500 block mt-1">

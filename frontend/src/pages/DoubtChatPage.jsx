@@ -7,7 +7,7 @@ import {
 } from "../services/doubtApi";
 import { socket } from "../socket";
 import { toast } from "sonner";
-import { ThumbsUp, Send, MessageCircle, Bell,Circle } from "lucide-react";
+import { ThumbsUp, Send, MessageCircle, Bell, Circle } from "lucide-react";
 import { useSelector } from "react-redux";
 import api from "../services/api";
 import { Input } from "../components/ui/input";
@@ -17,7 +17,6 @@ import { Badge } from "../components/ui/badge";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ReactMarkdown from "react-markdown";
-
 
 export default function DoubtChatPage() {
   const [question, setQuestion] = useState("");
@@ -204,226 +203,238 @@ export default function DoubtChatPage() {
   };
 
   return (
-    <div className="min-h-screen 
+    <div
+      className="min-h-screen 
 bg-gray-100 dark:bg-gray-950 
-overflow-x-hidden transition-colors duration-300 lg:ml-5 mt-5">
+overflow-x-hidden transition-colors duration-300 lg:ml-5 mt-5"
+    >
+      <Navbar />
 
-  <Navbar />
-
-  <div className="md:pl-64 mt-16 px-3 sm:px-4 md:px-6">
-
-    {/* Header */}
-    <div className="bg-white dark:bg-gray-900 
+      <div className="md:pl-64 mt-16 px-3 sm:px-4 md:px-6">
+        {/* Header */}
+        <div
+          className="bg-white dark:bg-gray-900 
     border-b border-gray-200 dark:border-white/10 
-    shadow-sm mb-6 p-4 md:p-6 transition">
+    shadow-sm mb-6 p-4 md:p-6 transition"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+              Community
+            </h1>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-4 shrink-0">
+              <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <Circle className="w-3 h-3 text-green-500 fill-green-500" />
+                {onlineUsers} online
+              </span>
 
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-          Community
-        </h1>
-
-        <div className="flex items-center gap-4 shrink-0">
-
-          <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-            <Circle className="w-3 h-3 text-green-500 fill-green-500" />
-            {onlineUsers} online
-          </span>
-
-          <div className="relative">
-            {showNotif && (
-              <div className="absolute right-0 mt-2 w-80 
+              <div className="relative">
+                {showNotif && (
+                  <div
+                    className="absolute right-0 mt-2 w-80 
               bg-white dark:bg-gray-900 
               border border-gray-200 dark:border-white/10 
-              shadow-lg rounded-xl p-4 z-50 max-h-64 overflow-y-auto">
-
-                {notifications.map((n, i) => (
-                  <div
-                    key={i}
-                    className="border-b border-gray-200 dark:border-gray-700 py-3 text-sm last:border-b-0"
+              shadow-lg rounded-xl p-4 z-50 max-h-64 overflow-y-auto"
                   >
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {n.message}
-                    </p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {n.time}
-                    </span>
+                    {notifications.map((n, i) => (
+                      <div
+                        key={i}
+                        className="border-b border-gray-200 dark:border-gray-700 py-3 text-sm last:border-b-0"
+                      >
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {n.message}
+                        </p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {n.time}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-
+                )}
               </div>
-            )}
+            </div>
           </div>
-
         </div>
-      </div>
-    </div>
 
-    {/* Main */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
-
-      {/* CENTER */}
-      <div className="lg:col-span-2 order-1 lg:order-2 space-y-4">
-
-        {/* Ask Box */}
-        <div className="bg-white dark:bg-gray-900 
+        {/* Main */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+          {/* CENTER */}
+          <div className="lg:col-span-2 order-1 lg:order-2 space-y-4">
+            {/* Ask Box */}
+            <div
+              className="bg-white dark:bg-gray-900 
         border border-gray-200 dark:border-white/10 
-        rounded-2xl shadow-sm p-4 md:p-6">
-
-          <Textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask your programming doubt or interview question..."
-            className="w-full resize-none mb-4 min-h-[100px] 
+        rounded-2xl shadow-sm p-4 md:p-6"
+            >
+              <Textarea
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Ask your programming doubt or interview question..."
+                className="w-full resize-none mb-4 min-h-[100px] 
             border border-gray-200 dark:border-white/10 
             bg-white dark:bg-gray-800 
             text-gray-900 dark:text-white 
             rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
+              />
 
-          <Button
-            onClick={handleAsk}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 rounded-xl cursor-pointer"
-          >
-            {loading ? "Asking..." : "Ask Community + AI"}
-          </Button>
-        </div>
-
-        {/* Doubts */}
-        {doubts.map((d) => (
-          <div
-            key={d._id}
-            className="bg-white dark:bg-gray-900 
-            border border-gray-200 dark:border-white/10 
-            rounded-xl shadow-sm overflow-hidden"
-          >
-
-            <div
-              className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-              onClick={() => toggleOpen(d._id)}
-            >
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                {d.question}
-              </h3>
-
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <MessageCircle size={16} />
-                {repliesMap[d._id]?.length || 0} replies
-              </div>
+              <Button
+                onClick={handleAsk}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 rounded-xl cursor-pointer"
+              >
+                {loading ? "Asking..." : "Ask Community + AI"}
+              </Button>
             </div>
 
-            {openId === d._id && (
-              <div className="border-t border-gray-200 dark:border-gray-700 p-4 md:p-6 space-y-4">
+            {/* Doubts */}
+            {doubts.map((d) => (
+              <div
+                key={d._id}
+                className="bg-white dark:bg-gray-900 
+            border border-gray-200 dark:border-white/10 
+            rounded-xl shadow-sm overflow-hidden"
+              >
+                <div
+                  className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                  onClick={() => toggleOpen(d._id)}
+                >
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    {d.question}
+                  </h3>
 
-                {/* AI Answer */}
-                <div className="bg-green-50 dark:bg-green-900/20 
-                border border-green-200 dark:border-green-800 
-                rounded-lg p-4">
-
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                    <MessageCircle size={16} />
+                    {repliesMap[d._id]?.length || 0} replies
                   </div>
                 </div>
 
-                {/* Replies */}
-                <div className="space-y-3">
-
-                  {repliesMap[d._id]?.map((r) => (
+                {openId === d._id && (
+                  <div className="border-t border-gray-200 dark:border-gray-700 p-4 md:p-6 space-y-4">
+                    {/* AI Answer */}
                     <div
-                      key={r._id}
-                      className="bg-gray-50 dark:bg-gray-800 
-                      hover:bg-gray-100 dark:hover:bg-gray-700 
-                      border border-gray-200 dark:border-white/10 
-                      rounded-lg p-3 md:p-4 transition"
+                      className="bg-green-50 dark:bg-green-900/20 
+                border border-green-200 dark:border-green-800 
+                rounded-lg p-4"
                     >
-
-                      <div className="flex justify-between items-center">
-
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
-                          {r.answer}
-                        </p>
-
-                        <button className="text-blue-600 hover:text-blue-700 text-sm">
-                          👍 {r.upvotesCount || 0}
-                        </button>
-
+                      <div className="prose prose-sm max-w-none dark:prose-invert">
+                        <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
                       </div>
-
                     </div>
-                  ))}
 
-                </div>
+                    {/* Replies */}
+                    {/* Replies */}
+                    <div className="space-y-3">
+                      {repliesMap[d._id]?.map((r) => (
+                        <div
+                          key={r._id}
+                          className="bg-gray-50 dark:bg-gray-800 
+      hover:bg-gray-100 dark:hover:bg-gray-700 
+      border border-gray-200 dark:border-white/10 
+      rounded-lg p-3 md:p-4 transition"
+                        >
+                          <div className="flex items-start gap-3">
+                            {/* Avatar */}
+                            <img
+                              src={r.user?.avatar || "/default-avatar.png"}
+                              alt="avatar"
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
 
-                {/* Reply */}
-                <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div className="flex-1">
+                              {/* Name */}
+                              <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                                {r.user?.fullName || "User"}
+                              </p>
 
-                  <Input
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Write your reply..."
-                    className="flex-1 bg-white dark:bg-gray-800 border dark:border-white/10 text-gray-900 dark:text-white"
-                  />
+                              {/* Answer */}
+                              <p className="text-sm text-gray-700 dark:text-gray-300">
+                                {r.answer}
+                              </p>
+                            </div>
 
-                  <Button className="bg-gray-800 hover:bg-gray-900 text-white">
-                    <Send className="h-4 w-4" />
-                  </Button>
+                            {/* Upvote */}
+                            <button
+                              onClick={() => handleUpvote(r._id, d._id)}
+                              className="flex items-center gap-1 px-2 py-1 rounded-md 
+  text-gray-500 hover:text-blue-600 
+  hover:bg-blue-100 dark:hover:bg-blue-900/30 
+  transition-all duration-200 
+  text-sm font-medium cursor-pointer"
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                              <span>
+                                {r.upvotesCount || r.upvotes?.length || 0}
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-                </div>
+                    {/* Reply */}
+                    <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <Input
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write your reply..."
+                        className="flex-1 bg-white dark:bg-gray-800 border dark:border-white/10 text-gray-900 dark:text-white"
+                      />
 
+                      <Button
+                        onClick={() => handleReply(d._id)}
+                        className="bg-gray-800 hover:bg-gray-900 text-white"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-
-          </div>
-        ))}
-
-      </div>
-
-      {/* SIDEBAR */}
-      <div className="space-y-4">
-
-        <div className="bg-white dark:bg-gray-900 
-        border border-gray-200 dark:border-white/10 
-        rounded-xl shadow-sm p-4">
-
-          <h2 className="font-semibold text-gray-900 dark:text-white mb-3">
-            🔥 Trending
-          </h2>
-
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            No trending doubts yet
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 
-        border border-gray-200 dark:border-white/10 
-        rounded-xl shadow-sm p-4">
-
-          <h2 className="font-semibold text-gray-900 dark:text-white mb-3">
-            Topics
-          </h2>
-
-          <div className="flex flex-wrap gap-2">
-            {topics.map((topic) => (
-              <Badge
-                key={topic}
-                className="bg-gray-200 dark:bg-gray-700 
-                text-gray-700 dark:text-gray-300"
-              >
-                {topic}
-              </Badge>
             ))}
           </div>
 
-        </div>
+          {/* SIDEBAR */}
+          <div className="space-y-4">
+            <div
+              className="bg-white dark:bg-gray-900 
+        border border-gray-200 dark:border-white/10 
+        rounded-xl shadow-sm p-4"
+            >
+              <h2 className="font-semibold text-gray-900 dark:text-white mb-3">
+                🔥 Trending
+              </h2>
 
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                No trending doubts yet
+              </p>
+            </div>
+
+            <div
+              className="bg-white dark:bg-gray-900 
+        border border-gray-200 dark:border-white/10 
+        rounded-xl shadow-sm p-4"
+            >
+              <h2 className="font-semibold text-gray-900 dark:text-white mb-3">
+                Topics
+              </h2>
+
+              <div className="flex flex-wrap gap-2">
+                {topics.map((topic) => (
+                  <Badge
+                    key={topic}
+                    className="bg-gray-200 dark:bg-gray-700 
+                text-gray-700 dark:text-gray-300"
+                  >
+                    {topic}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <Footer />
     </div>
-
-  </div>
-
-  <Footer />
-</div>
   );
 }
