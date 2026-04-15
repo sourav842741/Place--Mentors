@@ -132,8 +132,7 @@ graph TB
 
 ## 📹 Video Demo
 
-<iframe src="https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/preview" 
-width="100%" height="480" allow="autoplay"></iframe>
+[![Watch Video](https://github.com/sourav842741/Place--Mentors/blob/7a08c705439501743281285d9eb4b8c40d3743de/Screenshot%202026-04-15%20181718.png)](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view)
 **🎮 Live Demo Links:**
 - [Dashboard](https://place-mentor-frontend.onrender.com/dashboard)
 - [Coding Battles](https://place-mentor-frontend.onrender.com/coding-potd)
