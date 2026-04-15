@@ -25,8 +25,8 @@ const sanitizeUser = (user) => {
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: 10 * 24 * 60 * 60 * 1000,
 };
@@ -319,8 +319,8 @@ export const updateProfile = asyncHandler(async (req, res) => {
 export const signOut = asyncHandler(async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
   });
 
   return res
