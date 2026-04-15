@@ -1,128 +1,105 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { FaQuoteLeft } from "react-icons/fa";
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
 
 const successStoriesData = [
   {
-    name: "Sarah Jenkins",
-    role: "SDE-1 at Amazon",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
+    name: "How do I sign up for Place Mentor?",
     message:
-      "The coding track here exactly matched the level of difficulty I faced in the actual OA.",
+      "Click on Sign Up, use Google or email, verify OTP, and start your preparation journey instantly.",
   },
   {
-    name: "Rohan Mehta",
-    role: "SDE Intern at Amazon",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop",
+    name: "How can I change my profile name?",
     message:
-      "Didn’t ignore aptitude rounds. PrepPro’s data interpretation mocks were crucial.",
+      "Go to profile settings and update your name from the edit section.",
   },
   {
-    name: "Ananya Sharma",
-    role: "Placed at Flipkart",
-    image:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop",
+    name: "Is my profile information private?",
     message:
-      "AI planner helped me stay consistent. My preparation became structured.",
+      "Yes, your data is secure and controlled by your privacy settings.",
   },
   {
-    name: "Kunal Verma",
-    role: "SDE at TCS",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+    name: "Can I share my profile with recruiters?",
     message:
-      "Revision notes feature saved me before exams. Highly recommended!",
+      "Yes, you can generate a shareable profile link from your dashboard.",
   },
   {
-    name: "Vikram Aditya",
-    role: "SDE at Google",
-    image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&h=200&fit=crop",
-    message: "Data Structures aur Algorithms ka depth yahan kaafi solid hai. Google ke interview rounds ke liye kaafi help mili."
+    name: "What is POTD in Place Mentor?",
+    message:
+      "POTD (Problem of the Day) helps you practice coding daily and maintain consistency with streaks.",
   },
   {
-    name: "Ishita Gupta",
-    role: "Full Stack Dev at Zomato",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
-    message: "Project-based learning approach ne mere resume ko stand out karne mein help ki. Mentor support top-notch tha!"
+    name: "Does Place Mentor provide interview preparation?",
+    message:
+      "Yes, we provide company-wise interview questions, mock tests, and AI-based preparation tools.",
   },
   {
-    name: "Priya Das",
-    role: "Software Engineer at Microsoft",
-    image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop",
-    message: "System Design ke concepts itne clear pehle kabhi nahi the. Mock interviews ne mera confidence level boost kar diya."
+    name: "Can I track my progress?",
+    message:
+      "Yes, your dashboard shows progress, streaks, performance analytics, and improvement areas.",
   },
   {
-    name: "Siddharth Rao",
-    role: "Frontend Lead at Razorpay",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
-    message: "Yahan ke UI/UX tracks aur React mocks industry standards se bilkul match karte hain. Placement support amazing hai."
+    name: "Is there any premium plan available?",
+    message:
+      "Yes, premium plans unlock advanced features like mentorship, AI mock interviews, and detailed analytics.",
   },
-  {
-    name: "Megha Kapoor",
-    role: "Backend Intern at Adobe",
-    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7b?w=200&h=200&fit=crop",
-    message: "Practice sets itne exhaustive hain ki aapko kahin aur jaane ki zaroorat hi nahi. Best decision for my career!"
-  },
-  {
-    name: "Rahul Khanna",
-    role: "Placement in Goldman Sachs",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop",
-    message: "Problem-solving speed pe focus karna mere liye game changer raha. Quantitative aptitude tests kaafi accurate the."
-  }
 ];
 
 const SuccessStories = () => {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggle = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
-    <div className="w-full space-y-4 md:5 ">
-      
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          🏆 Success Stories
+    <div className="w-full flex justify-center py-12 md:py-16 px-4">
+      <div className="w-full max-w-3xl">
+
+        {/* HEADING */}
+        <h2 className="text-2xl md:text-4xl font-semibold text-center mb-10 md:mb-12 
+        text-gray-900 dark:text-white">
+          FREQUENTLY ASKED QUESTIONS
         </h2>
 
-        <Button variant="link" className="text-blue-600 text-sm p-0 h-auto">
-          View All →
-        </Button>
-      </div>
+        {/* FAQ LIST */}
+        <div>
+          {successStoriesData.map((item, index) => {
+            const isOpen = openIndex === index;
 
-      {/* Scrollable Stories */}
-      <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
-        {successStoriesData.map((story, index) => (
-          <Card
-            key={index}
-            className="rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition"
-          >
-            <CardContent className="p-4 flex gap-3">
-              
-              {/* Avatar */}
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={story.image} alt={story.name} />
-                <AvatarFallback>
-                  {story.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+            return (
+              <div
+                key={index}
+                className="border-b border-gray-400 dark:border-gray-600 py-4 md:py-5"
+              >
+                {/* QUESTION */}
+                <button
+                  onClick={() => toggle(index)}
+                  className="w-full flex justify-between items-center text-left gap-4"
+                >
+                  <span className="text-base md:text-xl font-medium 
+                  text-gray-800 dark:text-gray-200">
+                    {item.name}
+                  </span>
 
-              {/* Content */}
-              <div className="flex-1">
-                <h4 className="text-sm font-semibold">{story.name}</h4>
-                <p className="text-xs text-gray-500">{story.role}</p>
+                  <Plus
+                    className={`w-5 h-5 text-gray-500 transition-transform duration-300 shrink-0 ${
+                      isOpen ? "rotate-45" : ""
+                    }`}
+                  />
+                </button>
 
-                <div className="flex gap-2 mt-2">
-                  <FaQuoteLeft className="text-gray-400 text-xs mt-1" />
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    {story.message}
+                {/* ANSWER */}
+                {isOpen && (
+                  <p className="mt-3 md:mt-4 text-sm md:text-base 
+                  text-gray-600 dark:text-gray-400 leading-relaxed pr-2 md:pr-6">
+                    {item.message}
                   </p>
-                </div>
+                )}
               </div>
+            );
+          })}
+        </div>
 
-            </CardContent>
-          </Card>
-        ))}
       </div>
     </div>
   );
