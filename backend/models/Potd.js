@@ -50,7 +50,7 @@ const potdSchema = new mongoose.Schema(
     generatedAt: {
       type: Date,
       default: Date.now,
-      expires: 25 * 60 * 60,
+      expires: 7 * 24 * 60 * 60
     },
   },
   { timestamps: true },
