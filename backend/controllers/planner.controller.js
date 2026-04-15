@@ -283,7 +283,7 @@ export const syncCalendar = async (req, res) => {
       for (let taskIdx = 0; taskIdx < day.tasks.length; taskIdx++) {
         const task = day.tasks[taskIdx];
 
-        const summary = `Preparation Buddy: Day ${day.day} - ${task.title}`;
+        const summary = `Preparation Buddy: Day ${dayIdx + 1} - ${task.title}`;
 
         // Check if exists
         const existingEvents = await calendar.events.list({
