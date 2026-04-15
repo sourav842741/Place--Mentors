@@ -102,22 +102,30 @@ const finalOpponent = opponent || location.state?.opponent;
 
   //  BATTLE RESULT LISTENER (Room-specific)
   useEffect(() => {
-    const handleBattleResult = (data) => {
-      dispatch(battleResult(data));
-    };
+  const handleBattleResult = (data) => {
+    dispatch(battleResult(data));
+  };
 
-    const handleOpponentCodeChange = (data) => {
-      dispatch(updateOpponentCode(data));
-    };
+  const handleOpponentCodeChange = (data) => {
+    dispatch(updateOpponentCode(data));
+  };
 
-    socket.on("battle:result", handleBattleResult);
-    socket.on("opponent_code_change", handleOpponentCodeChange);
+  // 🔥 ADD THIS
+  const handleTyping = (isTyping) => {
+    console.log("Typing:", isTyping);
+    dispatch(setTyping(isTyping));
+  };
 
-    return () => {
-      socket.off("battle:result", handleBattleResult);
-      socket.off("opponent_code_change", handleOpponentCodeChange);
-    };
-  }, [dispatch, roomId]);
+  socket.on("battle:result", handleBattleResult);
+  socket.on("opponent_code_change", handleOpponentCodeChange);
+  socket.on("opponent_typing", handleTyping); 
+
+  return () => {
+    socket.off("battle:result", handleBattleResult);
+    socket.off("opponent_code_change", handleOpponentCodeChange);
+    socket.off("opponent_typing", handleTyping); 
+  };
+}, [dispatch, roomId]);
 
   // CODE CHANGE + TYPING
   const handleCodeChange = useCallback(
@@ -486,11 +494,23 @@ shadow-md hover:shadow-xl transition-all duration-300">
         </div>
 
         {/* Typing */}
-        {isOpponentTyping && (
-          <p className="text-blue-500 text-xs mt-2 animate-pulse flex items-center gap-1">
-            ✍️ Typing...
-          </p>
-        )}
+       {isOpponentTyping && (
+  <div className="flex items-center gap-2 mt-2">
+
+    {/* Animated dots */}
+    <div className="flex gap-1">
+      <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></span>
+      <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100"></span>
+      <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200"></span>
+    </div>
+
+    {/* Text */}
+    <span className="text-xs text-blue-500 font-medium">
+      Opponent is typing...
+    </span>
+
+  </div>
+)}
 
       </div>
     </div>

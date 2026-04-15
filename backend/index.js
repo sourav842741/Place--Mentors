@@ -423,6 +423,15 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
     socket.to(roomId).emit("opponent_code_change", { code, language });
   });
 
+  // 🔥 TYPING EVENTS ADD KAR
+socket.on("typing:start", ({ roomId, userId }) => {
+  socket.to(roomId).emit("opponent_typing", true);
+});
+
+socket.on("typing:stop", ({ roomId, userId }) => {
+  socket.to(roomId).emit("opponent_typing", false);
+});
+
   socket.on("battle:submit", async (data) => {
     const { roomId, code, language, playerId } = data;
     console.log("SUBMIT RECEIVED:", data);
