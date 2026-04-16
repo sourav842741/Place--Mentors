@@ -13,7 +13,7 @@
 
 Place Mentors is a production-grade full-stack placement preparation platform empowering 1000+ students with AI-driven mentorship, real-time multiplayer coding battles, comprehensive interview analytics, and gamified learning.
 
-**Live Demo:** [https://place-mentor-frontend.onrender.com](https://placementor.online)  
+**Live Demo:** [https://placementor.online](https://placementor.online)  
 **Backend API:** [https://souravkumar-7408410.postman.co/workspace/sourav-kumar's-Workspace~068384b5-c262-4314-8c57-2ad36050edc7/request/44025304-7b499f7b-07a5-4d6c-a473-4123632f6a7f?action=share&creator=44025304&active-environment=44025304-f8d68e60-3ea0-4a2e-8b06-36bc8e6aa3df](https://souravkumar-7408410.postman.co/workspace/sourav-kumar's-Workspace~068384b5-c262-4314-8c57-2ad36050edc7/request/44025304-7b499f7b-07a5-4d6c-a473-4123632f6a7f?action=share&creator=44025304&active-environment=44025304-f8d68e60-3ea0-4a2e-8b06-36bc8e6aa3df)
 
 ![Hero Banner](https://github.com/sourav842741/Place--Mentors/blob/42460d3bbd06a8f0eb275d99dd5ddda066087514/Screenshot%202026-04-15%20181718.png)
