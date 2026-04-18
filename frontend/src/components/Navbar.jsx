@@ -21,6 +21,7 @@ import {
   MessageSquare,
   Brain,
   ListTodo,
+  Bot
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -60,7 +61,10 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [showNotif, setShowNotif] = useState(false);
+const [showNotif, setShowNotif] = useState(false);
+
+  const [showThemePopup, setShowThemePopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({ icon: null, title: '', subtitle: '' });
 
   useEffect(() => {
     if (!isAuth || !user?._id) return;
@@ -98,11 +102,23 @@ export default function Navbar() {
     return () => window.removeEventListener("storage", handleThemeChange);
   }, []);
 
-  const toggleDark = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
-    setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
-  };
+const toggleDark = () => {
+  const wasDark = isDark;
+  const isNowDark = document.documentElement.classList.toggle("dark");
+  setIsDark(isNowDark);
+  localStorage.setItem("theme", isNowDark ? "dark" : "light");
+  
+  // Show premium popup
+  setPopupContent({
+    icon: isNowDark ? Moon : Sun,
+    title: isNowDark ? 'Dark Mode Enabled' : 'Light Mode Enabled',
+    subtitle: isNowDark ? 'Night vibes activated 🌙' : 'Sunshine is back ☀️'
+  });
+  setShowThemePopup(true);
+  
+  // Auto-hide after 2s
+  setTimeout(() => setShowThemePopup(false), 2000);
+};
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -148,8 +164,10 @@ export default function Navbar() {
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
     { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
+    { icon: Bot, label: "AI Coach", path: "/ai-coach" },
     { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
     { icon: BookOpen, label: "DSA Resources", path: "/resources" },
+
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
   ];
 
@@ -203,15 +221,47 @@ export default function Navbar() {
 
         {/* RIGHT */}
         <div className="flex items-center gap-3">
-          {/* 🌙 DARK MODE BUTTON */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDark}
-            className="transition"
-          >
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
-          </Button>
+          {/* 🌙 PREMIUM THEME TOGGLE */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleDark}
+              className="group relative p-2 hover:scale-110 transition-all duration-300 hover:rotate-12 shadow-md hover:shadow-lg bg-gradient-to-r hover:from-blue-500/20 hover:to-purple-500/20 dark:hover:from-slate-700 dark:hover:to-slate-600 rounded-2xl"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-20 rounded-xl blur-sm transition-all duration-300" />
+              {isDark ? (
+                <Sun className="h-5 w-5 text-amber-500 relative z-10 drop-shadow-lg" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-400 relative z-10 drop-shadow-lg" />
+              )}
+            </Button>
+            
+            {/* Premium Popup Card */}
+            {showThemePopup && (
+              <div className="absolute top-full right-0 mt-2 w-64 p-5 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-300 
+                bg-white/95 dark:bg-slate-900/95 
+                text-slate-900 dark:text-white 
+                border border-slate-200/50 dark:border-slate-700/50
+                backdrop-blur-xl
+                shadow-2xl dark:shadow-slate-900/30"
+              >
+                <div className="relative flex items-center gap-3">
+                  <div className={`p-2.5 bg-gradient-to-br rounded-xl shadow-lg flex-shrink-0 ${
+                    isDark 
+                      ? 'from-slate-600 to-slate-800 bg-slate-600/50 animate-pulse' 
+                      : 'from-amber-400 to-orange-400 bg-amber-400/50 animate-sparkle'
+                  }`}>
+                    {popupContent.icon ? <popupContent.icon className="h-6 w-6" /> : null}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">{popupContent.title}</h3>
+                    <p className="text-sm opacity-90 font-medium">{popupContent.subtitle}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           {/* DESKTOP-ONLY ELEMENTS */}
           <div className="hidden md:flex items-center gap-3">
             {/*  NOTIFICATION BELL */}

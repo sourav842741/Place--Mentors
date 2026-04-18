@@ -7,6 +7,7 @@ import GameBoard from "../components/Fruitbox/GameBoard";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 const FruitboxFlex = () => {
   const {
@@ -163,6 +164,7 @@ const FruitboxFlex = () => {
 
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

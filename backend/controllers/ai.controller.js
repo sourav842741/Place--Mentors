@@ -1,5 +1,7 @@
 import puppeteer from "puppeteer";
 import { askAi, extractJSON } from "../services/openRouter.service.js";
+import CoachChat from '../models/CoachChat.js';
+import { generateAI } from '../services/ai.service.js';
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -403,6 +405,301 @@ Hinglish OK. Energetic. Use \\n separator. No extra text.`
   }
 };
 
+
+
+export const coachChat = asyncHandler(async (req, res) => {
+  const { message, chatId } = req.body;
+  const userId = req.user._id;
+
+  if (!message || message.trim().length === 0) {
+    throw new ApiError(400, 'Message is required');
+  }
+
+  let chat;
+  if (chatId) {
+    chat = await CoachChat.findOne({ _id: chatId, userId, isDeleted: false });
+    if (!chat) throw new ApiError(404, 'Chat not found');
+  } else {
+    // New chat
+    chat = new CoachChat({ userId, title: message.substring(0, 50) + '...' });
+  }
+
+  // Add user message
+  chat.messages.push({ role: 'user', text: message.trim() });
+  
+  // Generate AI response
+  const context = chat.messages.slice(-10).map(m => `${m.role}: ${m.text}`).join('\n');
+const aiPrompt = `
+You are Place Mentor AI Coach, an expert mentor for placements, coding interviews, DSA, aptitude, resume, HR rounds, communication, and career growth.
+
+Your job is to first understand how much content the user wants, then respond accordingly.
+
+==================================================
+SMART RESPONSE LENGTH RULE (VERY IMPORTANT)
+==================================================
+
+Before answering, detect the user's intent:
+
+If user writes short queries like:
+- motivate me
+- stack explain
+- java oop
+- resume tips
+- binary search
+- tcs prep
+- hr answer
+
+Then give SHORT concise response.
+
+If user asks:
+- explain in detail
+- full roadmap
+- deep explanation
+- complete guide
+- step by step
+- with examples
+- detailed answer
+- teach me fully
+
+Then give LONG detailed response.
+
+If user does not specify:
+Give MEDIUM balanced answer.
+
+==================================================
+RESPONSE SIZE MODES
+==================================================
+
+SHORT MODE:
+3 to 6 lines max
+
+MEDIUM MODE:
+Headings + bullets + concise explanation
+
+LONG MODE:
+Detailed structured premium answer
+
+==================================================
+GLOBAL RESPONSE STYLE
+==================================================
+
+1. Never dump huge paragraph.
+2. Use markdown headings.
+3. Use bullets.
+4. Keep spacing clean.
+5. Sound smart and practical.
+6. Be direct and useful.
+7. If user asks simple thing, don't overexplain.
+
+==================================================
+FOR CODING / DSA
+==================================================
+
+SHORT:
+## Concept
+2-4 lines
+
+MEDIUM:
+## Problem
+## Approach
+## Code
+## Complexity
+
+LONG:
+## Problem Understanding
+## Best Approach
+## Code
+## Dry Run
+## Time Complexity
+## Space Complexity
+## Interview Tip
+
+==================================================
+FOR MOTIVATION
+==================================================
+
+SHORT:
+## Reality Check
+2 powerful lines
+
+MEDIUM:
+## Why You Must Continue
+## Today Action
+
+LONG:
+## Mindset
+## What To Do Daily
+## Long-Term Result
+## Final Push
+
+==================================================
+FOR ROADMAP
+==================================================
+
+SHORT:
+Top steps only
+
+MEDIUM:
+Weekly plan
+
+LONG:
+Complete 30-day roadmap
+
+==================================================
+FOR RESUME / HR
+==================================================
+
+SHORT:
+Quick tips
+
+MEDIUM:
+Main corrections
+
+LONG:
+Detailed review + examples
+
+==================================================
+IMPORTANT
+==================================================
+
+If user asks one line question,
+DO NOT give giant article.
+
+First match effort to question size.
+
+==================================================
+USER QUESTION
+==================================================
+
+${message}
+`;
+
+  let aiResponse;
+  try {
+    aiResponse = await generateAI(aiPrompt);
+  } catch (error) {
+    throw new ApiError(500, 'AI service unavailable');
+  }
+
+  // Add AI message
+  chat.messages.push({ role: 'ai', text: aiResponse });
+  await chat.save();
+
+  res.status(200).json(
+    new ApiResponse(200, {
+      success: true,
+      data: {
+        chatId: chat._id,
+        messages: chat.messages.slice(-20), // Last 20 for UI
+        title: chat.title
+      }
+    })
+  );
+});
+
+export const getCoachHistory = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  
+  const history = await CoachChat.find({ 
+    userId, 
+    isDeleted: false,
+    messages: { $ne: [] }
+  })
+  .sort({ updatedAt: -1 })
+  .limit(20)
+  .select('title messages createdAt updatedAt _id')
+  .lean();
+
+  res.status(200).json(
+    new ApiResponse(200, {
+      success: true,
+      data: history.map(chat => ({
+        ...chat,
+        preview: chat.messages[chat.messages.length - 1]?.text?.substring(0, 100) + '...',
+        messageCount: chat.messages.length
+      }))
+    })
+  );
+});
+
+export const clearChat = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+  const userId = req.user._id;
+
+  const chat = await CoachChat.findOne({ _id: chatId, userId });
+  if (!chat) throw new ApiError(404, 'Chat not found');
+
+  chat.isDeleted = true;
+  await chat.save();
+
+  res.status(200).json(
+    new ApiResponse(200, { success: true, message: 'Chat cleared' })
+  );
+});
+
+export const getQuickResponse = asyncHandler(async (req, res) => {
+  const { type } = req.params;
+  const userId = req.user._id;
+
+  const quickPrompts = {
+    'dsa': 'Give me a DSA doubt solving example with code for LeetCode medium problem.',
+    'resume': 'Review my resume structure. What should I improve for MAANG companies?',
+    'hr': 'Mock HR interview questions for SDE-2 role. Give sample answers.',
+    'aptitude': '5 aptitude questions with solutions for placement test.',
+    'roadmap': '30 day DSA + System Design roadmap for off-campus placements.',
+    'motivation': 'Motivate me for coding consistency and placement preparation.',
+    'debug': 'How to debug code efficiently? Common mistakes and tools.'
+  };
+
+  const prompt = quickPrompts[type] || quickPrompts['motivation'];
+
+  let response;
+  try {
+    response = await generateAI(prompt);
+  } catch (error) {
+    throw new ApiError(500, 'AI service unavailable');
+  }
+
+  // Create new chat for quick response
+  const chat = new CoachChat({ 
+    userId,
+    title: `Quick: ${type.toUpperCase()}`,
+    messages: [
+      { role: 'user', text: prompt },
+      { role: 'ai', text: response }
+    ]
+  });
+  await chat.save();
+
+  res.status(200).json(
+    new ApiResponse(200, {
+      success: true,
+      data: {
+        chatId: chat._id,
+        messages: chat.messages,
+        title: chat.title
+      }
+    })
+  );
+});
+
+export const getSingleCoachChat = asyncHandler(async (req,res)=>{
+ const { chatId } = req.params;
+ const userId = req.user._id;
+
+ const chat = await CoachChat.findOne({
+   _id: chatId,
+   userId,
+   isDeleted:false
+ });
+
+ if(!chat) throw new ApiError(404,"Chat not found");
+
+ res.status(200).json(
+   new ApiResponse(200, chat)
+ );
+});
+
 export const generateResumePDF = async (req, res) => {
   try {
     const { name, email, phone, linkedin, github, summary, skills, experience, projects, education, achievements, template = "classic" } = req.body;
@@ -421,58 +718,7 @@ export const generateResumePDF = async (req, res) => {
     let html;
     if (template === "modern") {
       html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body { margin: 0; padding: 0; font-family: Arial, sans-serif; font-size: 11px; line-height: 1.5; color: #000; }
-    .container { display: flex; height: 1123px; width: 794px; padding: 30px; box-sizing: border-box; background: white; }
-    .sidebar { width: 30%; background: #f8f9fa; padding: 30px 25px; border-radius: 8px 0 0 8px; }
-    .sidebar h1 { font-size: 24px; font-weight: bold; margin-bottom: 12px; }
-    .sidebar .contact-item { font-size: 12px; margin-bottom: 8px; display: flex; align-items: center; }
-    .sidebar .contact-icon { margin-right: 8px; font-size: 14px; }
-    .sidebar .skills-title { font-weight: bold; font-size: 13px; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 6px; display: flex; align-items: center; }
-    .sidebar .skills { font-size: 11px; line-height: 1.5; }
-    .main { width: 70%; padding-left: 30px; }
-    .section { margin-bottom: 25px; }
-    .section-title { font-weight: bold; font-size: 14px; border-bottom: 2px solid #333; padding-bottom: 5px; display: flex; align-items: center; margin-bottom: 10px; }
-    .section-title-icon { margin-right: 8px; font-size: 16px; }
-    .section-content { font-size: 12px; }
-    .section-content div { margin-bottom: 4px; line-height: 1.4; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="sidebar">
-      <h1>${name || 'Your Name'}</h1>
-      <div class="contact">
-        ${email ? `<div class="contact-item"><span class="contact-icon">${getIcon('email')}</span>${email}</div>` : ''}
-        ${phone ? `<div class="contact-item"><span class="contact-icon">${getIcon('phone')}</span>${phone}</div>` : ''}
-        ${linkedin ? `<div class="contact-item"><span class="contact-icon">${getIcon('linkedin')}</span>${linkedin}</div>` : ''}
-        ${github ? `<div class="contact-item"><span class="contact-icon">${getIcon('github')}</span>${github}</div>` : ''}
-      </div>
-      ${skillsHTML ? `<div class="skills-title"><span class="contact-icon">${getIcon('skills')}</span>Skills</div><div class="skills">${skillsHTML}</div>` : ''}
-    </div>
-    <div class="main">
-      ${summaryHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('summary')}</span>Summary</span><div class="section-content">${summaryHTML}</div></div>` : ''}
-      ${experienceHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('experience')}</span>Experience</span><div class="section-content">${experienceHTML}</div></div>` : ''}
-      ${projectsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('projects')}</span>Projects</span><div class="section-content">${projectsHTML}</div></div>` : ''}
-      ${educationHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('education')}</span>Education</span><div class="section-content">${educationHTML}</div></div>` : ''}
-      ${achievementsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('achievements')}</span>Achievements</span><div class="section-content">${achievementsHTML}</div></div>` : ''}
-    </div>
-  </div>
-</body>
-</html>`;
-    } else {
-      html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body { margin: 0; padding: 35px; font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; color: #000; background: white; box-sizing: border-box; }
-    .header { text-align: center; margin-bottom: 30px; }
-    .header h1 { font-size: 26px; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; }
-    .header .contact { font-size: 12px; color: #666; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 12px; }
+
     .contact-item { display: flex; align-items: center; }
     .contact-icon { margin-right: 6px; font-size: 14px; }
     .section { margin-bottom: 25px; }

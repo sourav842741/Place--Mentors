@@ -69,6 +69,8 @@ import SplashScreen from "./components/SplashScreen";
 import TaskBoard from "./pages/TaskBoard";
 import ShareTask from "./pages/ShareTask";
 import FruitboxFlex from "./pages/FruitboxFlex";
+import AICoach from "./pages/AICoach";
+
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -247,7 +249,9 @@ function App() {
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
           <Route path="/dashboard/tasks" element={<TaskBoard />} />
           <Route path="/dashboard/fruitbox-flex" element={<FruitboxFlex />} />
+          <Route path="/ai-coach" element={<AICoach />} />
           <Route path="/resources" element={<Resources />} />
+
           <Route path="/users" element={<UsersPage />} />
           <Route path="/battle/:roomId" element={<BattlePage />} />
           <Route path="/share/task/:shareId" element={<ShareTask />} />

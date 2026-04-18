@@ -4,6 +4,11 @@ import {
   generateAIContent,
   generateYoutubeSummary,
   getMotivation,
+  coachChat,
+  clearChat,
+  getCoachHistory,
+  getQuickResponse,
+  getSingleCoachChat
 } from "../controllers/ai.controller.js";
 import { getYoutubeVideo } from "../services/youtube.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -17,6 +22,13 @@ router.post("/generate-resume-pdf", isAuth, generateResumePDF);
 router.post("/generate-content", isAuth, generateAIContent);
 router.post("/youtube-summary", isAuth, generateYoutubeSummary);
 router.get("/motivation", isAuth, getMotivation);
+
+router.post("/coach/chat", isAuth, coachChat);
+router.get("/coach/history", isAuth, getCoachHistory);
+router.delete("/coach/:chatId", isAuth, clearChat);
+router.get("/coach/quick/:type", isAuth, getQuickResponse);
+router.get("/coach/:chatId", isAuth, getSingleCoachChat);
+
 
 // New YouTube search endpoint - no auth required
 router.get("/youtube", asyncHandler(async (req, res) => {
