@@ -18,3 +18,13 @@ export const completeCpotd = () => api.post('/api/cpotd/complete');
 // Streak APIs
 export const getStreak = () => api.get('/api/dashboard/streak');
 
+// Email APIs
+export const getEmailStats = () => api.get('/api/admin/email/stats');
+export const getEmailLogs = (params) => {
+  const query = new URLSearchParams(params).toString();
+  return api.get(`/api/admin/email/logs?${query}`);
+};
+export const sendSingleEmail = (data) => api.post('/api/admin/email/send-single', data);
+export const sendBulkEmail = (data) => api.post('/api/admin/email/send-bulk', data);
+export const testTemplate = (data) => api.post('/api/admin/email/test-template', data);
+

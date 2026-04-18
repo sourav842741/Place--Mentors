@@ -8,11 +8,13 @@ import {
   BarChart3,
   Settings,
   Plus,
+  Mail
 } from "lucide-react";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
   { icon: Users, label: "Users", path: "/admin/users" },
+  { icon: Mail, label: "Email Center", path: "/admin/email-center" },
   
   { icon: Plus, label: "Create POTD", path: "/admin/create-potd" },
   { icon: Plus, label: "Create CPOTD", path: "/admin/create-cpotd" },

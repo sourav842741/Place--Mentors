@@ -13,6 +13,7 @@ import streakSlice from "./streakSlice";
 import adminSlice from "./adminSlice";
 import adminUserSlice from "./adminUserSlice";
 import adminCreateSlice from "./adminCreateSlice";
+import emailAdminSlice from "./slices/emailAdminSlice";
 import battleSlice from "./battleSlice";
 import tasksSlice from "./tasksSlice";
 import aiCoachSlice from "./aiCoachSlice";
@@ -36,6 +37,7 @@ const store = configureStore({
     admin: adminSlice,
     adminUsers: adminUserSlice,
     adminCreate: adminCreateSlice,
+    emailAdmin: emailAdminSlice,
     battle: battleSlice,
     tasks: tasksSlice,
     challenges: userSlice, // extend userSlice with challenges

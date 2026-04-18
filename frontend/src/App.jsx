@@ -70,6 +70,7 @@ import TaskBoard from "./pages/TaskBoard";
 import ShareTask from "./pages/ShareTask";
 import FruitboxFlex from "./pages/FruitboxFlex";
 import AICoach from "./pages/AICoach";
+import AdminEmailCenter from "./pages/admin/AdminEmailCenter";
 
 
 function App() {
@@ -217,6 +218,7 @@ function App() {
             <Route path="/admin/users" element={<Users />} />
             <Route path="/admin/create-potd" element={<AdminCreatePotd />} />
             <Route path="/admin/create-cpotd" element={<AdminCreateCpotd />} />
+            <Route path="/admin/email-center" element={<AdminEmailCenter />} />
           </Route>
         </Route>
 

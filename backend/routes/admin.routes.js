@@ -13,6 +13,15 @@ import isAdmin from "../middlewares/admin.middleware.js";
 import { generatePotd } from "../controllers/potd.controller.js";
 import { generateCpotd } from "../controllers/cpotd.controller.js";
 import { getAdminDashboardAnalytics } from "../controllers/adminAnalytics.controller.js";
+import {
+  getEmailStats,
+  sendSingleEmail,
+  sendBulkEmails,
+  sendToSegment,
+  testTemplate,
+  getEmailLogs
+} from "../controllers/adminEmail.controller.js";
+
 
 const router = express.Router();
 
@@ -159,6 +168,17 @@ router.post(
 // ======================================================
 // 🔥 ANALYTICS
 // ======================================================
+
+// ======================================================
+// 🔥 EMAIL SYSTEM
+// ======================================================
+
+router.get("/email/stats", isAuth, isAdmin, getEmailStats);
+router.get("/email/logs", isAuth, isAdmin, getEmailLogs);
+router.post("/email/send-single", isAuth, isAdmin, sendSingleEmail);
+router.post("/email/send-bulk", isAuth, isAdmin, sendBulkEmails);
+router.post("/email/send-segment", isAuth, isAdmin, sendToSegment);
+router.post("/email/test-template", isAuth, isAdmin, testTemplate);
 
 router.get(
   "/analytics",

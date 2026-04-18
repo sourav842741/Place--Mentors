@@ -4,6 +4,7 @@ import { fetchAdzunaJobs, saveJobsToDb } from "../services/adzuna.service.js";
 import { getOrCreateTodayPotd } from "../services/potd.service.js";
 import { getOrCreateTodayCpotd } from "../services/cpotd.service.js";
 import { fetchAndProcessNews } from "../services/news.service.js";
+import { startEmailCronJobs } from "../services/email/scheduler.service.js";
 
 const KEYWORDS = ["developer", "engineer", "software"];
 const LOCATIONS = ["India", "Remote"];
@@ -146,7 +147,10 @@ export const startCronJobs = () => {
     await runFullCronCycle();
   });
 
-  console.log(" [CRON] Self-healing started (10min cycles)");
+  // Start email cron jobs
+  startEmailCronJobs();
+  
+  console.log(" [CRON] Self-healing + Email started (10min cycles)");
 };
 
 export default { startCronJobs };
