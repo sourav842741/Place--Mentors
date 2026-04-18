@@ -68,7 +68,7 @@ export default function SplashScreen() {
         </h1>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes zoomIn {
           0% { transform: scale(0.6); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }

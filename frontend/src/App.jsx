@@ -68,6 +68,7 @@ import NotificationPopup from "./components/NotificationPopup.jsx";
 import SplashScreen from "./components/SplashScreen";
 import TaskBoard from "./pages/TaskBoard";
 import ShareTask from "./pages/ShareTask";
+import FruitboxFlex from "./pages/FruitboxFlex";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -245,6 +246,7 @@ function App() {
           <Route path="/coding-potd" element={<CodingPotdPage />} />
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
           <Route path="/dashboard/tasks" element={<TaskBoard />} />
+          <Route path="/dashboard/fruitbox-flex" element={<FruitboxFlex />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/battle/:roomId" element={<BattlePage />} />

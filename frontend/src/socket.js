@@ -14,7 +14,7 @@ import {
   updateChallenges,
 } from "./redux/userSlice";
 
-//SOCKET INIT
+// //SOCKET INIT
 export const socket = io("https://place-mentor-x5d5.onrender.com", {
   withCredentials: true,
   autoConnect: true,

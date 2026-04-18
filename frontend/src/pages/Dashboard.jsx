@@ -73,14 +73,17 @@ export default function Dashboard() {
   const totalXP = user?.xp || 0;
 
   //  XP required for current level
-  const xp = user?.xp || 0;
-  const level = user?.level || 1;
+const level = user?.level || 1;
 
-  const prevXP = ((level - 1) * level * 100) / 2;
-  const currentXP = xp - prevXP;
-  const maxXP = level * 100;
+const currentXP = user?.currentLevelXP || 0;
 
-  const percent = Math.min(Math.max((currentXP / maxXP) * 100, 0), 100);
+// Level based required XP
+const maxXP = level * 100;
+
+const percent = Math.min(
+  Math.max((currentXP / maxXP) * 100, 0),
+  100
+);
 
   const companies = [
     {

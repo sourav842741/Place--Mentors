@@ -29,6 +29,7 @@ import contactRouter from "./routes/contact.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import friendRouter from "./routes/friend.routes.js";
 import userRouter from "./routes/user.routes.js";
+import fruitboxRouter from "./routes/fruitbox.routes.js";
 import User from "./models/user.model.js";
 import Battle from "./models/Battle.js";
 import CodingPotd from "./models/CodingPotd.js";
@@ -97,6 +98,7 @@ app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRoutes);
 app.use("/api/friends", friendRouter);
 app.use("/api/users", userRouter);
+app.use("/api/fruitbox", fruitboxRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;
@@ -154,43 +156,7 @@ io.on("connection", (socket) => {
     socket.join(`doubt-${doubtId}`);
   });
 
-  //  CHALLENGE SEND HANDLER (MISSING PIECE)
-  // socket.on("challenge:send", async ({ challengerId, challengedId }) => {
-  //   try {
-  //     //  VALIDATION
-  //     if (
-  //       !mongoose.Types.ObjectId.isValid(challengerId) ||
-  //       !mongoose.Types.ObjectId.isValid(challengedId)
-  //     ) {
-  //       return;
-  //     }
-
-  //     //  FETCH BOTH USERS
-  //     const challenger = await User.findById(challengerId).select(
-  //       "fullName avatar xp level streakCount",
-  //     );
-
-  //     const challengedUser = await User.findById(challengedId).select(
-  //       "socketId challenges",
-  //     );
-
-  //     if (!challenger || !challengedUser) return;
-
-  //     //  SAVE IN DB (RECEIVED + SENT BOTH)
-  //     challengedUser.challenges.received.push(challengerId);
-
-  //     await challengedUser.save();
-
-  //     await User.findByIdAndUpdate(challengerId, {
-  //       $push: { "challenges.sent": challengedId },
-  //     });
-
-  //     //  BEST METHOD (USER ROOM USE KARO)
-  //     io.to(challengedId.toString()).emit("challenge_received", challenger);
-  //   } catch (err) {
-  //     console.error("Challenge send error:", err);
-  //   }
-  // });
+  
 
   // ================= BATTLE EVENTS =================
   socket.on("challenge:accept", async (data) => {
