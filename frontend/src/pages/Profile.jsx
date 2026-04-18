@@ -130,8 +130,7 @@ export default function Profile() {
               <div className="w-full h-full bg-linear-to-r from-blue-500 to-purple-600" />
             )}
 
-            <label className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition bg-black/60 text-white px-3 py-1 rounded-lg cursor-pointer text-sm">
-              Change Cover
+            <label className="absolute top-4 right-4 transition bg-black/60 text-white px-3 py-1 rounded-lg cursor-pointer text-sm">                     Change Cover
               <input
                 type="file"
                 hidden

@@ -1,14 +1,13 @@
 import Potd from "../models/Potd.js";
 import { askAi, extractJSON } from "./openRouter.service.js";
 
-const getTodayDate = () => new Date().toISOString().split("T")[0];
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- *  FULL STRUCTURED FALLBACK (15 QUESTIONS)
+ * FULL STRUCTURED FALLBACK (15 QUESTIONS)
  * 5 aptitude + 5 reasoning + 5 verbal
  */
 const FULL_FALLBACK_QUESTIONS = [
-  // ===== APTITUDE =====
   {
     question: "If 12 men can complete a work in 8 days, how many days will 6 men take?",
     options: ["16", "12", "10", "8"],
@@ -50,7 +49,6 @@ const FULL_FALLBACK_QUESTIONS = [
     difficulty: "hard",
   },
 
-  // ===== REASONING =====
   {
     question: "Find next: 2, 4, 8, 16, ?",
     options: ["18", "32", "24", "30"],
@@ -92,7 +90,6 @@ const FULL_FALLBACK_QUESTIONS = [
     difficulty: "hard",
   },
 
-  // ===== VERBAL =====
   {
     question: "Synonym of 'Happy'",
     options: ["Sad", "Joyful", "Angry", "Tired"],
@@ -144,32 +141,47 @@ Rules:
 - 5 aptitude, 5 reasoning, 5 verbal
 - 5 easy, 5 medium, 5 hard
 
-Return ONLY JSON.
+Each question must contain:
+- question
+- options (4)
+- answer
+- explanation
+- category
+- difficulty
+
+Return ONLY JSON:
+{
+  "questions": [...]
+}
 `;
 
-/**
- * MAIN FUNCTION
- */
 export const getOrCreateTodayPotd = async () => {
-  const today = getTodayDate();
-  console.log(` [POTD-SVC] Checking ${today}...`);
+  console.log(" [POTD-SVC] Weekly check...");
 
-  let potd = await Potd.findOne({ date: today });
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - WEEK_MS);
+
+  //  Reuse last POTD within 7 days
+  let potd = await Potd.findOne({
+    createdAt: { $gte: sevenDaysAgo },
+  }).sort({ createdAt: -1 });
+
   if (potd?.isManual) {
-    console.log(` [POTD-SVC] Manual override found for ${today}`);
-    return potd;
-  }
-  if (potd) {
-    console.log(` [POTD-SVC] Found existing auto for ${today}`);
+    console.log(" [POTD-SVC] Manual weekly POTD found");
     return potd;
   }
 
-  console.log(` [POTD-SVC] Generating for ${today}...`);
+  if (potd) {
+    console.log(" [POTD-SVC] Existing weekly POTD reused");
+    return potd;
+  }
+
+  console.log(" [POTD-SVC] Generating new weekly POTD...");
 
   try {
     let questions = [];
 
-    //  AI TRY (3 times)
+    //  AI try 3 times
     for (let i = 0; i < 3; i++) {
       const aiResponse = await askAi([
         { role: "user", content: POTD_PROMPT },
@@ -182,55 +194,59 @@ export const getOrCreateTodayPotd = async () => {
         break;
       }
 
-      console.log(`Retry ${i + 1}`);
+      console.log(`[POTD-SVC] Retry ${i + 1}`);
     }
 
-    //  PARTIAL AI FILL
+    //  Partial AI fill
     if (questions.length < 15 && questions.length > 0) {
       try {
         const extraRes = await askAi([
           {
             role: "user",
-            content: `Generate ${15 - questions.length} more MCQs JSON only.`,
+            content: `Generate ${
+              15 - questions.length
+            } more MCQs in same JSON format only.`,
           },
         ]);
 
         const extraData = extractJSON(extraRes);
-        questions = [...questions, ...(extraData?.questions || [])];
-      } catch {}
+
+        questions = [
+          ...questions,
+          ...(extraData?.questions || []),
+        ];
+      } catch (error) {
+        console.log(
+          " [POTD-SVC] Extra AI fill failed"
+        );
+      }
     }
 
-    //  FINAL HARD FALLBACK
+    //  Final fallback
     if (questions.length < 15) {
-      console.log("Using full fallback set");
+      console.log(" [POTD-SVC] Using fallback set");
       questions = FULL_FALLBACK_QUESTIONS;
     }
 
-    //  FINAL SAFETY
     questions = questions.slice(0, 15);
 
-    //  SAVE
-    potd = await Potd.findOneAndUpdate(
-      { date: today },
-      {
-        date: today,
-        questions,
-        generatedAt: new Date(),
-      },
-      { upsert: true, returnDocument: "after" }
-    );
+    //  Create new weekly record
+    potd = await Potd.create({
+      date: now.toISOString().split("T")[0],
+      questions,
+      generatedAt: now,
+    });
 
-    console.log(` [POTD-SVC] Saved ${potd._id}`);
+    console.log(` [POTD-SVC] Saved weekly ${potd._id}`);
     return potd;
   } catch (error) {
-    console.error(error.message);
+    console.error(" [POTD-SVC] Failed:", error.message);
     throw error;
   }
 };
 
-/**
- *  Manual trigger
- */
+//  Manual trigger = force fresh weekly POTD
 export const generateTodayPotd = async () => {
+  await Potd.deleteMany({});
   return await getOrCreateTodayPotd();
 };

@@ -199,6 +199,11 @@ lastFriendRequestTime: {
   type: Date,
   default: null
 },
+
+lastChallengeTime: {
+  type: Date,
+  default: null
+},
   },
 
   { timestamps: true },

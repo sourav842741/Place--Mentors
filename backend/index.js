@@ -34,6 +34,7 @@ import Battle from "./models/Battle.js";
 import CodingPotd from "./models/CodingPotd.js";
 import mongoose from "mongoose";
 import { executeTests } from "./utils/codeExecutor.js";
+import taskRouter from "./routes/task.routes.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -90,6 +91,7 @@ app.use("/api/potd", potdRouter);
 
 app.use("/api/cpotd", cpotdRouter);
 
+app.use("/api/tasks", taskRouter);
 app.use("/api/news", newsRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRoutes);
@@ -116,19 +118,18 @@ io.on("connection", (socket) => {
   });
 
   //  JOIN ROOM (user room + doubt room prefix)
- socket.on("join", async (userId) => {
-  const id = userId.toString();
+  socket.on("join", async (userId) => {
+    const id = userId.toString();
 
+    socket.join(id);
+    socket.join(`doubt-${id}`);
 
-  socket.join(id);
-  socket.join(`doubt-${id}`);
+    connectedSockets.set(id, socket.id);
 
-  connectedSockets.set(id, socket.id);
-
-  await User.findByIdAndUpdate(id, {
-    socketId: socket.id,
-    isOnline: true,
-  });
+    await User.findByIdAndUpdate(id, {
+      socketId: socket.id,
+      isOnline: true,
+    });
 
     io.emit("online_users", onlineUsers);
   });
@@ -154,43 +155,42 @@ io.on("connection", (socket) => {
   });
 
   //  CHALLENGE SEND HANDLER (MISSING PIECE)
-socket.on("challenge:send", async ({ challengerId, challengedId }) => {
-  try {
-    //  VALIDATION
-    if (
-      !mongoose.Types.ObjectId.isValid(challengerId) ||
-      !mongoose.Types.ObjectId.isValid(challengedId)
-    ) {
-      return;
-    }
+  // socket.on("challenge:send", async ({ challengerId, challengedId }) => {
+  //   try {
+  //     //  VALIDATION
+  //     if (
+  //       !mongoose.Types.ObjectId.isValid(challengerId) ||
+  //       !mongoose.Types.ObjectId.isValid(challengedId)
+  //     ) {
+  //       return;
+  //     }
 
-    //  FETCH BOTH USERS
-    const challenger = await User.findById(challengerId)
-      .select("fullName avatar xp level streakCount");
+  //     //  FETCH BOTH USERS
+  //     const challenger = await User.findById(challengerId).select(
+  //       "fullName avatar xp level streakCount",
+  //     );
 
-    const challengedUser = await User.findById(challengedId)
-      .select("socketId challenges");
+  //     const challengedUser = await User.findById(challengedId).select(
+  //       "socketId challenges",
+  //     );
 
-    if (!challenger || !challengedUser) return;
+  //     if (!challenger || !challengedUser) return;
 
-    //  SAVE IN DB (RECEIVED + SENT BOTH)
-    challengedUser.challenges.received.push(challengerId);
+  //     //  SAVE IN DB (RECEIVED + SENT BOTH)
+  //     challengedUser.challenges.received.push(challengerId);
 
-    await challengedUser.save();
+  //     await challengedUser.save();
 
-    await User.findByIdAndUpdate(challengerId, {
-      $push: { "challenges.sent": challengedId },
-    });
+  //     await User.findByIdAndUpdate(challengerId, {
+  //       $push: { "challenges.sent": challengedId },
+  //     });
 
-   //  BEST METHOD (USER ROOM USE KARO)
-io.to(challengedId.toString()).emit("challenge_received", challenger);
-
-
-
-  } catch (err) {
-    console.error("Challenge send error:", err);
-  }
-});
+  //     //  BEST METHOD (USER ROOM USE KARO)
+  //     io.to(challengedId.toString()).emit("challenge_received", challenger);
+  //   } catch (err) {
+  //     console.error("Challenge send error:", err);
+  //   }
+  // });
 
   // ================= BATTLE EVENTS =================
   socket.on("challenge:accept", async (data) => {
@@ -208,7 +208,7 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
         "fullName avatar xp level streakCount challenges friends",
       );
       const challengerUser = await User.findById(challengerId).select(
-        "fullName avatar xp level streakCount challenges",
+        "fullName avatar xp level streakCount challenges lastChallengeTime",
       );
 
       if (!challengedUser || !challengerUser) {
@@ -234,6 +234,9 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
       challengerUser.challenges.sent = challengerUser.challenges.sent.filter(
         (r) => r.toString() !== challengedId,
       );
+
+      challengerUser.lastChallengeTime = null;
+
       await challengedUser.save();
       await challengerUser.save();
 
@@ -269,12 +272,13 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
         expectedOutput: tc.expectedOutput,
       }));
 
-      const problem = {
-        title: randomProblem.title,
-        description: randomProblem.description,
-        testCases,
-        difficulty: randomProblem.difficulty,
-      };
+     const problem = {
+  title: randomProblem.title,
+  description: randomProblem.description,
+  testCases,
+  difficulty:
+    randomProblem.difficulty?.toLowerCase() || "easy",
+};
 
       // Create battle
       const battle = new Battle({
@@ -284,7 +288,6 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
       });
       await battle.save();
 
-      
       const TIME_LIMIT = 900000; // 15 min
       const timerId = setTimeout(async () => {
         if (battle.status === "running") {
@@ -350,7 +353,6 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
   socket.on("challenge:reject", async (data) => {
     const { challengerId, challengedId } = data;
     try {
-
       if (
         !mongoose.Types.ObjectId.isValid(challengerId) ||
         !mongoose.Types.ObjectId.isValid(challengedId)
@@ -359,8 +361,12 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
         return;
       }
 
-      const challengedUser = await User.findById(challengedId).select("challenges socketId");
-      const challengerUser = await User.findById(challengerId).select("challenges socketId");
+      const challengedUser = await User.findById(challengedId).select(
+        "challenges socketId",
+      );
+      const challengerUser = await User.findById(challengerId).select(
+        "challenges socketId lastChallengeTime",
+      );
 
       if (!challengedUser || !challengerUser) {
         console.log(" User not found");
@@ -368,18 +374,25 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
       }
 
       // Validate pending challenge exists
-      if (!challengedUser.challenges.received.some(r => r.toString() === challengerId)) {
+      if (
+        !challengedUser.challenges.received.some(
+          (r) => r.toString() === challengerId,
+        )
+      ) {
         console.log(" No pending challenge found");
         return;
       }
 
       // Remove from BOTH users (mirror accept logic)
-      challengedUser.challenges.received = challengedUser.challenges.received.filter(
-        r => r.toString() !== challengerId
-      );
+      challengedUser.challenges.received =
+        challengedUser.challenges.received.filter(
+          (r) => r.toString() !== challengerId,
+        );
       challengerUser.challenges.sent = challengerUser.challenges.sent.filter(
-        r => r.toString() !== challengedId
+        (r) => r.toString() !== challengedId,
       );
+
+      challengerUser.lastChallengeTime = null;
 
       await challengedUser.save();
       await challengerUser.save();
@@ -387,8 +400,10 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
       console.log(" Challenge removed from both users");
 
       // Get socket IDs and notify both
-      const challengerSocketId = connectedSockets.get(challengerId) || challengerUser.socketId;
-      const challengedSocketId = connectedSockets.get(challengedId) || challengedUser.socketId;
+      const challengerSocketId =
+        connectedSockets.get(challengerId) || challengerUser.socketId;
+      const challengedSocketId =
+        connectedSockets.get(challengedId) || challengedUser.socketId;
 
       const rejectData = { challengerId, challengedId };
 
@@ -398,7 +413,6 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
       if (challengedSocketId && io.sockets.sockets.has(challengedSocketId)) {
         io.to(challengedSocketId).emit("challenge:rejected", rejectData);
       }
-
     } catch (error) {
       console.error(" Reject error:", error);
     }
@@ -411,25 +425,25 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
     // Re-emit battle state for refresh
     try {
       const battle = await Battle.findOne({ roomId });
-     if (battle) {
-  const TOTAL_TIME = 900000; // 15 min in ms
+      if (battle) {
+        const TOTAL_TIME = 900000; // 15 min in ms
 
-  const now = Date.now();
+        const now = Date.now();
 
-  const startedAt = new Date(battle.createdAt).getTime();
+        const startedAt = new Date(battle.createdAt).getTime();
 
-  const elapsed = now - startedAt;
+        const elapsed = now - startedAt;
 
-  const remainingTime = Math.max(
-    0,
-    Math.floor((TOTAL_TIME - elapsed) / 1000)
-  );
+        const remainingTime = Math.max(
+          0,
+          Math.floor((TOTAL_TIME - elapsed) / 1000),
+        );
 
-  io.to(roomId).emit("battle:data", {
-    ...battle.toObject(),
-    remainingTime, 
-  });
-}
+        io.to(roomId).emit("battle:data", {
+          ...battle.toObject(),
+          remainingTime,
+        });
+      }
     } catch (error) {
       console.error("Battle rejoin error:", error);
     }
@@ -440,13 +454,13 @@ io.to(challengedId.toString()).emit("challenge_received", challenger);
   });
 
   //  TYPING EVENTS ADD KAR
-socket.on("typing:start", ({ roomId, userId }) => {
-  socket.to(roomId).emit("opponent_typing", true);
-});
+  socket.on("typing:start", ({ roomId, userId }) => {
+    socket.to(roomId).emit("opponent_typing", true);
+  });
 
-socket.on("typing:stop", ({ roomId, userId }) => {
-  socket.to(roomId).emit("opponent_typing", false);
-});
+  socket.on("typing:stop", ({ roomId, userId }) => {
+    socket.to(roomId).emit("opponent_typing", false);
+  });
 
   socket.on("battle:submit", async (data) => {
     const { roomId, code, language, playerId } = data;
@@ -465,11 +479,11 @@ socket.on("typing:stop", ({ roomId, userId }) => {
 
       console.log(" Found testCases:", testCases.length);
 
-     const { results } = await executeTests({
-  code,
-  language,
-  testCases
-});
+      const { results } = await executeTests({
+        code,
+        language,
+        testCases,
+      });
 
       const allPassed = results.every((r) => r.passed);
 

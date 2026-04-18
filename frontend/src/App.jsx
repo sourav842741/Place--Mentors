@@ -66,6 +66,8 @@ import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
 import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import NotificationPopup from "./components/NotificationPopup.jsx";
 import SplashScreen from "./components/SplashScreen";
+import TaskBoard from "./pages/TaskBoard";
+import ShareTask from "./pages/ShareTask";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -242,9 +244,11 @@ function App() {
           <Route path="/potd" element={<PotdPage />} />
           <Route path="/coding-potd" element={<CodingPotdPage />} />
           <Route path="/youtube-summary" element={<YoutubeSummaryPage />} />
+          <Route path="/dashboard/tasks" element={<TaskBoard />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/battle/:roomId" element={<BattlePage />} />
+          <Route path="/share/task/:shareId" element={<ShareTask />} />
         </Route>
 
         {/* 404 */}

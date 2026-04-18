@@ -19,6 +19,7 @@ import {
   Bell,
   MessageSquare,
   Brain,
+  ListTodo,
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -134,6 +135,7 @@ export default function Navbar() {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+    { icon: ListTodo, label: "TaskBoard", path: "/dashboard/tasks" },
     { icon: Building2, label: "All Companies", path: "/companies" },
     { icon: BookOpen, label: "Interview Practice", path: "/quiz" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
@@ -573,3 +575,4 @@ p-2 rounded"
     </>
   );
 }
+

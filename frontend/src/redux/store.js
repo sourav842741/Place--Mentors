@@ -14,6 +14,7 @@ import adminSlice from "./adminSlice";
 import adminUserSlice from "./adminUserSlice";
 import adminCreateSlice from "./adminCreateSlice";
 import battleSlice from "./battleSlice";
+import tasksSlice from "./tasksSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -34,8 +35,10 @@ const store = configureStore({
     adminUsers: adminUserSlice,
     adminCreate: adminCreateSlice,
     battle: battleSlice,
+    tasks: tasksSlice,
     challenges: userSlice, // extend userSlice with challenges
   },
 });
 
 export default store;
+

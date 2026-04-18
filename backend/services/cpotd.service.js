@@ -1,10 +1,10 @@
 import CodingPotd from "../models/CodingPotd.js";
 import { askAi, extractJSON } from "./openRouter.service.js";
 
-const getTodayDate = () => new Date().toISOString().split("T")[0];
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * 🔥 HARD FALLBACK CODING QUESTIONS (GUARANTEED)
+ *  HARD FALLBACK CODING QUESTIONS (GUARANTEED)
  */
 const CODING_FALLBACK = [
   {
@@ -13,14 +13,22 @@ const CODING_FALLBACK = [
       "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
     inputFormat: "nums = [int array], target = int",
     outputFormat: "Return indices [i, j]",
-    constraints:
-      "2 ≤ nums.length ≤ 10^4, -10^9 ≤ nums[i] ≤ 10^9",
+    constraints: "2 ≤ nums.length ≤ 10^4, -10^9 ≤ nums[i] ≤ 10^9",
     sampleTestCases: [
-      { input: "nums = [2,7,11,15], target = 9", expectedOutput: "[0,1]" },
+      {
+        input: "nums = [2,7,11,15], target = 9",
+        expectedOutput: "[0,1]",
+      },
     ],
     hiddenTestCases: [
-      { input: "nums = [3,2,4], target = 6", expectedOutput: "[1,2]" },
-      { input: "nums = [3,3], target = 6", expectedOutput: "[0,1]" },
+      {
+        input: "nums = [3,2,4], target = 6",
+        expectedOutput: "[1,2]",
+      },
+      {
+        input: "nums = [3,3], target = 6",
+        expectedOutput: "[0,1]",
+      },
     ],
     difficulty: "easy",
     solutionExplanation:
@@ -32,24 +40,20 @@ const CODING_FALLBACK = [
       "Given a 2D grid of '1's (land) and '0's (water), count the number of islands.",
     inputFormat: "grid = 2D array",
     outputFormat: "Return integer count",
-    constraints:
-      "1 ≤ grid.length, grid[i].length ≤ 300",
+    constraints: "1 ≤ grid.length, grid[i].length ≤ 300",
     sampleTestCases: [
       {
-        input:
-          "grid = [[1,1,0],[1,1,0],[0,0,1]]",
+        input: "grid = [[1,1,0],[1,1,0],[0,0,1]]",
         expectedOutput: "2",
       },
     ],
     hiddenTestCases: [
       {
-        input:
-          "grid = [[1,0,1],[0,1,0],[1,0,1]]",
+        input: "grid = [[1,0,1],[0,1,0],[1,0,1]]",
         expectedOutput: "5",
       },
       {
-        input:
-          "grid = [[1,1,1],[0,1,0],[1,1,1]]",
+        input: "grid = [[1,1,1],[0,1,0],[1,1,1]]",
         expectedOutput: "1",
       },
     ],
@@ -67,7 +71,7 @@ Requirements:
 - Problem 2: Medium/Hard (trees/graphs/DP)
 - EACH problem MUST have:
   * title
-  * description  
+  * description
   * inputFormat
   * outputFormat
   * constraints
@@ -76,24 +80,34 @@ Requirements:
   * difficulty
   * solutionExplanation
 
-Return ONLY valid JSON: { "questions": [...] }
+Return ONLY valid JSON:
+{
+  "questions": [...]
+}
 `;
 
 export const getOrCreateTodayCpotd = async () => {
-  const today = getTodayDate();
-  console.log(` [CPOTD-SVC] Checking ${today}...`);
+  console.log(" [CPOTD-SVC] Weekly check...");
 
-  let cpotd = await CodingPotd.findOne({ date: today });
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - WEEK_MS);
+
+  //  If any CPOTD exists in last 7 days, reuse it
+  let cpotd = await CodingPotd.findOne({
+    createdAt: { $gte: sevenDaysAgo },
+  }).sort({ createdAt: -1 });
+
   if (cpotd?.isManual) {
-    console.log(` [CPOTD-SVC] Manual override found for ${today}`);
-    return cpotd;
-  }
-  if (cpotd) {
-    console.log(` [CPOTD-SVC] Found existing auto for ${today}`);
+    console.log(" [CPOTD-SVC] Manual weekly CPOTD found");
     return cpotd;
   }
 
-  console.log(` [CPOTD-SVC] Generating for ${today}...`);
+  if (cpotd) {
+    console.log(" [CPOTD-SVC] Existing weekly CPOTD reused");
+    return cpotd;
+  }
+
+  console.log(" [CPOTD-SVC] Generating new weekly CPOTD...");
 
   try {
     let questions = [];
@@ -112,15 +126,15 @@ export const getOrCreateTodayCpotd = async () => {
       }
 
       console.log(
-        `[CPOTD] Retry ${i + 1}: got ${data?.questions?.length || 0}`
+        `[CPOTD-SVC] Retry ${i + 1}: got ${
+          data?.questions?.length || 0
+        }`
       );
     }
 
-    //  AI fallback try
+    //  AI extra fill
     if (questions.length < 2) {
       const needed = 2 - questions.length;
-
-      console.log(`Filling ${needed} missing coding problems...`);
 
       try {
         const extraRes = await askAi([
@@ -133,45 +147,44 @@ export const getOrCreateTodayCpotd = async () => {
         const extraData = extractJSON(extraRes);
 
         questions = [...questions, ...(extraData?.questions || [])];
-      } catch (err) {
-        console.log("AI fallback failed, switching to static fallback...");
+      } catch (error) {
+        console.log(
+          " [CPOTD-SVC] AI fallback failed, using static fallback"
+        );
       }
     }
 
-    //  FINAL HARD FALLBACK (GUARANTEED)
+    //  Final fallback
     if (questions.length < 2) {
       const needed = 2 - questions.length;
-
-      console.log(`Adding ${needed} fallback coding problems...`);
-
-      const extraFallback = CODING_FALLBACK.slice(0, needed);
-
-      questions = [...questions, ...extraFallback];
+      questions = [
+        ...questions,
+        ...CODING_FALLBACK.slice(0, needed),
+      ];
     }
 
-    //  FINAL SAFETY
     questions = questions.slice(0, 2);
 
-    //  Atomic upsert
-    cpotd = await CodingPotd.findOneAndUpdate(
-      { date: today },
-      {
-        date: today,
-        questions,
-        generatedAt: new Date(),
-      },
-      { upsert: true, returnDocument: "after" }
-    );
+    //  create new weekly record
+    cpotd = await CodingPotd.create({
+      date: now.toISOString().split("T")[0],
+      questions,
+      generatedAt: now,
+    });
 
-    console.log(` [CPOTD-SVC] Generated & saved ${cpotd._id}`);
+    console.log(` [CPOTD-SVC] Saved weekly ${cpotd._id}`);
     return cpotd;
   } catch (error) {
-    console.error(` [CPOTD-SVC] Generation failed:`, error.message);
+    console.error(
+      " [CPOTD-SVC] Weekly generation failed:",
+      error.message
+    );
     throw error;
   }
 };
 
-//  Manual trigger
+//  Manual trigger = force new weekly CPOTD
 export const generateTodayCpotd = async () => {
+  await CodingPotd.deleteMany({});
   return await getOrCreateTodayCpotd();
 };

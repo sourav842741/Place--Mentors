@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ const FriendCard = ({
   onReject,
   onChallenge,
   loading = false,
+  challengeText = "⚔️ Challenge",
+  disabledChallenge = false,
 }) => {
   return (
     <Card className="w-full p-4 rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg transition">
@@ -64,11 +66,11 @@ const FriendCard = ({
         {!isRequest && onChallenge && (
           <Button
             size="sm"
-            disabled={loading}
+            disabled={loading || disabledChallenge}
             className="w-full bg-red-500 hover:bg-red-600 text-white"
             onClick={onChallenge}
           >
-            {loading ? "Sending..." : "⚔️ Challenge"}
+            {loading ? "Sending..." : challengeText}
           </Button>
         )}
       </div>
@@ -88,19 +90,90 @@ export default function FriendsSection({ friendsData }) {
   const [loadingId, setLoadingId] = useState(null);
   const [challengeLoadingId, setChallengeLoadingId] = useState(null);
 
+  // 🔥 cooldown state
+  const [cooldowns, setCooldowns] = useState({});
+
   const acceptFriend = useAcceptFriendRequest();
   const rejectFriend = useRejectFriendRequest();
 
-  //  SEND CHALLENGE
+  // 🔥 REFRESH SAFE TIMER
+  useEffect(() => {
+    const loadSavedCooldowns = () => {
+      const active = {};
+
+      friends.forEach((friend) => {
+        const saved = localStorage.getItem(
+          `challenge_${friend._id}`
+        );
+
+        if (saved) {
+          const remaining = Math.floor(
+            (Number(saved) - Date.now()) / 1000
+          );
+
+          if (remaining > 0) {
+            active[friend._id] = remaining;
+          } else {
+            localStorage.removeItem(
+              `challenge_${friend._id}`
+            );
+          }
+        }
+      });
+
+      setCooldowns(active);
+    };
+
+    loadSavedCooldowns();
+
+    const timer = setInterval(() => {
+      setCooldowns((prev) => {
+        const updated = { ...prev };
+
+        Object.keys(updated).forEach((id) => {
+          if (updated[id] > 1) {
+            updated[id] -= 1;
+          } else {
+            delete updated[id];
+            localStorage.removeItem(
+              `challenge_${id}`
+            );
+          }
+        });
+
+        return updated;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [friends]);
+
+  // SEND CHALLENGE
   const sendChallenge = useMutation({
     mutationFn: async (friendId) => {
       setChallengeLoadingId(friendId);
-      return await api.post(`/api/friends/challenge/${friendId}`);
+      return await api.post(
+        `/api/friends/challenge/${friendId}`
+      );
     },
-    onSuccess: () => {
+
+    onSuccess: (_, friendId) => {
       toast.success("⚔️ Challenge sent!");
       setChallengeLoadingId(null);
+
+      const expiresAt = Date.now() + 120000;
+
+      localStorage.setItem(
+        `challenge_${friendId}`,
+        expiresAt.toString()
+      );
+
+      setCooldowns((prev) => ({
+        ...prev,
+        [friendId]: 120,
+      }));
     },
+
     onError: () => {
       toast.error("Failed to send challenge");
       setChallengeLoadingId(null);
@@ -108,19 +181,27 @@ export default function FriendsSection({ friendsData }) {
   });
 
   if (!friendsData) {
-    return <div className="text-center mt-10">Loading...</div>;
+    return (
+      <div className="text-center mt-10">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <div className="space-y-8 mt-6">
-
       {/* HEADER */}
       <div className="flex items-center gap-3">
         <Users className="w-6 h-6 text-blue-500" />
+
         <div>
-          <h2 className="text-lg font-semibold">Friends</h2>
+          <h2 className="text-lg font-semibold">
+            Friends
+          </h2>
+
           <p className="text-sm text-gray-500">
-            {friends.length} friends • {friendRequests.received.length} requests
+            {friends.length} friends •{" "}
+            {friendRequests.received.length} requests
           </p>
         </div>
       </div>
@@ -128,14 +209,33 @@ export default function FriendsSection({ friendsData }) {
       {/* FRIEND LIST */}
       {friends.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {friends.map((friend) => (
-            <FriendCard
-              key={friend._id}
-              friend={friend}
-              loading={challengeLoadingId === friend._id}
-              onChallenge={() => sendChallenge.mutate(friend._id)}
-            />
-          ))}
+          {friends.map((friend) => {
+            const cooldown =
+              cooldowns[friend._id] || 0;
+
+            return (
+              <FriendCard
+                key={friend._id}
+                friend={friend}
+                loading={
+                  challengeLoadingId === friend._id
+                }
+                onChallenge={() =>
+                  sendChallenge.mutate(friend._id)
+                }
+                disabledChallenge={cooldown > 0}
+                challengeText={
+                  cooldown > 0
+                    ? `Wait ${Math.floor(
+                        cooldown / 60
+                      )}:${(cooldown % 60)
+                        .toString()
+                        .padStart(2, "0")}`
+                    : "⚔️ Challenge"
+                }
+              />
+            );
+          })}
         </div>
       ) : (
         <div className="text-center text-gray-400">
@@ -162,23 +262,34 @@ export default function FriendsSection({ friendsData }) {
 
                   acceptFriend.mutate(req._id, {
                     onSuccess: () => {
-                      toast.success("Friend accepted ✅");
+                      toast.success(
+                        "Friend accepted ✅"
+                      );
 
-                      // 🔥 UI update instantly
-                      dispatch(loadFriends({
-                        friends: [...friends, req],
-                        friendRequests: {
-                          ...friendRequests,
-                          received: friendRequests.received.filter(
-                            (r) => r._id !== req._id
-                          ),
-                        },
-                      }));
+                      dispatch(
+                        loadFriends({
+                          friends: [
+                            ...friends,
+                            req,
+                          ],
+                          friendRequests: {
+                            ...friendRequests,
+                            received:
+                              friendRequests.received.filter(
+                                (r) =>
+                                  r._id !== req._id
+                              ),
+                          },
+                        })
+                      );
 
                       setLoadingId(null);
                     },
+
                     onError: () => {
-                      toast.error("Failed to accept");
+                      toast.error(
+                        "Failed to accept"
+                      );
                       setLoadingId(null);
                     },
                   });
@@ -188,17 +299,23 @@ export default function FriendsSection({ friendsData }) {
 
                   rejectFriend.mutate(req._id, {
                     onSuccess: () => {
-                      toast("Friend rejected");
+                      toast(
+                        "Friend rejected"
+                      );
 
-                      dispatch(loadFriends({
-                        friends,
-                        friendRequests: {
-                          ...friendRequests,
-                          received: friendRequests.received.filter(
-                            (r) => r._id !== req._id
-                          ),
-                        },
-                      }));
+                      dispatch(
+                        loadFriends({
+                          friends,
+                          friendRequests: {
+                            ...friendRequests,
+                            received:
+                              friendRequests.received.filter(
+                                (r) =>
+                                  r._id !== req._id
+                              ),
+                          },
+                        })
+                      );
 
                       setLoadingId(null);
                     },

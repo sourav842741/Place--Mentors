@@ -96,49 +96,84 @@ const acceptFriendRequest = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid user ID");
   }
 
-  const user = await User.findById(userId).select("friends friendRequests");
+  if (userId.toString() === requesterId.toString()) {
+    throw new ApiError(400, "You cannot accept your own request");
+  }
+
+  const user = await User.findById(userId).select(
+    "friends friendRequests fullName avatar xp level streakCount"
+  );
 
   const requester = await User.findById(requesterId).select(
-    "friends friendRequests socketId fullName avatar xp level streakCount",
+    "friends friendRequests socketId fullName avatar xp level streakCount"
   );
 
   if (!user || !requester) {
     throw new ApiError(404, "User not found");
   }
 
-  //  ensure structure
+  // ensure structure
   if (!user.friendRequests) {
     user.friendRequests = { sent: [], received: [] };
   }
+
   if (!requester.friendRequests) {
     requester.friendRequests = { sent: [], received: [] };
   }
 
-  //  check request
+  // already friends check
+  const alreadyFriends = user.friends.some(
+    (id) => id.toString() === requesterId.toString()
+  );
+
+  if (alreadyFriends) {
+    throw new ApiError(400, "Already friends");
+  }
+
+  // check pending request
   const index = user.friendRequests.received.findIndex(
-    (r) => r.toString() === requesterId,
+    (id) => id.toString() === requesterId.toString()
   );
 
   if (index === -1) {
     throw new ApiError(400, "No pending request");
   }
 
-  // remove request
+  // =========================
+  // REMOVE REQUESTS
+  // =========================
   user.friendRequests.received.splice(index, 1);
 
-  requester.friendRequests.sent = requester.friendRequests.sent.filter(
-    (r) => r.toString() !== userId.toString(),
-  );
+  requester.friendRequests.sent =
+    requester.friendRequests.sent.filter(
+      (id) => id.toString() !== userId.toString()
+    );
 
-  // add friends
+  // optional cleanup reverse accidental request
+  user.friendRequests.sent =
+    user.friendRequests.sent.filter(
+      (id) => id.toString() !== requesterId.toString()
+    );
+
+  requester.friendRequests.received =
+    requester.friendRequests.received.filter(
+      (id) => id.toString() !== userId.toString()
+    );
+
+  // =========================
+  // ADD FRIENDS
+  // =========================
   user.friends.push(requesterId);
   requester.friends.push(userId);
 
   await user.save();
   await requester.save();
 
-  // socket
+  // =========================
+  // SOCKET NOTIFY
+  // =========================
   const io = req.app.get("io");
+
   if (requester.socketId && io) {
     io.to(requester.socketId).emit("friend_request_accepted", {
       friend: {
@@ -165,8 +200,8 @@ const acceptFriendRequest = asyncHandler(async (req, res) => {
           streakCount: requester.streakCount,
         },
       },
-      "Friend request accepted",
-    ),
+      "Friend request accepted successfully"
+    )
   );
 });
 
@@ -213,30 +248,75 @@ const sendChallenge = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const user = await User.findById(userId).select(
-    "friends challenges fullName avatar xp level",
+    "friends challenges fullName avatar xp level lastChallengeTime"
   );
+
   const challenged = await User.findById(challengedId).select(
-    "challenges fullName avatar xp level socketId",
+    "challenges fullName avatar xp level socketId"
   );
 
-  if (!user || !challenged) throw new ApiError(404, "User not found");
+  if (!user || !challenged) {
+    throw new ApiError(404, "User not found");
+  }
 
-  if (!user.challenges) user.challenges = { sent: [], received: [] };
-  if (!challenged.challenges)
+  if (!user.challenges) {
+    user.challenges = { sent: [], received: [] };
+  }
+
+  if (!challenged.challenges) {
     challenged.challenges = { sent: [], received: [] };
+  }
+
+  // cannot challenge yourself
+  if (userId.toString() === challengedId.toString()) {
+    throw new ApiError(400, "You cannot challenge yourself");
+  }
 
   // must be friends
-  if (!user.friends.some((f) => f.toString() === challengedId)) {
-    throw new ApiError(400, "Must be friends");
+  if (!user.friends.some((f) => f.toString() === challengedId.toString())) {
+    throw new ApiError(400, "Must be friends first");
   }
 
-  // already sent
-  if (user.challenges.sent.includes(challengedId)) {
-    throw new ApiError(400, "Already challenged");
+  // ===============================
+  // AUTO REMOVE OLD CHALLENGE (2 MIN)
+  // ===============================
+  const twoMinAgo = new Date(Date.now() - 2 * 60 * 1000);
+
+  if (
+    user.lastChallengeTime &&
+    user.lastChallengeTime < twoMinAgo
+  ) {
+    user.challenges.sent = user.challenges.sent.filter(
+      (id) => id.toString() !== challengedId.toString()
+    );
+
+    challenged.challenges.received =
+      challenged.challenges.received.filter(
+        (id) => id.toString() !== userId.toString()
+      );
   }
 
+  // ===============================
+  // ACTIVE CHALLENGE CHECK
+  // ===============================
+  const alreadyPending = user.challenges.sent.some(
+    (id) => id.toString() === challengedId.toString()
+  );
+
+  if (alreadyPending) {
+    throw new ApiError(
+      400,
+      "Challenge already sent. Wait 2 minutes or ask user to respond."
+    );
+  }
+
+  // ===============================
+  // SEND NEW CHALLENGE
+  // ===============================
   user.challenges.sent.push(challengedId);
   challenged.challenges.received.push(userId);
+
+  user.lastChallengeTime = new Date();
 
   await user.save();
   await challenged.save();
@@ -251,15 +331,23 @@ const sendChallenge = asyncHandler(async (req, res) => {
     level: user.level,
   };
 
-  // Primary: Room emit
-  io.to(challengedId.toString()).emit("challenge_received", challengerData);
+  // room emit
+  io.to(challengedId.toString()).emit(
+    "challenge_received",
+    challengerData
+  );
 
-  // Fallback: Direct socketId
+  // fallback direct socket
   if (challenged.socketId) {
-    io.to(challenged.socketId).emit("challenge_received", challengerData);
+    io.to(challenged.socketId).emit(
+      "challenge_received",
+      challengerData
+    );
   }
 
-  return res.status(200).json(new ApiResponse(200, {}, "Challenge sent"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Challenge sent successfully"));
 });
 
 //  REJECT CHALLENGE
@@ -270,7 +358,7 @@ const rejectChallenge = asyncHandler(async (req, res) => {
 
   const user = await User.findById(userId).select("challenges");
 
-  const challenger = await User.findById(challengerId).select("challenges");
+  const challenger = await User.findById(challengerId).select("challenges lastChallengeTime");
 
   if (!user || !challenger) {
     throw new ApiError(404, "User not found");
@@ -290,8 +378,10 @@ const rejectChallenge = asyncHandler(async (req, res) => {
     (r) => r.toString() !== userId.toString(),
   );
 
-  await user.save();
-  await challenger.save();
+challenger.lastChallengeTime = null;
+
+await user.save();
+await challenger.save();
 
   return res.status(200).json(new ApiResponse(200, {}, "Challenge rejected"));
 });
