@@ -4,7 +4,9 @@ import { askAi, extractJSON } from "./openRouter.service.js";
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- *  HARD FALLBACK CODING QUESTIONS (GUARANTEED)
+ * -----------------------------------------
+ * STATIC FALLBACK QUESTIONS (GUARANTEED)
+ * -----------------------------------------
  */
 const CODING_FALLBACK = [
   {
@@ -13,7 +15,7 @@ const CODING_FALLBACK = [
       "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
     inputFormat: "nums = [int array], target = int",
     outputFormat: "Return indices [i, j]",
-    constraints: "2 ≤ nums.length ≤ 10^4, -10^9 ≤ nums[i] ≤ 10^9",
+    constraints: "2 ≤ nums.length ≤ 10^4",
     sampleTestCases: [
       {
         input: "nums = [2,7,11,15], target = 9",
@@ -32,15 +34,15 @@ const CODING_FALLBACK = [
     ],
     difficulty: "easy",
     solutionExplanation:
-      "Use hashmap to store visited numbers and check complement.",
+      "Use hashmap to store visited values and check complement.",
   },
   {
     title: "Number of Islands",
     description:
-      "Given a 2D grid of '1's (land) and '0's (water), count the number of islands.",
+      "Given a 2D grid of 1s and 0s, count number of islands.",
     inputFormat: "grid = 2D array",
-    outputFormat: "Return integer count",
-    constraints: "1 ≤ grid.length, grid[i].length ≤ 300",
+    outputFormat: "Return integer",
+    constraints: "1 ≤ rows, cols ≤ 300",
     sampleTestCases: [
       {
         input: "grid = [[1,1,0],[1,1,0],[0,0,1]]",
@@ -52,39 +54,128 @@ const CODING_FALLBACK = [
         input: "grid = [[1,0,1],[0,1,0],[1,0,1]]",
         expectedOutput: "5",
       },
-      {
-        input: "grid = [[1,1,1],[0,1,0],[1,1,1]]",
-        expectedOutput: "1",
-      },
     ],
     difficulty: "medium",
     solutionExplanation:
-      "Use DFS/BFS to mark visited land cells.",
+      "Use DFS/BFS to mark connected land cells.",
   },
 ];
 
 const CPOTD_PROMPT = `
-Generate EXACTLY 2 coding problems for "Coding Problem of the Day" in JSON format only.
+Generate EXACTLY 2 coding interview problems in VALID JSON only.
 
-Requirements:
-- Problem 1: Easy/Medium (array/strings)
-- Problem 2: Medium/Hard (trees/graphs/DP)
-- EACH problem MUST have:
-  * title
-  * description
-  * inputFormat
-  * outputFormat
-  * constraints
-  * sampleTestCases: [{input, expectedOutput}]
-  * hiddenTestCases: 2-3 more
-  * difficulty
-  * solutionExplanation
+Rules:
+1. Problem 1 = Easy or Medium (array/string/hashmap)
+2. Problem 2 = Medium or Hard (tree/graph/dp)
+3. Include fields:
+title
+description
+inputFormat
+outputFormat
+constraints
+sampleTestCases [{input, expectedOutput}]
+hiddenTestCases [{input, expectedOutput}]
+difficulty
+solutionExplanation
 
-Return ONLY valid JSON:
+Return ONLY:
+
 {
   "questions": [...]
 }
 `;
+
+/**
+ * -----------------------------------------
+ * HELPERS
+ * -----------------------------------------
+ */
+
+const safeString = (value = "") => {
+  if (typeof value === "string") return value;
+  return JSON.stringify(value);
+};
+
+const normalizeDifficulty = (value = "easy") => {
+  const val = String(value).toLowerCase().trim();
+
+  if (["easy", "medium", "hard"].includes(val)) {
+    return val;
+  }
+
+  if (val.includes("med")) return "medium";
+  if (val.includes("har")) return "hard";
+
+  return "easy";
+};
+
+const normalizeCases = (arr = [], isSample = false) => {
+  if (!Array.isArray(arr)) return [];
+
+  return arr.map((item) => ({
+    input: safeString(item?.input ?? ""),
+    expectedOutput: safeString(
+      item?.expectedOutput ?? item?.output ?? ""
+    ),
+    isSample,
+  }));
+};
+
+const normalizeQuestions = (questions = []) => {
+  return questions.map((q, index) => ({
+    title: q?.title || `Problem ${index + 1}`,
+
+    description:
+      q?.description || "Solve the problem efficiently.",
+
+    inputFormat:
+      q?.inputFormat || "Read input from standard input.",
+
+    outputFormat:
+      q?.outputFormat || "Print the required output.",
+
+    constraints: q?.constraints || "N/A",
+
+    sampleTestCases: normalizeCases(
+      q?.sampleTestCases,
+      true
+    ),
+
+    hiddenTestCases: normalizeCases(
+      q?.hiddenTestCases,
+      false
+    ),
+
+    difficulty: normalizeDifficulty(q?.difficulty),
+
+    solutionExplanation:
+      q?.solutionExplanation || "",
+  }));
+};
+
+const getTodayDate = () => {
+  return new Date().toISOString().split("T")[0];
+};
+
+const askAiForQuestions = async () => {
+  const response = await askAi([
+    { role: "user", content: CPOTD_PROMPT },
+  ]);
+
+  const data = extractJSON(response);
+
+  if (!data?.questions || !Array.isArray(data.questions)) {
+    return [];
+  }
+
+  return data.questions;
+};
+
+/**
+ * -----------------------------------------
+ * MAIN SERVICE
+ * -----------------------------------------
+ */
 
 export const getOrCreateTodayCpotd = async () => {
   console.log(" [CPOTD-SVC] Weekly check...");
@@ -92,98 +183,140 @@ export const getOrCreateTodayCpotd = async () => {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - WEEK_MS);
 
-  //  If any CPOTD exists in last 7 days, reuse it
-  let cpotd = await CodingPotd.findOne({
+  /**
+   * If already generated in last 7 days -> reuse
+   */
+  let existing = await CodingPotd.findOne({
     createdAt: { $gte: sevenDaysAgo },
   }).sort({ createdAt: -1 });
 
-  if (cpotd?.isManual) {
-    console.log(" [CPOTD-SVC] Manual weekly CPOTD found");
-    return cpotd;
+  if (existing?.isManual) {
+    console.log(
+      " [CPOTD-SVC] Manual weekly CPOTD found"
+    );
+    return existing;
   }
 
-  if (cpotd) {
-    console.log(" [CPOTD-SVC] Existing weekly CPOTD reused");
-    return cpotd;
+  if (existing) {
+    console.log(
+      " [CPOTD-SVC] Existing weekly CPOTD reused"
+    );
+    return existing;
   }
 
-  console.log(" [CPOTD-SVC] Generating new weekly CPOTD...");
+  console.log(
+    " [CPOTD-SVC] Generating new weekly CPOTD..."
+  );
 
   try {
     let questions = [];
 
-    //  Retry AI 3 times
-    for (let i = 0; i < 3; i++) {
-      const aiResponse = await askAi([
-        { role: "user", content: CPOTD_PROMPT },
-      ]);
-
-      const data = extractJSON(aiResponse);
-
-      if (data?.questions?.length === 2) {
-        questions = data.questions;
-        break;
-      }
-
-      console.log(
-        `[CPOTD-SVC] Retry ${i + 1}: got ${
-          data?.questions?.length || 0
-        }`
-      );
-    }
-
-    //  AI extra fill
-    if (questions.length < 2) {
-      const needed = 2 - questions.length;
-
+    /**
+     * Retry AI 3 times
+     */
+    for (let i = 1; i <= 3; i++) {
       try {
-        const extraRes = await askAi([
-          {
-            role: "user",
-            content: `Generate ONLY ${needed} coding problems in same JSON format. Return JSON only.`,
-          },
-        ]);
+        const aiQuestions = await askAiForQuestions();
 
-        const extraData = extractJSON(extraRes);
+        if (aiQuestions.length >= 2) {
+          questions = aiQuestions;
+          break;
+        }
 
-        questions = [...questions, ...(extraData?.questions || [])];
-      } catch (error) {
+        if (aiQuestions.length > 0) {
+          questions = aiQuestions;
+        }
+
         console.log(
-          " [CPOTD-SVC] AI fallback failed, using static fallback"
+          ` [CPOTD-SVC] Retry ${i}: received ${aiQuestions.length}`
+        );
+      } catch (err) {
+        console.log(
+          ` [CPOTD-SVC] Retry ${i} failed`
         );
       }
     }
 
-    //  Final fallback
+    /**
+     * Fill remaining from fallback
+     */
     if (questions.length < 2) {
-      const needed = 2 - questions.length;
+      const need = 2 - questions.length;
+
       questions = [
         ...questions,
-        ...CODING_FALLBACK.slice(0, needed),
+        ...CODING_FALLBACK.slice(0, need),
       ];
     }
 
-    questions = questions.slice(0, 2);
+    /**
+     * Keep only 2 and sanitize
+     */
+    questions = normalizeQuestions(
+      questions.slice(0, 2)
+    );
 
-    //  create new weekly record
-    cpotd = await CodingPotd.create({
-      date: now.toISOString().split("T")[0],
-      questions,
-      generatedAt: now,
+    /**
+     * Avoid duplicate same date
+     */
+    const today = getTodayDate();
+
+    await CodingPotd.deleteMany({
+      date: today,
     });
 
-    console.log(` [CPOTD-SVC] Saved weekly ${cpotd._id}`);
+    /**
+     * Create
+     */
+    const cpotd = await CodingPotd.create({
+      date: today,
+      questions,
+      generatedAt: now,
+      isManual: false,
+    });
+
+    console.log(
+      ` [CPOTD-SVC] Saved weekly ${cpotd._id}`
+    );
+
     return cpotd;
   } catch (error) {
     console.error(
       " [CPOTD-SVC] Weekly generation failed:",
       error.message
     );
-    throw error;
+
+    /**
+     * Emergency fallback create
+     */
+    const today = getTodayDate();
+
+    await CodingPotd.deleteMany({
+      date: today,
+    });
+
+    const fallback = await CodingPotd.create({
+      date: today,
+      questions: normalizeQuestions(
+        CODING_FALLBACK
+      ),
+      generatedAt: new Date(),
+      isManual: false,
+    });
+
+    console.log(
+      " [CPOTD-SVC] Emergency fallback saved"
+    );
+
+    return fallback;
   }
 };
 
-//  Manual trigger = force new weekly CPOTD
+/**
+ * -----------------------------------------
+ * MANUAL FORCE GENERATE
+ * -----------------------------------------
+ */
 export const generateTodayCpotd = async () => {
   await CodingPotd.deleteMany({});
   return await getOrCreateTodayCpotd();
