@@ -111,7 +111,14 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
     { upsert: true, returnDocument: "after" },
   );
 
+  try {
   await sendSignupOtpMail(email, otp);
+} catch (error) {
+  throw new ApiError(
+    500,
+    "Failed to send signup OTP"
+  );
+}
 
   return res.status(200).json(new ApiResponse(200, null, "OTP sent to email"));
 });
@@ -421,7 +428,14 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
   user.resetOtpExpires = Date.now() + 5 * 60 * 1000;
   await user.save();
 
+ try {
   await sendResetOtpMail(email, otp);
+} catch (error) {
+  throw new ApiError(
+    500,
+    "Failed to send reset OTP"
+  );
+}
 
   return res
     .status(200)
