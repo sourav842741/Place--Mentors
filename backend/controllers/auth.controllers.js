@@ -160,7 +160,10 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  sendWelcomeMail(user.email, user.fullName);
+ await sendWelcomeMail(
+  user.email,
+  user.fullName
+);
 
   await TempUser.deleteOne({ email: tempUser.email });
 
@@ -349,6 +352,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
     user = await User.create({
+      
       fullName: fullName?.trim() || "Google User",
       email: email.toLowerCase().trim(),
       password: hashedPassword,
@@ -361,6 +365,11 @@ export const googleAuth = asyncHandler(async (req, res) => {
       lastLoginDate: new Date(),
       credits: 100,
     });
+
+    await sendWelcomeMail(
+  user.email,
+  user.fullName
+);
   }
 
   // ================= XP + STREAK =================
