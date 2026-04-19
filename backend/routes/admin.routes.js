@@ -13,24 +13,39 @@ import isAdmin from "../middlewares/admin.middleware.js";
 import { generatePotd } from "../controllers/potd.controller.js";
 import { generateCpotd } from "../controllers/cpotd.controller.js";
 import { getAdminDashboardAnalytics } from "../controllers/adminAnalytics.controller.js";
+
 import {
   getEmailStats,
   sendSingleEmail,
   sendBulkEmails,
   sendToSegment,
   testTemplate,
-  getEmailLogs
+  getEmailLogs,
 } from "../controllers/adminEmail.controller.js";
 
+import {
+  getSettings,
+  updateSettings,
+  getPublicSettings,
+} from "../controllers/settings.controller.js";
 
 const router = express.Router();
 
+/* ======================================================
+   🔥 PUBLIC SETTINGS (NO AUTH)
+   Endpoint => /api/admin/public-settings
+====================================================== */
 
-// ======================================================
-// 🔥 USERS MANAGEMENT
-// ======================================================
+router.get(
+  "/public-settings",
+  getPublicSettings
+);
 
-// ✅ GET ALL USERS (FIXES 404 ERROR)
+/* ======================================================
+   🔥 USERS MANAGEMENT
+====================================================== */
+
+// GET ALL USERS
 router.get(
   "/users",
   isAuth,
@@ -38,41 +53,54 @@ router.get(
   asyncHandler(async (req, res) => {
     const users = await User.find().select("-password");
 
-    res.status(200).json(
-      new ApiResponse(200, users, "Users fetched successfully")
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        users,
+        "Users fetched successfully"
+      )
     );
   })
 );
 
-
-// ✅ PROMOTE USER TO ADMIN
+// PROMOTE USER TO ADMIN
 router.patch(
   "/promote/:id",
   isAuth,
   isAdmin,
   asyncHandler(async (req, res) => {
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { role: "admin" },
-      { new: true, runValidators: true }
-    ).select("-password");
+    const user =
+      await User.findByIdAndUpdate(
+        req.params.id,
+        { role: "admin" },
+        {
+          new: true,
+          runValidators: true,
+        }
+      ).select("-password");
 
     if (!user) {
-      throw new ApiError(404, "User not found");
+      throw new ApiError(
+        404,
+        "User not found"
+      );
     }
 
-    res.status(200).json(
-      new ApiResponse(200, user, "User promoted to admin successfully")
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        user,
+        "User promoted to admin successfully"
+      )
     );
   })
 );
 
+/* ======================================================
+   🔥 POTD MANAGEMENT
+====================================================== */
 
-// ======================================================
-// 🔥 POTD MANAGEMENT
-// ======================================================
-
-// ✅ AUTO GENERATE POTD
+// AUTO GENERATE POTD
 router.post(
   "/potd",
   isAuth,
@@ -82,46 +110,65 @@ router.post(
   })
 );
 
-
-// ✅ MANUAL POTD
+// MANUAL POTD
 router.post(
   "/manual-potd",
   isAuth,
   isAdmin,
   asyncHandler(async (req, res) => {
-    const { date = new Date().toISOString().split("T")[0], questions } = req.body;
+    const {
+      date =
+        new Date()
+          .toISOString()
+          .split("T")[0],
+      questions,
+    } = req.body;
 
-    if (!questions || !Array.isArray(questions) || questions.length === 0) {
-      throw new ApiError(400, "Questions array required");
+    if (
+      !questions ||
+      !Array.isArray(
+        questions
+      ) ||
+      questions.length === 0
+    ) {
+      throw new ApiError(
+        400,
+        "Questions array required"
+      );
     }
 
-    const potd = await Potd.findOneAndUpdate(
-      { date },
-      {
-        date,
-        questions,
-        isManual: true,
-        generatedAt: new Date(),
-      },
-      {
-        upsert: true,
-        new: true,
-        runValidators: true,
-      }
-    );
+    const potd =
+      await Potd.findOneAndUpdate(
+        { date },
+        {
+          date,
+          questions,
+          isManual: true,
+          generatedAt:
+            new Date(),
+        },
+        {
+          upsert: true,
+          new: true,
+          runValidators: true,
+        }
+      );
 
-    res.status(201).json(
-      new ApiResponse(201, potd, "Manual POTD created/updated successfully")
+    return res.status(201).json(
+      new ApiResponse(
+        201,
+        potd,
+        "Manual POTD created/updated successfully"
+      )
     );
   })
 );
 
+/* ======================================================
+   🔥 CPOTD MANAGEMENT
+====================================================== */
 
-// ======================================================
-// 🔥 CPOTD MANAGEMENT
-// ======================================================
-
-// ✅ AUTO GENERATE CPOTD
+// AUTO GENERATE CPOTD
 router.post(
   "/cpotd",
   isAuth,
@@ -131,54 +178,109 @@ router.post(
   })
 );
 
-
-// ✅ MANUAL CPOTD
+// MANUAL CPOTD
 router.post(
   "/manual-cpotd",
   isAuth,
   isAdmin,
   asyncHandler(async (req, res) => {
-    const { date = new Date().toISOString().split("T")[0], questions } = req.body;
+    const {
+      date =
+        new Date()
+          .toISOString()
+          .split("T")[0],
+      questions,
+    } = req.body;
 
-    if (!questions || !Array.isArray(questions) || questions.length === 0) {
-      throw new ApiError(400, "Questions array required");
+    if (
+      !questions ||
+      !Array.isArray(
+        questions
+      ) ||
+      questions.length === 0
+    ) {
+      throw new ApiError(
+        400,
+        "Questions array required"
+      );
     }
 
-    const cpotd = await CodingPotd.findOneAndUpdate(
-      { date },
-      {
-        date,
-        questions,
-        isManual: true,
-        generatedAt: new Date(),
-      },
-      {
-        upsert: true,
-        new: true,
-      }
-    );
+    const cpotd =
+      await CodingPotd.findOneAndUpdate(
+        { date },
+        {
+          date,
+          questions,
+          isManual: true,
+          generatedAt:
+            new Date(),
+        },
+        {
+          upsert: true,
+          new: true,
+          runValidators: true,
+        }
+      );
 
-    res.status(201).json(
-      new ApiResponse(201, cpotd, "Manual CPOTD created/updated successfully")
+    return res.status(201).json(
+      new ApiResponse(
+        201,
+        cpotd,
+        "Manual CPOTD created/updated successfully"
+      )
     );
   })
 );
 
+/* ======================================================
+   🔥 EMAIL SYSTEM
+====================================================== */
 
-// ======================================================
-// 🔥 ANALYTICS
-// ======================================================
+router.get(
+  "/email/stats",
+  isAuth,
+  isAdmin,
+  getEmailStats
+);
 
-// ======================================================
-// 🔥 EMAIL SYSTEM
-// ======================================================
+router.get(
+  "/email/logs",
+  isAuth,
+  isAdmin,
+  getEmailLogs
+);
 
-router.get("/email/stats", isAuth, isAdmin, getEmailStats);
-router.get("/email/logs", isAuth, isAdmin, getEmailLogs);
-router.post("/email/send-single", isAuth, isAdmin, sendSingleEmail);
-router.post("/email/send-bulk", isAuth, isAdmin, sendBulkEmails);
-router.post("/email/send-segment", isAuth, isAdmin, sendToSegment);
-router.post("/email/test-template", isAuth, isAdmin, testTemplate);
+router.post(
+  "/email/send-single",
+  isAuth,
+  isAdmin,
+  sendSingleEmail
+);
+
+router.post(
+  "/email/send-bulk",
+  isAuth,
+  isAdmin,
+  sendBulkEmails
+);
+
+router.post(
+  "/email/send-segment",
+  isAuth,
+  isAdmin,
+  sendToSegment
+);
+
+router.post(
+  "/email/test-template",
+  isAuth,
+  isAdmin,
+  testTemplate
+);
+
+/* ======================================================
+   🔥 ANALYTICS
+====================================================== */
 
 router.get(
   "/analytics",
@@ -187,9 +289,29 @@ router.get(
   getAdminDashboardAnalytics
 );
 
+/* ======================================================
+   🔥 SETTINGS MANAGEMENT (ADMIN)
+   Endpoint:
+   GET /api/admin/settings
+   PUT /api/admin/settings
+====================================================== */
 
-// ======================================================
-// ✅ EXPORT
-// ======================================================
+router.get(
+  "/settings",
+  isAuth,
+  isAdmin,
+  getSettings
+);
+
+router.put(
+  "/settings",
+  isAuth,
+  isAdmin,
+  updateSettings
+);
+
+/* ======================================================
+   ✅ EXPORT
+====================================================== */
 
 export default router;

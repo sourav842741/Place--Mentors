@@ -8,13 +8,14 @@ import {
 } from "../controllers/potd.controller.js";
 import isAuth from "../middlewares/isAuth.js";
 import isAdmin from "../middlewares/admin.middleware.js";
+import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 
 const router = Router();
 
 router.get("/", getTodayPotd);
-router.post("/generate",isAuth,isAdmin, generatePotd); // Manual trigger (admin?)
-router.post("/submit", isAuth, submitPotd);
-router.get("/status", isAuth, getPotdStatus);
-router.post("/complete", isAuth, completePotd);
+router.post("/generate", maintenanceCheck, isAuth,isAdmin, generatePotd); // Manual trigger (admin?)
+router.post("/submit", maintenanceCheck, isAuth, submitPotd);
+router.get("/status", maintenanceCheck, isAuth, getPotdStatus);
+router.post("/complete", maintenanceCheck, isAuth, completePotd);
 
 export default router;

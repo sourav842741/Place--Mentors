@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import isAuth from "../middlewares/isAuth.js";
+import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 import {
   createTask,
   getMyTasks,
@@ -14,7 +15,7 @@ import {
 
 const router = Router();
 
-router.use(isAuth);
+router.use(maintenanceCheck, isAuth);
 
 // Private routes - only for task owner
 router.post("/create", asyncHandler(createTask));

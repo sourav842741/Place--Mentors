@@ -1,11 +1,10 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-
-
 import { socket } from "./socket";
 import useAuth from "./hooks/useAuth";
+import useSettings from "./hooks/useSettings";
 
 import {
   battleStart,
@@ -16,7 +15,7 @@ import {
   updateOpponentCode,
 } from "./redux/battleSlice";
 
-// Pages
+/* Pages */
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyOtp from "./pages/VerifyOtp";
@@ -50,83 +49,131 @@ import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
 import Resources from "./pages/Resources";
 import UsersPage from "./pages/UsersPage";
 import BattlePage from "./pages/BattlePage.jsx";
+import TaskBoard from "./pages/TaskBoard";
+import ShareTask from "./pages/ShareTask";
+import FruitboxFlex from "./pages/FruitboxFlex";
+import AICoach from "./pages/AICoach";
+import MaintenancePage from "./pages/MaintenancePage";
 
-// Components
+/* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/admin/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
 import InstallPopup from "./components/InstallPopup";
 import NotFoundPage from "./components/NotFoundPage";
+import NotificationPopup from "./components/NotificationPopup.jsx";
+import SplashScreen from "./components/SplashScreen";
 import { Toaster } from "sonner";
 
-// Admin pages
+/* Admin Pages */
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Users from "./pages/admin/Users";
 import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
 import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
-import NotificationPopup from "./components/NotificationPopup.jsx";
-import SplashScreen from "./components/SplashScreen";
-import TaskBoard from "./pages/TaskBoard";
-import ShareTask from "./pages/ShareTask";
-import FruitboxFlex from "./pages/FruitboxFlex";
-import AICoach from "./pages/AICoach";
 import AdminEmailCenter from "./pages/admin/AdminEmailCenter";
-
+import AdminSettings from "./pages/admin/AdminSettings";
 
 function App() {
   const { getCurrentUser } = useAuth();
-  const { user,loading } = useSelector((state) => state.user);
+  const { user, loading } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
+  /* SETTINGS */
+  const {
+    data: settingsData,
+    isLoading: settingsLoading,
+  } = useSettings();
+
+  const maintenanceActive =
+    settingsData?.data?.maintenanceMode;
+
+  const isAdminRoute =
+    location.pathname.startsWith("/admin");
+
+  /* SPLASH */
   useEffect(() => {
-  if (!loading && user) {
-    const seen = sessionStorage.getItem("seenSplash");
+    if (!loading && user) {
+      const seen =
+        sessionStorage.getItem("seenSplash");
 
-    if (!seen && window.location.pathname !== "/splash") {
-      sessionStorage.setItem("seenSplash", "true");
-      navigate("/splash");
+      if (
+        !seen &&
+        location.pathname !== "/splash"
+      ) {
+        sessionStorage.setItem(
+          "seenSplash",
+          "true"
+        );
+
+        navigate("/splash");
+      }
     }
-  }
-}, [user, loading]);
+  }, [user, loading]);
 
-  //  Load user
+  /* LOAD USER */
   useEffect(() => {
     getCurrentUser();
   }, []);
 
-  //  SOCKET JOIN (VERY IMPORTANT)
+  /* SOCKET JOIN */
   useEffect(() => {
     if (user?._id) {
       socket.emit("join", user._id);
     }
   }, [user]);
 
-  //  CENTRALIZED NOTIFICATION LISTENERS (GLOBAL)
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupData, setPopupData] = useState(null);
-  const [popupType, setPopupType] = useState("");
+  /* POPUPS */
+  const [showPopup, setShowPopup] =
+    useState(false);
+
+  const [popupData, setPopupData] =
+    useState(null);
+
+  const [popupType, setPopupType] =
+    useState("");
 
   useEffect(() => {
-    const handleFriendRequest = (data) => {
+    const handleFriendRequest = (
+      data
+    ) => {
       setPopupData(data.requester);
       setPopupType("friend");
       setShowPopup(true);
     };
 
-    const handleChallenge = (data) => {
-      setPopupData(data.challenger || data);
+    const handleChallenge = (
+      data
+    ) => {
+      setPopupData(
+        data.challenger || data
+      );
       setPopupType("challenge");
       setShowPopup(true);
     };
 
-    socket.on("friend_request_received", handleFriendRequest);
-    socket.on("challenge_received", handleChallenge);
+    socket.on(
+      "friend_request_received",
+      handleFriendRequest
+    );
+
+    socket.on(
+      "challenge_received",
+      handleChallenge
+    );
 
     return () => {
-      socket.off("friend_request_received", handleFriendRequest);
-      socket.off("challenge_received", handleChallenge);
+      socket.off(
+        "friend_request_received",
+        handleFriendRequest
+      );
+
+      socket.off(
+        "challenge_received",
+        handleChallenge
+      );
     };
   }, []);
 
@@ -136,61 +183,117 @@ function App() {
     setPopupType("");
   };
 
-  //  CENTRALIZED BATTLE SOCKET LISTENERS
+  /* BATTLE SOCKETS */
   useEffect(() => {
-    const handleBattleStart = (data) => {
+    const handleBattleStart = (
+      data
+    ) => {
       dispatch(battleStart(data));
 
-      navigate(`/battle/${data.roomId}`, {
-        state: {
-          problem: data.problem,
-          opponent: data.opponent,
-          timeLimit: data.timeLimit,
-        },
-      });
+      navigate(
+        `/battle/${data.roomId}`,
+        {
+          state: {
+            problem: data.problem,
+            opponent:
+              data.opponent,
+            timeLimit:
+              data.timeLimit,
+          },
+        }
+      );
     };
 
-    const handleBattleWinner = (data) => {
-      dispatch(battleWinner(data));
-    };
+    socket.on(
+      "battle:start",
+      handleBattleStart
+    );
 
-    const handleBattleDraw = () => {
-      dispatch(battleDraw());
-    };
+    socket.on(
+      "battle:winner",
+      (data) =>
+        dispatch(
+          battleWinner(data)
+        )
+    );
 
-    const handleBattleFailed = () => {
-      dispatch(battleFailed());
-    };
+    socket.on(
+      "battle:draw",
+      () =>
+        dispatch(
+          battleDraw()
+        )
+    );
 
-    const handleOpponentCodeChange = (data) => {
-      dispatch(updateOpponentCode(data));
-    };
+    socket.on(
+      "battle:failed",
+      () =>
+        dispatch(
+          battleFailed()
+        )
+    );
 
-    const handleBattleResult = (data) => {
-      dispatch(battleResult(data));
-    };
+    socket.on(
+      "battle:result",
+      (data) =>
+        dispatch(
+          battleResult(data)
+        )
+    );
 
-    socket.on("battle:start", handleBattleStart);
-    socket.on("battle:winner", handleBattleWinner);
-    socket.on("battle:draw", handleBattleDraw);
-    socket.on("battle:failed", handleBattleFailed);
-    socket.on("opponent_code_change", handleOpponentCodeChange);
-    socket.on("battle:result", handleBattleResult);
+    socket.on(
+      "opponent_code_change",
+      (data) =>
+        dispatch(
+          updateOpponentCode(data)
+        )
+    );
 
     return () => {
-      socket.off("battle:start", handleBattleStart);
-      socket.off("battle:winner", handleBattleWinner);
-      socket.off("battle:draw", handleBattleDraw);
-      socket.off("battle:failed", handleBattleFailed);
-      socket.off("opponent_code_change", handleOpponentCodeChange);
-      socket.off("battle:result", handleBattleResult);
+      socket.off(
+        "battle:start",
+        handleBattleStart
+      );
+      socket.off(
+        "battle:winner"
+      );
+      socket.off(
+        "battle:draw"
+      );
+      socket.off(
+        "battle:failed"
+      );
+      socket.off(
+        "battle:result"
+      );
+      socket.off(
+        "opponent_code_change"
+      );
     };
   }, [dispatch, navigate]);
+
+  /* LOADER */
+  if (loading || settingsLoading) {
+    return null;
+  }
+
+  /* MAINTENANCE BLOCK
+     ADMIN ROUTES ALWAYS ALLOWED */
+  if (
+    maintenanceActive &&
+    !isAdminRoute &&
+    user?.role !== "admin"
+  ) {
+    return <MaintenancePage />;
+  }
 
   return (
     <>
       <InstallPopup />
-      <Toaster position="top-right" richColors />
+      <Toaster
+        position="top-right"
+        richColors
+      />
 
       {showPopup && (
         <NotificationPopup
@@ -204,12 +307,11 @@ function App() {
         {/* PUBLIC */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/splash" element={<SplashScreen/>} />
+        <Route path="/splash" element={<SplashScreen />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-
 
         {/* ADMIN */}
         <Route element={<AdminRoute />}>
@@ -219,6 +321,7 @@ function App() {
             <Route path="/admin/create-potd" element={<AdminCreatePotd />} />
             <Route path="/admin/create-cpotd" element={<AdminCreateCpotd />} />
             <Route path="/admin/email-center" element={<AdminEmailCenter />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
         </Route>
 
@@ -253,11 +356,16 @@ function App() {
           <Route path="/dashboard/fruitbox-flex" element={<FruitboxFlex />} />
           <Route path="/ai-coach" element={<AICoach />} />
           <Route path="/resources" element={<Resources />} />
-
           <Route path="/users" element={<UsersPage />} />
           <Route path="/battle/:roomId" element={<BattlePage />} />
           <Route path="/share/task/:shareId" element={<ShareTask />} />
         </Route>
+
+        {/* SPECIAL */}
+        <Route
+          path="/maintenance"
+          element={<MaintenancePage />}
+        />
 
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />

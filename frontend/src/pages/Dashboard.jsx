@@ -46,8 +46,15 @@ import ContactUs from "@/components/ContactUs";
 import StreakCalendar from "@/components/StreakCalendar.jsx";
 import { fetchStreak } from "../redux/streakSlice.js";
 
+import AnnouncementBar from "../components/AnnouncementBar";
+import useSettings from "../hooks/useSettings";
+import { useQueryClient } from '@tanstack/react-query';
+
 export default function Dashboard() {
+  const queryClient = useQueryClient();
   const { user } = useSelector((state) => state.user);
+  const { data: settings } = useSettings();
+  
 
   const navigate = useNavigate();
 
@@ -302,10 +309,21 @@ const percent = Math.min(
     {};
   // ======================================================
 
+
+
+
   return (
     <>
+    
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-16  dark:bg-gray-950 transition-colors duration-300">
+   {settings?.data && (
+  <div className="mt-16 md:ml-64">
+    <AnnouncementBar settings={settings.data} />
+  </div>
+)}
+   
+      
+<div className="md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen dark:bg-gray-950 transition-colors duration-300">
         {/* 🔥 BADGE POPUP */}
         {unlockedBadges.length > 0 && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -329,8 +347,10 @@ const percent = Math.min(
         )}
 
         {/* Main Content */}
+  
         <main className="flex-1">
           <div className="p-2 md:p-6 space-y-4 md:space-y-6">
+
             {/* TOP */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default  dark:bg-gray-900  dark:border-white/10">

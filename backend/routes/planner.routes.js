@@ -15,21 +15,22 @@ import {
 } from "../controllers/planner.controller.js";
 import { upload } from "../middlewares/multer.js";
 import isAuth from "../middlewares/isAuth.js";
+import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 
 const router = express.Router();
 
-router.post("/create", isAuth ,createPlanner);
-router.get("/my",isAuth, getMyPlanner);
-router.post("/complete",isAuth, completeTask);
-router.post("/calendar",isAuth, syncCalendar);
-router.get("/calendar/auth", isAuth, getCalendarAuthUrl);
+router.post("/create", maintenanceCheck, isAuth ,createPlanner);
+router.get("/my", maintenanceCheck, isAuth, getMyPlanner);
+router.post("/complete", maintenanceCheck, isAuth, completeTask);
+router.post("/calendar", maintenanceCheck, isAuth, syncCalendar);
+router.get("/calendar/auth", maintenanceCheck, isAuth, getCalendarAuthUrl);
 router.get("/calendar/callback", calendarCallback);
-router.get("/calendar/status", isAuth, getCalendarStatus);
-router.get("/all", isAuth, getAllPlanners);
-router.get("/user", isAuth, getAllPlanners);
-router.get("/:id", isAuth, getPlannerById);
+router.get("/calendar/status", maintenanceCheck, isAuth, getCalendarStatus);
+router.get("/all", maintenanceCheck, isAuth, getAllPlanners);
+router.get("/user", maintenanceCheck, isAuth, getAllPlanners);
+router.get("/:id", maintenanceCheck, isAuth, getPlannerById);
 
-router.post("/analyze-resume", isAuth, upload.single("resume"), analyzeResume);
+router.post("/analyze-resume", maintenanceCheck, isAuth, upload.single("resume"), analyzeResume);
 
 
 export default router;

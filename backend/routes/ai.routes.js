@@ -52,4 +52,6 @@ router.get("/youtube", asyncHandler(async (req, res) => {
   );
 }));
 
+import maintenanceCheck from "../middlewares/maintenanceCheck.js";
+
 export default router;
