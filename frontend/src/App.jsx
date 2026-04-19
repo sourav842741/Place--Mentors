@@ -72,6 +72,7 @@ import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
 import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import AdminEmailCenter from "./pages/admin/AdminEmailCenter";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminMaintenanceManager from "./pages/admin/AdminMaintenanceManager.jsx";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -322,6 +323,7 @@ function App() {
             <Route path="/admin/create-cpotd" element={<AdminCreateCpotd />} />
             <Route path="/admin/email-center" element={<AdminEmailCenter />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/maintenance-manager" element={<AdminMaintenanceManager />} />
           </Route>
         </Route>
 

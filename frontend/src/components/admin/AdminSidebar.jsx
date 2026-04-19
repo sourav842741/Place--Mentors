@@ -8,7 +8,8 @@ import {
   BarChart3,
   Settings,
   Plus,
-  Mail
+  Mail,
+  Brain
 } from "lucide-react";
 
 const menuItems = [
@@ -19,7 +20,8 @@ const menuItems = [
   { icon: Plus, label: "Create POTD", path: "/admin/create-potd" },
   { icon: Plus, label: "Create CPOTD", path: "/admin/create-cpotd" },
 
-  { icon: Settings, label: "Settings", path: "/admin/settings" },
+{ icon: Settings, label: "Settings", path: "/admin/settings" },
+  { icon: Brain, label: "Maintenance Content", path: "/admin/maintenance-manager" },
 ];
 
 export default function AdminSidebar({ isOpen, setIsOpen }) {

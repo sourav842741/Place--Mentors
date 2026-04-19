@@ -36,6 +36,7 @@ import CodingPotd from "./models/CodingPotd.js";
 import mongoose from "mongoose";
 import { executeTests } from "./utils/codeExecutor.js";
 import taskRouter from "./routes/task.routes.js";
+import maintenanceRouter from "./routes/maintenance.routes.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -99,6 +100,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/friends", friendRouter);
 app.use("/api/users", userRouter);
 app.use("/api/fruitbox", fruitboxRouter);
+app.use("/api/maintenance", maintenanceRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;

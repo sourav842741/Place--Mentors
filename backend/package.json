@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "create-admin": "node scripts/createAdmin.js"
+    "create-admin": "node scripts/createAdmin.js",
+    "seed": "node scripts/seedMaintenance.js"
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
