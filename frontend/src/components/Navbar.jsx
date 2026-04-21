@@ -592,43 +592,108 @@ p-2 rounded"
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR */}
-      {mobileOpen && (
-        <>
-          {/* BACKDROP */}
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setMobileOpen(false)}
-          />
+     {/* MOBILE SIDEBAR */}
+{mobileOpen && (
+  <>
+    {/* BACKDROP */}
+    <div
+      className="fixed inset-0 bg-black/50 z-40"
+      onClick={() => setMobileOpen(false)}
+    />
 
-          {/* SIDEBAR */}
-         <div className="fixed top-0 left-0 w-[85%] max-w-xs h-full bg-white dark:bg-gray-900 z-50 p-4 shadow-2xl animate-in slide-in-from-left duration-300 border-r border-gray-200 dark:border-gray-800">
-            <div className="flex justify-between mb-4">
-              <span className="font-bold">Menu</span>
-              <button
-  onClick={() => setMobileOpen(false)}
-  className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
->
-                <X />
-              </button>
-            </div>
+    {/* SIDEBAR */}
+    <div className="fixed top-0 left-0 w-[85%] max-w-xs h-screen bg-white dark:bg-gray-900 z-50 shadow-2xl animate-in slide-in-from-left duration-300 border-r border-gray-200 dark:border-gray-800 flex flex-col">
 
-            {menuItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={() => {
-                  navigate(item.path);
-                  setMobileOpen(false);
-                }}
-                className="group flex items-center gap-3 p-3 w-full text-left rounded-xl cursor-pointer transition-all duration-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:translate-x-1 hover:shadow-md"
-              >
-                <item.icon />
-                {item.label}
-              </button>
-            ))}
+      {/* HEADER */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
+        <span className="font-bold text-lg dark:text-white">
+          Menu
+        </span>
+
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition cursor-pointer"
+        >
+          <X />
+        </button>
+      </div>
+
+      {/* SCROLL AREA */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+
+        {/* PROFILE CARD */}
+        <button
+          onClick={() => {
+            navigate("/profile");
+            setMobileOpen(false);
+          }}
+          className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98] transition text-left"
+        >
+          <Avatar className="h-11 w-11">
+            <AvatarImage src={user?.avatar} />
+            <AvatarFallback>
+              {getInitials(user?.fullName)}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="min-w-0">
+            <p className="font-semibold text-sm dark:text-white truncate">
+              {user?.fullName}
+            </p>
+            <p className="text-xs text-gray-500">
+              View Profile
+            </p>
           </div>
-        </>
-      )}
+        </button>
+
+        {/* MENU ITEMS */}
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+
+          return (
+            <button
+              key={item.label}
+              onClick={() => {
+                navigate(item.path);
+                setMobileOpen(false);
+              }}
+              className={`group flex items-center gap-3 p-3 w-full text-left rounded-xl transition-all duration-300 cursor-pointer
+              ${
+                isActive
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 active:bg-blue-100 dark:active:bg-gray-700"
+              }
+              active:scale-[0.98]`}
+            >
+              <item.icon
+                className={`w-5 h-5 shrink-0 ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
+              />
+              {item.label}
+            </button>
+          );
+        })}
+
+        {/* STREAK */}
+        <div className="mt-4 p-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 flex items-center gap-3">
+          <Flame className="w-5 h-5 text-orange-500 shrink-0" />
+          <div>
+            <p className="font-bold text-sm dark:text-white">
+              {user?.streakCount || 0} Day Streak
+            </p>
+            <p className="text-xs text-gray-500">
+              Keep learning daily 🔥
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </>
+)}
     </>
   );
 }

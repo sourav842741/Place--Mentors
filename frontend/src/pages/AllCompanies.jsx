@@ -89,36 +89,60 @@ const AllCompanies = () => {
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* HEADER */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-white/10 p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 transition-colors duration-300">
+      <div
+  className="
+    bg-white dark:bg-gray-900
+    rounded-2xl shadow-sm
+    border border-gray-200 dark:border-white/10
+    p-6
+    flex flex-col lg:flex-row
+    lg:items-center lg:justify-between
+    gap-4
+    transition-colors duration-300
+  "
+>
+  {/* LEFT */}
+  <div>
+    <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+      Explore Companies
+    </h1>
 
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
-              Explore Companies
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-              Interview patterns, salary & preparation roadmap
-            </p>
-          </div>
+    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+      Interview patterns, salary & preparation roadmap
+    </p>
+  </div>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={refetch}
-              variant="outline"
-              className="rounded-xl"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
+  {/* RIGHT BUTTONS */}
+  <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
 
-            <Button
-              onClick={() => navigate("/ai-search")}
-              className="rounded-xl bg-black text-white dark:bg-white dark:text-black cursor-pointer transition-colors duration-300"
-            >
-              <Brain className="h-4 w-4 mr-2" />
-              AI Search for more companies
-            </Button>
-          </div>
-        </div>
+    <Button
+      onClick={refetch}
+      variant="outline"
+      className="rounded-xl w-full sm:w-auto"
+    >
+      <RefreshCw className="h-4 w-4 mr-2" />
+      Refresh
+    </Button>
+
+    <Button
+      onClick={() => navigate("/ai-search")}
+      className="
+        rounded-xl
+        bg-black text-white
+        dark:bg-white dark:text-black
+        cursor-pointer
+        transition-colors duration-300
+        w-full sm:w-auto
+        whitespace-normal text-center
+        px-4 py-2
+      "
+    >
+      <Brain className="h-4 w-4 mr-2 shrink-0" />
+      AI Search for more companies
+    </Button>
+
+  </div>
+</div>
 
         {/* SEARCH + FILTER */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-white/10 p-4 flex flex-col md:flex-row gap-3 items-center transition-colors duration-300">

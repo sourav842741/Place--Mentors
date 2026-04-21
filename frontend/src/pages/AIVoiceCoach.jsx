@@ -158,13 +158,13 @@ const AIVoiceCoach = () => {
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 px-4 md:px-8 py-8 lg:mt-14 lg:ml-64 md:mt-16">
         {/* HERO */}
-        <div className="max-w-6xl mx-auto text-center mb-16">
+        <div className="max-w-6xl mx-auto text-center mb-16 ">
           <div className="inline-flex items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl px-6 py-3 rounded-3xl shadow-xl mb-8 border border-white/50">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-ping" />
+            <div className="w-3 h-3 bg-green-400 rounded-full animate-ping " />
 
-            <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-gray-900 to-slate-700 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              PlaceMentor AI Voice Coach
-            </h1>
+           <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-gray-900 to-slate-700 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mt-6 sm:mt-0">
+  PlaceMentor AI Voice Coach
+</h1>
           </div>
 
           <p className="text-lg md:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">

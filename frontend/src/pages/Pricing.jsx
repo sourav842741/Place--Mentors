@@ -8,6 +8,7 @@ import { setUserData } from "../redux/userSlice";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+
 function Pricing() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("free");
@@ -62,16 +63,21 @@ function Pricing() {
     try {
       setLoadingPlan(plan.id);
 
-      const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 500 : 0;
+      const amount =
+        plan.id === "basic"
+          ? 100
+          : plan.id === "pro"
+          ? 500
+          : 0;
 
       const result = await api.post(
         "/api/payment/order",
         {
           planId: plan.id,
-          amount: amount,
+          amount,
           credits: plan.credits,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       );
 
       const options = {
@@ -83,16 +89,19 @@ function Pricing() {
         order_id: result.data.id,
 
         handler: async function (response) {
-          const res = await api.post("/api/payment/verify", response, {
-            withCredentials: true,
-          });
-          dispatch(setUserData(res.data.user));
+          const res = await api.post(
+            "/api/payment/verify",
+            response,
+            { withCredentials: true }
+          );
 
+          dispatch(setUserData(res.data.user));
           toast.success("Credits added successfully!");
           navigate("/dashboard");
         },
+
         theme: {
-          color: "#10b981", 
+          color: "#2563eb",
         },
       };
 
@@ -108,138 +117,198 @@ function Pricing() {
 
   return (
     <>
-    <Navbar/>
-   <div className="min-h-screen 
-bg-gradient-to-br from-gray-50 to-emerald-50 
-dark:from-gray-950 dark:to-gray-900 
-py-16 px-6 transition-colors duration-300 lg:ml-64">
+      <Navbar />
 
-  <div className="max-w-6xl mx-auto mb-14 flex items-start gap-4">
+      <div
+        className="min-h-screen
+        bg-gray-50 dark:bg-gray-950
+        py-16 px-6 transition-colors duration-300 lg:ml-64"
+      >
+        {/* Header */}
+        <div className="max-w-6xl mx-auto mb-14 flex items-start gap-4">
+          <button
+            onClick={() =>
+              navigate("/dashboard")
+            }
+            className="mt-2 p-3 rounded-full
+            bg-white dark:bg-gray-900
+            shadow-sm hover:shadow-md
+            border border-gray-200 dark:border-white/10
+            transition-all duration-300 hover:scale-105"
+          >
+            <FaArrowLeft className="text-gray-600 dark:text-gray-300" />
+          </button>
 
-    <button
-      onClick={() => navigate("/dashboard")}
-      className="mt-2 p-3 rounded-full 
-      bg-white dark:bg-gray-800 
-      shadow hover:shadow-md 
-      border border-gray-200 dark:border-white/10 transition"
-    >
-      <FaArrowLeft className="text-gray-600 dark:text-gray-300" />
-    </button>
+          <div className="text-center w-full">
+            <h1
+              className="text-4xl font-bold
+              text-gray-900 dark:text-white"
+            >
+              Choose Your Plan
+            </h1>
 
-    <div className="text-center w-full">
-      <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
-        Choose Your Plan
-      </h1>
-
-      <p className="text-gray-500 dark:text-gray-400 mt-3 text-lg">
-        Flexible pricing to match your interview preparation goals.
-      </p>
-    </div>
-
-  </div>
-
-  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-
-    {plans.map((plan) => {
-      const isSelected = selectedPlan === plan.id;
-
-      return (
-        <motion.div
-          key={plan.id}
-          whileHover={!plan.default && { scale: 1.03 }}
-          onClick={() => !plan.default && setSelectedPlan(plan.id)}
-          className={`relative rounded-3xl p-8 transition-all duration-300 border 
-          ${
-            isSelected
-              ? "border-emerald-600 shadow-2xl bg-white dark:bg-gray-900"
-              : "border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-md"
-          }
-          ${plan.default ? "cursor-default" : "cursor-pointer"}
-          `}
-        >
-
-          {/* Badge */}
-          {plan.badge && (
-            <div className="absolute top-6 right-6 bg-emerald-600 text-white text-xs px-4 py-1 rounded-full shadow">
-              {plan.badge}
-            </div>
-          )}
-
-          {/* Default Tag */}
-          {plan.default && (
-            <div className="absolute top-6 right-6 
-            bg-gray-200 dark:bg-gray-700 
-            text-gray-700 dark:text-gray-300 
-            text-xs px-3 py-1 rounded-full">
-              Default
-            </div>
-          )}
-
-          {/* Plan Name */}
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-            {plan.name}
-          </h3>
-
-          {/* Price */}
-          <div className="mt-4">
-            <span className="text-3xl font-bold text-emerald-600">
-              {plan.price}
-            </span>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              {plan.credits} Credits
+            <p
+              className="text-gray-500 dark:text-gray-400 mt-3 text-lg"
+            >
+              Flexible pricing to match your interview preparation goals.
             </p>
           </div>
+        </div>
 
-          {/* Description */}
-          <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm leading-relaxed">
-            {plan.description}
-          </p>
+        {/* Cards */}
+        <div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+        >
+          {plans.map((plan) => {
+            const isSelected =
+              selectedPlan === plan.id;
 
-          {/* Features */}
-          <div className="mt-6 space-y-3 text-left">
-            {plan.features.map((feature, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <FaCheckCircle className="text-emerald-500 text-sm" />
-                <span className="text-gray-700 dark:text-gray-300 text-sm">
-                  {feature}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {!plan.default && (
-            <button
-              disabled={loadingPlan === plan.id}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!isSelected) {
-                  setSelectedPlan(plan.id);
-                } else {
-                  handlePayment(plan);
+            return (
+              <motion.div
+                key={plan.id}
+                whileHover={
+                  !plan.default && {
+                    scale: 1.03,
+                  }
                 }
-              }}
-              className={`w-full mt-8 py-3 rounded-xl font-semibold transition 
-              ${
-                isSelected
-                  ? "bg-emerald-600 text-white hover:opacity-90"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-gray-700"
-              }`}
-            >
-              {loadingPlan === plan.id
-                ? "Processing..."
-                : isSelected
-                ? "Proceed to Pay"
-                : "Select Plan"}
-            </button>
-          )}
+                onClick={() =>
+                  !plan.default &&
+                  setSelectedPlan(
+                    plan.id
+                  )
+                }
+                className={`relative rounded-3xl p-8 transition-all duration-300 border
+                ${
+                  isSelected
+                    ? "border-blue-600 shadow-2xl bg-white dark:bg-gray-900"
+                    : "border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-md"
+                }
+                ${
+                  plan.default
+                    ? "cursor-default"
+                    : "cursor-pointer"
+                }`}
+              >
+                {/* Badge */}
+                {plan.badge && (
+                  <div
+                    className="absolute top-6 right-6
+                    bg-gradient-to-r from-blue-600 to-indigo-600
+                    text-white text-xs px-4 py-1 rounded-full shadow"
+                  >
+                    {plan.badge}
+                  </div>
+                )}
 
-        </motion.div>
-      );
-    })}
+                {/* Default */}
+                {plan.default && (
+                  <div
+                    className="absolute top-6 right-6
+                    bg-gray-200 dark:bg-gray-700
+                    text-gray-700 dark:text-gray-300
+                    text-xs px-3 py-1 rounded-full"
+                  >
+                    Default
+                  </div>
+                )}
 
-  </div>
-</div>
-    <Footer/>
+                {/* Title */}
+                <h3
+                  className="text-xl font-semibold
+                  text-gray-900 dark:text-white"
+                >
+                  {plan.name}
+                </h3>
+
+                {/* Price */}
+                <div className="mt-4">
+                  <span
+                    className="text-4xl font-bold
+                    text-blue-600 dark:text-blue-400"
+                  >
+                    {plan.price}
+                  </span>
+
+                  <p
+                    className="text-gray-500 dark:text-gray-400 mt-1"
+                  >
+                    {plan.credits} Credits
+                  </p>
+                </div>
+
+                {/* Desc */}
+                <p
+                  className="text-gray-500 dark:text-gray-400 mt-4 text-sm leading-relaxed"
+                >
+                  {plan.description}
+                </p>
+
+                {/* Features */}
+                <div className="mt-6 space-y-3 text-left">
+                  {plan.features.map(
+                    (feature, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-3"
+                      >
+                        <FaCheckCircle
+                          className="text-blue-500 text-sm"
+                        />
+
+                        <span
+                          className="text-gray-700 dark:text-gray-300 text-sm"
+                        >
+                          {feature}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+
+                {/* Button */}
+                {!plan.default && (
+                  <button
+                    disabled={
+                      loadingPlan ===
+                      plan.id
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      if (
+                        !isSelected
+                      ) {
+                        setSelectedPlan(
+                          plan.id
+                        );
+                      } else {
+                        handlePayment(
+                          plan
+                        );
+                      }
+                    }}
+                    className={`w-full mt-8 py-3 rounded-xl font-semibold transition-all duration-300
+                    ${
+                      isSelected
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    {loadingPlan ===
+                    plan.id
+                      ? "Processing..."
+                      : isSelected
+                      ? "Proceed to Pay"
+                      : "Select Plan"}
+                  </button>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      <Footer />
     </>
   );
 }
