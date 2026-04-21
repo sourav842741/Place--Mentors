@@ -377,7 +377,7 @@ const JobsPage = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-8 mt-17 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950  text-white transition-colors duration-300">
+      <div className="pt-16 lg:pl-64 p-4 md:p-6 min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 lg:ml-8 mt-17 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950  text-white transition-colors duration-300">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Hero */}
           <div className="text-center mb-12">
@@ -390,158 +390,215 @@ const JobsPage = () => {
             </p>
           </div>
 
-          {/* Search & Filters */}
-          <Card className="shadow-lg border-0">
-            <CardContent className="p-6 lg:p-8">
-              <div className="grid md:grid-cols-[1fr_1fr_auto] lg:grid-cols-[2fr_1fr_180px] gap-4 items-end">
-                <div>
-                  <Label className="text-sm font-medium mb-2 block">
-                    Job Title
-                  </Label>
-                  <Input
-                    placeholder="e.g. Frontend Developer, Product Manager..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium mb-2 block">
-                    Location
-                  </Label>
-                  <Input
-                    placeholder="e.g. Remote, New York, London..."
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <Button
-                  onClick={onSearch}
-                  className="h-full bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700"
-                >
-                  <Search className="mr-2 h-5 w-5" />
-                  Search Jobs
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+         {/* Search & Filters */}
+<Card className="shadow-lg border border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800 transition-colors duration-300">
+  <CardContent className="p-6 lg:p-8">
+    <div className="grid md:grid-cols-[1fr_1fr_auto] lg:grid-cols-[2fr_1fr_180px] gap-4 items-end">
+      
+      {/* Job Title */}
+      <div>
+        <Label className="text-sm font-medium mb-2 block text-gray-700 dark:text-gray-200">
+          Job Title
+        </Label>
+        <Input
+          placeholder="e.g. Frontend Developer, Product Manager..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="h-12 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 
+                     dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400
+                     focus-visible:ring-indigo-500"
+        />
+      </div>
+
+      {/* Location */}
+      <div>
+        <Label className="text-sm font-medium mb-2 block text-gray-700 dark:text-gray-200">
+          Location
+        </Label>
+        <Input
+          placeholder="e.g. Remote, New York, London..."
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="h-12 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 
+                     dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400
+                     focus-visible:ring-indigo-500"
+        />
+      </div>
+
+      {/* Search Button */}
+      <Button
+        onClick={onSearch}
+        className="h-12 md:h-full bg-gradient-to-r from-indigo-600 to-purple-600 
+                   hover:from-indigo-700 hover:to-purple-700 
+                   text-white shadow-md transition-all duration-300"
+      >
+        <Search className="mr-2 h-5 w-5" />
+        Search Jobs
+      </Button>
+
+    </div>
+  </CardContent>
+</Card>
 
           {/* Controls */}
-          <div className="flex flex-wrap gap-3 items-center">
-            <div className="flex gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border shadow-sm">
-              <Button
-                variant={view === "all" ? "default" : "outline"}
-                onClick={() => switchView("all")}
-                className="font-medium"
-              >
-                All Jobs ({jobs.length})
-              </Button>
-              <Button
-                variant={view === "matched" ? "default" : "outline"}
-                className="font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                AI Matches ({matchedJobs.length})
-              </Button>
-            </div>
+<div className="flex flex-wrap gap-3 items-center">
+  
+  {/* View Buttons */}
+  <div className="flex gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
+                  dark:bg-gray-900/80 dark:border-gray-800 transition-colors duration-300">
+    
+    <Button
+      variant={view === "all" ? "default" : "outline"}
+      onClick={() => switchView("all")}
+      className={`font-medium transition-all duration-300 ${
+        view === "all"
+          ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+          : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+      }`}
+    >
+      All Jobs ({jobs.length})
+    </Button>
 
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filters ({Object.values(localFilters).filter(Boolean).length})
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-100">
-                <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
-                  <SheetDescription>Refine your job search</SheetDescription>
-                </SheetHeader>
-                <div className="space-y-6 py-4">
-                  <div className="space-y-2">
-                    <Label>Job Type</Label>
-                    <Select
-                      value={localFilters.jobType}
-                      onValueChange={(v) =>
-                        setLocalFilters({ ...localFilters, jobType: v })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full-time">Full Time</SelectItem>
-                        <SelectItem value="part-time">Part Time</SelectItem>
-                        <SelectItem value="contract">Contract</SelectItem>
-                        <SelectItem value="internship">Internship</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Experience Level</Label>
-                    <Select
-                      value={localFilters.experienceLevel}
-                      onValueChange={(v) =>
-                        setLocalFilters({ ...localFilters, experienceLevel: v })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="entry">Entry Level</SelectItem>
-                        <SelectItem value="junior">Junior</SelectItem>
-                        <SelectItem value="mid">Mid Level</SelectItem>
-                        <SelectItem value="senior">Senior</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="remote"
-                      checked={localFilters.remote}
-                      onCheckedChange={(v) =>
-                        setLocalFilters({ ...localFilters, remote: v })
-                      }
-                    />
-                    <Label htmlFor="remote" className="font-medium">
-                      Remote OK
-                    </Label>
-                  </div>
-                  <div>
-                    <Label>Min Salary</Label>
-                    <Input
-                      type="number"
-                      placeholder="50"
-                      value={localFilters.salaryMin}
-                      onChange={(e) =>
-                        setLocalFilters({
-                          ...localFilters,
-                          salaryMin: e.target.value,
-                        })
-                      }
-                      className="mt-1"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Minimum annual salary (k)
-                    </p>
-                  </div>
-                  <div className="flex gap-3 pt-4">
-                    <Button className="flex-1" onClick={applyLocalFilters}>
-                      Apply Filters
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={clearFilters}
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+    <Button
+      variant={view === "matched" ? "default" : "outline"}
+      className={`font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${
+        view === "matched"
+          ? "bg-purple-600 hover:bg-purple-700 text-white"
+          : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+      }`}
+    >
+      AI Matches ({matchedJobs.length})
+    </Button>
+  </div>
+
+  {/* Filter Button */}
+  <Sheet>
+    <SheetTrigger asChild>
+      <Button
+        variant="outline"
+        className="flex items-center gap-2 border-gray-300 bg-white text-gray-700 hover:bg-gray-100
+                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800 transition-all duration-300"
+      >
+        <Filter className="h-4 w-4" />
+        Filters ({Object.values(localFilters).filter(Boolean).length})
+      </Button>
+    </SheetTrigger>
+
+    {/* Filter Drawer */}
+    <SheetContent className="w-100 bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800">
+      <SheetHeader>
+        <SheetTitle className="text-gray-900 dark:text-white">
+          Filters
+        </SheetTitle>
+        <SheetDescription className="text-gray-500 dark:text-gray-400">
+          Refine your job search
+        </SheetDescription>
+      </SheetHeader>
+
+      <div className="space-y-6 py-4">
+
+        {/* Job Type */}
+        <div className="space-y-2">
+          <Label className="text-gray-700 dark:text-gray-200">Job Type</Label>
+          <Select
+            value={localFilters.jobType}
+            onValueChange={(v) =>
+              setLocalFilters({ ...localFilters, jobType: v })
+            }
+          >
+            <SelectTrigger className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+              <SelectItem value="full-time">Full Time</SelectItem>
+              <SelectItem value="part-time">Part Time</SelectItem>
+              <SelectItem value="contract">Contract</SelectItem>
+              <SelectItem value="internship">Internship</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Experience */}
+        <div className="space-y-2">
+          <Label className="text-gray-700 dark:text-gray-200">
+            Experience Level
+          </Label>
+          <Select
+            value={localFilters.experienceLevel}
+            onValueChange={(v) =>
+              setLocalFilters({ ...localFilters, experienceLevel: v })
+            }
+          >
+            <SelectTrigger className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+              <SelectItem value="entry">Entry Level</SelectItem>
+              <SelectItem value="junior">Junior</SelectItem>
+              <SelectItem value="mid">Mid Level</SelectItem>
+              <SelectItem value="senior">Senior</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Remote */}
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="remote"
+            checked={localFilters.remote}
+            onCheckedChange={(v) =>
+              setLocalFilters({ ...localFilters, remote: v })
+            }
+          />
+          <Label htmlFor="remote" className="font-medium text-gray-700 dark:text-gray-200">
+            Remote OK
+          </Label>
+        </div>
+
+        {/* Salary */}
+        <div>
+          <Label className="text-gray-700 dark:text-gray-200">
+            Min Salary
+          </Label>
+          <Input
+            type="number"
+            placeholder="50"
+            value={localFilters.salaryMin}
+            onChange={(e) =>
+              setLocalFilters({
+                ...localFilters,
+                salaryMin: e.target.value,
+              })
+            }
+            className="mt-1 bg-white border-gray-300 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Minimum annual salary (k)
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 pt-4">
+          <Button
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+            onClick={applyLocalFilters}
+          >
+            Apply Filters
+          </Button>
+
+          <Button
+            variant="outline"
+            className="flex-1 border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+            onClick={clearFilters}
+          >
+            Clear
+          </Button>
+        </div>
+
+      </div>
+    </SheetContent>
+  </Sheet>
+</div>
 
           {/* Main Content */}
           <div className="grid lg:grid-cols-[1fr_450px] gap-8 items-start">

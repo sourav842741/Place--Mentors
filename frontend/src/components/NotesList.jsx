@@ -35,7 +35,7 @@ const NotesList = ({ notes, isLoading }) => {
 
   if (!notes?.length) {
     return (
-      <div className="text-center py-12 md:ml-16   ">
+      <div className="text-center py-12  ">
         <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <h3 className="text-lg font-medium mb-2">No notes yet</h3>
         <p className="text-gray-500 mb-4">
@@ -47,7 +47,7 @@ const NotesList = ({ notes, isLoading }) => {
   }
 
   return (
-   <div className="space-y-6 px-4 sm:px-6 md:px-10 lg:px-20 py-6 
+   <div className="space-y-6 px-4 sm:px-6  lg:px-20 py-6 
 bg-gray-50 dark:bg-gray-950 min-h-screen">
 
   <div className="flex items-center gap-3 

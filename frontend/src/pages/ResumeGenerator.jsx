@@ -78,7 +78,7 @@ const ResumePreview = ({ data, template }) => {
 
   return (
     <div
-      className="w-full lg:w-[794px] mx-auto bg-white text-black shadow-2xl border rounded-2xl overflow-auto"
+      className="w-full lg:w-[794px] mx-auto bg-white text-black shadow-2xl border rounded-2xl overflow-auto "
       style={{ minHeight: "1122px" }}
     >
       {template === "modern" ? (

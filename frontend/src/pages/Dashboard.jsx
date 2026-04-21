@@ -26,6 +26,8 @@ import {
   ExternalLink,
   ArrowRight,
   Loader2,
+  Mic,
+  Sparkles,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -48,13 +50,12 @@ import { fetchStreak } from "../redux/streakSlice.js";
 
 import AnnouncementBar from "../components/AnnouncementBar";
 import useSettings from "../hooks/useSettings";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
   const { user } = useSelector((state) => state.user);
   const { data: settings } = useSettings();
-  
 
   const navigate = useNavigate();
 
@@ -80,17 +81,14 @@ export default function Dashboard() {
   const totalXP = user?.xp || 0;
 
   //  XP required for current level
-const level = user?.level || 1;
+  const level = user?.level || 1;
 
-const currentXP = user?.currentLevelXP || 0;
+  const currentXP = user?.currentLevelXP || 0;
 
-// Level based required XP
-const maxXP = level * 100;
+  // Level based required XP
+  const maxXP = level * 100;
 
-const percent = Math.min(
-  Math.max((currentXP / maxXP) * 100, 0),
-  100
-);
+  const percent = Math.min(Math.max((currentXP / maxXP) * 100, 0), 100);
 
   const companies = [
     {
@@ -245,8 +243,6 @@ const percent = Math.min(
           withCredentials: true,
         });
 
-       
-
         const message = res.data.message || "Keep pushing forward! 🚀";
 
         setMotivation(message);
@@ -309,21 +305,16 @@ const percent = Math.min(
     {};
   // ======================================================
 
-
-
-
   return (
     <>
-    
       <Navbar />
-   {settings?.data && (
-  <div className="mt-16 md:ml-64">
-    <AnnouncementBar settings={settings.data} />
-  </div>
-)}
-   
-      
-<div className="md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen dark:bg-gray-950 transition-colors duration-300">
+      {settings?.data && (
+        <div className="mt-16 lg:ml-64">
+          <AnnouncementBar settings={settings.data} />
+        </div>
+      )}
+
+      <div className="lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen dark:bg-gray-950 transition-colors duration-300">
         {/* 🔥 BADGE POPUP */}
         {unlockedBadges.length > 0 && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -347,10 +338,9 @@ const percent = Math.min(
         )}
 
         {/* Main Content */}
-  
+
         <main className="flex-1">
           <div className="p-2 md:p-6 space-y-4 md:space-y-6">
-
             {/* TOP */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default  dark:bg-gray-900  dark:border-white/10">
@@ -432,8 +422,12 @@ const percent = Math.min(
                     <Briefcase className="w-6 h-6 text-gray-900 dark:text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Jobs</h3>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">Latest openings</p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      Jobs
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">
+                      Latest openings
+                    </p>
                   </div>
                 </div>
 
@@ -441,14 +435,47 @@ const percent = Math.min(
               </div>
             </div>
 
+            <div
+              onClick={() => navigate("/ai-voice-coach")}
+              className="relative overflow-hidden flex items-center justify-between
+  bg-white dark:bg-gray-900
+  border border-gray-200 dark:border-white/10
+  p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-500
+  cursor-pointer transition-all duration-300 hover:scale-[1.02] group"
+            >
+              {/* Hover Glow */}
+              <div className="absolute inset-0 bg-blue-50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+
+              <div className="flex items-center gap-5 relative z-10">
+                {/* Icon */}
+                <div className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-2xl shadow-sm">
+                  <Mic className="w-7 h-7 text-blue-600 dark:text-blue-400 animate-pulse" />
+                </div>
+
+                {/* Text */}
+                <div className="ml-2">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    🎤 AI Voice Interview
+                  </h3>
+
+                  <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
+                    Speak live with AI & boost confidence instantly
+                  </p>
+
+                  <span className="inline-block mt-3 px-3 py-1 text-xs font-semibold bg-yellow-400 text-black rounded-full shadow">
+                    🔥 Most Popular Feature
+                  </span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all relative z-10" />
+            </div>
+
             {/*  POTD SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <CpotdCard
-                onClick={() => navigate("/coding-potd")}
-              />
-              <PotdCard
-                onClick={() => navigate("/potd")}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <CpotdCard onClick={() => navigate("/coding-potd")} />
+              <PotdCard onClick={() => navigate("/potd")} />
               <StreakCalendar />
             </div>
 
@@ -476,7 +503,11 @@ const percent = Math.min(
 
               {/* CHART */}
               <div className="w-full h-62.5 sm:h-75 md:h-87.5 min-h-62.5">
-               <ResponsiveContainer width="100%" height="100%" className="bg-white dark:bg-gray-900 rounded-xl">
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                  className="bg-white dark:bg-gray-900 rounded-xl"
+                >
                   <LineChart data={weeklyData}>
                     <XAxis dataKey="date" />
 
@@ -779,9 +810,8 @@ const percent = Math.min(
             </div>
           </div>
         </main>
-         <ContactUs/>
+        <ContactUs />
         <SuccessStories />
-       
       </div>
 
       <Footer />

@@ -21,7 +21,8 @@ import {
   MessageSquare,
   Brain,
   ListTodo,
-  Bot
+  Bot,
+  Mic
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -165,6 +166,7 @@ const toggleDark = () => {
     { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
     { icon: Bot, label: "AI Coach", path: "/ai-coach" },
+    { icon: Mic, label: "AI Voice Coach", path: "/ai-voice-coach" },
     { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
     { icon: BookOpen, label: "DSA Resources", path: "/resources" },
 
@@ -179,8 +181,8 @@ const toggleDark = () => {
         {/* LEFT */}
         <div className="w-full flex items-center justify-between px-4 md:px-6">
           {" "}
-          <button
-            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+         <button
+  className="lg:hidden p-2 rounded-xl transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 cursor-pointer"
             onClick={() => setMobileOpen(true)}
           >
             <Menu />
@@ -211,7 +213,7 @@ const toggleDark = () => {
               </span>
             </div>
             {/* Desktop Links */}
-            <div className="hidden md:flex gap-6 lg:ml-21">
+            <div className="hidden lg:flex gap-6 lg:ml-21">
               <Link to="/dashboard">Dashboard</Link>
               <Link to="/jobs">Jobs</Link>
               <Link to="/code-editor">Code Compiler</Link>
@@ -263,7 +265,7 @@ const toggleDark = () => {
             )}
           </div>
           {/* DESKTOP-ONLY ELEMENTS */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             {/*  NOTIFICATION BELL */}
             {isAuth && (
               <div className="relative">
@@ -387,7 +389,7 @@ p-2 rounded"
           {/* USER */}
           {isAuth ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="ml-auto md:ml-0">
+              <DropdownMenuTrigger className="ml-auto lg:ml-0 cursor-pointer">
                 <Avatar>
                   <AvatarImage src={user?.avatar} />
                   <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
@@ -493,7 +495,7 @@ p-2 rounded"
       </nav>
 
       {/* DESKTOP SIDEBAR - IMPROVED */}
-      <div className="hidden md:flex fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-background/80 backdrop-blur-lg border-r shadow-sm p-6 flex-col z-40 overflow-y-auto scrollbar-hide">
+      <div className="hidden lg:flex fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-background/80 backdrop-blur-lg border-r shadow-sm p-6 flex-col z-40 overflow-y-auto scrollbar-hide">
         {/* MAIN Section */}
         <div className="space-y-3 mb-8">
           <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-1 mb-2 tracking-wider">
@@ -600,10 +602,13 @@ p-2 rounded"
           />
 
           {/* SIDEBAR */}
-          <div className="fixed top-0 left-0 w-64 h-full bg-white dark:bg-gray-900 z-50 p-4">
+         <div className="fixed top-0 left-0 w-[85%] max-w-xs h-full bg-white dark:bg-gray-900 z-50 p-4 shadow-2xl animate-in slide-in-from-left duration-300 border-r border-gray-200 dark:border-gray-800">
             <div className="flex justify-between mb-4">
               <span className="font-bold">Menu</span>
-              <button onClick={() => setMobileOpen(false)}>
+              <button
+  onClick={() => setMobileOpen(false)}
+  className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+>
                 <X />
               </button>
             </div>
@@ -615,7 +620,7 @@ p-2 rounded"
                   navigate(item.path);
                   setMobileOpen(false);
                 }}
-                className="flex gap-3 p-3 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                className="group flex items-center gap-3 p-3 w-full text-left rounded-xl cursor-pointer transition-all duration-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:translate-x-1 hover:shadow-md"
               >
                 <item.icon />
                 {item.label}

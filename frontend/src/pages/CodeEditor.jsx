@@ -69,7 +69,7 @@ const CodeEditor = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-[#0b1220] text-gray-200 mt-16 md:ml-64">
+      <div className="min-h-screen bg-[#0b1220] text-gray-200 lg:mt-16 lg:ml-64 md:mt-16">
 
         {/* HEADER */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-[#0f172a]">

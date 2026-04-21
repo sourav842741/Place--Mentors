@@ -17,7 +17,7 @@ import emailAdminSlice from "./slices/emailAdminSlice";
 import battleSlice from "./battleSlice";
 import tasksSlice from "./tasksSlice";
 import aiCoachSlice from "./aiCoachSlice";
-
+import voiceSlice from "./voiceSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -42,6 +42,7 @@ const store = configureStore({
     tasks: tasksSlice,
     challenges: userSlice, // extend userSlice with challenges
     aiCoach: aiCoachSlice,
+    voice: voiceSlice,
   },
 
 });

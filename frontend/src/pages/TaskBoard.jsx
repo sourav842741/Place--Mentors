@@ -19,6 +19,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { ListTodo, Filter, RefreshCw } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const TaskBoard = () => {
   const { user } = useSelector(state => state.user);
@@ -151,7 +152,7 @@ const TaskBoard = () => {
     return (
       <>
         <Navbar />
-        <div className="pt-16 md:pl-64 p-6 bg-gray-50 dark:bg-gray-950 min-h-screen ">
+        <div className="pt-16 lg:pl-64 p-6 bg-gray-50 dark:bg-gray-950 min-h-screen ">
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex items-center gap-4">
               <Skeleton className="h-12 w-12 rounded-xl" />
@@ -175,7 +176,7 @@ const TaskBoard = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-24 md:pl-64 px-4 md:px-8 pb-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-900 min-h-screen">
+      <div className="pt-24 lg:pl-64 px-4 md:px-8 pb-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-900 min-h-screen">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-12 p-2 rounded-2xl bg-background/50 backdrop-blur-sm -mx-4 md:-mx-0 md:p-0">
@@ -329,6 +330,7 @@ const TaskBoard = () => {
           </Dialog>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

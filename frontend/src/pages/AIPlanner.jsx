@@ -235,7 +235,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
 
   if (isLoading)
     return (
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center  dark:bg-gray-950">
+      <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center  dark:bg-gray-950">
         <div className="text-center">
           <RefreshCw className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-500" />
           <p className="text-lg">Loading your plan...</p>
@@ -245,7 +245,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
 
   if (error)
     return (
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center">
+      <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center">
       <Card className="max-w-md bg-white dark:bg-gray-900 border dark:border-white/10">
           <CardContent className="p-8 text-center">
             <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
@@ -263,7 +263,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
     <>
       <Navbar />
 
-      <div className="pt-16 md:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-17  dark:bg-gray-950">
+      <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-17  dark:bg-gray-950">
         <main className="flex-1">
           <div className="max-w-6xl mx-auto">
             {/* Header */}

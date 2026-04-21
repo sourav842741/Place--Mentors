@@ -54,6 +54,9 @@ import ShareTask from "./pages/ShareTask";
 import FruitboxFlex from "./pages/FruitboxFlex";
 import AICoach from "./pages/AICoach";
 import MaintenancePage from "./pages/MaintenancePage";
+import AIVoiceCoach from "./pages/AIVoiceCoach";
+import CallHistory from "./pages/CallHistory";
+import CallReport from "./pages/CallReport";
 
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -361,6 +364,9 @@ function App() {
           <Route path="/users" element={<UsersPage />} />
           <Route path="/battle/:roomId" element={<BattlePage />} />
           <Route path="/share/task/:shareId" element={<ShareTask />} />
+          <Route path="/ai-voice-coach" element={<AIVoiceCoach />} />
+          <Route path="/voice-history" element={<CallHistory />} />
+          <Route path="/voice-report/:id" element={<CallReport />} />
         </Route>
 
         {/* SPECIAL */}

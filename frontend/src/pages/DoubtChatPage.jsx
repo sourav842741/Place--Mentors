@@ -210,7 +210,7 @@ overflow-x-hidden transition-colors duration-300 lg:ml-5 mt-5"
     >
       <Navbar />
 
-      <div className="md:pl-64 mt-16 px-3 sm:px-4 md:px-6">
+      <div className="lg:pl-64 mt-16 px-3 sm:px-4 md:px-6">
         {/* Header */}
         <div
           className="bg-white dark:bg-gray-900 

@@ -81,7 +81,7 @@ const handleSubmit = async (e) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 p-6">
+    <div className="max-w-4xl mx-auto space-y-8 p-6 lg:ml-64">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-black bg-gradient-to-r from-gray-900 to-black bg-clip-text text-transparent dark:text-white">

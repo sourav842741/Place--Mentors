@@ -93,7 +93,7 @@ const JobDetailsPage = () => {
   // Error / Not found
   if (!job) {
     return (
-      <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300 flex items-center justify-center">
+      <div className="pt-16 lg:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300 flex items-center justify-center">
         <Navbar />
         <div className="text-center p-12 max-w-md">
           <Briefcase className="h-20 w-20 text-gray-400 mx-auto mb-6" />

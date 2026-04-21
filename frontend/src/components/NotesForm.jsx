@@ -122,7 +122,7 @@ const NotesForm = () => {
     <>
       <Navbar />
 
-     <div className="max-w-4xl mx-auto space-y-8 p-4 md:p-4">
+     <div className="max-w-4xl mx-auto space-y-8 p-4 ">
 
   {/* FORM */}
   <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">

@@ -53,7 +53,7 @@ const AllCompanies = () => {
     return (
       <>
         <Navbar />
-        <div className="pt-16 md:pl-64 p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+        <div className="pt-16 lg:pl-64 p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex flex-col lg:flex-row gap-4 items-center">
               <Skeleton className="h-12 w-96" />
@@ -85,7 +85,7 @@ const AllCompanies = () => {
   <>
     <Navbar />
 
-    <div className="pt-16 md:pl-64 p-6 md:p-10 bg-linear-to-br mt-8 from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 min-h-screen lg:mt-8 ml-5 sm:mt-8 transition-colors duration-300">
+    <div className="pt-16 lg:pl-64 p-6 md:p-10 bg-linear-to-br mt-8 from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 min-h-screen lg:mt-8 ml-5 sm:mt-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* HEADER */}
@@ -240,7 +240,6 @@ const AllCompanies = () => {
         </div>
 
       </div>
-      <SuccessStories/>
     </div>
     
     <Footer/>

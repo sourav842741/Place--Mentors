@@ -60,7 +60,7 @@ const FruitboxFlex = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen pt-16 md:pl-64 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen pt-16 lg:pl-64 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center p-10 bg-white/70 dark:bg-slate-900/70 rounded-3xl shadow-2xl backdrop-blur-xl">
           <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6" />
           <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">
@@ -75,7 +75,7 @@ const FruitboxFlex = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen pt-20 md:pl-64 bg-gradient-to-br from-slate-50/30 via-blue-50/20 to-indigo-100/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-all duration-500">
+      <div className="min-h-screen pt-20 lg:pl-64 bg-gradient-to-br from-slate-50/30 via-blue-50/20 to-indigo-100/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-all duration-500">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-6">
 
           {/* Header */}

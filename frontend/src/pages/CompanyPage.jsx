@@ -44,7 +44,7 @@ const CompanyPage = () => {
     return (
       <>
         <Navbar />
-        <div className="pt-16 md:pl-64 p-6 bg-gray-50 min-h-screen ">
+        <div className="pt-16 lg:pl-64 p-6 bg-gray-50 min-h-screen ">
           <div className="max-w-7xl mx-auto space-y-6">
             <Skeleton className="h-12 w-96" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

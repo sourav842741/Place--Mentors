@@ -50,14 +50,14 @@ export default function Leaderboard() {
 
      <div className="min-h-screen 
 bg-gray-100 dark:bg-gray-950 
-pt-16 md:pl-64 px-4 sm:px-6 lg:px-8 transition-colors duration-300 lg:ml-64">
+pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300 lg:ml-64">
 
   <div className="max-w-6xl mx-auto">
 
     {/* HEADER */}
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
 
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white md:mt-8 sm:mt-8">
         Leaderboard 🏆
       </h1>
 
