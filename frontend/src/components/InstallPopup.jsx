@@ -26,9 +26,9 @@ export default function InstallPopup() {
         </h3>
 
         {/* Subtitle */}
-        <p className="text-sm text-gray-500 mb-4">
-          Get faster access & offline features!
-        </p>
+       <p className="text-sm text-gray-500 mb-4">
+  Unlock premium tools, faster access & exclusive features.
+</p>
 
         {/* Buttons */}
         <div className="flex justify-end gap-2">

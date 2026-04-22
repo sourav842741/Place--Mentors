@@ -25,6 +25,7 @@ import {
 
 import CertificateHistory from "../components/certificates/CertificateHistory";
 import CertificateCard from "../components/certificates/CertificateCard";
+import Footer from "@/components/Footer";
 
 export default function Certificates() {
   const { user } = useSelector((state) => state.user);
@@ -113,6 +114,7 @@ export default function Certificates() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-slate-950 text-white px-4 md:px-8 py-8">
 
       {/* TOP BAR */}
@@ -263,5 +265,7 @@ export default function Certificates() {
         </Tabs>
       </div>
     </div>
+    
+    </>
   );
 }

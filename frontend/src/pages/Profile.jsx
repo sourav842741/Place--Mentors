@@ -20,6 +20,7 @@ import StreakCalendar from "@/components/StreakCalendar.jsx";
 import Footer from "@/components/Footer";
 import FriendsSection from "@/components/FriendsSection";
 import { useFriends } from "../hooks/useFriends";
+import Navbar from "@/components/Navbar";
 
 export default function Profile() {
   const { user } = useSelector((state) => state.user);
@@ -116,10 +117,11 @@ export default function Profile() {
 
   return (
     <>
+    <Navbar/>
       <div
         className="min-h-screen p-6 bg-linear-to-br 
   from-slate-100 via-blue-50 to-purple-100 
-  dark:from-gray-950 dark:via-gray-900 dark:to-black"
+  dark:from-gray-950 dark:via-gray-900 dark:to-black lg:mt-16 lg:ml-64 md:mt-16 sm:mt-16"
       >
         <div className="max-w-5xl mx-auto bg-white/80 dark:bg-gray-900 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
           {/* COVER */}
@@ -130,7 +132,7 @@ export default function Profile() {
               <div className="w-full h-full bg-linear-to-r from-blue-500 to-purple-600" />
             )}
 
-            <label className="absolute top-4 right-4 transition bg-black/60 text-white px-3 py-1 rounded-lg cursor-pointer text-sm">
+            <label className="absolute top-4 right-4 transition bg-black/60 text-white px-3 py-1 rounded-lg cursor-pointer text-sm mt-10 ">
               {" "}
               Change Cover
               <input
@@ -165,7 +167,7 @@ export default function Profile() {
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-12">
                     {user?.fullName}
                   </h2>
                   <p className="text-gray-500 text-sm">{user?.email}</p>

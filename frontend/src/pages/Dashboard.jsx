@@ -472,6 +472,53 @@ export default function Dashboard() {
               <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all relative z-10" />
             </div>
 
+            {/* NEW PLACEMENT PREDICTOR PREMIUM CARD */}
+            <div
+              onClick={() => navigate("/placement-predictor")}
+              className="relative overflow-hidden flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-[1.02] group"
+            >
+              {/* Hover Glow */}
+              <div className="absolute inset-0 bg-purple-50 dark:bg-purple-900/10 opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl"></div>
+
+              <div className="flex items-center gap-5 relative z-10">
+                {/* Icon */}
+                <div className="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-2xl shadow-sm group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-all">
+                  <TrendingUp className="w-7 h-7 text-purple-600 dark:text-purple-400" />
+                </div>
+
+                {/* Text */}
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    Placement Predictor AI
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 font-medium text-lg mb-3">
+                    Check your placement chances in 30 seconds
+                  </p>
+
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-gradient-to-r from-purple-500 to-indigo-500 text-xs px-3 py-1 font-semibold shadow-sm">
+                      AI Powered
+                    </Badge>
+                    <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-xs px-4 py-1 font-semibold shadow-sm">
+                      Salary Prediction
+                    </Badge>
+                    <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-xs px-3 py-1 font-semibold shadow-sm">
+                      Career Score
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Arrow */}
+              <div className="text-right relative z-10">
+                <div className="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-1">
+                  Predict Now
+                </div>
+                <ArrowRight className="w-7 h-7 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-2 transition-all ml-auto" />
+              </div>
+            </div>
+
             {/*  POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               <CpotdCard onClick={() => navigate("/coding-potd")} />

@@ -58,6 +58,7 @@ import AIVoiceCoach from "./pages/AIVoiceCoach";
 import CallHistory from "./pages/CallHistory";
 import CallReport from "./pages/CallReport";
 import CertificateVerifyPage from "./pages/CertificateVerifyPage.jsx";
+import PlacementPredictor from "./pages/PlacementPredictor";
 
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -363,6 +364,7 @@ function App() {
           <Route path="/battle/:roomId" element={<BattlePage />} />
           <Route path="/share/task/:shareId" element={<ShareTask />} />
           <Route path="/ai-voice-coach" element={<AIVoiceCoach />} />
+          <Route path="/placement-predictor" element={<PlacementPredictor />} />
           <Route path="/voice-history" element={<CallHistory />} />
           <Route path="/voice-report/:id" element={<CallReport />} />
         </Route>
