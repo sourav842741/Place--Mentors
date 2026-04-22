@@ -1,72 +1,74 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserData, logoutUser, setLoading } from "../redux/userSlice";
 import api from "../services/api";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../utils/firebase";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { socket } from "../socket";
 
-
-
 const useAuth = () => {
   const { user, loading } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // ================= LOGIN =================
- const login = async (form) => {
-  try {
-    const res = await api.post("/api/auth/signin", form);
+  const login = async (form) => {
+    try {
+      const res = await api.post("/api/auth/signin", form);
 
-  
+      dispatch(setUserData(res.data.data));
 
-    dispatch(setUserData(res.data.data));
+      return res.data;
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
 
-    return res.data; 
-  } catch (err) {
-    console.error(" LOGIN ERROR:", err);
-    return {
-      success: false,
-      message: err.response?.data?.message || "Login failed",
-    };
-  }
-};
+      return {
+        success: false,
+        statusCode: err.response?.status,
+        message: err.response?.data?.message || "Login failed",
+      };
+    }
+  };
 
   // ================= LOGOUT =================
- const logout = async () => {
-  await api.get("/api/auth/signout");
-  dispatch(logoutUser());
-  navigate("/");
-};
+  const logout = async () => {
+    try {
+      await api.get("/api/auth/signout");
+    } catch (err) {
+      console.error("Logout Error:", err);
+    } finally {
+      dispatch(logoutUser());
+      navigate("/");
+    }
+  };
 
   // ================= GET CURRENT USER =================
-const getCurrentUser = useCallback(async () => {
-  try {
-    dispatch(setLoading(true));
+  const getCurrentUser = useCallback(async () => {
+    try {
+      dispatch(setLoading(true));
 
-    const res = await api.get("/api/auth/me", {
-      withCredentials: true,
-    });
+      const res = await api.get("/api/auth/me", {
+        withCredentials: true,
+      });
 
-    const userData = res.data?.data || res.data;
+      const userData = res.data?.data || res.data;
 
-    dispatch(setUserData(userData));
+      dispatch(setUserData(userData));
 
-    // Join socket room
-    if (userData._id) {
-      socket.emit("join", userData._id);
-      console.log("Socket joined room for user", userData._id);
+      // Join socket room
+      if (userData?._id) {
+        socket.emit("join", userData._id);
+        console.log("Socket joined room for user", userData._id);
+      }
+    } catch (err) {
+      console.error(err);
+      dispatch(logoutUser());
+    } finally {
+      dispatch(setLoading(false));
     }
-
-  } catch (err) {
-    console.error(err);
-    dispatch(logoutUser());
-  } finally {
-    dispatch(setLoading(false));
-  }
-}, [dispatch]);
+  }, [dispatch]);
 
   // ================= SIGNUP SEND OTP =================
   const sendSignupOtp = async (data) => {
@@ -78,7 +80,10 @@ const getCurrentUser = useCallback(async () => {
 
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message };
+      return {
+        success: false,
+        message: err.response?.data?.message,
+      };
     }
   };
 
@@ -86,6 +91,7 @@ const getCurrentUser = useCallback(async () => {
   const verifySignupOtp = async (data) => {
     try {
       const formData = new FormData();
+
       formData.append("email", data.email);
       formData.append("otp", data.otp);
 
@@ -98,7 +104,10 @@ const getCurrentUser = useCallback(async () => {
 
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message };
+      return {
+        success: false,
+        message: err.response?.data?.message,
+      };
     }
   };
 
@@ -108,11 +117,19 @@ const getCurrentUser = useCallback(async () => {
       const formData = new FormData();
 
       if (data.fullName) formData.append("fullName", data.fullName);
-      if (data.skills)
-        formData.append("skills", JSON.stringify(data.skills));
+
+      if (data.skills) {
+        formData.append(
+          "skills",
+          JSON.stringify(data.skills)
+        );
+      }
 
       if (data.avatar) formData.append("avatar", data.avatar);
-      if (data.coverImage) formData.append("coverImage", data.coverImage);
+
+      if (data.coverImage) {
+        formData.append("coverImage", data.coverImage);
+      }
 
       const res = await api.put("/api/auth/profile", formData);
 
@@ -120,96 +137,125 @@ const getCurrentUser = useCallback(async () => {
 
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message };
+      return {
+        success: false,
+        message: err.response?.data?.message,
+      };
     }
   };
 
   // ================= UPDATE SKILLS =================
   const updateSkills = async (skills) => {
     try {
-      const res = await api.put("/api/auth/skills", { skills });
+      const res = await api.put("/api/auth/skills", {
+        skills,
+      });
 
       dispatch(setUserData(res.data.data));
 
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message };
+      return {
+        success: false,
+        message: err.response?.data?.message,
+      };
     }
   };
 
   // ================= PASSWORD RESET =================
-const sendResetOtp = async (data) => {
-  try {
-    await api.post("/api/auth/password/send-otp", data);
-    return { success: true };
-  } catch (err) {
-    return { success: false, message: err.response?.data?.message };
-  }
-};
+  const sendResetOtp = async (data) => {
+    try {
+      await api.post("/api/auth/password/send-otp", data);
+
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.response?.data?.message,
+      };
+    }
+  };
 
   const resetPassword = async (data) => {
     try {
       await api.post("/api/auth/password/reset", data);
+
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message };
+      return {
+        success: false,
+        message: err.response?.data?.message,
+      };
     }
   };
 
-  // ================= GOOGLE AUTH =================
- const googleLogin = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+  // ================= GOOGLE LOGIN =================
+  const googleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
 
-    const res = await api.post("/api/auth/google", {
-      fullName: user.displayName,
-      email: user.email,
-      avatar: user.photoURL,
-    });
+      const res = await api.post("/api/auth/google", {
+        fullName: firebaseUser.displayName,
+        email: firebaseUser.email,
+        avatar: firebaseUser.photoURL,
+      });
 
-    if (res.data.success) {
-      dispatch(setUserData(res.data.user)); 
-      navigate("/dashboard");
-      return { success: true };
+      if (res.data.success) {
+        dispatch(setUserData(res.data.user));
+        navigate("/dashboard");
+
+        return { success: true };
+      }
+
+      return {
+        success: false,
+        message: "Google login failed",
+      };
+    } catch (err) {
+      console.error(err);
+
+      return {
+        success: false,
+        statusCode: err.response?.status,
+        message:
+          err.response?.data?.message ||
+          "Google login failed",
+      };
     }
+  };
 
-  } catch (err) {
-    console.log(err);
-    return { success: false, message: "Google login failed" };
-  }
-};
+  // ================= TIME TRACK =================
+  const updateTimeSpent = async (minutes) => {
+    try {
+      const res = await api.post("/api/xp/time", {
+        minutes,
+      });
 
-// ================= TIME TRACK =================
-const updateTimeSpent = async (minutes) => {
-  try {
-    const res = await api.post("/api/xp/time", { minutes });
+      dispatch(setUserData(res.data));
 
-    //  IMPORTANT: Redux update
-    dispatch(setUserData(res.data));
+      return { success: true };
+    } catch (err) {
+      return { success: false };
+    }
+  };
 
-    return { success: true };
-  } catch (err) {
-    return { success: false };
-  }
-};
-
-  // ================= RETURN ALL =================
-return {
-  user,
-  loading,
-  login,
-  logout,
-  getCurrentUser,
-  sendSignupOtp,
-  verifySignupOtp,
-  updateProfile,
-  updateSkills,
-  sendResetOtp,
-  resetPassword,
-  googleLogin,
-  updateTimeSpent,
-};
+  // ================= RETURN =================
+  return {
+    user,
+    loading,
+    login,
+    logout,
+    getCurrentUser,
+    sendSignupOtp,
+    verifySignupOtp,
+    updateProfile,
+    updateSkills,
+    sendResetOtp,
+    resetPassword,
+    googleLogin,
+    updateTimeSpent,
+  };
 };
 
 export default useAuth;

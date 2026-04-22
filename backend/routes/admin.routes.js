@@ -30,6 +30,7 @@ import {
   getPublicSettings,
 } from "../controllers/settings.controller.js";
 
+
 const router = express.Router();
 
 /* ======================================================
@@ -141,6 +142,103 @@ router.patch(
     );
   })
 );
+
+/* ======================================================
+   🚫 BAN/UNBAN SYSTEM
+====================================================== */
+
+// BAN USER
+router.patch(
+  "/users/:id/ban",
+  isAuth,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    const { banReason } = req.body;
+    const adminUser = req.user;
+    const targetId = req.params.id;
+
+    // Fetch target
+    const targetUser = await User.findById(targetId).select("email role isBanned");
+    if (!targetUser) {
+      throw new ApiError(404, "User not found");
+    }
+
+    // Self ban protection
+    if (targetUser._id.toString() === adminUser._id.toString()) {
+      throw new ApiError(403, "Cannot ban yourself");
+    }
+
+    // Permission checks
+    const isSuperAdmin = adminUser.email === process.env.SUPER_ADMIN_EMAIL;
+    const isTargetSuperAdmin = targetUser.email === process.env.SUPER_ADMIN_EMAIL;
+    const isTargetAdmin = targetUser.role === "admin";
+    const canBanTargetAdmin = isSuperAdmin;
+
+    if (isTargetSuperAdmin) {
+      throw new ApiError(403, "Cannot ban super admin");
+    }
+
+    if (isTargetAdmin && !canBanTargetAdmin) {
+      throw new ApiError(403, "Admin access required to ban admins");
+    }
+
+    // Ban user
+    const updatedUser = await User.findByIdAndUpdate(
+      targetId,
+      {
+        isBanned: true,
+        banReason: banReason || "No reason provided",
+        bannedAt: new Date(),
+        bannedBy: adminUser._id
+      },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    return res.status(200).json(
+      new ApiResponse(200, updatedUser, "User banned successfully")
+    );
+  })
+);
+
+// UNBAN USER
+router.patch(
+  "/users/:id/unban",
+  isAuth,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    const targetId = req.params.id;
+    const adminUser = req.user;
+
+    // Fetch target
+    const targetUser = await User.findById(targetId).select("email role isBanned");
+    if (!targetUser) {
+      throw new ApiError(404, "User not found");
+    }
+
+    // Self check (optional)
+    if (targetUser._id.toString() === adminUser._id.toString() && targetUser.isBanned) {
+      throw new ApiError(403, "Contact super admin to unban yourself");
+    }
+
+    // Update
+    const updatedUser = await User.findByIdAndUpdate(
+      targetId,
+      {
+        isBanned: false,
+        banReason: "",
+        bannedAt: null,
+        bannedBy: null
+      },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    return res.status(200).json(
+      new ApiResponse(200, updatedUser, "User unbanned successfully")
+    );
+  })
+);
+
+
 
 /* ======================================================
    🔥 POTD MANAGEMENT

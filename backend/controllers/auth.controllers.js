@@ -167,6 +167,11 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
 
   await user.save();
 
+  // BAN CHECK - Should never happen on signup but safety
+  if (user.isBanned) {
+    throw new ApiError(403, "Account issue. Contact support.");
+  }
+
  await sendWelcomeMail(
   user.email,
   user.fullName
@@ -216,6 +221,16 @@ export const signIn = asyncHandler(async (req, res) => {
   if (!isMatch) {
     throw new ApiError(401, "Invalid credentials");
   }
+
+  // BAN CHECK - Block banned users at login
+ if (user.isBanned) {
+  throw new ApiError(
+    403,
+    user.banReason && user.banReason.trim() !== ""
+      ? user.banReason
+      : "Your account has been suspended. Contact support."
+  );
+}
 
   await handleLoginStreak(user);
   checkAndAssignBadges(user);
@@ -355,70 +370,106 @@ export const signOut = asyncHandler(async (req, res) => {
 export const googleAuth = asyncHandler(async (req, res) => {
   const { fullName, email, avatar } = req.body;
 
+  /* ================= VALIDATION ================= */
   if (!email || !validateEmail(email)) {
     throw new ApiError(400, "Valid email is required");
   }
 
+  /* ================= FIND USER ================= */
   let user = await User.findOne({
     email: email.toLowerCase().trim(),
   });
 
   let isNewUser = false;
 
+  /* ================= BAN CHECK (EXISTING USER) ================= */
+  if (user && user.isBanned) {
+    throw new ApiError(
+      403,
+      user.banReason?.trim()
+        ? user.banReason
+        : "Your account has been suspended. Contact support."
+    );
+  }
+
+  /* ================= CREATE NEW USER ================= */
   if (!user) {
     isNewUser = true;
 
-    const randomPassword = Math.random().toString(36).slice(-8);
-    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+    const randomPassword = Math.random()
+      .toString(36)
+      .slice(-8);
+
+    const hashedPassword = await bcrypt.hash(
+      randomPassword,
+      10
+    );
 
     user = await User.create({
-      
-      fullName: fullName?.trim() || "Google User",
+      fullName:
+        fullName?.trim() || "Google User",
+
       email: email.toLowerCase().trim(),
+
       password: hashedPassword,
+
       avatar: avatar || "",
+
       skills: ["Beginner"],
+
       isEmailVerified: true,
 
-      //  INIT STREAK
       streakCount: 1,
       lastLoginDate: new Date(),
+
       credits: 100,
     });
 
     await sendWelcomeMail(
-  user.email,
-  user.fullName
-);
+      user.email,
+      user.fullName
+    );
   }
 
-  // ================= XP + STREAK =================
+  /* ================= SAFETY CHECK ================= */
+  if (user.isBanned) {
+    throw new ApiError(
+      403,
+      user.banReason?.trim()
+        ? user.banReason
+        : "Your account has been suspended. Contact support."
+    );
+  }
 
+  /* ================= XP + STREAK ================= */
   if (isNewUser) {
-    //  Signup bonus
     addXP(user, 10);
   } else {
-    //  Normal login streak
     await handleLoginStreak(user);
   }
 
-  //  Badge check
+  /* ================= BADGES ================= */
   checkAndAssignBadges(user);
 
   await user.save();
 
-  // ================= TOKEN =================
+  /* ================= TOKEN ================= */
   const token = genToken(user._id);
+
   res.cookie("token", token, cookieOptions);
 
+  /* ================= RESPONSE ================= */
   const userData = {
     ...sanitizeUser(user),
     xp: user.xp,
     level: user.level,
     streak: user.streakCount,
     badges: user.badges,
-    isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
+    isSuperAdmin:
+      user.email ===
+      process.env.SUPER_ADMIN_EMAIL,
   };
+
   return res.status(200).json({
     success: true,
     user: userData,
@@ -427,7 +478,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
     streak: user.streakCount,
     badges: user.badges,
   });
-
 });
 
 // ================= PASSWORD RESET OTP =================

@@ -28,3 +28,6 @@ export const sendSingleEmail = (data) => api.post('/api/admin/email/send-single'
 export const sendBulkEmail = (data) => api.post('/api/admin/email/send-bulk', data);
 export const testTemplate = (data) => api.post('/api/admin/email/test-template', data);
 
+// ========== BAN/UNBAN USERS ==========
+export const banUser = (userId, banReason) => api.patch(`/api/admin/users/${userId}/ban`, { banReason });
+export const unbanUser = (userId) => api.patch(`/api/admin/users/${userId}/unban`);

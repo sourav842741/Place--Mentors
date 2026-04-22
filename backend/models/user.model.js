@@ -204,6 +204,23 @@ lastChallengeTime: {
   type: Date,
   default: null
 },
+
+// BAN SYSTEM
+isBanned: {
+  type: Boolean,
+  default: false
+},
+banReason: {
+  type: String,
+  default: ""
+},
+bannedAt: {
+  type: Date
+},
+bannedBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User"
+},
   },
 
   { timestamps: true },

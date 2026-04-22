@@ -33,6 +33,17 @@ const isAuth = async (req, res, next) => {
     }
 
     await user.save();
+
+    // BAN CHECK - Block banned users from all requests
+   if (user.isBanned) {
+  throw new ApiError(
+    403,
+    user.banReason?.trim()
+      ? user.banReason
+      : "Your account has been suspended. Contact support."
+  );
+}
+
     req.user = user;
     req.userId = user._id.toString();
     next();
