@@ -9,6 +9,7 @@ import CodingPotd from "../models/CodingPotd.js";
 
 import isAuth from "../middlewares/isAuth.js";
 import isAdmin from "../middlewares/admin.middleware.js";
+import isSuperAdmin from "../middlewares/superAdmin.middleware.js";
 
 import { generatePotd } from "../controllers/potd.controller.js";
 import { generateCpotd } from "../controllers/cpotd.controller.js";
@@ -52,45 +53,90 @@ router.get(
   isAdmin,
   asyncHandler(async (req, res) => {
     const users = await User.find().select("-password");
+    const usersWithFlag = users.map(user => ({
+      ...user.toObject(),
+      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+    }));
 
     return res.status(200).json(
       new ApiResponse(
         200,
-        users,
+        usersWithFlag,
         "Users fetched successfully"
       )
     );
   })
+
 );
 
 // PROMOTE USER TO ADMIN
 router.patch(
   "/promote/:id",
   isAuth,
-  isAdmin,
+  isSuperAdmin,
   asyncHandler(async (req, res) => {
-    const user =
-      await User.findByIdAndUpdate(
-        req.params.id,
-        { role: "admin" },
-        {
-          new: true,
-          runValidators: true,
-        }
-      ).select("-password");
-
-    if (!user) {
-      throw new ApiError(
-        404,
-        "User not found"
-      );
+    const targetUser = await User.findById(req.params.id).select("email role");
+    if (!targetUser) {
+      throw new ApiError(404, "User not found");
     }
+
+    if (targetUser.email === process.env.SUPER_ADMIN_EMAIL) {
+      return res.status(200).json(new ApiResponse(200, targetUser, "Super Admin role protected"));
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { role: "admin" },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
 
     return res.status(200).json(
       new ApiResponse(
         200,
         user,
         "User promoted to admin successfully"
+      )
+    );
+  })
+);
+
+// DEMOTE ADMIN TO USER
+router.patch(
+  "/demote/:id",
+  isAuth,
+  isSuperAdmin,
+  asyncHandler(async (req, res) => {
+    const targetUser = await User.findById(req.params.id).select("email role");
+
+    if (!targetUser) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (targetUser.email === process.env.SUPER_ADMIN_EMAIL) {
+      throw new ApiError(403, "Cannot demote super admin");
+    }
+
+    if (targetUser.role !== "admin") {
+      throw new ApiError(400, "User is not an admin");
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { role: "user" },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        user,
+        "User demoted to normal user successfully"
       )
     );
   })

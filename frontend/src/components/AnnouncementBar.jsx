@@ -194,18 +194,32 @@ export default function AnnouncementBar({
           )}
 
         {/* CLOSE */}
-        {settings?.announcementClosable && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={
-              handleClose
-            }
-            className="h-9 w-9 p-0 rounded-full hover:bg-white/20 text-white"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        )}
+       {/* CLOSE BUTTON ko sirf replace karo */}
+
+{settings?.announcementClosable && (
+  <button
+    onClick={handleClose}
+    aria-label="Close announcement"
+    className="
+      shrink-0
+      h-10 w-10
+      rounded-2xl
+      bg-white/12
+      border border-white/20
+      backdrop-blur-md
+      flex items-center justify-center
+      text-white/90
+      shadow-lg
+      transition-all duration-200
+      hover:bg-white hover:text-gray-900
+      hover:scale-105
+      active:scale-95
+      group
+    "
+  >
+    <X className="w-4.5 h-4.5 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
+  </button>
+)}
       </div>
     </div>
   );

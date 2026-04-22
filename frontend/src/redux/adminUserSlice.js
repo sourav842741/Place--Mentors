@@ -27,6 +27,21 @@ export const promoteUser = createAsyncThunk(
   }
 );
 
+export const demoteUser = createAsyncThunk(
+  'adminUsers/demoteUser',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await api.patch(`/api/admin/demote/${userId}`);
+      return response.data.data; // updated user
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to demote user'
+      );
+    }
+  }
+);
+
+
 const initialState = {
   data: [],
   loading: false,
@@ -56,6 +71,13 @@ const adminUserSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(promoteUser.fulfilled, (state, action) => {
+  const updatedUser = action.payload;
+
+  state.data = state.data.map((user) =>
+    user._id === updatedUser._id ? updatedUser : user
+  );
+})
+      .addCase(demoteUser.fulfilled, (state, action) => {
   const updatedUser = action.payload;
 
   state.data = state.data.map((user) =>

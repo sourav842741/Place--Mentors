@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { promoteUser } from "../../redux/adminUserSlice";
+import { promoteUser, demoteUser } from "../../redux/adminUserSlice";
 import { toast } from "sonner";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,9 +38,9 @@ export default function Users() {
   }
 
   return (
-    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-6 ">
-      {/* MAIN CONTAINER */}
-      <div className="max-w-[1600px] mx-auto space-y-6">
+    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-6" >
+      {/* lg screen navbar hidden issue fix */}
+      <div className="max-w-[1600px] mx-auto space-y-6 lg:ml-64">
 
         {/* HEADER */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -63,7 +63,6 @@ export default function Users() {
         <Card className="border border-white/10 shadow-xl rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
           <CardContent className="p-4 flex flex-col lg:flex-row gap-3 lg:items-center">
 
-            {/* SEARCH */}
             <div className="flex items-center gap-2 px-4 h-11 rounded-xl bg-white dark:bg-gray-900 border w-full lg:max-w-sm">
               <Search className="w-4 h-4 text-gray-500" />
               <Input
@@ -72,7 +71,6 @@ export default function Users() {
               />
             </div>
 
-            {/* BUTTONS */}
             <div className="flex flex-wrap gap-3">
               <Button className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700">
                 <UserPlus className="w-4 h-4 mr-2" />
@@ -98,9 +96,7 @@ export default function Users() {
 
           <CardContent className="p-0">
             <div className="overflow-x-auto">
-
               <table className="w-full min-w-[900px]">
-                {/* HEADER */}
                 <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
                   <tr className="text-left text-sm font-semibold">
                     <th className="p-4">User</th>
@@ -113,7 +109,6 @@ export default function Users() {
                   </tr>
                 </thead>
 
-                {/* BODY */}
                 <tbody>
                   {loading ? (
                     Array(6)
@@ -131,7 +126,6 @@ export default function Users() {
                         key={user._id}
                         className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/40 transition"
                       >
-                        {/* USER */}
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">
@@ -153,59 +147,82 @@ export default function Users() {
                           </div>
                         </td>
 
-                        {/* ROLE */}
                         <td className="p-4">
-                          <Badge variant="secondary">
-                            {user.role?.toUpperCase()}
-                          </Badge>
+                          {user.isSuperAdmin ? (
+                            <Badge variant="default" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                              OWNER
+                            </Badge>
+                          ) : user.role === "admin" ? (
+                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300">
+                              LIMITED ADMIN
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">
+                              {user.role?.toUpperCase()}
+                            </Badge>
+                          )}
                         </td>
 
-                        {/* LEVEL */}
                         <td className="p-4 font-medium">
                           Lv {user.level || 1}
                         </td>
 
-                        {/* CREDITS */}
                         <td className="p-4">{user.credits || 0}</td>
 
-                        {/* STATUS */}
                         <td className="p-4">
                           <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                             {user.status || "ACTIVE"}
                           </Badge>
                         </td>
 
-                        {/* LAST SEEN */}
                         <td className="p-4 text-sm text-gray-500">
                           {user.lastSeen || "Recently"}
                         </td>
 
-                        {/* ACTION */}
                         <td className="p-4 text-center">
-                          {currentUser?.role === "admin" &&
-                          user.role !== "admin" ? (
-                            <Button
-                              size="sm"
-                              onClick={async () => {
-                                try {
-                                  await dispatch(
-                                    promoteUser(user._id)
-                                  ).unwrap();
-
-                                  toast.success(
-                                    "Promoted to Admin 🚀"
-                                  );
-                                } catch (err) {
-                                  toast.error(err);
-                                }
-                              }}
-                              className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                            >
-                              Make Admin
-                            </Button>
+                          {currentUser?.isSuperAdmin ? (
+                            user.isSuperAdmin ? (
+                              <Badge className="bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                                Owner
+                              </Badge>
+                            ) : user.role !== "admin" ? (
+                              <Button
+                                size="sm"
+                                onClick={async () => {
+                                  try {
+                                    await dispatch(promoteUser(user._id)).unwrap();
+                                    toast.success("Promoted to Admin 🚀");
+                                  } catch (err) {
+                                    toast.error(err);
+                                  }
+                                }}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                              >
+                                Make Admin
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={async () => {
+                                  try {
+                                    await dispatch(demoteUser(user._id)).unwrap();
+                                    toast.success("Demoted to User ✅");
+                                  } catch (err) {
+                                    toast.error(err);
+                                  }
+                                }}
+                              >
+                                Back to User
+                              </Button>
+                            )
+                          ) : currentUser?.role === "admin" ? (
+                            <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300">
+                              Limited Admin
+                            </Badge>
                           ) : (
                             <Badge className="bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                              {user.role === "admin" ? "Admin" : "-"}
+                              -
                             </Badge>
                           )}
                         </td>
@@ -214,10 +231,10 @@ export default function Users() {
                   )}
                 </tbody>
               </table>
-
             </div>
           </CardContent>
         </Card>
+
       </div>
     </div>
   );

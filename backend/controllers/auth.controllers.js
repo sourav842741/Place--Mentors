@@ -183,9 +183,14 @@ await user.save();
 
   res.cookie("token", token, cookieOptions);
 
+  const userData = {
+    ...sanitizeUser(user),
+    isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+  };
   return res
     .status(201)
-    .json(new ApiResponse(201, sanitizeUser(user), "Signup successful"));
+    .json(new ApiResponse(201, userData, "Signup successful"));
+
 });
 
 // ================= SIGNIN =================
@@ -221,16 +226,19 @@ export const signIn = asyncHandler(async (req, res) => {
 
   res.cookie("token", token, cookieOptions);
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
+  const userData = {
         ...sanitizeUser(user),
         xp: user.xp,
         level: user.level,
         streak: user.streakCount,
         badges: user.badges,
-      },
+        isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
+      };
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      userData,
       "Login successful",
     ),
   );
@@ -320,9 +328,14 @@ export const updateProfile = asyncHandler(async (req, res) => {
     { returnDocument: "after" },
   ).select("-password");
 
+  const userData = {
+    ...updatedUser.toObject(),
+    isSuperAdmin: updatedUser.email === process.env.SUPER_ADMIN_EMAIL
+  };
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "Profile updated"));
+    .json(new ApiResponse(200, userData, "Profile updated"));
+
 });
 
 // ================= SIGNOUT =================
@@ -398,14 +411,23 @@ export const googleAuth = asyncHandler(async (req, res) => {
   const token = genToken(user._id);
   res.cookie("token", token, cookieOptions);
 
+  const userData = {
+    ...sanitizeUser(user),
+    xp: user.xp,
+    level: user.level,
+    streak: user.streakCount,
+    badges: user.badges,
+    isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
+  };
   return res.status(200).json({
     success: true,
-    user,
+    user: userData,
     xp: user.xp,
     level: user.level,
     streak: user.streakCount,
     badges: user.badges,
   });
+
 });
 
 // ================= PASSWORD RESET OTP =================
@@ -510,7 +532,12 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
+  const userData = {
+      ...user.toObject(),
+      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+    };
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "Current user fetched successfully"));
+    .json(new ApiResponse(200, userData, "Current user fetched successfully"));
+
 });
