@@ -57,6 +57,7 @@ import MaintenancePage from "./pages/MaintenancePage";
 import AIVoiceCoach from "./pages/AIVoiceCoach";
 import CallHistory from "./pages/CallHistory";
 import CallReport from "./pages/CallReport";
+import CertificateVerifyPage from "./pages/CertificateVerifyPage.jsx";
 
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -76,6 +77,7 @@ import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import AdminEmailCenter from "./pages/admin/AdminEmailCenter";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMaintenanceManager from "./pages/admin/AdminMaintenanceManager.jsx";
+import Certificates from "./pages/Certificates.jsx";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -97,25 +99,19 @@ function App() {
   const isAdminRoute =
     location.pathname.startsWith("/admin");
 
-  /* SPLASH */
-  useEffect(() => {
-    if (!loading && user) {
-      const seen =
-        sessionStorage.getItem("seenSplash");
+ useEffect(() => {
+  const publicVerifyPage =
+    location.pathname.startsWith("/verify/");
 
-      if (
-        !seen &&
-        location.pathname !== "/splash"
-      ) {
-        sessionStorage.setItem(
-          "seenSplash",
-          "true"
-        );
+  if (!loading && user && !publicVerifyPage) {
+    const seen = sessionStorage.getItem("seenSplash");
 
-        navigate("/splash");
-      }
+    if (!seen && location.pathname !== "/splash") {
+      sessionStorage.setItem("seenSplash", "true");
+      navigate("/splash");
     }
-  }, [user, loading]);
+  }
+}, [user, loading, location.pathname]);
 
   /* LOAD USER */
   useEffect(() => {
@@ -315,7 +311,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+<Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify/:id" element={<CertificateVerifyPage />} />
 
         {/* ADMIN */}
         <Route element={<AdminRoute />}>
@@ -335,6 +332,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/certificates" element={<Certificates />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/history" element={<InterviewHistory />} />

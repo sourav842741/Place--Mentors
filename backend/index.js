@@ -38,6 +38,7 @@ import { executeTests } from "./utils/codeExecutor.js";
 import taskRouter from "./routes/task.routes.js";
 import maintenanceRouter from "./routes/maintenance.routes.js";
 import voiceRouter from "./routes/voice.route.js";
+import certificateRouter from "./routes/certificate.routes.js";
 
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
@@ -104,6 +105,7 @@ app.use("/api/users", userRouter);
 app.use("/api/fruitbox", fruitboxRouter);
 app.use("/api/maintenance", maintenanceRouter);
 app.use("/api/voice", voiceRouter);
+app.use("/api/certificates", certificateRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;
