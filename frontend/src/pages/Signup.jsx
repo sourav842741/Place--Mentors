@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Upload, ImageIcon, User } from "lucide-react";
 
 import AuthLayout from "../components/AuthLayout";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,7 @@ export default function Signup() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
 
-  // ✅ LOAD THEME
+  /* THEME LOAD */
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
 
@@ -42,7 +42,7 @@ export default function Signup() {
     }
   }, []);
 
-  // ✅ TOGGLE THEME
+  /* THEME TOGGLE */
   const toggleTheme = () => {
     const isNowDark = document.documentElement.classList.toggle("dark");
     setIsDark(isNowDark);
@@ -91,7 +91,6 @@ export default function Signup() {
       } else {
         toast.error(res.message || "Signup failed");
       }
-
     } catch {
       toast.error("Signup failed ❌");
     } finally {
@@ -101,42 +100,58 @@ export default function Signup() {
 
   return (
     <AuthLayout>
-
-      {/* 🌙 THEME BUTTON */}
+      {/* THEME BUTTON */}
       <div className="absolute top-5 right-5">
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
         >
-          {isDark ? <Sun /> : <Moon />}
+          {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
       </div>
 
-      <div className="w-full max-w-md mx-auto space-y-5 
-        bg-white dark:bg-gray-900 
-        p-6 rounded-2xl shadow-md border 
-        border-gray-200 dark:border-gray-700
-      ">
+      {/* CARD */}
+      <div
+        className="w-full max-w-md mx-auto space-y-5
+        bg-white dark:bg-gray-900
+        p-6 rounded-2xl shadow-xl border
+        border-gray-200 dark:border-white/10"
+      >
+        {/* LOGO */}
+        <div className="flex justify-center">
+          <img
+            src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+            alt="PlaceMentor"
+            className="w-18 h-18 rounded-2xl shadow-lg"
+          />
+        </div>
 
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center">
-          Create Account
-        </h2>
+        {/* TITLE */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Create Account
+          </h2>
+
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Start your placement journey today 🚀
+          </p>
+        </div>
 
         {/* INPUTS */}
         <Input
           name="fullName"
           placeholder="Full Name"
           onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
+          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
         />
 
         <Input
           name="email"
-          placeholder="Email"
+          placeholder="Email Address"
           onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
+          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
         />
 
         <Input
@@ -144,55 +159,73 @@ export default function Signup() {
           name="password"
           placeholder="Password"
           onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
+          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
         />
 
         <Input
           name="skills"
-          placeholder="Skills (comma separated)"
+          placeholder="Skills (React, Java, DSA...)"
           onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
+          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
         />
 
         {/* AVATAR */}
-        <div className="text-center">
-          <label className="cursor-pointer block border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-            {avatarPreview ? (
-              <img
-                src={avatarPreview}
-                className="w-20 h-20 mx-auto rounded-full object-cover"
-              />
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <label
+          className="cursor-pointer block border-2 border-dashed border-blue-300 dark:border-blue-700
+          rounded-xl p-4 text-center hover:bg-blue-50 dark:hover:bg-blue-950/30 transition"
+        >
+          {avatarPreview ? (
+            <img
+              src={avatarPreview}
+              className="w-20 h-20 mx-auto rounded-full object-cover"
+            />
+          ) : (
+            <div className="space-y-2">
+              <User className="mx-auto w-6 h-6 text-blue-500" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Upload Avatar
               </p>
-            )}
-            <input type="file" hidden onChange={(e) => handleFileChange(e, "avatar")} />
-          </label>
-        </div>
+            </div>
+          )}
+
+          <input
+            type="file"
+            hidden
+            onChange={(e) => handleFileChange(e, "avatar")}
+          />
+        </label>
 
         {/* COVER */}
-        <div className="text-center">
-          <label className="cursor-pointer block border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-            {coverPreview ? (
-              <img
-                src={coverPreview}
-                className="w-full h-24 object-cover rounded-md"
-              />
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <label
+          className="cursor-pointer block border-2 border-dashed border-purple-300 dark:border-purple-700
+          rounded-xl p-4 text-center hover:bg-purple-50 dark:hover:bg-purple-950/30 transition"
+        >
+          {coverPreview ? (
+            <img
+              src={coverPreview}
+              className="w-full h-24 object-cover rounded-lg"
+            />
+          ) : (
+            <div className="space-y-2">
+              <ImageIcon className="mx-auto w-6 h-6 text-purple-500" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Upload Cover Image
               </p>
-            )}
-            <input type="file" hidden onChange={(e) => handleFileChange(e, "cover")} />
-          </label>
-        </div>
+            </div>
+          )}
 
-        {/* BUTTON */}
+          <input
+            type="file"
+            hidden
+            onChange={(e) => handleFileChange(e, "cover")}
+          />
+        </label>
+
+        {/* SIGNUP BUTTON */}
         <Button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
         >
           {loading ? "Creating..." : "Sign Up"}
         </Button>
@@ -203,11 +236,10 @@ export default function Signup() {
             const res = await googleLogin();
             if (res.success) window.location.reload();
           }}
-          className="w-full flex items-center justify-center gap-3 
-          bg-white dark:bg-gray-800 
-          border border-gray-300 dark:border-gray-700 
-          text-black dark:text-white 
-          py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="w-full flex items-center justify-center gap-3
+          bg-white dark:bg-gray-800
+          border border-gray-300 dark:border-gray-700
+          py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -219,11 +251,13 @@ export default function Signup() {
         {/* LOGIN */}
         <p className="text-sm text-center text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
-          <Link to="/login" className="text-orange-500 hover:underline">
+          <Link
+            to="/login"
+            className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+          >
             Sign in
           </Link>
         </p>
-
       </div>
     </AuthLayout>
   );

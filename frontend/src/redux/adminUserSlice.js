@@ -100,6 +100,29 @@ const adminUserSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    // SOCKET REAL-TIME UPDATES
+    setUserOnline: (state, action) => {
+      const userId = action.payload._id;
+      const userIndex = state.data.findIndex(u => u._id === userId);
+      if (userIndex !== -1) {
+        state.data[userIndex].isOnline = true;
+      }
+    },
+    setUserOffline: (state, action) => {
+      const userId = action.payload._id || action.payload;
+      const userIndex = state.data.findIndex(u => u._id === userId);
+      if (userIndex !== -1) {
+        state.data[userIndex].isOnline = false;
+        state.data[userIndex].lastSeen = action.payload.lastSeen || new Date();
+      }
+    },
+    updateUserFromSocket: (state, action) => {
+      const updatedUser = action.payload;
+      const userIndex = state.data.findIndex(u => u._id === updatedUser._id);
+      if (userIndex !== -1) {
+        state.data[userIndex] = { ...state.data[userIndex], ...updatedUser };
+      }
+    },
   },
 
   extraReducers: (builder) => {
@@ -163,6 +186,14 @@ const adminUserSlice = createSlice({
   },
 });
 
-export const { clearError } = adminUserSlice.actions;
+
+
+export const {
+  clearError,
+  setUserOnline,
+  setUserOffline,
+  updateUserFromSocket,
+} = adminUserSlice.actions;
 
 export default adminUserSlice.reducer;
+

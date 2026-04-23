@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ShieldCheck } from "lucide-react";
 
 import AuthLayout from "../components/AuthLayout";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export default function VerifyOtp() {
 
   const inputsRef = useRef([]);
 
-  // ✅ LOAD THEME
+  /* THEME LOAD */
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
 
@@ -36,7 +36,7 @@ export default function VerifyOtp() {
     }
   }, []);
 
-  // ✅ TOGGLE THEME
+  /* THEME TOGGLE */
   const toggleTheme = () => {
     const isNowDark = document.documentElement.classList.toggle("dark");
     setIsDark(isNowDark);
@@ -50,7 +50,6 @@ export default function VerifyOtp() {
     }
   }, [email, navigate]);
 
-  // ================= INPUT CHANGE =================
   const handleChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
 
@@ -63,14 +62,12 @@ export default function VerifyOtp() {
     }
   };
 
-  // ================= BACKSPACE =================
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
-  // ================= PASTE =================
   const handlePaste = (e) => {
     const paste = e.clipboardData.getData("text").slice(0, 4);
     if (!/^\d+$/.test(paste)) return;
@@ -85,7 +82,6 @@ export default function VerifyOtp() {
     });
   };
 
-  // ================= VERIFY =================
   const handleVerifyOtp = async () => {
     const finalOtp = otp.join("");
 
@@ -112,11 +108,11 @@ export default function VerifyOtp() {
       if (res.data.success) {
         dispatch(setUserData(res.data.data));
         toast.success("Signup Successful 🎉");
-         navigate("/splash");
+        navigate("/splash");
       } else {
         toast.error(res.data.message || "Invalid OTP");
       }
-    } catch (err) {
+    } catch {
       toast.error("Something went wrong ❌");
     } finally {
       setLoading(false);
@@ -125,39 +121,58 @@ export default function VerifyOtp() {
 
   return (
     <>
-      {/* LOADER */}
       {loading && <FullScreenLoader />}
 
       <AuthLayout>
-
-        {/* 🌙 THEME BUTTON */}
+        {/* THEME BUTTON */}
         <div className="absolute top-5 right-5">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="hover:bg-gray-200 dark:hover:bg-gray-800"
+            className="rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
           >
-            {isDark ? <Sun /> : <Moon />}
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </Button>
         </div>
 
-        <div className="w-full max-w-md mx-auto space-y-6 
-          bg-white dark:bg-gray-900 
-          p-6 rounded-2xl shadow-md border 
-          border-gray-200 dark:border-gray-700
-        ">
+        {/* CARD */}
+        <div
+          className="w-full max-w-md mx-auto space-y-6
+          bg-white dark:bg-gray-900
+          p-6 rounded-2xl shadow-xl border
+          border-gray-200 dark:border-white/10"
+        >
+          {/* LOGO */}
+          <div className="flex justify-center">
+            <img
+              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+              alt="PlaceMentor"
+              className="w-20 h-20 rounded-2xl shadow-lg"
+            />
+          </div>
 
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Verify Email
-          </h2>
+          {/* TITLE */}
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Verify Email
+            </h2>
 
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Enter the 4-digit OTP sent to your email
-          </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Enter the 4-digit OTP sent to your email
+            </p>
+          </div>
 
-          {/* OTP */}
-          <div className="flex justify-between gap-3" onPaste={handlePaste}>
+          {/* EMAIL SHOW */}
+          <div className="text-center text-sm text-blue-600 dark:text-blue-400 font-medium">
+            {email}
+          </div>
+
+          {/* OTP BOXES */}
+          <div
+            className="flex justify-between gap-3"
+            onPaste={handlePaste}
+          >
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -166,11 +181,12 @@ export default function VerifyOtp() {
                 ref={(el) => (inputsRef.current[index] = el)}
                 onChange={(e) => handleChange(e.target.value, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-14 h-14 text-center text-lg rounded-xl 
-                bg-gray-100 dark:bg-gray-800 
-                text-black dark:text-white 
-                border border-gray-300 dark:border-gray-700 
-                focus:border-orange-500 focus:outline-none transition"
+                className="w-14 h-14 text-center text-xl font-semibold rounded-xl
+                bg-gray-100 dark:bg-gray-800
+                border border-gray-300 dark:border-gray-700
+                text-gray-900 dark:text-white
+                focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
+                outline-none transition"
               />
             ))}
           </div>
@@ -179,38 +195,51 @@ export default function VerifyOtp() {
           <Button
             onClick={handleVerifyOtp}
             disabled={loading}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white h-11"
           >
             {loading ? (
               <>
                 <Spinner />
-                Verifying...
+                <span className="ml-2">Verifying...</span>
               </>
             ) : (
-              "Verify OTP"
+              <>
+                <ShieldCheck className="w-4 h-4 mr-2" />
+                Verify OTP
+              </>
             )}
           </Button>
 
+          {/* RESEND TEXT */}
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+            Didn’t receive code?{" "}
+            <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline">
+              Resend
+            </span>
+          </p>
         </div>
       </AuthLayout>
     </>
   );
 }
 
-// 🔄 Spinner
+/* SPINNER */
 function Spinner() {
   return (
-    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
   );
 }
 
-// 🔄 Full Loader
+/* FULLSCREEN LOADER */
 function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-white text-sm">Verifying OTP...</p>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 px-8 py-6 rounded-2xl shadow-2xl text-center">
+        <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+
+        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">
+          Verifying OTP...
+        </p>
       </div>
     </div>
   );

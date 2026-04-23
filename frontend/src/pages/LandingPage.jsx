@@ -1,208 +1,397 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Brain,
-  Code,
-  FileText,
+  ArrowRight,
+  Sparkles,
   Trophy,
-  Briefcase,
-  BarChart,
-  BookOpen,
-  Users,
+  Code2,
+  Brain,
+  Moon,
+  Sun,
+  Star,
+  PlayCircle,
+  ShieldCheck,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Target,
+  Award,
 } from "lucide-react";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
 
+  const [dark, setDark] = useState(false);
+  const [count1, setCount1] = useState(0);
+  const [count2, setCount2] = useState(0);
+  const [count3, setCount3] = useState(0);
+  const [faq, setFaq] = useState(null);
+  const [slide, setSlide] = useState(0);
+
+  const gallery = [
+    "https://drive.google.com/file/d/1nWzcfBcFzmBcR7k9Q3p8-i7RQOlyPKDr/preview",
+    "https://drive.google.com/file/d/1QbQnlztsXVLmxaViLnX7hFSugHy4usMq/preview",
+    "https://drive.google.com/file/d/1VTykObLV0ZSUZvzeUChct322zKH5X-Wy/preview",
+    "https://drive.google.com/file/d/1RUG-NIheQutDhmSagbO40ZgVqZFI2pHA/preview",
+  ];
+
   useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
+    if (user) navigate("/dashboard");
   }, [user]);
 
-  return (
-    <div className="min-h-screen bg-linear-to-br from-white via-orange-50 to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
-      {/*  NAVBAR */}
-      <nav className="flex justify-between items-center px-6 py-4 bg-white/80 backdrop-blur border-b sticky top-0 z-50">
-        <h1 className="text-2xl font-bold text-orange-500">PlaceMentor</h1>
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
 
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => navigate("/login")}>
-            Login
-          </Button>
-          <Button
-            className="bg-orange-500 hover:bg-orange-600 text-white"
-            onClick={() => navigate("/signup")}
-          >
-            Signup
-          </Button>
+    if (saved === "dark") {
+      document.documentElement.classList.add("dark");
+      setDark(true);
+    }
+
+    const counter = setInterval(() => {
+      setCount1((p) => (p < 10000 ? p + 100 : 10000));
+      setCount2((p) => (p < 50000 ? p + 500 : 50000));
+      setCount3((p) => (p < 1200 ? p + 20 : 1200));
+    }, 20);
+
+    const slider = setInterval(() => {
+      setSlide((prev) => (prev + 1) % gallery.length);
+    }, 3500);
+
+    return () => {
+      clearInterval(counter);
+      clearInterval(slider);
+    };
+  }, []);
+
+  const toggleTheme = () => {
+    const mode = document.documentElement.classList.toggle("dark");
+    setDark(mode);
+    localStorage.setItem("theme", mode ? "dark" : "light");
+  };
+
+  const faqs = [
+    {
+      q: "Is PlaceMentor free to start?",
+      a: "Yes, you can begin free and use core features instantly.",
+    },
+    {
+      q: "Can I improve coding here?",
+      a: "Yes, coding battles, POTD and practice tools are included.",
+    },
+    {
+      q: "Does AI Planner help placements?",
+      a: "Yes, it creates roadmap based on your goals.",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-slate-950 dark:to-black text-gray-900 dark:text-white overflow-hidden">
+
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-50 border-b border-white/20 dark:border-white/10 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+          <div className="flex items-center gap-3">
+            <img
+              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+              className="w-10 h-10 rounded-2xl"
+            />
+
+            <h1 className="text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              PlaceMentor
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={toggleTheme}>
+              {dark ? <Sun /> : <Moon />}
+            </Button>
+
+            <Button
+              variant="outline"
+              className="hidden sm:flex rounded-xl"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+
+            <Button
+              className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
+              onClick={() => navigate("/signup")}
+            >
+              Start Free
+            </Button>
+          </div>
         </div>
       </nav>
 
-      {/*  HERO */}
-      <section className="text-center py-24 px-6">
-        <h1 className="text-5xl font-bold leading-tight">
-          Crack Your Dream Job with{" "}
-          <span className="text-orange-500">AI 🚀</span>
-        </h1>
+      {/* HERO */}
+      <section className="relative max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-14 items-center">
 
-        <p className="text-gray-600 mt-4 max-w-xl mx-auto">
-          One platform for DSA, AI interviews, resume tools, job tracking &
-          coding practice.
-        </p>
+        <div className="absolute -top-10 left-10 w-72 h-72 bg-purple-400/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-400/20 blur-[120px] rounded-full" />
 
-        <div className="mt-8 flex justify-center gap-4">
-          <Button
-            size="lg"
-            className="bg-orange-500 hover:bg-orange-600 text-white"
-            onClick={() => navigate("/signup")}
-          >
-            Get Started
-          </Button>
+        {/* LEFT */}
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-gray-900 border shadow-sm mb-6">
+            <Sparkles className="w-4 h-4 text-purple-500" />
+            <span className="text-sm font-semibold">
+              AI Powered Placement Platform
+            </span>
+          </div>
 
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </Button>
+          <h1 className="text-5xl md:text-6xl font-black leading-tight">
+            Build Your{" "}
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Dream Career
+            </span>{" "}
+            Faster 🚀
+          </h1>
+
+          <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-xl leading-relaxed">
+            Coding practice, AI roadmap, interviews, resume tools and
+            everything needed to crack placements smarter.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button
+              size="lg"
+              className="rounded-2xl px-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
+              onClick={() => navigate("/signup")}
+            >
+              Join Free Now
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="rounded-2xl px-8"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <MiniBadge text="10K+ Students" />
+            <MiniBadge text="24/7 AI Help" />
+            <MiniBadge text="Daily Coding" />
+          </div>
+        </div>
+
+        {/* RIGHT VIDEO */}
+        <div className="relative z-10">
+          <div className="rounded-[32px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border shadow-2xl p-3 rotate-1 hover:rotate-0 transition duration-500">
+            <div className="aspect-video rounded-2xl overflow-hidden relative">
+              <iframe
+                src="https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/preview"
+                className="w-full h-full"
+                allow="autoplay"
+              />
+
+              <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl px-4 py-2 flex items-center gap-2 shadow">
+                <PlayCircle className="w-5 h-5 text-purple-600" />
+                <span className="text-sm font-semibold">
+                  Product Preview
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-4 border">
+            <p className="text-sm text-gray-500">Weekly Progress</p>
+            <p className="text-2xl font-black text-green-500">+82%</p>
+          </div>
+
+          <div className="absolute -top-6 -right-4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-4 border">
+            <p className="text-sm text-gray-500">Interview Score</p>
+            <p className="text-2xl font-black text-indigo-600">9.1/10</p>
+          </div>
         </div>
       </section>
 
-      {/*  FEATURES GRID */}
-      <section className="max-w-6xl mx-auto px-6 pb-20 grid md:grid-cols-3 gap-6">
-        <Feature
-          icon={<Brain />}
-          title="AI Planner"
-          desc="Personal roadmap for placement prep"
-        />
-        <Feature
-          icon={<Users />}
-          title="Mock Interviews"
-          desc="Practice real interview scenarios"
-        />
-        <Feature
-          icon={<FileText />}
-          title="Resume Analyzer"
-          desc="AI feedback on your resume"
-        />
-        <Feature
-          icon={<FileText />}
-          title="Resume Generator"
-          desc="Create ATS-friendly resumes"
-        />
-        <Feature
-          icon={<Briefcase />}
-          title="Job Tracker"
-          desc="Track all applications easily"
-        />
-        <Feature
-          icon={<Code />}
-          title="Code Editor"
-          desc="Practice coding with Monaco editor"
-        />
-        <Feature
-          icon={<Trophy />}
-          title="Leaderboard"
-          desc="Compete with other students"
-        />
-        <Feature
-          icon={<BookOpen />}
-          title="AI Notes"
-          desc="Generate notes instantly"
-        />
-        <Feature
-          icon={<BarChart />}
-          title="Analytics"
-          desc="Track your progress"
-        />
+      {/* COUNTERS */}
+      <section className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="grid md:grid-cols-3 gap-6">
+          <CounterCard number={`${count1.toLocaleString()}+`} label="Students Joined" />
+          <CounterCard number={`${count2.toLocaleString()}+`} label="Problems Solved" />
+          <CounterCard number={`${count3.toLocaleString()}+`} label="Trusted Users" />
+        </div>
       </section>
 
-      {/*  EXTRA FEATURES SECTION */}
-      <section className="bg-white py-20">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Everything you need to get placed 💼
+      {/* CAROUSEL */}
+      <section className="max-w-7xl mx-auto px-6 pb-24">
+        <h2 className="text-4xl font-black text-center mb-4">
+          Explore PlaceMentor ✨
         </h2>
 
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 px-6">
-          <BigCard
-            title="Company Insights"
-            desc="Explore companies, roles & hiring trends"
-          />
-          <BigCard
-            title="AI Search"
-            desc="Search anything related to placements instantly"
-          />
-          <BigCard
-            title="Interview Reports"
-            desc="Detailed feedback after mock interviews"
-          />
-          <BigCard title="Planner History" desc="Track your learning journey" />
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
+          Real product previews and dashboard snapshots
+        </p>
+
+        <div className="relative rounded-[32px] bg-white/80 dark:bg-gray-900/80 border shadow-2xl p-3 overflow-hidden">
+          <div className="aspect-video rounded-2xl overflow-hidden">
+            <iframe src={gallery[slide]} className="w-full h-full" />
+          </div>
+
+          <button
+            onClick={() =>
+              setSlide(slide === 0 ? gallery.length - 1 : slide - 1)
+            }
+            className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center"
+          >
+            <ChevronLeft />
+          </button>
+
+          <button
+            onClick={() => setSlide((slide + 1) % gallery.length)}
+            className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center"
+          >
+            <ChevronRight />
+          </button>
         </div>
       </section>
 
-      {/*  HOW IT WORKS */}
-      <section className="py-20 text-center">
-        <h2 className="text-3xl font-bold mb-10">How it works</h2>
+      {/* FEATURES */}
+      <section className="max-w-7xl mx-auto px-6 pb-24">
+        <h2 className="text-4xl font-black text-center mb-12">
+          Why PlaceMentor Wins 🚀
+        </h2>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6">
-          <Step title="1. Signup" desc="Create account quickly" />
-          <Step title="2. Learn & Practice" desc="Use AI + coding tools" />
-          <Step title="3. Get Placed" desc="Crack interviews easily" />
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <FeatureCard icon={<Brain />} title="AI Planner" desc="Personal roadmap based on your level." />
+          <FeatureCard icon={<Code2 />} title="Coding Battles" desc="Daily challenges with growth tracking." />
+          <FeatureCard icon={<Target />} title="Placement Predictor" desc="Check chances instantly." />
+          <FeatureCard icon={<Award />} title="Leaderboard" desc="Compete and stay consistent." />
+          <FeatureCard icon={<Zap />} title="Fast Progress" desc="XP, streaks and growth system." />
+          <FeatureCard icon={<ShieldCheck />} title="Resume Tools" desc="Create ATS ready resumes." />
         </div>
       </section>
 
-      {/*  CTA */}
-      <section className="text-center py-20 bg-orange-100">
-        <h2 className="text-3xl font-bold">Start your journey today 🚀</h2>
+      {/* TESTIMONIALS */}
+      <section className="max-w-7xl mx-auto px-6 pb-20">
+        <h2 className="text-4xl font-black text-center mb-12">
+          Loved by Students ❤️
+        </h2>
 
-        <Button
-          className="mt-6 bg-orange-500 text-white hover:bg-orange-600"
-          onClick={() => navigate("/signup")}
-        >
-          Get Started Free
-        </Button>
+        <div className="grid md:grid-cols-3 gap-6">
+          <Testimonial name="Rahul" text="Coding consistency became much better." />
+          <Testimonial name="Anjali" text="AI roadmap helped me stay focused." />
+          <Testimonial name="Sourav" text="Best modern platform for placements." />
+        </div>
       </section>
 
-      {/*  FOOTER */}
-      <footer className="text-center py-6 text-gray-500">
+      {/* FAQ */}
+      <section className="max-w-4xl mx-auto px-6 pb-24">
+        <h2 className="text-4xl font-black text-center mb-10">
+          Frequently Asked Questions
+        </h2>
+
+        <div className="space-y-4">
+          {faqs.map((item, i) => (
+            <div
+              key={i}
+              className="rounded-2xl bg-white dark:bg-gray-900 border shadow-sm overflow-hidden"
+            >
+              <button
+                onClick={() => setFaq(faq === i ? null : i)}
+                className="w-full px-5 py-4 flex justify-between font-semibold text-left"
+              >
+                {item.q}
+                <ChevronDown
+                  className={`w-5 h-5 transition ${
+                    faq === i ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {faq === i && (
+                <div className="px-5 pb-4 text-gray-500 dark:text-gray-300">
+                  {item.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-6xl mx-auto px-6 pb-24">
+        <div className="rounded-[32px] p-10 text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white shadow-2xl">
+          <h2 className="text-4xl font-black mb-4">
+            Ready To Crack Your Dream Job?
+          </h2>
+
+          <p className="text-white/90 max-w-2xl mx-auto">
+            Join thousands of students building careers smarter.
+          </p>
+
+          <Button
+            className="mt-7 bg-white text-indigo-700 rounded-2xl px-10"
+            onClick={() => navigate("/signup")}
+          >
+            Get Started Free
+          </Button>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-white/10 py-8 text-center text-gray-500 dark:text-gray-400">
         © {new Date().getFullYear()} PlaceMentor. All rights reserved.
       </footer>
     </div>
   );
 }
 
-function Feature({ icon, title, desc }) {
+function MiniBadge({ text }) {
   return (
-    <Card className="hover:shadow-lg transition">
-      <CardContent className="p-6 space-y-3">
-        <div className="text-orange-500">{icon}</div>
-        <h3 className="font-semibold text-lg">{title}</h3>
-        <p className="text-gray-600 text-sm">{desc}</p>
+    <div className="px-4 py-2 rounded-full bg-white dark:bg-gray-900 border text-sm font-medium shadow-sm">
+      {text}
+    </div>
+  );
+}
+
+function CounterCard({ number, label }) {
+  return (
+    <Card className="rounded-3xl border-0 shadow-xl bg-white/80 dark:bg-gray-900/80">
+      <CardContent className="p-8 text-center">
+        <div className="text-5xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          {number}
+        </div>
+        <p className="mt-2 text-gray-500">{label}</p>
       </CardContent>
     </Card>
   );
 }
 
-function BigCard({ title, desc }) {
+function FeatureCard({ icon, title, desc }) {
   return (
-    <div className="p-6 border rounded-xl bg-gray-50 hover:shadow-md transition">
-      <h3 className="text-lg font-semibold text-orange-500">{title}</h3>
-      <p className="text-gray-600 mt-2 text-sm">{desc}</p>
-    </div>
+    <Card className="rounded-3xl border-0 shadow-lg hover:-translate-y-2 transition bg-white/80 dark:bg-gray-900/80">
+      <CardContent className="p-7">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center mb-5">
+          {icon}
+        </div>
+        <h3 className="text-xl font-bold">{title}</h3>
+        <p className="mt-2 text-gray-500 text-sm">{desc}</p>
+      </CardContent>
+    </Card>
   );
 }
 
-function Step({ title, desc }) {
+function Testimonial({ name, text }) {
   return (
-    <div className="p-6 border rounded-xl bg-white shadow-sm">
-      <h3 className="font-semibold text-lg">{title}</h3>
-      <p className="text-gray-600 mt-2 text-sm">{desc}</p>
-    </div>
+    <Card className="rounded-3xl border-0 shadow-lg bg-white/80 dark:bg-gray-900/80">
+      <CardContent className="p-7">
+        <div className="text-yellow-500 text-xl mb-3">★★★★★</div>
+        <p className="text-gray-700 dark:text-gray-300">{text}</p>
+        <div className="mt-4 font-bold">{name}</div>
+      </CardContent>
+    </Card>
   );
 }

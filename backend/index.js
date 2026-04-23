@@ -142,6 +142,13 @@ io.on("connection", (socket) => {
       isOnline: true,
     });
 
+    const user = await User.findById(id).select('-password');
+    io.emit("admin:user:online", { 
+      _id: user._id,
+      isOnline: true,
+      lastSeen: user.lastSeen,
+      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+    });
     io.emit("online_users", onlineUsers);
   });
 
@@ -506,13 +513,19 @@ io.on("connection", (socket) => {
   socket.on("disconnect", async () => {
     console.log("User disconnected:", socket.id);
 
-    // Find userId and update online status
+    // Find userId and update online status + lastSeen
     for (let [userId, sockId] of connectedSockets.entries()) {
       if (sockId === socket.id) {
         await User.findByIdAndUpdate(userId, {
           socketId: null,
           isOnline: false,
+          lastSeen: new Date()
         });
+        
+        // Emit admin updates
+        const updatedUser = await User.findById(userId).select('isOnline lastSeen');
+        io.emit('admin:user:offline', updatedUser);
+        
         connectedSockets.delete(userId);
         break;
       }
@@ -520,6 +533,22 @@ io.on("connection", (socket) => {
 
     onlineUsers = Math.max(0, onlineUsers - 1);
     io.emit("online_users", onlineUsers);
+  });
+
+  // ADMIN EVENTS - emit full user for Redux update
+  socket.on('admin:user:join', async (userId) => {
+    await User.findByIdAndUpdate(userId, {
+      isOnline: true,
+      socketId: socket.id
+    });
+    
+    const user = await User.findById(userId).select('-password');
+    io.emit('admin:user:online', { 
+      _id: user._id,
+      isOnline: true,
+      lastSeen: user.lastSeen,
+      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+    });
   });
 });
 

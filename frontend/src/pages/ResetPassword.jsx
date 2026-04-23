@@ -2,7 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Sun, Moon } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Sun,
+  Moon,
+  ArrowLeft,
+  LockKeyhole,
+} from "lucide-react";
 import { toast } from "sonner";
 import useAuth from "../hooks/useAuth";
 
@@ -21,7 +28,7 @@ export default function ResetPassword() {
 
   const inputsRef = useRef([]);
 
-  // ✅ LOAD THEME
+  /* THEME LOAD */
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
 
@@ -34,7 +41,7 @@ export default function ResetPassword() {
     }
   }, []);
 
-  // ✅ TOGGLE THEME
+  /* THEME TOGGLE */
   const toggleTheme = () => {
     const isNowDark = document.documentElement.classList.toggle("dark");
     setIsDark(isNowDark);
@@ -113,44 +120,55 @@ export default function ResetPassword() {
     <>
       {loading && <FullScreenLoader />}
 
-      {/* 🌙 THEME BUTTON */}
-      <div className="absolute top-5 right-5">
+      {/* THEME BUTTON */}
+      <div className="absolute top-5 right-5 z-20">
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
         >
           {isDark ? <Sun /> : <Moon />}
         </Button>
       </div>
 
-      <div className="min-h-screen flex items-center justify-center 
-        bg-gradient-to-br from-white via-orange-50 to-blue-50 
-        dark:from-gray-900 dark:via-gray-900 dark:to-gray-950
-        px-4"
+      <div
+        className="min-h-screen flex items-center justify-center px-4
+        bg-gradient-to-br from-slate-50 via-white to-indigo-50
+        dark:from-gray-950 dark:via-gray-900 dark:to-black"
       >
-        <div className="w-full max-w-md 
-          bg-white dark:bg-gray-900 
-          rounded-2xl shadow-lg p-6 space-y-6 border 
-          border-gray-200 dark:border-gray-700
-        ">
+        {/* CARD */}
+        <div
+          className="w-full max-w-md rounded-3xl p-7 space-y-6
+          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl
+          border border-gray-200 dark:border-white/10 shadow-2xl"
+        >
+          {/* LOGO */}
+          <div className="flex justify-center">
+            <img
+              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+              alt="PlaceMentor"
+              className="w-20 h-20 rounded-2xl shadow-lg"
+            />
+          </div>
 
           {/* BACK */}
-          <p
+          <button
             onClick={() => navigate("/login")}
-            className="text-sm text-orange-500 cursor-pointer"
+            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
-            ← Back to login
-          </p>
+            <ArrowLeft className="w-4 h-4" />
+            Back to login
+          </button>
 
           {/* HEADING */}
-          <div>
+          <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Reset Password
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-              Enter OTP and new password
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Enter OTP and create your new password
             </p>
           </div>
 
@@ -162,7 +180,10 @@ export default function ResetPassword() {
           />
 
           {/* OTP */}
-          <div onPaste={handlePaste} className="flex gap-3 justify-between">
+          <div
+            onPaste={handlePaste}
+            className="flex justify-between gap-3"
+          >
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -171,11 +192,12 @@ export default function ResetPassword() {
                 ref={(el) => (inputsRef.current[index] = el)}
                 onChange={(e) => handleChange(e.target.value, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-14 h-14 text-center text-lg rounded-xl 
-                bg-gray-100 dark:bg-gray-800 
-                text-black dark:text-white 
-                border border-gray-300 dark:border-gray-700 
-                focus:border-orange-500 focus:outline-none transition"
+                className="w-14 h-14 rounded-xl text-center text-xl font-semibold
+                bg-gray-100 dark:bg-gray-800
+                border border-gray-300 dark:border-gray-700
+                text-gray-900 dark:text-white
+                focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
+                outline-none transition"
               />
             ))}
           </div>
@@ -187,7 +209,7 @@ export default function ResetPassword() {
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white pr-10"
+              className="pr-10 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
             />
 
             <span
@@ -202,24 +224,27 @@ export default function ResetPassword() {
           <Button
             onClick={handleReset}
             disabled={loading}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+            className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
           >
+            <LockKeyhole className="w-4 h-4 mr-2" />
             {loading ? "Resetting..." : "Reset Password"}
           </Button>
-
         </div>
       </div>
     </>
   );
 }
 
-// 🔄 LOADER
+/* FULL LOADER */
 function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-white text-sm">Resetting password...</p>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 px-8 py-6 rounded-2xl shadow-2xl text-center">
+        <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+
+        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">
+          Resetting password...
+        </p>
       </div>
     </div>
   );

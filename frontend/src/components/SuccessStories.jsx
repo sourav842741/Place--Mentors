@@ -52,56 +52,81 @@ const SuccessStories = () => {
   };
 
   return (
-    <div className="w-full flex justify-center py-12 md:py-16 px-4">
-      <div className="w-full max-w-3xl">
+    <section className="w-full py-14 md:py-20 px-4 bg-gradient-to-b from-white via-slate-50 to-indigo-50 dark:from-[#020617] dark:via-[#0b1120] dark:to-[#111827] transition-colors duration-300">
+      <div className="max-w-4xl mx-auto">
+        {/* TOP TAG */}
+        <div className="flex justify-center mb-4">
+          <span className="px-4 py-2 rounded-full text-sm font-medium border border-blue-200 text-blue-700 bg-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20">
+            Need Help?
+          </span>
+        </div>
 
         {/* HEADING */}
-        <h2 className="text-2xl md:text-4xl font-semibold text-center mb-10 md:mb-12 
-        text-gray-900 dark:text-white">
-          FREQUENTLY ASKED QUESTIONS
+        <h2 className="text-3xl md:text-5xl font-bold text-center text-slate-900 dark:text-white">
+          Frequently Asked{" "}
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Questions
+          </span>
         </h2>
 
-        {/* FAQ LIST */}
-        <div>
+        <p className="text-center text-slate-600 dark:text-slate-400 mt-4 mb-12 max-w-2xl mx-auto text-sm md:text-base">
+          Find quick answers about Place Mentor, account setup, progress
+          tracking, premium plans, and preparation tools.
+        </p>
+
+        {/* FAQ BOX */}
+        <div className="space-y-4">
           {successStoriesData.map((item, index) => {
             const isOpen = openIndex === index;
 
             return (
               <div
                 key={index}
-                className="border-b border-gray-400 dark:border-gray-600 py-4 md:py-5"
+                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
               >
                 {/* QUESTION */}
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full flex justify-between items-center text-left gap-4"
+                  className="w-full flex items-center justify-between gap-4 text-left px-5 md:px-6 py-5"
                 >
-                  <span className="text-base md:text-xl font-medium 
-                  text-gray-800 dark:text-gray-200">
+                  <span className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100">
                     {item.name}
                   </span>
 
-                  <Plus
-                    className={`w-5 h-5 text-gray-500 transition-transform duration-300 shrink-0 ${
-                      isOpen ? "rotate-45" : ""
+                  <div
+                    className={`min-w-[38px] h-[38px] rounded-xl flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-transform duration-300 ${
+                      isOpen ? "rotate-45 scale-105" : ""
                     }`}
-                  />
+                  >
+                    <Plus className="w-5 h-5" />
+                  </div>
                 </button>
 
                 {/* ANSWER */}
-                {isOpen && (
-                  <p className="mt-3 md:mt-4 text-sm md:text-base 
-                  text-gray-600 dark:text-gray-400 leading-relaxed pr-2 md:pr-6">
-                    {item.message}
-                  </p>
-                )}
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-5 md:px-6 pb-5 text-sm md:text-base leading-7 text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-4">
+                      {item.message}
+                    </p>
+                  </div>
+                </div>
               </div>
             );
           })}
         </div>
 
+        {/* BOTTOM TEXT */}
+        <p className="text-center text-sm text-slate-500 dark:text-slate-500 mt-10">
+          Still have questions? Contact our support team anytime.
+        </p>
       </div>
-    </div>
+    </section>
   );
 };
 

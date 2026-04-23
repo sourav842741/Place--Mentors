@@ -4,15 +4,7 @@ import { useSelector } from "react-redux";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Eye,
-  EyeOff,
-  Sun,
-  Moon,
-  ShieldAlert,
-  Mail,
-  X,
-} from "lucide-react";
+import { Eye, EyeOff, Sun, Moon, ShieldAlert, Mail, X } from "lucide-react";
 import { toast } from "sonner";
 
 import useAuth from "../hooks/useAuth";
@@ -62,16 +54,15 @@ export default function Login() {
      CONTACT ADMIN CLICK HANDLER
   ================================= */
   const handleContactAdmin = () => {
-  const subject = encodeURIComponent("Account Suspended Support");
-  const body = encodeURIComponent(
-    "Hello Admin,\n\nI need help with my account."
-  );
+    const subject = encodeURIComponent("Account Suspended Support");
+    const body = encodeURIComponent(
+      "Hello Admin,\n\nI need help with my account.",
+    );
 
-  const gmailUrl =
-    `https://mail.google.com/mail/?view=cm&fs=1&to=souravkumar85055@gmail.com&su=${subject}&body=${body}`;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=souravkumar85055@gmail.com&su=${subject}&body=${body}`;
 
-  window.open(gmailUrl, "_blank");
-};
+    window.open(gmailUrl, "_blank");
+  };
 
   /* ===============================
      LOGIN
@@ -104,19 +95,24 @@ export default function Login() {
       } else {
         const msg = res?.message || "Login failed";
 
-        /* if backend returns blocked msg without throwing */
-        if (res?.statusCode === 403 || msg.toLowerCase().includes("banned") || msg.toLowerCase().includes("suspended")) {
+        if (
+          res?.statusCode === 403 ||
+          msg.toLowerCase().includes("banned") ||
+          msg.toLowerCase().includes("suspended")
+        ) {
           setBanPopup(msg);
         } else {
           toast.error(msg);
         }
       }
     } catch (error) {
-      const msg =
-        error?.response?.data?.message || "Something went wrong";
+      const msg = error?.response?.data?.message || "Something went wrong";
 
-      /* banned user popup */
-      if (error?.response?.status === 403 || msg.toLowerCase().includes("banned") || msg.toLowerCase().includes("suspended")) {
+      if (
+        error?.response?.status === 403 ||
+        msg.toLowerCase().includes("banned") ||
+        msg.toLowerCase().includes("suspended")
+      ) {
         setBanPopup(msg);
       } else {
         toast.error(msg);
@@ -140,7 +136,12 @@ export default function Login() {
         window.location.reload();
       } else {
         const msg = res.message || "Google login failed";
-        if (res?.statusCode === 403 || msg.toLowerCase().includes("banned") || msg.toLowerCase().includes("suspended")) {
+
+        if (
+          res?.statusCode === 403 ||
+          msg.toLowerCase().includes("banned") ||
+          msg.toLowerCase().includes("suspended")
+        ) {
           setBanPopup(msg);
         } else {
           toast.error(msg);
@@ -156,164 +157,185 @@ export default function Login() {
   return (
     <AuthLayout>
 
-      {/* ===============================
-          PREMIUM BANNED USER POPUP
-      ================================= */}
       {banPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-300">
-          <div className="relative w-full max-w-md sm:max-w-xl overflow-hidden rounded-3xl border border-red-200/50 dark:border-red-500/30 bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/80 dark:to-gray-800/80 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
-            {/* Glowing animated top border */}
-            <div className="h-3 w-full bg-gradient-to-r from-red-500 via-orange-500/80 to-red-600 shadow-[0_4px_12px_rgba(239,68,68,0.4)] animate-pulse-glow" />
-
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+          {" "}
+          <div className="relative w-full max-w-lg overflow-hidden rounded-[28px] border border-white/20 dark:border-white/10 bg-white dark:bg-gray-900 shadow-2xl animate-in zoom-in-95 duration-300">
+            {" "}
+            {/* TOP GLOW */}{" "}
+            <div className="h-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500" />{" "}
+            {/* CLOSE */}{" "}
+            <button
+              onClick={() => setBanPopup("")}
+              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            >
+              {" "}
+              <X className="w-5 h-5 text-gray-500 dark:text-gray-300" />{" "}
+            </button>{" "}
             <div className="p-8 text-center">
-
-              {/* Pulsing floating icon */}
-              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-red-100/80 to-orange-100/80 dark:from-red-500/10 dark:to-orange-500/10 shadow-2xl border border-red-200/50 dark:border-red-500/30 animate-bounce-subtle">
-                <ShieldAlert className="h-14 w-14 text-red-500 drop-shadow-lg animate-pulse" />
-              </div>
-
-              {/* Premium title */}
-              <h2 className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-100 bg-clip-text text-transparent mb-2 tracking-tight">
-                Account Suspended
-              </h2>
-
-              {/* Subtitle */}
-              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 font-medium mb-6 max-w-md mx-auto leading-relaxed">
-                Your access has been temporarily restricted.
-              </p>
-
-              {/* Backend reason message card */}
-              <div className="mx-auto max-w-md rounded-2xl border border-gray-200/50 dark:border-gray-700/60 bg-white/60 dark:bg-gray-800/50 backdrop-blur-lg shadow-xl p-6 mb-8">
-                <p className="text-sm sm:text-base leading-7 text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words font-medium">
-                  {banPopup}
-                </p>
-              </div>
-
-              {/* Support info */}
-              <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium mb-8 px-4 max-w-sm mx-auto leading-relaxed">
-                Need assistance? Contact admin below.
-              </p>
-
-              {/* Premium responsive buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md mx-auto">
+              {" "}
+             
+              {/* ICON */}{" "}
+              <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-red-100 dark:bg-red-900/20">
+                {" "}
+                <ShieldAlert className="h-10 w-10 text-red-500" />{" "}
+              </div>{" "}
+              {/* TITLE */}{" "}
+              <h2 className="text-3xl font-black text-gray-900 dark:text-white">
+                {" "}
+                Account Suspended{" "}
+              </h2>{" "}
+              <p className="mt-2 text-gray-500 dark:text-gray-400">
+                {" "}
+                Access has been restricted temporarily.{" "}
+              </p>{" "}
+              {/* REASON */}{" "}
+              <div className="mt-6 rounded-2xl bg-gray-100 dark:bg-gray-800 p-5 text-left">
+                {" "}
+                <p className="text-sm leading-7 text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                  {" "}
+                  {banPopup}{" "}
+                </p>{" "}
+              </div>{" "}
+              {/* BUTTONS */}{" "}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+                {" "}
                 <Button
                   onClick={handleContactAdmin}
-                  size="lg"
-                  className="group rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-semibold h-14 flex items-center gap-2"
+                  className="h-12 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
                 >
-                  <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  Contact Admin
-                </Button>
-
+                  {" "}
+                  <Mail className="w-4 h-4 mr-2" /> Contact Admin{" "}
+                </Button>{" "}
                 <Button
                   onClick={() => setBanPopup("")}
-                  variant="destructive"
-                  size="lg"
-                  className="group rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-semibold h-14 flex items-center gap-2"
+                  variant="outline"
+                  className="h-12 rounded-2xl"
                 >
-                  <X className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  Close
-                </Button>
-              </div>
-            </div>
-          </div>
+                  {" "}
+                  Close{" "}
+                </Button>{" "}
+              </div>{" "}
+            </div>{" "}
+          </div>{" "}
         </div>
-      )}
-
-      {/* ===============================
-          THEME TOGGLE
-      ================================= */}
-      <div className="absolute top-5 right-5">
+      )}{" "}
+      {/* ===============================        THEME TOGGLE    ================================= */}{" "}
+      <div className="absolute top-5 right-5 z-20">
+        {" "}
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="rounded-xl hover:bg-gray-200 dark:hover:bg-gray-800"
         >
-          {isDark ? <Sun /> : <Moon />}
-        </Button>
-      </div>
-
-      {/* ===============================
-          LOGIN CARD (UNCHANGED)
-      ================================= */}
-      <div className="w-full max-w-md space-y-5 bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center">
-          Sign in
-        </h2>
-
-        {/* Email */}
+          {" "}
+          {isDark ? <Sun /> : <Moon />}{" "}
+        </Button>{" "}
+      </div>{" "}
+      {/* ===============================        LOGIN CARD PREMIUM    ================================= */}{" "}
+      <div className="w-full max-w-md rounded-[28px] border border-white/20 dark:border-white/10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl p-7 space-y-5">
+        {" "}
+        {/* LOGO */}{" "}
+        <div className="flex flex-col items-center">
+          {" "}
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center shadow-lg">
+            {" "}
+            <img
+              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+              className="w-12 h-12"
+            />{" "}
+          </div>{" "}
+          <h2 className="mt-4 text-3xl font-black text-gray-900 dark:text-white">
+            {" "}
+            Welcome Back 👋{" "}
+          </h2>{" "}
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {" "}
+            Sign in to continue your journey{" "}
+          </p>{" "}
+        </div>{" "}
+        {/* EMAIL */}{" "}
         <Input
-          placeholder="Email"
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
-          onChange={(e) =>
-            setForm({ ...form, email: e.target.value })
-          }
-        />
-
-        {/* Password */}
+          placeholder="Enter email"
+          className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0"
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        />{" "}
+        {/* PASSWORD */}{" "}
         <div className="relative">
+          {" "}
           <Input
             type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white pr-10"
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
-          />
-
+            placeholder="Enter password"
+            className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 pr-10"
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />{" "}
           <span
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-2.5 cursor-pointer text-gray-500 dark:text-gray-400"
+            className="absolute right-4 top-3.5 cursor-pointer text-gray-500"
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </span>
-        </div>
-
-        {/* Forgot */}
+            {" "}
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}{" "}
+          </span>{" "}
+        </div>{" "}
+        {/* FORGOT */}{" "}
         <div className="text-right">
+          {" "}
           <Link
             to="/forgot-password"
-            className="text-sm text-orange-500 hover:underline"
+            className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
           >
-            Forgot Password?
-          </Link>
-        </div>
-
-        {/* Login */}
+            {" "}
+            Forgot Password?{" "}
+          </Link>{" "}
+        </div>{" "}
+        {/* LOGIN BTN */}{" "}
         <Button
           onClick={handleLogin}
           disabled={loading}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+          className="w-full h-12 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold"
         >
-          {loading ? "Signing in..." : "Sign in"}
-        </Button>
-
-        {/* Google */}
+          {" "}
+          {loading ? "Signing in..." : "Sign In"}{" "}
+        </Button>{" "}
+        {/* DIVIDER */}{" "}
+        <div className="relative text-center">
+          {" "}
+          <div className="absolute inset-0 flex items-center">
+            {" "}
+            <div className="w-full border-t dark:border-gray-700"></div>{" "}
+          </div>{" "}
+          <span className="relative px-3 text-sm bg-white dark:bg-gray-900 text-gray-400">
+            {" "}
+            OR{" "}
+          </span>{" "}
+        </div>{" "}
+        {/* GOOGLE */}{" "}
         <button
           onClick={handleGoogleLogin}
           disabled={googleLoading}
-          className="w-full flex items-center justify-center gap-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-black dark:text-white py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="w-full h-12 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-3"
         >
+          {" "}
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             className="w-5 h-5"
-          />
-          Sign in with Google
-        </button>
-
-        {/* Signup */}
-        <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-          Don't have an account?{" "}
+          />{" "}
+          Continue with Google{" "}
+        </button>{" "}
+        {/* SIGNUP */}{" "}
+        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+          {" "}
+          Don’t have an account?{" "}
           <Link
             to="/signup"
-            className="text-orange-500 font-medium hover:underline"
+            className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
           >
-            Sign up
-          </Link>
-        </p>
-      </div>
+            {" "}
+            Sign Up{" "}
+          </Link>{" "}
+        </p>{" "}
+      </div>{" "}
     </AuthLayout>
   );
 }
-

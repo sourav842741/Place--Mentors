@@ -66,26 +66,23 @@ export default function AIPlanner() {
   }, [successMsg]);
 
   // Load planner
-const fetchPlanner = useCallback(async (plannerId = null) => {
-  try {
-    const url = plannerId
-      ? `/api/planner/${plannerId}`
-      : "/api/planner/my";
+  const fetchPlanner = useCallback(async (plannerId = null) => {
+    try {
+      const url = plannerId ? `/api/planner/${plannerId}` : "/api/planner/my";
 
-    const res = await api.get(url, { withCredentials: true });
+      const res = await api.get(url, { withCredentials: true });
 
-    if (!res.data) {
-      setPlanner(null);
-      return;
+      if (!res.data) {
+        setPlanner(null);
+        return;
+      }
+
+      setPlanner(res.data);
+    } catch (err) {
+      console.error("Fetch error:", err.response?.data || err.message);
+      setPlanner(null); // 🔥 important
     }
-
-    setPlanner(res.data);
-
-  } catch (err) {
-    console.error("Fetch error:", err.response?.data || err.message);
-    setPlanner(null); // 🔥 important
-  }
-}, []);
+  }, []);
 
   useEffect(() => {
     // Check for Google Calendar success param
@@ -246,7 +243,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
   if (error)
     return (
       <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center">
-      <Card className="max-w-md bg-white dark:bg-gray-900 border dark:border-white/10">
+        <Card className="max-w-md bg-white dark:bg-gray-900 border dark:border-white/10">
           <CardContent className="p-8 text-center">
             <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
             <h3 className="text-xl font-bold mb-2">Error</h3>
@@ -392,101 +389,102 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
             {/* Planner Display */}
             {planner ? (
               id ? (
-                //  DETAIL VIEW 
+                //  DETAIL VIEW
                 <div className="space-y-10">
-                   {planner.plan.map((day, dayIdx) => {
-    const isCurrent = planner.currentDay === day.day;
+                  {planner.plan.map((day, dayIdx) => {
+                    const isCurrent = planner.currentDay === day.day;
 
-    return (
-      <div key={dayIdx} className="space-y-4">
-        
-        {/* DAY TITLE */}
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-          Day {day.day}: {day.title}
-        </h2>
+                    return (
+                      <div key={dayIdx} className="space-y-4">
+                        {/* DAY TITLE */}
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                          Day {day.day}: {day.title}
+                        </h2>
 
-        {/* TASKS */}
-        <div className="space-y-4">
-          {day.tasks.map((task, taskIdx) => (
-            <div
-              key={taskIdx}
-              className={`p-4 rounded-xl border transition ${
-                isCurrent
-                  ? "bg-white dark:bg-gray-900 shadow-md border-gray-200 dark:border-white/10"
-                  : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-white/10"
-              }`}
-            >
+                        {/* TASKS */}
+                        <div className="space-y-4">
+                          {day.tasks.map((task, taskIdx) => (
+                            <div
+                              key={taskIdx}
+                              className={`p-4 rounded-xl border transition ${
+                                isCurrent
+                                  ? "bg-white dark:bg-gray-900 shadow-md border-gray-200 dark:border-white/10"
+                                  : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-white/10"
+                              }`}
+                            >
+                              {/* TITLE */}
+                              <h4 className="font-semibold text-lg text-gray-800 dark:text-white">
+                                {task.title}
+                              </h4>
 
-              {/* TITLE */}
-              <h4 className="font-semibold text-lg text-gray-800 dark:text-white">
-                {task.title}
-              </h4>
+                              {/* TYPE */}
+                              <p className="text-xs text-blue-600 font-medium uppercase">
+                                {task.type}
+                              </p>
 
-              {/* TYPE */}
-              <p className="text-xs text-blue-600 font-medium uppercase">
-                {task.type}
-              </p>
+                              {/* DESCRIPTION */}
+                              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                {task.explanation || "No explanation"}
+                              </p>
 
-              {/* DESCRIPTION */}
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                {task.explanation || "No explanation"}
-              </p>
+                              {/* META */}
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex gap-2 flex-wrap">
+                                <span>⏰ {task.time}</span>
+                                <span>•</span>
+                                <span>{task.difficulty}</span>
 
-              {/* META */}
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex gap-2 flex-wrap">
-                <span>⏰ {task.time}</span>
-                <span>•</span>
-                <span>{task.difficulty}</span>
+                                {task.platform && (
+                                  <>
+                                    <span>•</span>
+                                    <span>{task.platform}</span>
+                                  </>
+                                )}
+                              </div>
 
-                {task.platform && (
-                  <>
-                    <span>•</span>
-                    <span>{task.platform}</span>
-                  </>
-                )}
-              </div>
+                              {/* RESOURCE LINK */}
+                              {task.link && (
+                                <a
+                                  href={task.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-500 text-sm underline mt-2 inline-block"
+                                >
+                                  Open Resource
+                                </a>
+                              )}
 
-              {/* RESOURCE LINK */}
-              {task.link && (
-                <a
-                  href={task.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 text-sm underline mt-2 inline-block"
-                >
-                  Open Resource
-                </a>
-              )}
+                              {/* YOUTUBE SEARCH */}
+                              {task.youtubeQuery && (
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                  🔍 {task.youtubeQuery}
+                                </p>
+                              )}
 
-              {/* YOUTUBE SEARCH */}
-              {task.youtubeQuery && (
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                  🔍 {task.youtubeQuery}
-                </p>
-              )}
+                              {/* VIDEO */}
+                              {task.videoUrl && (
+                                <iframe
+                                  src={task.videoUrl.replace(
+                                    "watch?v=",
+                                    "embed/",
+                                  )}
+                                  className="w-full h-[300px] md:h-[400px] mt-3 rounded-xl"
+                                />
+                              )}
 
-              {/* VIDEO */}
-              {task.videoUrl && (
-                <iframe
-                  src={task.videoUrl.replace("watch?v=", "embed/")}
-                  className="w-full h-[300px] md:h-[400px] mt-3 rounded-xl"
-                />
-              )}
-
-              {/* COMPLETE */}
-              <div className="mt-3 flex justify-end">
-                {task.completed ? (
-                  <span className="text-green-500 text-sm">
-                    Completed
-                  </span>
-                ) : (
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      handleCompleteTask(dayIdx, taskIdx)
-                    }
-                  />
-                )}
+                              {/* COMPLETE */}
+                              <div className="mt-3 flex justify-end">
+                                {task.completed ? (
+                                  <span className="text-green-500 text-sm">
+                                    Completed
+                                  </span>
+                                ) : (
+                                  <input
+                                    type="checkbox"
+                                    onChange={() =>
+                                      handleCompleteTask(dayIdx, taskIdx)
+                                    }
+                                  />
+                                )}
                               </div>
                             </div>
                           ))}
@@ -513,21 +511,21 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
                   </p>
 
                   {/* BUTTON */}
-                    <Button
-                onClick={() => setShowForm(true)}
-                size="lg"
-                variant={planner ? "outline" : "default"}
-                className={`
+                  <Button
+                    onClick={() => setShowForm(true)}
+                    size="lg"
+                    variant={planner ? "outline" : "default"}
+                    className={`
                   ${
                     planner
                       ? "border-gray-300 hover:bg-gray-50"
                       : "bg-linear-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
                   }
                 `}
-              >
-                <Play className="mr-2" />{" "}
-                {planner ? "Create New Plan" : "Create Plan"}
-              </Button>
+                  >
+                    <Play className="mr-2" />{" "}
+                    {planner ? "Create New Plan" : "Create Plan"}
+                  </Button>
                 </div>
               )
             ) : (
@@ -545,7 +543,7 @@ const fetchPlanner = useCallback(async (plannerId = null) => {
           </div>
         </main>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

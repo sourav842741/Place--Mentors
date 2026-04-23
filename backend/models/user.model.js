@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     },
 
     googleId: {
-      type: String, 
+      type: String,
       default: null,
     },
 
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
 
     avatar: {
       type: String,
-      default: "", 
+      default: "",
     },
 
     coverImage: {
@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema(
 
     skills: {
       type: [String],
-      required: true, 
+      required: true,
       validate: {
         validator: function (arr) {
           return arr.length > 0;
@@ -95,15 +95,15 @@ const userSchema = new mongoose.Schema(
     lastMotivation: { type: String, default: "" },
     lastMotivationDate: { type: Date, default: null },
 
-      currentLevelXP: {
-  type: Number,
-  default: 0,
-},
+    currentLevelXP: {
+      type: Number,
+      default: 0,
+    },
 
-nextLevelXP: {
-  type: Number,
-  default: 100,
-},
+    nextLevelXP: {
+      type: Number,
+      default: 100,
+    },
 
     //  BADGES
     badges: [
@@ -131,17 +131,16 @@ nextLevelXP: {
       },
     ],
     //  Company Preparation Tracking
-prepCompanies: [
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Company"
-  }
-],
- notes:{
-        type:[mongoose.Schema.Types.ObjectId],
-        ref:"Notes",
-        default:[]
-
+    prepCompanies: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Company",
+      },
+    ],
+    notes: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Notes",
+      default: [],
     },
 
     //  TIME TRACKING
@@ -167,60 +166,73 @@ prepCompanies: [
     friends: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
+        ref: "User",
+      },
     ],
-    
-friendRequests: {
-  sent: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "User",
-    default: []
-  },
-  received: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "User",
-    default: []
-  }
-},
-challenges: {
-  sent: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "User",
-    default: []
-  },
-  received: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "User",
-    default: []
-  }
-},
-lastFriendRequestTime: {
-  type: Date,
-  default: null
-},
 
-lastChallengeTime: {
-  type: Date,
-  default: null
-},
+    friendRequests: {
+      sent: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User",
+        default: [],
+      },
+      received: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User",
+        default: [],
+      },
+    },
+    challenges: {
+      sent: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User",
+        default: [],
+      },
+      received: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User",
+        default: [],
+      },
+    },
+    lastFriendRequestTime: {
+      type: Date,
+      default: null,
+    },
 
-// BAN SYSTEM
-isBanned: {
-  type: Boolean,
-  default: false
-},
-banReason: {
-  type: String,
-  default: ""
-},
-bannedAt: {
-  type: Date
-},
-bannedBy: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "User"
-},
+    lastChallengeTime: {
+      type: Date,
+      default: null,
+    },
+
+    // BAN SYSTEM
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
+    banReason: {
+      type: String,
+      default: "",
+    },
+    bannedAt: {
+      type: Date,
+    },
+    bannedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    banHistory: [
+      {
+        reason: String,
+        bannedAt: { type: Date, default: Date.now },
+        bannedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      },
+    ],
+
+    // REAL-TIME STATUS (for admin dashboard)
+    lastSeen: {
+      type: Date,
+      default: null,
+    },
   },
 
   { timestamps: true },

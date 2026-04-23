@@ -31,3 +31,11 @@ export const testTemplate = (data) => api.post('/api/admin/email/test-template',
 // ========== BAN/UNBAN USERS ==========
 export const banUser = (userId, banReason) => api.patch(`/api/admin/users/${userId}/ban`, { banReason });
 export const unbanUser = (userId) => api.patch(`/api/admin/users/${userId}/unban`);
+
+// ========== CSV EXPORT ==========
+export const exportUsersCSV = () => api.get('/api/admin/users/export', { 
+  responseType: 'blob',
+  headers: { 
+    'Content-Type': 'text/csv'
+  }
+});

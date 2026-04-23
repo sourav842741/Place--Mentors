@@ -33,19 +33,13 @@ import {
 
 const router = express.Router();
 
-/* ======================================================
-   🔥 PUBLIC SETTINGS (NO AUTH)
-   Endpoint => /api/admin/public-settings
-====================================================== */
+
 
 router.get(
   "/public-settings",
   getPublicSettings
 );
 
-/* ======================================================
-   🔥 USERS MANAGEMENT
-====================================================== */
 
 // GET ALL USERS
 router.get(
@@ -94,6 +88,9 @@ router.patch(
       }
     ).select("-password");
 
+    // Real-time admin update
+    req.io.emit('admin:user:updated', user);
+
     return res.status(200).json(
       new ApiResponse(
         200,
@@ -133,6 +130,9 @@ router.patch(
       }
     ).select("-password");
 
+    // Real-time admin update
+    req.io.emit('admin:user:updated', user);
+
     return res.status(200).json(
       new ApiResponse(
         200,
@@ -143,9 +143,7 @@ router.patch(
   })
 );
 
-/* ======================================================
-   🚫 BAN/UNBAN SYSTEM
-====================================================== */
+
 
 // BAN USER
 router.patch(
@@ -189,10 +187,20 @@ router.patch(
         isBanned: true,
         banReason: banReason || "No reason provided",
         bannedAt: new Date(),
-        bannedBy: adminUser._id
+        bannedBy: adminUser._id,
+        $push: {
+          banHistory: {
+            reason: banReason || "No reason provided",
+            bannedAt: new Date(),
+            bannedBy: adminUser._id
+          }
+        }
       },
       { new: true, runValidators: true }
     ).select("-password");
+
+    // Real-time admin update
+    req.io.emit('admin:user:updated', updatedUser);
 
     return res.status(200).json(
       new ApiResponse(200, updatedUser, "User banned successfully")
@@ -232,6 +240,9 @@ router.patch(
       { new: true, runValidators: true }
     ).select("-password");
 
+    // Real-time admin update
+    req.io.emit('admin:user:updated', updatedUser);
+
     return res.status(200).json(
       new ApiResponse(200, updatedUser, "User unbanned successfully")
     );
@@ -240,9 +251,7 @@ router.patch(
 
 
 
-/* ======================================================
-   🔥 POTD MANAGEMENT
-====================================================== */
+
 
 // AUTO GENERATE POTD
 router.post(
@@ -308,9 +317,7 @@ router.post(
   })
 );
 
-/* ======================================================
-   🔥 CPOTD MANAGEMENT
-====================================================== */
+
 
 // AUTO GENERATE CPOTD
 router.post(
@@ -376,9 +383,7 @@ router.post(
   })
 );
 
-/* ======================================================
-   🔥 EMAIL SYSTEM
-====================================================== */
+
 
 router.get(
   "/email/stats",
@@ -422,9 +427,7 @@ router.post(
   testTemplate
 );
 
-/* ======================================================
-   🔥 ANALYTICS
-====================================================== */
+
 
 router.get(
   "/analytics",
@@ -433,12 +436,7 @@ router.get(
   getAdminDashboardAnalytics
 );
 
-/* ======================================================
-   🔥 SETTINGS MANAGEMENT (ADMIN)
-   Endpoint:
-   GET /api/admin/settings
-   PUT /api/admin/settings
-====================================================== */
+
 
 router.get(
   "/settings",
@@ -454,8 +452,33 @@ router.put(
   updateSettings
 );
 
-/* ======================================================
-   ✅ EXPORT
-====================================================== */
+
+router.get('/users/export', isAuth, isAdmin, asyncHandler(async (req, res) => {
+  const users = await User.find().select('-password');
+  
+  const csvData = users.map(user => ({
+    Name: user.fullName,
+    Email: user.email,
+    'Role': user.role?.toUpperCase() || 'USER',
+    'Level': user.level || 1,
+    'Credits': user.credits || 0,
+    'Status': user.isBanned ? 'BANNED' : (user.isOnline ? 'ONLINE' : 'OFFLINE'),
+    'Last Seen': user.lastSeen ? new Date(user.lastSeen).toLocaleString() : 'Never',
+    'Joined': new Date(user.createdAt).toLocaleDateString()
+  }));
+
+  const csvHeader = Object.keys(csvData[0] || {}).join(',');
+  const csvRows = csvData.map(row => Object.values(row).map(val => 
+    `"${String(val).replace(/"/g, '""')}"`
+  ).join(',')).join('\\n');
+
+  const csvContent = csvHeader + '\\n' + csvRows;
+  
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename=users-${new Date().toISOString().split('T')[0]}.csv`);
+  res.status(200).send(csvContent);
+}));
+
+
 
 export default router;

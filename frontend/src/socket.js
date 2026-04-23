@@ -32,7 +32,7 @@ export const socket = io("https://place-mentor-x5d5.onrender.com", {
 
 // CONNECTION
 socket.on("connect", () => {
-  console.log("🔥 Socket connected:", socket.id);
+  console.log(" Socket connected:", socket.id);
 });
 
 socket.on("disconnect", () => {
@@ -53,7 +53,7 @@ socket.on("friend_request_received", (data) => {
 });
 
 socket.on("challenge_received", (data) => {
-  console.log("🔥 SOCKET DATA:", data);
+  console.log(" SOCKET DATA:", data);
   store.dispatch(
     updateChallenges({
       sent: store.getState().user.challenges.sent,
@@ -89,7 +89,7 @@ socket.on("battle:data", (data) => {
   store.dispatch(battleStart({ ...data, timeLimit: data.timeLimit || 900 }));
 });
 
-// 🔥 NEW: Challenge Rejected Handler
+//  NEW: Challenge Rejected Handler
 socket.on("challenge:rejected", ({ challengerId, challengedId }) => {
   console.log("🎯 Challenge rejected update:", { challengerId, challengedId });
   const state = store.getState().user;
@@ -113,6 +113,31 @@ socket.on("challenge:rejected", ({ challengerId, challengedId }) => {
   );
 
   console.log("✅ Challenges state updated");
+});
+
+// 🔥 ADMIN USERS REAL-TIME EVENTS
+socket.on("admin:user:online", (userData) => {
+  store.dispatch({ type: 'adminUsers/setUserOnline', payload: userData });
+ 
+});
+
+socket.on("admin:user:offline", (userData) => {
+  store.dispatch({ type: 'adminUsers/setUserOffline', payload: userData });
+  
+});
+
+socket.on("admin:user:updated", (updatedUser) => {
+  store.dispatch({
+    type: "adminUsers/updateUserFromSocket",
+    payload: {
+      ...updatedUser,
+      isSuperAdmin:
+        updatedUser.email ===
+        import.meta.env.VITE_SUPER_ADMIN_EMAIL,
+    },
+  });
+
+
 });
 
 export default socket;

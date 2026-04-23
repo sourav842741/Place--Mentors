@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import {
+  Moon,
+  Sun,
+  ArrowLeft,
+  Mail,
+  SendHorizonal,
+} from "lucide-react";
+
 import useAuth from "../hooks/useAuth";
 import { toast } from "sonner";
 
@@ -14,9 +21,7 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
-  /* ===============================
-     LOAD THEME ON REFRESH
-  ================================= */
+  /* LOAD THEME */
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
 
@@ -29,9 +34,7 @@ export default function ForgotPassword() {
     }
   }, []);
 
-  /* ===============================
-     TOGGLE THEME
-  ================================= */
+  /* TOGGLE THEME */
   const toggleTheme = () => {
     const nowDark = document.documentElement.classList.toggle("dark");
 
@@ -39,9 +42,7 @@ export default function ForgotPassword() {
     localStorage.setItem("theme", nowDark ? "dark" : "light");
   };
 
-  /* ===============================
-     SEND OTP
-  ================================= */
+  /* SEND OTP */
   const handleSendOtp = async () => {
     if (!email) {
       return toast.warning("Please enter your email");
@@ -54,14 +55,14 @@ export default function ForgotPassword() {
 
       if (res.success) {
         toast.success("OTP sent to your email 📩");
+
         navigate("/reset-password", {
           state: { email },
         });
       } else {
         toast.error(res.message || "Failed to send OTP");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
@@ -70,17 +71,20 @@ export default function ForgotPassword() {
 
   return (
     <>
-      {loading && <FullScreenLoader isDark={isDark} />}
+      {loading && <FullScreenLoader />}
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50 to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-4 transition-colors duration-300">
-
-        {/* THEME TOGGLE */}
-        <div className="absolute top-5 right-5">
+      <div
+        className="min-h-screen flex items-center justify-center px-4 relative
+        bg-gradient-to-br from-slate-50 via-white to-indigo-50
+        dark:from-gray-950 dark:via-gray-900 dark:to-black transition-colors duration-300"
+      >
+        {/* THEME BUTTON */}
+        <div className="absolute top-5 right-5 z-20">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             {isDark ? (
               <Sun className="w-5 h-5 text-yellow-400" />
@@ -91,59 +95,80 @@ export default function ForgotPassword() {
         </div>
 
         {/* CARD */}
-        <div className="w-full max-w-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 border border-white/40 dark:border-gray-800 transition-all duration-300">
+        <div
+          className="w-full max-w-md rounded-3xl p-7 space-y-6
+          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl
+          border border-gray-200 dark:border-white/10 shadow-2xl"
+        >
+          {/* LOGO */}
+          <div className="flex justify-center">
+            <img
+              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+              alt="PlaceMentor"
+              className="w-20 h-20 rounded-2xl shadow-lg"
+            />
+          </div>
 
           {/* BACK */}
-          <p
+          <button
             onClick={() => navigate("/login")}
-            className="text-sm text-orange-500 hover:text-orange-600 font-medium cursor-pointer w-fit"
+            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
-            ← Back to login
-          </p>
+            <ArrowLeft className="w-4 h-4" />
+            Back to login
+          </button>
 
-          {/* HEADING */}
-          <div>
+          {/* TITLE */}
+          <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Forgot Password
             </h2>
 
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-              Enter your email to receive OTP
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Enter your email to receive reset OTP
             </p>
           </div>
 
           {/* INPUT */}
-          <Input
-            placeholder="Enter email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-12 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus-visible:ring-orange-500"
-          />
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+
+            <Input
+              placeholder="Enter email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-12 pl-10 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
+            />
+          </div>
 
           {/* BUTTON */}
           <Button
             onClick={handleSendOtp}
             disabled={loading}
-            className="w-full h-12 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-lg"
+            className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white font-semibold shadow-lg"
           >
+            <SendHorizonal className="w-4 h-4 mr-2" />
             {loading ? "Sending..." : "Send OTP"}
           </Button>
+
+          {/* FOOT TEXT */}
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+            Secure password recovery for your account
+          </p>
         </div>
       </div>
     </>
   );
 }
 
-/* ===============================
-   FULL SCREEN LOADER
-================================= */
-function FullScreenLoader({ isDark }) {
+/* FULLSCREEN LOADER */
+function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 dark:bg-black/60 backdrop-blur-sm">
-      <div className="flex flex-col items-center gap-4 rounded-2xl px-6 py-5 bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-800">
-        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl px-8 py-6 shadow-2xl text-center">
+        <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
 
-        <p className="text-sm text-gray-700 dark:text-gray-300">
+        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">
           Sending OTP...
         </p>
       </div>
