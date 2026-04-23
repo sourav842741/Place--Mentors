@@ -2,143 +2,38 @@ export const checkAndAssignBadges = (user) => {
   const newBadges = [];
 
   const badgeConditions = [
-    /* 🔥 STREAK BADGES */
-    {
-      name: "Bronze Consistency Award",
-      icon: "🥉🔥",
-      type: "streak",
-      condition: user.streakCount >= 3,
-    },
-    {
-      name: "Silver Discipline Award",
-      icon: "🥈⚡",
-      type: "streak",
-      condition: user.streakCount >= 7,
-    },
-    {
-      name: "Gold Commitment Award",
-      icon: "🥇💎",
-      type: "streak",
-      condition: user.streakCount >= 15,
-    },
-    {
-      name: "Royal Streak Champion",
-      icon: "👑🔥",
-      type: "streak",
-      condition: user.streakCount >= 30,
-    },
+    // 🔥 STREAK BADGES (Flame Progression)
+    { name: "3 Day Streak 🔥", icon: "🥉🔥", type: "streak", condition: user.streakCount >= 3 },
+    { name: "7 Day Streak 🔥", icon: "🥈⚡", type: "streak", condition: user.streakCount >= 7 },
+    { name: "15 Day Streak 🏆", icon: "🥇💎", type: "streak", condition: user.streakCount >= 15 },
+    { name: "30 Day Streak 👑", icon: "🔥👑🔥", type: "streak", condition: user.streakCount >= 30 },
 
-    /* 💪 XP BADGES */
-    {
-      name: "Learning Starter Award",
-      icon: "🌱",
-      type: "xp",
-      condition: user.xp >= 100,
-    },
-    {
-      name: "Growth Achiever Award",
-      icon: "📈💪",
-      type: "xp",
-      condition: user.xp >= 300,
-    },
-    {
-      name: "Mastery Excellence Award",
-      icon: "🔱🔥",
-      type: "xp",
-      condition: user.xp >= 1000,
-    },
-    {
-      name: "Legendary Knowledge Award",
-      icon: "🌌💠",
-      type: "xp",
-      condition: user.xp >= 5000,
-    },
+    // 💪 XP BADGES (Power Progression)
+    { name: "XP Beginner 💪", icon: "🌱", type: "xp", condition: user.xp >= 100 },
+    { name: "XP Learner 💪", icon: "📈💪", type: "xp", condition: user.xp >= 300 },
+    { name: "XP Master 💪", icon: "🔱🔥", type: "xp", condition: user.xp >= 1000 },
+    { name: "XP Legend 👑", icon: "🌌💠", type: "xp", condition: user.xp >= 5000 },
 
-    /* ⏱️ TIME BADGES */
-    {
-      name: "Focused Beginner Award",
-      icon: "⏳",
-      type: "time",
-      condition: user.totalTimeSpent >= 30,
-    },
-    {
-      name: "Productivity Performer",
-      icon: "🎯",
-      type: "time",
-      condition: user.totalTimeSpent >= 100,
-    },
-    {
-      name: "Dedication Excellence Award",
-      icon: "🔋✨",
-      type: "time",
-      condition: user.totalTimeSpent >= 300,
-    },
-    {
-      name: "Hard Work Champion",
-      icon: "🛠️🧠",
-      type: "time",
-      condition: user.totalTimeSpent >= 1000,
-    },
-    {
-      name: "Elite Grinder Award",
-      icon: "⚙️🔥",
-      type: "time",
-      condition: user.totalTimeSpent >= 3000,
-    },
+    // ⏱️ TIME BADGES (Clock to Hard Work)
+    { name: "Getting Started ⏱️", icon: "⏳", type: "time", condition: user.totalTimeSpent >= 30 },
+    { name: "Focused User ⏱️", icon: "🎯", type: "time", condition: user.totalTimeSpent >= 100 },
+    { name: "Dedicated User ⏱️", icon: "🔋✨", type: "time", condition: user.totalTimeSpent >= 300 },
+    { name: "Hard Worker 🧠", icon: "🛠️🧠", type: "time", condition: user.totalTimeSpent >= 1000 },
+    { name: "Grinder 🔥", icon: "⚙️🔥", type: "time", condition: user.totalTimeSpent >= 3000 },
 
-    /* 🚀 LEVEL BADGES */
-    {
-      name: "Rising Talent Award",
-      icon: "🚀",
-      type: "level",
-      condition: user.level >= 2,
-    },
-    {
-      name: "Advanced Performer Award",
-      icon: "🛸✨",
-      type: "level",
-      condition: user.level >= 5,
-    },
-    {
-      name: "Elite Excellence Award",
-      icon: "🛰️🏆",
-      type: "level",
-      condition: user.level >= 10,
-    },
-    {
-      name: "Supreme Leader Award",
-      icon: "🌌👑",
-      type: "level",
-      condition: user.level >= 20,
-    },
+    // 🚀 LEVEL BADGES (Space Progression)
+    { name: "Level 2 🚀", icon: "🚀", type: "level", condition: user.level >= 2 },
+    { name: "Level 5 🚀", icon: "🛸✨", type: "level", condition: user.level >= 5 },
+    { name: "Level 10 🏆", icon: "🛰️🏆", type: "level", condition: user.level >= 10 },
+    { name: "Level 20 👑", icon: "🌌👑", type: "level", condition: user.level >= 20 },
 
-    /* 💎 SPECIAL COMBO BADGES */
-    {
-      name: "Consistent Learner Honor",
-      icon: "💠✨",
-      type: "combo",
-      condition:
-        user.streakCount >= 7 &&
-        user.xp >= 500,
-    },
-    {
-      name: "Ultimate Grinder Honor",
-      icon: "🌋⚔️",
-      type: "combo",
-      condition:
-        user.totalTimeSpent >= 500 &&
-        user.xp >= 1000,
-    },
-    {
-      name: "Legendary Achiever Crown",
-      icon: "🎇💠🎇",
-      type: "combo",
-      condition:
-        user.level >= 10 &&
-        user.xp >= 3000,
-    },
+    // 💎 COMBO BADGES (Special/Rarest)
+    { name: "Consistent Learner 💎", icon: "💠✨", type: "combo", condition: user.streakCount >= 7 && user.xp >= 500 },
+    { name: "Ultimate Grinder 🔥", icon: "🌋⚔️", type: "combo", condition: user.totalTimeSpent >= 500 && user.xp >= 1000 },
+    { name: "Legendary Player 👑", icon: "🎇💠🎇", type: "combo", condition: user.level >= 10 && user.xp >= 3000 },
   ];
 
+  // Logic to ensure user.badges is an array
   if (!user.badges) user.badges = [];
 
   badgeConditions.forEach((badge) => {
