@@ -1,64 +1,75 @@
 #!/usr/bin/env node
-import dns from "dns"
+
+import dns from "dns";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+
 import User from "../models/user.model.js";
 import connectDb from "../config/db.js";
-import dotenv from "dotenv";
+
 dotenv.config();
-
-
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-dotenv.config();
-
-const createDefaultAdmin = async () => {
+const createOrUpdateAdmin = async () => {
   try {
     await connectDb();
-    console.log(" Connected to MongoDB");
+    console.log("✅ Connected to MongoDB");
 
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (!adminEmail || !adminPassword) {
-      console.error(" Set ADMIN_EMAIL and ADMIN_PASSWORD in .env");
+      console.log("❌ ADMIN_EMAIL and ADMIN_PASSWORD required in .env");
       process.exit(1);
     }
 
-    // Check if admin already exists
+    const cleanEmail = adminEmail.toLowerCase().trim();
+    const hashedPassword = await bcrypt.hash(adminPassword, 12);
+
+    // Find existing admin
     const existingAdmin = await User.findOne({ role: "admin" });
+
     if (existingAdmin) {
-      console.log(" Admin already exists:", existingAdmin.email);
-      mongoose.connection.close();
+      existingAdmin.fullName = "Platform Admin";
+      existingAdmin.email = cleanEmail;
+      existingAdmin.password = hashedPassword;
+      existingAdmin.skills = ["admin", "superuser"];
+      existingAdmin.isEmailVerified = true;
+      existingAdmin.credits = 999;
+
+      await existingAdmin.save();
+
+      console.log("✅ Existing admin updated successfully");
+      console.log(`📧 Email: ${existingAdmin.email}`);
+      console.log(`🆔 ID: ${existingAdmin._id}`);
+
+      await mongoose.connection.close();
       process.exit(0);
     }
 
-    // Create default admin
-    const hashedPassword = await bcrypt.hash(adminPassword, 12);
+    // Create new admin
     const adminUser = await User.create({
       fullName: "Platform Admin",
-      email: adminEmail.toLowerCase().trim(),
+      email: cleanEmail,
       password: hashedPassword,
       skills: ["admin", "superuser"],
       role: "admin",
       isEmailVerified: true,
-      credits: 999
+      credits: 999,
     });
 
-    console.log("Default admin created successfully:");
-    console.log(`   Email: ${adminUser.email}`);
-    console.log(`   ID: ${adminUser._id}`);
-    
-    await mongoose.connection.close();
-    console.log(" Seeder completed. You can now login as admin.");
-    process.exit(0);
+    console.log("✅ New admin created successfully");
+    console.log(`📧 Email: ${adminUser.email}`);
+    console.log(`🆔 ID: ${adminUser._id}`);
 
+    await mongoose.connection.close();
+    process.exit(0);
   } catch (error) {
-    console.error(" Seeder failed:", error.message);
+    console.log("❌ Seeder Failed:", error.message);
     process.exit(1);
   }
 };
 
-createDefaultAdmin();
-
+createOrUpdateAdmin();
