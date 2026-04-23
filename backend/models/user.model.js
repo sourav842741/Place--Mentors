@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "superadmin"],
       default: "user",
     },
 
@@ -233,6 +233,39 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    // 2FA SYSTEM (privileged accounts only)
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    twoFactorSecret: {
+      type: String,
+      default: "",
+    },
+    twoFactorTempSecret: {
+      type: String,
+      default: "",
+    },
+    twoFactorRecoveryCodes: {
+      type: [String],
+      default: [],
+    },
+    lastPrivilegedLoginAt: {
+      type: Date,
+      default: null,
+    },
+
+    // TRUSTED DEVICES (admin/superadmin)
+    trustedDevices: [
+      {
+        deviceId: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+        expiresAt: { type: Date, required: true },
+        ipAddress: { type: String, default: "" },
+        userAgent: { type: String, default: "" },
+      },
+    ],
   },
 
   { timestamps: true },

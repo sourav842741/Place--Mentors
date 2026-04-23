@@ -4,7 +4,19 @@ import { useSelector } from "react-redux";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Sun, Moon, ShieldAlert, Mail, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Eye,
+  EyeOff,
+  Sun,
+  Moon,
+  ShieldAlert,
+  Mail,
+  X,
+  Shield,
+  KeyRound,
+  Smartphone,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import useAuth from "../hooks/useAuth";
@@ -12,7 +24,7 @@ import AuthLayout from "../components/AuthLayout";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, googleLogin } = useAuth();
+  const { login, googleLogin, verify2FA } = useAuth();
   const user = useSelector((state) => state.user.user);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +37,15 @@ export default function Login() {
     email: "",
     password: "",
   });
+
+  // 2FA state
+  const [twoFactorMode, setTwoFactorMode] = useState(false);
+  const [tempAuthToken, setTempAuthToken] = useState("");
+  const [twoFactorRole, setTwoFactorRole] = useState("");
+  const [isSuperAdmin2FA, setIsSuperAdmin2FA] = useState(false);
+  const [otpToken, setOtpToken] = useState("");
+  const [rememberDevice, setRememberDevice] = useState(false);
+  const [useRecoveryCode, setUseRecoveryCode] = useState(false);
 
   /* ===============================
      LOAD THEME
@@ -77,6 +98,16 @@ export default function Login() {
     try {
       const res = await login(form);
 
+      if (res?.requiresTwoFactor) {
+        setTwoFactorMode(true);
+        setTempAuthToken(res.tempAuthToken);
+        setTwoFactorRole(res.role);
+        setIsSuperAdmin2FA(res.isSuperAdmin);
+        setOtpToken("");
+        toast.info("Two-factor authentication required");
+        return;
+      }
+
       if (res?.success) {
         toast.success("Welcome back 🎉");
 
@@ -87,7 +118,7 @@ export default function Login() {
           return;
         }
 
-        if (user.role === "admin") {
+        if (user.role === "admin" || user.role === "superadmin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/splash");
@@ -120,6 +151,57 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  /* ===============================
+     VERIFY 2FA
+  ================================= */
+  const handleVerify2FA = async () => {
+    if (!otpToken) {
+      return toast.warning("Please enter the code");
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await verify2FA(tempAuthToken, otpToken, rememberDevice);
+
+      if (res?.success) {
+        toast.success("Authentication successful 🎉");
+
+        const data = res?.data;
+
+        if (data?.usedRecoveryCode) {
+          toast.warning(
+            "Recovery code used. Please generate new codes in security settings.",
+          );
+        }
+
+        if (
+          data?.role === "admin" ||
+          data?.role === "superadmin" ||
+          data?.isSuperAdmin
+        ) {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/splash");
+        }
+      } else {
+        toast.error(res?.message || "Invalid code");
+      }
+    } catch (error) {
+      toast.error("Verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBackToLogin = () => {
+    setTwoFactorMode(false);
+    setTempAuthToken("");
+    setOtpToken("");
+    setRememberDevice(false);
+    setUseRecoveryCode(false);
   };
 
   /* ===============================
@@ -156,7 +238,6 @@ export default function Login() {
 
   return (
     <AuthLayout>
-
       {banPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
           {" "}
@@ -174,7 +255,6 @@ export default function Login() {
             </button>{" "}
             <div className="p-8 text-center">
               {" "}
-             
               {/* ICON */}{" "}
               <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-red-100 dark:bg-red-900/20">
                 {" "}
@@ -233,109 +313,195 @@ export default function Login() {
           {isDark ? <Sun /> : <Moon />}{" "}
         </Button>{" "}
       </div>{" "}
-      {/* ===============================        LOGIN CARD PREMIUM    ================================= */}{" "}
+      {/* ===============================        LOGIN CARD / 2FA CHALLENGE    ================================= */}{" "}
       <div className="w-full max-w-md rounded-[28px] border border-white/20 dark:border-white/10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl p-7 space-y-5">
         {" "}
-        {/* LOGO */}{" "}
-        <div className="flex flex-col items-center">
-          {" "}
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center shadow-lg">
-            {" "}
-            <img
-              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
-              className="w-12 h-12"
-            />{" "}
-          </div>{" "}
-          <h2 className="mt-4 text-3xl font-black text-gray-900 dark:text-white">
-            {" "}
-            Welcome Back 👋{" "}
-          </h2>{" "}
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {" "}
-            Sign in to continue your journey{" "}
-          </p>{" "}
-        </div>{" "}
-        {/* EMAIL */}{" "}
-        <Input
-          placeholder="Enter email"
-          className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0"
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />{" "}
-        {/* PASSWORD */}{" "}
-        <div className="relative">
-          {" "}
-          <Input
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter password"
-            className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 pr-10"
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />{" "}
-          <span
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-3.5 cursor-pointer text-gray-500"
-          >
-            {" "}
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}{" "}
-          </span>{" "}
-        </div>{" "}
-        {/* FORGOT */}{" "}
-        <div className="text-right">
-          {" "}
-          <Link
-            to="/forgot-password"
-            className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-          >
-            {" "}
-            Forgot Password?{" "}
-          </Link>{" "}
-        </div>{" "}
-        {/* LOGIN BTN */}{" "}
-        <Button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full h-12 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold"
-        >
-          {" "}
-          {loading ? "Signing in..." : "Sign In"}{" "}
-        </Button>{" "}
-        {/* DIVIDER */}{" "}
-        <div className="relative text-center">
-          {" "}
-          <div className="absolute inset-0 flex items-center">
-            {" "}
-            <div className="w-full border-t dark:border-gray-700"></div>{" "}
-          </div>{" "}
-          <span className="relative px-3 text-sm bg-white dark:bg-gray-900 text-gray-400">
-            {" "}
-            OR{" "}
-          </span>{" "}
-        </div>{" "}
-        {/* GOOGLE */}{" "}
-        <button
-          onClick={handleGoogleLogin}
-          disabled={googleLoading}
-          className="w-full h-12 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-3"
-        >
-          {" "}
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            className="w-5 h-5"
-          />{" "}
-          Continue with Google{" "}
-        </button>{" "}
-        {/* SIGNUP */}{" "}
-        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-          {" "}
-          Don’t have an account?{" "}
-          <Link
-            to="/signup"
-            className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
-          >
-            {" "}
-            Sign Up{" "}
-          </Link>{" "}
-        </p>{" "}
-      </div>{" "}
+        {twoFactorMode ? (
+          <>
+            {/* 2FA CHALLENGE UI */}
+            <div className="flex flex-col items-center">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center shadow-lg">
+                <Shield className="w-10 h-10 text-amber-600 dark:text-amber-400" />
+              </div>
+              <h2 className="mt-4 text-2xl font-black text-gray-900 dark:text-white">
+                Two-Factor Authentication
+              </h2>
+              <div className="mt-2 flex items-center gap-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold text-white ${
+                    isSuperAdmin2FA
+                      ? "bg-gradient-to-r from-purple-600 to-pink-600"
+                      : twoFactorRole === "admin"
+                        ? "bg-gradient-to-r from-orange-500 to-red-500"
+                        : "bg-gradient-to-r from-emerald-500 to-teal-600"
+                  }`}
+                >
+                  {isSuperAdmin2FA
+                    ? "SUPER ADMIN"
+                    : twoFactorRole?.toUpperCase()}
+                </span>
+              </div>
+              {isSuperAdmin2FA && (
+                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400 font-medium text-center">
+                  High privilege account security verification required.
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  {useRecoveryCode ? (
+                    <KeyRound className="w-4 h-4" />
+                  ) : (
+                    <Smartphone className="w-4 h-4" />
+                  )}
+                  {useRecoveryCode ? "Recovery Code" : "Authenticator Code"}
+                </label>
+                <button
+                  onClick={() => setUseRecoveryCode(!useRecoveryCode)}
+                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+                >
+                  {useRecoveryCode
+                    ? "Use authenticator instead"
+                    : "Use recovery code"}
+                </button>
+              </div>
+              <Input
+                type="text"
+                placeholder={
+                  useRecoveryCode ? "8-character recovery code" : "6-digit code"
+                }
+                value={otpToken}
+                onChange={(e) =>
+                  setOtpToken(
+                    useRecoveryCode
+                      ? e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")
+                      : e.target.value.replace(/\D/g, ""),
+                  )
+                }
+                className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 text-center text-lg tracking-widest font-mono"
+                maxLength={useRecoveryCode ? 8 : 6}
+              />
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember"
+                  checked={rememberDevice}
+                  onCheckedChange={(checked) => setRememberDevice(!!checked)}
+                />
+                <label
+                  htmlFor="remember"
+                  className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer"
+                >
+                  Remember this browser for 7 days
+                </label>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleVerify2FA}
+              disabled={loading}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-90 text-white font-semibold"
+            >
+              {loading ? "Verifying..." : "Verify & Sign In"}
+            </Button>
+
+            <button
+              onClick={handleBackToLogin}
+              className="w-full text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition"
+            >
+              ← Back to login
+            </button>
+          </>
+        ) : (
+          <>
+            {/* NORMAL LOGIN UI */}
+            <div className="flex flex-col items-center">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center shadow-lg">
+                <img
+                  src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
+                  className="w-12 h-12"
+                />
+              </div>
+              <h2 className="mt-4 text-3xl font-black text-gray-900 dark:text-white">
+                Welcome Back 👋
+              </h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Sign in to continue your journey
+              </p>
+            </div>
+
+            <Input
+              placeholder="Enter email"
+              className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0"
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter password"
+                className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 pr-10"
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-3.5 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
+            </div>
+
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            <Button
+              onClick={handleLogin}
+              disabled={loading}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+
+            <div className="relative text-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t dark:border-gray-700"></div>
+              </div>
+              <span className="relative px-3 text-sm bg-white dark:bg-gray-900 text-gray-400">
+                OR
+              </span>
+            </div>
+
+            <button
+              onClick={handleGoogleLogin}
+              disabled={googleLoading}
+              className="w-full h-12 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-3"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
+
+            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+              Don’t have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+              >
+                Sign Up
+              </Link>
+            </p>
+          </>
+        )}
+      </div>
     </AuthLayout>
   );
 }

@@ -7,6 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { socket } from "../socket";
 
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem("pm_device_id");
+  if (!deviceId) {
+    deviceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
+    localStorage.setItem("pm_device_id", deviceId);
+  }
+  return deviceId;
+};
+
 const useAuth = () => {
   const { user, loading } = useSelector((state) => state.user);
 
@@ -16,9 +25,29 @@ const useAuth = () => {
   // ================= LOGIN =================
   const login = async (form) => {
     try {
-      const res = await api.post("/api/auth/signin", form);
+      const res = await api.post("/api/auth/signin", {
+        ...form,
+        deviceId: getDeviceId(),
+      });
 
-      dispatch(setUserData(res.data.data));
+      const data = res.data.data;
+
+      // 2FA required — don't dispatch user yet
+      if (data?.requiresTwoFactor) {
+        return {
+          success: true,
+          requiresTwoFactor: true,
+          tempAuthToken: data.tempAuthToken,
+          role: data.role,
+          isSuperAdmin: data.isSuperAdmin,
+        };
+      }
+
+      if (data?.deviceId) {
+        localStorage.setItem("pm_device_id", data.deviceId);
+      }
+
+      dispatch(setUserData(data));
 
       return res.data;
     } catch (err) {
@@ -28,6 +57,87 @@ const useAuth = () => {
         success: false,
         statusCode: err.response?.status,
         message: err.response?.data?.message || "Login failed",
+      };
+    }
+  };
+
+  // ================= VERIFY 2FA =================
+  const verify2FA = async (tempAuthToken, token, rememberDevice = false) => {
+    try {
+      const res = await api.post("/api/auth/2fa/login", {
+        tempAuthToken,
+        token,
+        rememberDevice,
+      });
+
+      const data = res.data?.data;
+
+      if (data?.deviceId) {
+        localStorage.setItem("pm_device_id", data.deviceId);
+      }
+
+      dispatch(setUserData(data));
+
+      return { success: true, data };
+    } catch (err) {
+      console.error("2FA VERIFY ERROR:", err);
+
+      return {
+        success: false,
+        statusCode: err.response?.status,
+        message: err.response?.data?.message || "2FA verification failed",
+      };
+    }
+  };
+
+  // ================= 2FA SETUP =================
+  const setup2FA = async () => {
+    try {
+      const res = await api.post("/api/auth/2fa/setup");
+      return { success: true, data: res.data?.data };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.response?.data?.message || "Failed to setup 2FA",
+      };
+    }
+  };
+
+  // ================= 2FA ENABLE =================
+  const enable2FA = async (token) => {
+    try {
+      const res = await api.post("/api/auth/2fa/enable", { token });
+      return { success: true, data: res.data?.data };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.response?.data?.message || "Failed to enable 2FA",
+      };
+    }
+  };
+
+  // ================= 2FA DISABLE =================
+  const disable2FA = async (password, token) => {
+    try {
+      await api.post("/api/auth/2fa/disable", { password, token });
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.response?.data?.message || "Failed to disable 2FA",
+      };
+    }
+  };
+
+  // ================= 2FA STATUS =================
+  const get2FAStatus = async () => {
+    try {
+      const res = await api.get("/api/auth/2fa/status");
+      return { success: true, data: res.data?.data };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.response?.data?.message || "Failed to get 2FA status",
       };
     }
   };
@@ -255,6 +365,11 @@ const useAuth = () => {
     resetPassword,
     googleLogin,
     updateTimeSpent,
+    verify2FA,
+    setup2FA,
+    enable2FA,
+    disable2FA,
+    get2FAStatus,
   };
 };
 

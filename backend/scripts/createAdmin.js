@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 import dns from "dns";
 import mongoose from "mongoose";
@@ -28,14 +27,16 @@ const createOrUpdateAdmin = async () => {
     const cleanEmail = adminEmail.toLowerCase().trim();
     const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
-    // Find existing admin
-    const existingAdmin = await User.findOne({ role: "admin" });
+    const existingAdmin = await User.findOne({
+      $or: [{ role: "admin" }, { email: cleanEmail }],
+    });
 
     if (existingAdmin) {
-      existingAdmin.fullName = "Platform Admin";
+      existingAdmin.fullName = "Place Mentor Admin";
       existingAdmin.email = cleanEmail;
       existingAdmin.password = hashedPassword;
       existingAdmin.skills = ["admin", "superuser"];
+      existingAdmin.role = "admin";
       existingAdmin.isEmailVerified = true;
       existingAdmin.credits = 999;
 
@@ -44,27 +45,25 @@ const createOrUpdateAdmin = async () => {
       console.log("✅ Existing admin updated successfully");
       console.log(`📧 Email: ${existingAdmin.email}`);
       console.log(`🆔 ID: ${existingAdmin._id}`);
+    } else {
+      const adminUser = await User.create({
+        fullName: "Place Mentor Admin",
+        email: cleanEmail,
+        password: hashedPassword,
+        skills: ["admin", "superuser"],
+        role: "admin",
+        isEmailVerified: true,
+        credits: 999,
+      });
 
-      await mongoose.connection.close();
-      process.exit(0);
+      console.log("✅ New admin created successfully");
+      console.log(`📧 Email: ${adminUser.email}`);
+      console.log(`🆔 ID: ${adminUser._id}`);
     }
 
-    // Create new admin
-    const adminUser = await User.create({
-      fullName: "Platform Admin",
-      email: cleanEmail,
-      password: hashedPassword,
-      skills: ["admin", "superuser"],
-      role: "admin",
-      isEmailVerified: true,
-      credits: 999,
-    });
-
-    console.log("✅ New admin created successfully");
-    console.log(`📧 Email: ${adminUser.email}`);
-    console.log(`🆔 ID: ${adminUser._id}`);
-
     await mongoose.connection.close();
+
+    console.log("🚀 Admin Seeder Completed");
     process.exit(0);
   } catch (error) {
     console.log("❌ Seeder Failed:", error.message);

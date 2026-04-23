@@ -35,9 +35,16 @@ import {
   Info,
   CheckCircle2,
   X,
+  Shield,
+  ChevronRight,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 export default function AdminSettings() {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   const {
     settings,
     updateSettings,
@@ -176,6 +183,46 @@ export default function AdminSettings() {
         }
         className="space-y-8"
       >
+        {/* =========================
+            SECURITY
+        ========================= */}
+        <Card
+          className="cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => navigate("/admin/security")}
+        >
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-3">
+                <Shield className="w-5 h-5 text-emerald-500" />
+                Account Security
+              </CardTitle>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </div>
+            <CardDescription>
+              Manage two-factor authentication for your privileged account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-3">
+              <Badge
+                className={`px-3 py-1 ${
+                  user?.twoFactorEnabled
+                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+                    : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                }`}
+              >
+                {user?.twoFactorEnabled ? "2FA Enabled" : "2FA Not Enabled"}
+              </Badge>
+              {user?.twoFactorWarning && (
+                <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" />
+                  Enable 2FA recommended for privileged accounts
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* =========================
             MAINTENANCE
         ========================= */}

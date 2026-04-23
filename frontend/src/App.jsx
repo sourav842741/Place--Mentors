@@ -78,6 +78,7 @@ import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
 import AdminEmailCenter from "./pages/admin/AdminEmailCenter";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMaintenanceManager from "./pages/admin/AdminMaintenanceManager.jsx";
+import AdminSecurity from "./pages/admin/AdminSecurity";
 import Certificates from "./pages/Certificates.jsx";
 
 function App() {
@@ -283,7 +284,8 @@ function App() {
   if (
     maintenanceActive &&
     !isAdminRoute &&
-    user?.role !== "admin"
+    user?.role !== "admin" &&
+    user?.role !== "superadmin"
   ) {
     return <MaintenancePage />;
   }
@@ -312,8 +314,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify/:id" element={<CertificateVerifyPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify/:id" element={<CertificateVerifyPage />} />
 
         {/* ADMIN */}
         <Route element={<AdminRoute />}>
@@ -324,6 +326,7 @@ function App() {
             <Route path="/admin/create-cpotd" element={<AdminCreateCpotd />} />
             <Route path="/admin/email-center" element={<AdminEmailCenter />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/security" element={<AdminSecurity />} />
             <Route path="/admin/maintenance-manager" element={<AdminMaintenanceManager />} />
           </Route>
         </Route>
