@@ -40,6 +40,7 @@ import maintenanceRouter from "./routes/maintenance.routes.js";
 import voiceRouter from "./routes/voice.route.js";
 import certificateRouter from "./routes/certificate.routes.js";
 import predictionRoutes from "./routes/prediction.routes.js";
+import ticketRouter from "./routes/ticket.routes.js";
 
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
@@ -108,6 +109,7 @@ app.use("/api/maintenance", maintenanceRouter);
 app.use("/api/voice", voiceRouter);
 app.use("/api/certificates", certificateRouter);
 app.use("/api/prediction", predictionRoutes);
+app.use("/api/tickets", ticketRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;
@@ -128,7 +130,7 @@ io.on("connection", (socket) => {
     console.log("Friend request accepted event");
   });
 
-  //  JOIN ROOM (user room + doubt room prefix)
+  //  JOIN ROOM (user room + doubt room prefix + admin room if applicable)
   socket.on("join", async (userId) => {
     const id = userId.toString();
 
@@ -143,6 +145,15 @@ io.on("connection", (socket) => {
     });
 
     const user = await User.findById(id).select('-password');
+    if (!user) return;
+
+    // Join admin room for ticket/admin real-time updates
+    const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
+    if (isAdmin) {
+      socket.join("admins");
+     
+    }
+
     io.emit("admin:user:online", { 
       _id: user._id,
       isOnline: true,
@@ -150,6 +161,22 @@ io.on("connection", (socket) => {
       isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
     });
     io.emit("online_users", onlineUsers);
+  });
+
+  // JOIN TICKET ROOM for real-time ticket updates
+  socket.on("join_ticket", (ticketId) => {
+    if (ticketId) {
+      socket.join(`ticket-${ticketId}`);
+     
+    }
+  });
+
+  // LEAVE TICKET ROOM
+  socket.on("leave_ticket", (ticketId) => {
+    if (ticketId) {
+      socket.leave(`ticket-${ticketId}`);
+      
+    }
   });
 
   //  CHAT
@@ -163,7 +190,7 @@ io.on("connection", (socket) => {
       data.doubtId || (data.doubt && data.doubt._id) || data.doubt;
     if (doubtId) {
       io.to(`doubt-${doubtId}`).emit("new_reply", { doubtId });
-      console.log(`Emitted new_reply to doubt-${doubtId}`);
+     
     }
   });
 
@@ -592,3 +619,4 @@ const startServer = async () => {
 };
 
 startServer();
+

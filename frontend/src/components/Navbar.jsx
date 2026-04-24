@@ -22,7 +22,9 @@ import {
   Brain,
   ListTodo,
   Bot,
-  Mic
+  Mic,
+  Ticket,
+  Users
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -163,6 +165,7 @@ const toggleDark = () => {
      { icon: Code, label: "Code Compiler", path: "/code-editor" },
     { icon: Puzzle, label: "Fruitbox Flex", path: "/dashboard/fruitbox-flex" },
     { icon: BookOpen, label: "AI Notes", path: "/notes" },
+    { icon: Users, label: "Interview Experience", path: "/interview-experience" },
     { icon: MessageSquare, label: "Community", path: "/doubts" },
     { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
     { icon: Bot, label: "AI Coach", path: "/ai-coach" },
@@ -171,6 +174,7 @@ const toggleDark = () => {
     { icon: BookOpen, label: "DSA Resources", path: "/resources" },
 
     { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
+    { icon: Ticket, label: "Support", path: "/support" },
   ];
 
   const isLoading = loading;

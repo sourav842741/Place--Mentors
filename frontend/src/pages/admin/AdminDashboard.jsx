@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAdminAnalytics } from "../../hooks/useAdminAnalytics";
+import { useAdminTickets } from "../../hooks/useTickets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -32,6 +34,9 @@ import {
   CheckCircle,
   XCircle,
   Percent,
+  Ticket,
+  AlertCircle,
+  ArrowUp,
 } from "lucide-react";
 
 import {
@@ -63,7 +68,13 @@ const softCard =
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#6b7280"];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const { data, loading, error, refetch } = useAdminAnalytics();
+  const { stats: ticketStats, loadTicketStats } = useAdminTickets();
+
+  useEffect(() => {
+    loadTicketStats();
+  }, []);
 
   const userGrowthData =
     data?.trends?.last7DaysUserGrowth?.map((item) => ({
@@ -202,6 +213,57 @@ const AdminDashboard = () => {
             />
           </div>
         )}
+      </div>
+
+      {/* TICKET STATS */}
+      <div>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Ticket className="w-6 h-6 text-blue-500" />
+            Support Tickets
+          </h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/admin/tickets")}
+            className="rounded-xl"
+          >
+            Manage Tickets
+          </Button>
+        </div>
+
+        <div className="grid md:grid-cols-2 xl:grid-cols-5 gap-4">
+          <MetricCard
+            title="Total Tickets"
+            value={ticketStats?.total || 0}
+            icon={Ticket}
+            color="text-blue-500"
+          />
+          <MetricCard
+            title="Open"
+            value={ticketStats?.open || 0}
+            icon={AlertCircle}
+            color="text-amber-500"
+          />
+          <MetricCard
+            title="In Progress"
+            value={ticketStats?.inProgress || 0}
+            icon={Clock}
+            color="text-purple-500"
+          />
+          <MetricCard
+            title="Solved"
+            value={ticketStats?.solved || 0}
+            icon={CheckCircle}
+            color="text-green-500"
+          />
+          <MetricCard
+            title="High Priority"
+            value={ticketStats?.highPriority || 0}
+            icon={ArrowUp}
+            color="text-red-500"
+          />
+        </div>
       </div>
 
       {/* MIDDLE CARDS */}

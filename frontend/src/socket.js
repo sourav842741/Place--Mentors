@@ -15,20 +15,20 @@ import {
 } from "./redux/userSlice";
 
 // //SOCKET INIT
-export const socket = io("https://place-mentor-x5d5.onrender.com", {
-  withCredentials: true,
-  autoConnect: true,
-});
+// export const socket = io("https://place-mentor-x5d5.onrender.com", {
+//   withCredentials: true,
+//   autoConnect: true,
+// });
 
-// export const socket = io(
-//   import.meta.env.DEV
-//     ? "http://localhost:5000"
-//     : "https://place-mentor-x5d5.onrender.com",
-//   {
-//     withCredentials: true,
-//     autoConnect: true,
-//   }
-// );
+export const socket = io(
+  import.meta.env.DEV
+    ? "http://localhost:5000"
+    : "https://place-mentor-x5d5.onrender.com",
+  {
+    withCredentials: true,
+    autoConnect: true,
+  }
+);
 
 // CONNECTION
 socket.on("connect", () => {
@@ -138,6 +138,15 @@ socket.on("admin:user:updated", (updatedUser) => {
   });
 
 
+});
+
+// TICKET REAL-TIME EVENTS
+socket.on("ticket:updated", (data) => {
+  store.dispatch({ type: "tickets/updateTicketFromSocket", payload: data });
+});
+
+socket.on("ticket:deleted", (data) => {
+  store.dispatch({ type: "tickets/removeTicketFromSocket", payload: data });
 });
 
 export default socket;

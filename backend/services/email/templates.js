@@ -13,14 +13,15 @@ export const getEmailTemplate = (type, data = {}) => {
   const logo =
     "https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png";
 
-  const layout = ({
-    gradient,
-    heading,
-    subheading,
-    body,
-    buttonText,
-    buttonUrl,
-  }) => `
+ const layout = ({
+  gradient,
+  heading,
+  subheading,
+  body,
+  buttonText,
+  buttonUrl,
+  hideStats = false,
+}) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,16 +39,14 @@ export const getEmailTemplate = (type, data = {}) => {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
 style="max-width:620px;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.08);">
 
-<!-- HERO -->
 <tr>
 <td style="padding:0;background:${gradient};">
-
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
 <tr>
 <td align="center" style="padding:38px 25px 26px;">
 
 <img src="${logo}" width="88" alt="PlaceMentor"
-style="display:block;border-radius:22px;background:#fff;padding:8px;box-shadow:0 12px 30px rgba(255,255,255,.25);" />
+style="display:block;border-radius:22px;background:#fff;padding:8px;" />
 
 <div style="height:18px;"></div>
 
@@ -68,16 +67,12 @@ style="display:inline-block;background:#ffffff;color:#111827;text-decoration:non
 ${buttonText}
 </a>
 
-<div style="height:10px;"></div>
-
 </td>
 </tr>
 </table>
-
 </td>
 </tr>
 
-<!-- BODY -->
 <tr>
 <td style="padding:38px 34px 10px;">
 
@@ -92,14 +87,14 @@ ${body}
 </td>
 </tr>
 
-<!-- STATS BOX -->
+${
+  !hideStats
+    ? `
 <tr>
 <td style="padding:10px 34px 0;">
-
 <table width="100%" cellspacing="0" cellpadding="0"
 style="background:#f9fafb;border:1px solid #eef2f7;border-radius:18px;">
 <tr>
-
 <td align="center" style="padding:20px;">
 <div style="font-size:12px;color:#6b7280;">Current Streak</div>
 <div style="font-size:24px;font-weight:800;color:#111827;">${streak}</div>
@@ -109,56 +104,34 @@ style="background:#f9fafb;border:1px solid #eef2f7;border-radius:18px;">
 <div style="font-size:12px;color:#6b7280;">Today</div>
 <div style="font-size:16px;font-weight:700;color:#111827;">${date}</div>
 </td>
-
 </tr>
 </table>
-
 </td>
 </tr>
+`
+    : ""
+}
 
-<!-- SECOND CTA -->
 <tr>
 <td align="center" style="padding:28px 34px 10px;">
-
 <a href="${buttonUrl}"
 style="display:inline-block;background:#111827;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 26px;border-radius:14px;">
 ${buttonText}
 </a>
-
 </td>
 </tr>
 
-<!-- FOOTER -->
 <tr>
 <td style="padding:26px 30px 34px;text-align:center;">
-
 <div style="font-size:14px;font-weight:700;color:#111827;">PlaceMentor</div>
-
 <div style="height:8px;"></div>
-
 <div style="font-size:13px;line-height:22px;color:#6b7280;">
 Your Placement Partner for Coding, Practice & Growth
 </div>
-
-<div style="height:10px;"></div>
-
-<div style="font-size:12px;color:#9ca3af;">
-<a href="${appUrl}" style="color:#6b7280;text-decoration:none;">placementor.online</a>
-&nbsp; • &nbsp;
-<a href="${appUrl}/unsubscribe" style="color:#6b7280;text-decoration:none;">Unsubscribe</a>
-</div>
-
 </td>
 </tr>
 
 </table>
-
-<div style="height:18px;"></div>
-
-<div style="font-size:11px;color:#9ca3af;text-align:center;">
-© ${new Date().getFullYear()} PlaceMentor. All rights reserved.
-</div>
-
 </td>
 </tr>
 </table>
@@ -305,6 +278,55 @@ Your Placement Partner for Coding, Practice & Growth
       buttonText: "Explore Now",
       buttonUrl: `${appUrl}/dashboard`,
     }),
+ticket_created: layout({
+  gradient: "linear-gradient(135deg,#3b82f6,#8b5cf6)",
+  heading: "Ticket Created 🎫",
+  subheading: "Your support request has been received successfully.",
+  body: message,
+  buttonText: ctaText,
+  buttonUrl: ctaUrl,
+  hideStats: true,
+}),
+
+ticket_replied: layout({
+  gradient: "linear-gradient(135deg,#06b6d4,#3b82f6)",
+  heading: "New Reply 💬",
+  subheading: "Our support team has responded to your ticket.",
+  body: message,
+  buttonText: ctaText,
+  buttonUrl: ctaUrl,
+  hideStats: true,
+}),
+
+ticket_solved: layout({
+  gradient: "linear-gradient(135deg,#22c55e,#16a34a)",
+  heading: "Ticket Resolved ✅",
+  subheading: "Your issue has been successfully resolved.",
+  body: message,
+  buttonText: ctaText,
+  buttonUrl: ctaUrl,
+  hideStats: true,
+}),
+
+ticket_reopened: layout({
+  gradient: "linear-gradient(135deg,#f59e0b,#ef4444)",
+  heading: "Ticket Reopened 🔄",
+  subheading: "This ticket has been reopened and needs attention.",
+  body: message,
+  buttonText: ctaText,
+  buttonUrl: ctaUrl,
+  hideStats: true,
+}),
+
+admin_notification: layout({
+  gradient: "linear-gradient(135deg,#ef4444,#dc2626)",
+  heading: "Admin Alert 🔔",
+  subheading: "A user activity requires your immediate attention.",
+  body: message,
+  buttonText: ctaText,
+  buttonUrl: ctaUrl,
+  hideStats: true,
+}),
   };
 
   return templates[type] || templates.custom_broadcast;

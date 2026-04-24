@@ -59,6 +59,10 @@ import CallHistory from "./pages/CallHistory";
 import CallReport from "./pages/CallReport";
 import CertificateVerifyPage from "./pages/CertificateVerifyPage.jsx";
 import PlacementPredictor from "./pages/PlacementPredictor";
+import SupportPage from "./pages/SupportPage";
+import TicketDetailPage from "./pages/TicketDetailPage";
+import AdminTickets from "./pages/admin/AdminTickets";
+import InterviewExperienceComingSoon from "./pages/InterviewExperienceComingSoon";
 
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -91,30 +95,24 @@ function App() {
   const dispatch = useDispatch();
 
   /* SETTINGS */
-  const {
-    data: settingsData,
-    isLoading: settingsLoading,
-  } = useSettings();
+  const { data: settingsData, isLoading: settingsLoading } = useSettings();
 
-  const maintenanceActive =
-    settingsData?.data?.maintenanceMode;
+  const maintenanceActive = settingsData?.data?.maintenanceMode;
 
-  const isAdminRoute =
-    location.pathname.startsWith("/admin");
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
- useEffect(() => {
-  const publicVerifyPage =
-    location.pathname.startsWith("/verify/");
+  useEffect(() => {
+    const publicVerifyPage = location.pathname.startsWith("/verify/");
 
-  if (!loading && user && !publicVerifyPage) {
-    const seen = sessionStorage.getItem("seenSplash");
+    if (!loading && user && !publicVerifyPage) {
+      const seen = sessionStorage.getItem("seenSplash");
 
-    if (!seen && location.pathname !== "/splash") {
-      sessionStorage.setItem("seenSplash", "true");
-      navigate("/splash");
+      if (!seen && location.pathname !== "/splash") {
+        sessionStorage.setItem("seenSplash", "true");
+        navigate("/splash");
+      }
     }
-  }
-}, [user, loading, location.pathname]);
+  }, [user, loading, location.pathname]);
 
   /* LOAD USER */
   useEffect(() => {
@@ -129,54 +127,33 @@ function App() {
   }, [user]);
 
   /* POPUPS */
-  const [showPopup, setShowPopup] =
-    useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-  const [popupData, setPopupData] =
-    useState(null);
+  const [popupData, setPopupData] = useState(null);
 
-  const [popupType, setPopupType] =
-    useState("");
+  const [popupType, setPopupType] = useState("");
 
   useEffect(() => {
-    const handleFriendRequest = (
-      data
-    ) => {
+    const handleFriendRequest = (data) => {
       setPopupData(data.requester);
       setPopupType("friend");
       setShowPopup(true);
     };
 
-    const handleChallenge = (
-      data
-    ) => {
-      setPopupData(
-        data.challenger || data
-      );
+    const handleChallenge = (data) => {
+      setPopupData(data.challenger || data);
       setPopupType("challenge");
       setShowPopup(true);
     };
 
-    socket.on(
-      "friend_request_received",
-      handleFriendRequest
-    );
+    socket.on("friend_request_received", handleFriendRequest);
 
-    socket.on(
-      "challenge_received",
-      handleChallenge
-    );
+    socket.on("challenge_received", handleChallenge);
 
     return () => {
-      socket.off(
-        "friend_request_received",
-        handleFriendRequest
-      );
+      socket.off("friend_request_received", handleFriendRequest);
 
-      socket.off(
-        "challenge_received",
-        handleChallenge
-      );
+      socket.off("challenge_received", handleChallenge);
     };
   }, []);
 
@@ -188,90 +165,39 @@ function App() {
 
   /* BATTLE SOCKETS */
   useEffect(() => {
-    const handleBattleStart = (
-      data
-    ) => {
+    const handleBattleStart = (data) => {
       dispatch(battleStart(data));
 
-      navigate(
-        `/battle/${data.roomId}`,
-        {
-          state: {
-            problem: data.problem,
-            opponent:
-              data.opponent,
-            timeLimit:
-              data.timeLimit,
-          },
-        }
-      );
+      navigate(`/battle/${data.roomId}`, {
+        state: {
+          problem: data.problem,
+          opponent: data.opponent,
+          timeLimit: data.timeLimit,
+        },
+      });
     };
 
-    socket.on(
-      "battle:start",
-      handleBattleStart
-    );
+    socket.on("battle:start", handleBattleStart);
 
-    socket.on(
-      "battle:winner",
-      (data) =>
-        dispatch(
-          battleWinner(data)
-        )
-    );
+    socket.on("battle:winner", (data) => dispatch(battleWinner(data)));
 
-    socket.on(
-      "battle:draw",
-      () =>
-        dispatch(
-          battleDraw()
-        )
-    );
+    socket.on("battle:draw", () => dispatch(battleDraw()));
 
-    socket.on(
-      "battle:failed",
-      () =>
-        dispatch(
-          battleFailed()
-        )
-    );
+    socket.on("battle:failed", () => dispatch(battleFailed()));
 
-    socket.on(
-      "battle:result",
-      (data) =>
-        dispatch(
-          battleResult(data)
-        )
-    );
+    socket.on("battle:result", (data) => dispatch(battleResult(data)));
 
-    socket.on(
-      "opponent_code_change",
-      (data) =>
-        dispatch(
-          updateOpponentCode(data)
-        )
+    socket.on("opponent_code_change", (data) =>
+      dispatch(updateOpponentCode(data)),
     );
 
     return () => {
-      socket.off(
-        "battle:start",
-        handleBattleStart
-      );
-      socket.off(
-        "battle:winner"
-      );
-      socket.off(
-        "battle:draw"
-      );
-      socket.off(
-        "battle:failed"
-      );
-      socket.off(
-        "battle:result"
-      );
-      socket.off(
-        "opponent_code_change"
-      );
+      socket.off("battle:start", handleBattleStart);
+      socket.off("battle:winner");
+      socket.off("battle:draw");
+      socket.off("battle:failed");
+      socket.off("battle:result");
+      socket.off("opponent_code_change");
     };
   }, [dispatch, navigate]);
 
@@ -295,10 +221,7 @@ function App() {
     <>
       <InstallPopup />
       <CookieConsent />
-      <Toaster
-        position="top-right"
-        richColors
-      />
+      <Toaster position="top-right" richColors />
 
       {showPopup && (
         <NotificationPopup
@@ -329,7 +252,11 @@ function App() {
             <Route path="/admin/email-center" element={<AdminEmailCenter />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/security" element={<AdminSecurity />} />
-            <Route path="/admin/maintenance-manager" element={<AdminMaintenanceManager />} />
+            <Route
+              path="/admin/maintenance-manager"
+              element={<AdminMaintenanceManager />}
+            />
+            <Route path="/admin/tickets" element={<AdminTickets />} />
           </Route>
         </Route>
 
@@ -372,13 +299,16 @@ function App() {
           <Route path="/placement-predictor" element={<PlacementPredictor />} />
           <Route path="/voice-history" element={<CallHistory />} />
           <Route path="/voice-report/:id" element={<CallReport />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/support/ticket/:id" element={<TicketDetailPage />} />
+          <Route
+            path="/interview-experience"
+            element={<InterviewExperienceComingSoon />}
+          />
         </Route>
 
         {/* SPECIAL */}
-        <Route
-          path="/maintenance"
-          element={<MaintenancePage />}
-        />
+        <Route path="/maintenance" element={<MaintenancePage />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />

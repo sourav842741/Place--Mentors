@@ -4,23 +4,26 @@ import {
   LayoutDashboard,
   Users,
   Settings,
-  Plus,
   Mail,
   Brain,
+  Ticket,
+  FileQuestion,
+   Code2
 } from "lucide-react";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
   { icon: Users, label: "Users", path: "/admin/users" },
   { icon: Mail, label: "Email Center", path: "/admin/email-center" },
-  { icon: Plus, label: "Create POTD", path: "/admin/create-potd" },
-  { icon: Plus, label: "Create CPOTD", path: "/admin/create-cpotd" },
+  { icon: FileQuestion, label: "Create POTD", path: "/admin/create-potd" },
+{ icon: Code2, label: "Create CPOTD", path: "/admin/create-cpotd" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
   {
     icon: Brain,
     label: "Maintenance Content",
     path: "/admin/maintenance-manager",
   },
+  { icon: Ticket, label: "Tickets", path: "/admin/tickets" },
 ];
 
 export default function AdminSidebar({ isOpen, setIsOpen }) {

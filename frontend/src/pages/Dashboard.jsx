@@ -521,6 +521,68 @@ export default function Dashboard() {
               </div>
             </div>
 
+ <div
+  onClick={() => navigate("/interview-experience")}
+  className="relative overflow-hidden flex items-center justify-between
+  bg-white dark:bg-gray-900
+  border border-gray-200 dark:border-white/10
+  p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-500
+  cursor-pointer transition-all duration-300 hover:scale-[1.02] group min-h-[170px]"
+>
+  {/* Hover Glow */}
+  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-blue-50 dark:bg-blue-900/10"></div>
+
+  {/* Left */}
+  <div className="relative z-10 flex items-center gap-5 flex-1">
+
+    {/* Icon */}
+    <div className="p-4 rounded-2xl bg-blue-100 dark:bg-blue-900/30 shadow-sm shrink-0">
+      <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+    </div>
+
+    {/* Text */}
+    <div className="flex-1">
+      <div className="flex items-center gap-2 flex-wrap">
+        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+          Interview Experience
+        </h3>
+
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-600 text-white shadow">
+          NEW
+        </span>
+      </div>
+
+      <p className="text-gray-500 dark:text-gray-400 font-medium mt-2 text-base md:text-lg">
+        Real company rounds, HR questions & student success stories
+      </p>
+
+      {/* Tags */}
+      <div className="flex gap-2 mt-4 flex-wrap">
+        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+          TCS
+        </span>
+
+        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+          Infosys
+        </span>
+
+        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+          Wipro
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {/* Right */}
+  <div className="hidden md:flex flex-col items-end justify-center relative z-10 ml-6">
+    <span className="text-purple-600 dark:text-purple-400 font-bold text-2xl">
+      Explore Now
+    </span>
+
+    <ArrowRight className="w-8 h-8 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all mt-3" />
+  </div>
+</div>
+
             {/*  POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               <CpotdCard onClick={() => navigate("/coding-potd")} />

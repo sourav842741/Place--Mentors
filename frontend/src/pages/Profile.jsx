@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { setUserData } from "../redux/userSlice";
-import { Pencil, Award } from "lucide-react";
+import { Pencil, Award, Ticket, ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -401,6 +401,30 @@ export default function Profile() {
                     Update
                   </Button>
                 </div>
+              </div>
+            </div>
+
+            {/* NEED HELP CARD */}
+            <div className="mt-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-6 text-white shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Ticket className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">Need Help?</h3>
+                    <p className="text-sm text-white/80">
+                      Create a support ticket and we will assist you shortly.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate("/support")}
+                  className="h-12 px-6 rounded-2xl font-bold bg-white text-blue-600 hover:bg-white/90 shadow-lg"
+                >
+                  Get Support
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               </div>
             </div>
 
