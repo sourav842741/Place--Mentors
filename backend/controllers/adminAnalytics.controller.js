@@ -3,25 +3,47 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
 import AnalyticsEvent from "../models/AnalyticsEvent.model.js";
 
-const getTodayDateStr = () => new Date().toISOString().split("T")[0];
+const getISTBounds = () => {
+  const now = new Date();
+  const istDateStr = now.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  const [y, m, d] = istDateStr.split("-").map(Number);
+  const offset = 5.5 * 60 * 60 * 1000;
+  const todayStart = new Date(Date.UTC(y, m - 1, d, 0, 0, 0) - offset);
+  const todayEnd = new Date(Date.UTC(y, m - 1, d, 23, 59, 59, 999) - offset);
+  return { todayStart, todayEnd };
+};
+
+const getTodayDateStr = () => {
+  return new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata",
+  });
+};
 
 export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
   const todayDateStr = getTodayDateStr();
 
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  // ================= INDIA TIMEZONE SAFE DATE RANGE =================
+  const now = new Date();
+  const { todayStart, todayEnd } = getISTBounds();
 
-  const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
-
+  // Yesterday Start
   const yesterdayStart = new Date(todayStart);
   yesterdayStart.setDate(yesterdayStart.getDate() - 1);
 
+  // Yesterday End
   const yesterdayEnd = new Date(todayEnd);
   yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
 
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  // Last 7 Days
+  const sevenDaysAgo = new Date(todayStart);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  // Last 24 Hours
+  const twentyFourHoursAgo = new Date(
+    now.getTime() - 24 * 60 * 60 * 1000
+  );
+
+
 
   // ================= MAIN PARALLEL QUERIES =================
   const [

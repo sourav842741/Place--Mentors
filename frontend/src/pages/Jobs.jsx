@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { debounce } from "lodash"; // Assume lodash or implement simple debounce
 import Navbar from "../components/Navbar";
 import useJobs from "../hooks/useJobs";
@@ -87,9 +87,13 @@ const JobsPage = () => {
   }, [reduxFilters]);
 
   // Load initial jobs
+  const hasTrackedJobs = useRef(false);
   useEffect(() => {
     loadJobs(currentPage);
-    trackEvent("jobs_page_clicked");
+    if (!hasTrackedJobs.current) {
+      trackEvent("jobs_page_clicked", { source: "page_mount", page: currentPage });
+      hasTrackedJobs.current = true;
+    }
   }, [currentPage]);
 
   // Debounced search

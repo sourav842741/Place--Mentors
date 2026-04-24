@@ -46,10 +46,10 @@ analyticsEventSchema.index({ eventType: 1, createdAt: -1 });
 analyticsEventSchema.index({ eventType: 1, createdAt: 1 });
 analyticsEventSchema.index({ deviceType: 1, createdAt: -1 });
 
-// Auto delete after 6 days
+// Auto delete after 90 days
 analyticsEventSchema.index(
   { createdAt: 1 },
-  { expireAfterSeconds: 6 * 24 * 60 * 60 }
+  { expireAfterSeconds: 90 * 24 * 60 * 60 }
 );
 
 const AnalyticsEvent = mongoose.model(

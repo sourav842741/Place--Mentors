@@ -39,3 +39,27 @@ export const trackEvent = asyncHandler(async (req, res) => {
   );
 });
 
+export const trackEventsBatch = asyncHandler(async (req, res) => {
+  const { events } = req.body;
+
+  if (!Array.isArray(events) || events.length === 0) {
+    return res.status(400).json(
+      new ApiResponse(400, null, "events array is required")
+    );
+  }
+
+  const docs = events.map((e) => ({
+    eventType: e.eventType,
+    userId: req.user?._id || null,
+    deviceType: e.deviceType || "unknown",
+    metadata: e.metadata || {},
+    createdAt: e.timestamp ? new Date(e.timestamp) : new Date(),
+  }));
+
+  const result = await AnalyticsEvent.insertMany(docs, { ordered: false });
+
+  res.status(201).json(
+    new ApiResponse(201, { count: result.length }, "Batch tracked")
+  );
+});
+

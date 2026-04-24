@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -60,8 +60,12 @@ function Pricing() {
     },
   ];
 
+  const hasTrackedPremium = useRef(false);
   useEffect(() => {
-    trackEvent("premium_page_visit");
+    if (!hasTrackedPremium.current) {
+      trackEvent("premium_page_visit");
+      hasTrackedPremium.current = true;
+    }
   }, []);
 
   const handlePayment = async (plan) => {

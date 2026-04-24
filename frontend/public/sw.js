@@ -1,4 +1,4 @@
-const CACHE_VERSION = "mentor-v4"; // 🔥 version update
+const CACHE_VERSION = "mentor-v4"; //
 const CACHE_NAME = `${CACHE_VERSION}-static`;
 const API_CACHE_NAME = `${CACHE_VERSION}-api`;
 
@@ -44,6 +44,11 @@ self.addEventListener("fetch", (event) => {
 
   // ❌ Only GET
   if (request.method !== "GET") return;
+
+  // ❌ Never cache analytics endpoints
+  if (url.pathname === "/api/admin/analytics" || url.pathname === "/api/admin/track-event") {
+    return;
+  }
 
   // ✅ NAVIGATION (SPA fallback)
   if (request.mode === "navigate") {

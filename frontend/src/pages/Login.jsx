@@ -207,34 +207,59 @@ export default function Login() {
   /* ===============================
      GOOGLE LOGIN
   ================================= */
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
+ const handleGoogleLogin = async () => {
+  setGoogleLoading(true);
 
-    try {
-      const res = await googleLogin();
+  try {
+    const res = await googleLogin();
 
-      if (res.success) {
-        toast.success("Google login successful 🚀");
-        window.location.reload();
-      } else {
-        const msg = res.message || "Google login failed";
+    //  If banned / suspended
+    const msg = res?.message || "Google login failed";
 
-        if (
-          res?.statusCode === 403 ||
-          msg.toLowerCase().includes("banned") ||
-          msg.toLowerCase().includes("suspended")
-        ) {
-          setBanPopup(msg);
-        } else {
-          toast.error(msg);
-        }
-      }
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setGoogleLoading(false);
+    if (
+      res?.statusCode === 403 ||
+      msg.toLowerCase().includes("banned") ||
+      msg.toLowerCase().includes("suspended")
+    ) {
+      setBanPopup(msg);
+      return;
     }
-  };
+
+    //  If 2FA required (Admin / Super Admin)
+    if (res?.requiresTwoFactor) {
+      setTwoFactorMode(true);
+      setTempAuthToken(res.tempAuthToken);
+      setTwoFactorRole(res.role);
+      setIsSuperAdmin2FA(res.isSuperAdmin);
+      setOtpToken("");
+      toast.info("Two-factor authentication required");
+      return;
+    }
+
+    //  Successful login
+    if (res?.success) {
+      toast.success("Google login successful 🚀");
+
+      const user = res?.user;
+
+      if (user?.role === "admin" || user?.isSuperAdmin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/splash");
+      }
+
+      return;
+    }
+
+    //  Other errors
+    toast.error(msg);
+
+  } catch (error) {
+    toast.error("Something went wrong");
+  } finally {
+    setGoogleLoading(false);
+  }
+};
 
   return (
     <AuthLayout>

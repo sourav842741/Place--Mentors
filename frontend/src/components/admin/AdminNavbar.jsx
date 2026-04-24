@@ -5,19 +5,9 @@ import { logoutUser } from "../../redux/userSlice";
 import api from "../../services/api";
 
 import { Button } from "@/components/ui/button";
-import {
-  Sun,
-  Moon,
-  LogOut,
-  LayoutDashboard,
-  Menu,
-} from "lucide-react";
+import { Sun, Moon, LogOut, LayoutDashboard, Menu } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   DropdownMenu,
@@ -32,56 +22,39 @@ export default function AdminNavbar({ setIsOpen }) {
   const navigate = useNavigate();
 
   const [isDark, setIsDark] = useState(false);
-  const [showThemePopup, setShowThemePopup] =
-    useState(false);
+  const [showThemePopup, setShowThemePopup] = useState(false);
 
-  const [popupContent, setPopupContent] =
-    useState({
-      icon: null,
-      title: "",
-      subtitle: "",
-    });
+  const [popupContent, setPopupContent] = useState({
+    icon: null,
+    title: "",
+    subtitle: "",
+  });
 
   /* LOAD THEME */
   useEffect(() => {
-    const savedTheme =
-      localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem("theme");
 
     if (savedTheme === "dark") {
-      document.documentElement.classList.add(
-        "dark"
-      );
+      document.documentElement.classList.add("dark");
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove(
-        "dark"
-      );
+      document.documentElement.classList.remove("dark");
       setIsDark(false);
     }
   }, []);
 
   /* THEME TOGGLE + POPUP */
   const toggleTheme = () => {
-    const isNowDark =
-      document.documentElement.classList.toggle(
-        "dark"
-      );
+    const isNowDark = document.documentElement.classList.toggle("dark");
 
     setIsDark(isNowDark);
 
-    localStorage.setItem(
-      "theme",
-      isNowDark ? "dark" : "light"
-    );
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
 
     setPopupContent({
       icon: isNowDark ? Moon : Sun,
-      title: isNowDark
-        ? "Dark Mode Enabled"
-        : "Light Mode Enabled",
-      subtitle: isNowDark
-        ? "Night vibes activated 🌙"
-        : "Sunshine is back ☀️",
+      title: isNowDark ? "Dark Mode Enabled" : "Light Mode Enabled",
+      subtitle: isNowDark ? "Night vibes activated 🌙" : "Sunshine is back ☀️",
     });
 
     setShowThemePopup(true);
@@ -112,10 +85,7 @@ export default function AdminNavbar({ setIsOpen }) {
 
     return words.length === 1
       ? words[0][0].toUpperCase()
-      : (
-          words[0][0] +
-          words[words.length - 1][0]
-        ).toUpperCase();
+      : (words[0][0] + words[words.length - 1][0]).toUpperCase();
   };
 
   return (
@@ -126,9 +96,7 @@ export default function AdminNavbar({ setIsOpen }) {
           <div className="flex items-center gap-3">
             {/* MOBILE MENU */}
             <button
-              onClick={() =>
-                setIsOpen((prev) => !prev)
-              }
+              onClick={() => setIsOpen((prev) => !prev)}
               className="lg:hidden p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
             >
               <Menu className="w-6 h-6" />
@@ -188,15 +156,11 @@ export default function AdminNavbar({ setIsOpen }) {
 
                     <div>
                       <h3 className="font-bold text-sm text-gray-900 dark:text-white">
-                        {
-                          popupContent.title
-                        }
+                        {popupContent.title}
                       </h3>
 
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {
-                          popupContent.subtitle
-                        }
+                        {popupContent.subtitle}
                       </p>
                     </div>
                   </div>
@@ -212,33 +176,29 @@ export default function AdminNavbar({ setIsOpen }) {
                   className="relative h-10 w-10 rounded-full"
                 >
                   <Avatar className="h-9 w-9">
-                    <AvatarImage
-                      src={user?.avatar}
-                    />
+                    <AvatarImage src={user?.avatar} />
 
                     <AvatarFallback className="bg-gradient-to-br from-violet-600 to-blue-600 text-white font-semibold">
-                      {getInitials(
-                        user?.fullName
-                      )}
+                      {getInitials(user?.fullName)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="end"
-                className="w-56"
-              >
+              <DropdownMenuContent align="end" className="w-56">
                 <div className="flex items-center justify-between p-2 border-b">
-                  <span className="text-sm font-medium">
-                    {user?.fullName}
-                  </span>
+                  <span className="text-sm font-medium">{user?.fullName}</span>
 
-                  <span className="text-xs text-gray-400">
-                    Admin
-                  </span>
+                  <span className="text-xs text-gray-400">Admin</span>
                 </div>
-
+              
+                <DropdownMenuItem
+                  onClick={() => navigate("/dashboard")}
+                  className="cursor-pointer mt-2 focus:bg-blue-200 dark:text-gray-400"
+                >
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  User Dashboard
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}
                   className="cursor-pointer text-red-500 focus:bg-red-50 dark:focus:bg-red-950"

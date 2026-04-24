@@ -300,40 +300,54 @@ const useAuth = () => {
   };
 
   // ================= GOOGLE LOGIN =================
-  const googleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
+ const googleLogin = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const firebaseUser = result.user;
 
-      const res = await api.post("/api/auth/google", {
-        fullName: firebaseUser.displayName,
-        email: firebaseUser.email,
-        avatar: firebaseUser.photoURL,
-      });
+    const res = await api.post("/api/auth/google", {
+      fullName: firebaseUser.displayName,
+      email: firebaseUser.email,
+      avatar: firebaseUser.photoURL,
+      deviceId: getDeviceId(),
+    });
 
-      if (res.data.success) {
-        dispatch(setUserData(res.data.user));
-        navigate("/dashboard");
+    const data = res.data;
 
-        return { success: true };
-      }
-
+    // ✅ If 2FA required
+    if (data?.requiresTwoFactor) {
       return {
-        success: false,
-        message: "Google login failed",
-      };
-    } catch (err) {
-      console.error(err);
-
-      return {
-        success: false,
-        statusCode: err.response?.status,
-        message:
-          err.response?.data?.message ||
-          "Google login failed",
+        success: true,
+        requiresTwoFactor: true,
+        tempAuthToken: data.tempAuthToken,
+        role: data.role,
+        isSuperAdmin: data.isSuperAdmin,
       };
     }
-  };
+
+    // ✅ Normal Success Login
+    if (data?.success) {
+      dispatch(setUserData(data.user));
+      return data;
+    }
+
+    return {
+      success: false,
+      message: "Google login failed",
+    };
+
+  } catch (err) {
+    console.error(err);
+
+    return {
+      success: false,
+      statusCode: err.response?.status,
+      message:
+        err.response?.data?.message ||
+        "Google login failed",
+    };
+  }
+};
 
   // ================= TIME TRACK =================
   const updateTimeSpent = async (minutes) => {

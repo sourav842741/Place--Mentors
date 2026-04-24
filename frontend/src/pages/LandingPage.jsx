@@ -91,18 +91,16 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-slate-950 dark:to-black text-gray-900 dark:text-white overflow-hidden">
-
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 border-b border-white/20 dark:border-white/10 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
           <div className="flex items-center gap-3">
             <img
               src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
               className="w-10 h-10 rounded-2xl"
             />
 
-            <h1 className="text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-lg sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent whitespace-nowrap">
               PlaceMentor
             </h1>
           </div>
@@ -132,7 +130,6 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section className="relative max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-14 items-center">
-
         <div className="absolute -top-10 left-10 w-72 h-72 bg-purple-400/20 blur-[120px] rounded-full" />
         <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-400/20 blur-[120px] rounded-full" />
 
@@ -154,8 +151,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-xl leading-relaxed">
-            Coding practice, AI roadmap, interviews, resume tools and
-            everything needed to crack placements smarter.
+            Coding practice, AI roadmap, interviews, resume tools and everything
+            needed to crack placements smarter.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
@@ -197,9 +194,7 @@ export default function LandingPage() {
 
               <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl px-4 py-2 flex items-center gap-2 shadow">
                 <PlayCircle className="w-5 h-5 text-purple-600" />
-                <span className="text-sm font-semibold">
-                  Product Preview
-                </span>
+                <span className="text-sm font-semibold">Product Preview</span>
               </div>
             </div>
           </div>
@@ -219,9 +214,18 @@ export default function LandingPage() {
       {/* COUNTERS */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
         <div className="grid md:grid-cols-3 gap-6">
-          <CounterCard number={`${count1.toLocaleString()}+`} label="Students Joined" />
-          <CounterCard number={`${count2.toLocaleString()}+`} label="Problems Solved" />
-          <CounterCard number={`${count3.toLocaleString()}+`} label="Trusted Users" />
+          <CounterCard
+            number={`${count1.toLocaleString()}+`}
+            label="Students Joined"
+          />
+          <CounterCard
+            number={`${count2.toLocaleString()}+`}
+            label="Problems Solved"
+          />
+          <CounterCard
+            number={`${count3.toLocaleString()}+`}
+            label="Trusted Users"
+          />
         </div>
       </section>
 
@@ -265,12 +269,36 @@ export default function LandingPage() {
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <FeatureCard icon={<Brain />} title="AI Planner" desc="Personal roadmap based on your level." />
-          <FeatureCard icon={<Code2 />} title="Coding Battles" desc="Daily challenges with growth tracking." />
-          <FeatureCard icon={<Target />} title="Placement Predictor" desc="Check chances instantly." />
-          <FeatureCard icon={<Award />} title="Leaderboard" desc="Compete and stay consistent." />
-          <FeatureCard icon={<Zap />} title="Fast Progress" desc="XP, streaks and growth system." />
-          <FeatureCard icon={<ShieldCheck />} title="Resume Tools" desc="Create ATS ready resumes." />
+          <FeatureCard
+            icon={<Brain />}
+            title="AI Planner"
+            desc="Personal roadmap based on your level."
+          />
+          <FeatureCard
+            icon={<Code2 />}
+            title="Coding Battles"
+            desc="Daily challenges with growth tracking."
+          />
+          <FeatureCard
+            icon={<Target />}
+            title="Placement Predictor"
+            desc="Check chances instantly."
+          />
+          <FeatureCard
+            icon={<Award />}
+            title="Leaderboard"
+            desc="Compete and stay consistent."
+          />
+          <FeatureCard
+            icon={<Zap />}
+            title="Fast Progress"
+            desc="XP, streaks and growth system."
+          />
+          <FeatureCard
+            icon={<ShieldCheck />}
+            title="Resume Tools"
+            desc="Create ATS ready resumes."
+          />
         </div>
       </section>
 
@@ -281,9 +309,18 @@ export default function LandingPage() {
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <Testimonial name="Rahul" text="Coding consistency became much better." />
-          <Testimonial name="Anjali" text="AI roadmap helped me stay focused." />
-          <Testimonial name="Sourav" text="Best modern platform for placements." />
+          <Testimonial
+            name="Rahul"
+            text="Coding consistency became much better."
+          />
+          <Testimonial
+            name="Anjali"
+            text="AI roadmap helped me stay focused."
+          />
+          <Testimonial
+            name="Sourav"
+            text="Best modern platform for placements."
+          />
         </div>
       </section>
 
