@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import { setUserData } from "../redux/userSlice";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { trackEvent } from "../hooks/useAnalytics";
 
 function Pricing() {
   const navigate = useNavigate();
@@ -59,9 +60,14 @@ function Pricing() {
     },
   ];
 
+  useEffect(() => {
+    trackEvent("premium_page_visit");
+  }, []);
+
   const handlePayment = async (plan) => {
     try {
       setLoadingPlan(plan.id);
+      trackEvent("premium_button_click");
 
       const amount =
         plan.id === "basic"

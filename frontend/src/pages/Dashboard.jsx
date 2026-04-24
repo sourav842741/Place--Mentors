@@ -5,6 +5,7 @@ import Autoplay from "embla-carousel-autoplay";
 import * as React from "react";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { trackEvent } from "../hooks/useAnalytics";
 
 import {
   LineChart,
@@ -414,7 +415,10 @@ export default function Dashboard() {
               </div>
 
               <div
-                onClick={() => navigate("/jobs")}
+                onClick={() => {
+                  trackEvent("jobs_page_clicked");
+                  navigate("/jobs");
+                }}
                 className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
               >
                 <div className="flex items-center gap-4">

@@ -80,16 +80,21 @@ export const submitCpotd = asyncHandler(async (req, res) => {
 
   const isAccepted = percentage === 1;
 
-  const user = await User.findById(userId);
-  if (user && isAccepted) {
-    const today = new Date().toISOString().split("T")[0];
-    user.codingPotdCompleted = true;
-    user.lastCodingPotdDate = today;
-    user.lastCodingPotdAt = new Date();
+const user = await User.findById(userId);
 
+if (user) {
+  const today = new Date().toISOString().split("T")[0];
+
+  user.codingPotdCompleted = true;
+  user.lastCodingPotdDate = today;
+  user.lastCodingPotdAt = new Date();
+
+  if (isAccepted) {
     addXP(user, xpEarned, "cpotd");
-    await user.save();
   }
+
+  await user.save();
+}
 
   return res.status(200).json({
     success: true,

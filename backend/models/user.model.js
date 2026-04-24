@@ -154,6 +154,13 @@ const userSchema = new mongoose.Schema(
     //  POTD TRACKING
     potdCompleted: { type: Boolean, default: false },
     codingPotdCompleted: { type: Boolean, default: false },
+
+    weakArea: {
+      type: String,
+      enum: ["aptitude", "reasoning", "verbal"],
+      default: null,
+    },
+
     lastPotdDate: { type: String, default: null }, // YYYY-MM-DD
     lastCodingPotdDate: { type: String, default: null }, // YYYY-MM-DD
     lastPotdAt: { type: Date, default: null },

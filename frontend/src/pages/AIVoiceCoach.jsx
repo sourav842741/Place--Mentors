@@ -25,6 +25,7 @@ import {
 } from "../redux/voiceSlice";
 
 import Navbar from "../components/Navbar";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const AIVoiceCoach = () => {
   const dispatch = useDispatch();
@@ -106,6 +107,8 @@ const AIVoiceCoach = () => {
       ).unwrap();
 
       toast.success("Call started successfully");
+
+      trackEvent("ai_interview_used", { type: "voice", mode });
 
       // Start 20 minute cooldown
       const endTime = Date.now() + 20 * 60 * 1000;
@@ -336,3 +339,4 @@ const AIVoiceCoach = () => {
 };
 
 export default AIVoiceCoach;
+

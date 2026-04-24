@@ -14,6 +14,7 @@ import isSuperAdmin from "../middlewares/superAdmin.middleware.js";
 import { generatePotd } from "../controllers/potd.controller.js";
 import { generateCpotd } from "../controllers/cpotd.controller.js";
 import { getAdminDashboardAnalytics } from "../controllers/adminAnalytics.controller.js";
+import { trackEvent } from "../controllers/analytics.controller.js";
 
 import {
   getEmailStats,
@@ -39,6 +40,9 @@ router.get(
   "/public-settings",
   getPublicSettings
 );
+
+// PUBLIC TRACKING ENDPOINT — no auth required
+router.post("/track-event", trackEvent);
 
 
 // GET ALL USERS

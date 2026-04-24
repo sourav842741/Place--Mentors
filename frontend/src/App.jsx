@@ -80,6 +80,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMaintenanceManager from "./pages/admin/AdminMaintenanceManager.jsx";
 import AdminSecurity from "./pages/admin/AdminSecurity";
 import Certificates from "./pages/Certificates.jsx";
+import CookieConsent from "./components/CookieConsent";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -293,6 +294,7 @@ function App() {
   return (
     <>
       <InstallPopup />
+      <CookieConsent />
       <Toaster
         position="top-right"
         richColors

@@ -39,3 +39,7 @@ export const exportUsersCSV = () => api.get('/api/admin/users/export', {
     'Content-Type': 'text/csv'
   }
 });
+
+// ========== ANALYTICS TRACKING ==========
+export const trackAnalyticsEvent = (eventType, metadata = {}) => 
+  api.post('/api/admin/track-event', { eventType, metadata });

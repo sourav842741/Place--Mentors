@@ -32,6 +32,7 @@ import {
 
 import { toast } from "sonner";
 import predictionApi from "../services/predictionApi";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const PlacementPredictor = () => {
   const navigate = useNavigate();
@@ -95,6 +96,7 @@ const PlacementPredictor = () => {
 
     try {
       setLoading(true);
+      trackEvent("placement_predictor_used");
 
       const res =
         await predictionApi.predictPlacement(

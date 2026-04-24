@@ -143,6 +143,8 @@ export const submitPotd = asyncHandler(async (req, res) => {
   user.potdCompleted = true;
   user.lastPotdDate = todayDate;
   user.lastPotdAt = new Date();
+  
+  user.weakArea = weakArea;
 
   addXP(user, xpEarned, "potd");
 

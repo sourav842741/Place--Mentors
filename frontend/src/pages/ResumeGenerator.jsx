@@ -33,6 +33,7 @@ import { FaEye } from "react-icons/fa";
 import { FaCode } from "react-icons/fa";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const ResumePreview = ({ data, template }) => {
   const renderLines = (text) => {
@@ -282,21 +283,29 @@ export default function ResumeGenerator() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleGenerateAI = async () => {
-    setGenerateLoading(true);
-    try {
-      const res = await api.post("/api/ai/generate-content", {
-        name: formData.name || "Software Developer",
-        education: formData.education || "Computer Science",
-      });
-      setFormData((prev) => ({ ...prev, ...res.data }));
-    } catch (err) {
-      console.error(err);
-      alert("AI unavailable - use manual input");
-    } finally {
-      setGenerateLoading(false);
-    }
-  };
+ const handleGenerateAI = async () => {
+  setGenerateLoading(true);
+
+  try {
+    const res = await api.post("/api/ai/generate-content", {
+      name: formData.name || "Software Developer",
+      education: formData.education || "Computer Science",
+    });
+
+    setFormData((prev) => ({ ...prev, ...res.data }));
+
+    trackEvent("resume_builder_used", {
+      action: "ai_generate",
+      template: selectedTemplate,
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("AI unavailable - use manual input");
+  } finally {
+    setGenerateLoading(false);
+  }
+};
 
   const handleDownload = async () => {
     if (!formData.name.trim()) {

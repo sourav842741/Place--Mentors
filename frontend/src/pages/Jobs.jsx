@@ -50,6 +50,7 @@ import {
   Zap,
 } from "lucide-react";
 import { toast } from "sonner";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const JobsPage = () => {
   const {
@@ -88,6 +89,7 @@ const JobsPage = () => {
   // Load initial jobs
   useEffect(() => {
     loadJobs(currentPage);
+    trackEvent("jobs_page_clicked");
   }, [currentPage]);
 
   // Debounced search
