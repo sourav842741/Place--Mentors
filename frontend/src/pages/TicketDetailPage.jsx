@@ -13,11 +13,13 @@ import {
   ImageIcon,
   Loader2,
   X,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useTickets } from "@/hooks/useTickets";
@@ -199,6 +201,24 @@ export default function TicketDetailPage() {
                     {ticketDetail.description}
                   </p>
                 </div>
+
+                {/* AI Chat Summary */}
+                {ticketDetail.aiEscalated && ticketDetail.aiChatSummary && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium text-blue-800 dark:text-blue-200 w-full text-left">
+                        <Bot className="w-4 h-4" />
+                        <span>AI Chat Summary (for support team)</span>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <Separator className="my-3 opacity-50" />
+                        <p className="text-sm text-blue-900 dark:text-blue-100 whitespace-pre-wrap leading-relaxed font-mono">
+                          {ticketDetail.aiChatSummary}
+                        </p>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </div>
+                )}
 
                 {ticketDetail.image && (
                   <div>

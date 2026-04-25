@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ticketApi from "../services/ticketApi.js";
+import * as supportApi from "../services/supportApi.js";
 import { toast } from "sonner";
 
 const initialState = {
@@ -137,6 +138,20 @@ export const deleteAdminTicket = createAsyncThunk(
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete ticket");
       return rejectWithValue(error.response?.data?.message || "Failed to delete ticket");
+    }
+  }
+);
+
+export const escalateToTicket = createAsyncThunk(
+  "tickets/escalateToTicket",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await supportApi.escalateTicket(formData);
+      toast.success(`Ticket escalated: ${response.data.data.ticketId}`);
+      return response.data.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to escalate ticket");
+      return rejectWithValue(error.response?.data?.message || "Failed to escalate ticket");
     }
   }
 );
@@ -383,6 +398,19 @@ const ticketSlice = createSlice({
         }
       })
       .addCase(deleteAdminTicket.rejected, (state) => {
+        state.actionLoading = false;
+      })
+
+      // Escalate from AI chat
+      .addCase(escalateToTicket.pending, (state) => {
+        state.actionLoading = true;
+      })
+      .addCase(escalateToTicket.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        state.tickets.unshift(action.payload);
+        state.pagination.total += 1;
+      })
+      .addCase(escalateToTicket.rejected, (state) => {
         state.actionLoading = false;
       });
   },

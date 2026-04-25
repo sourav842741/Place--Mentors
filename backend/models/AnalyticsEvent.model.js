@@ -16,6 +16,10 @@ const analyticsEventSchema = new mongoose.Schema(
         "premium_button_click",
         "cookie_accept",
         "cookie_reject",
+        "ai_chat_started",
+        "ai_resolved",
+        "ai_escalated",
+        "ai_dropoff",
       ],
     },
 
@@ -49,7 +53,7 @@ analyticsEventSchema.index({ deviceType: 1, createdAt: -1 });
 // Auto delete after 90 days
 analyticsEventSchema.index(
   { createdAt: 1 },
-  { expireAfterSeconds: 90 * 24 * 60 * 60 }
+  { expireAfterSeconds: 30 * 24 * 60 * 60 }
 );
 
 const AnalyticsEvent = mongoose.model(

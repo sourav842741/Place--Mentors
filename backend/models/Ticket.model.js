@@ -92,6 +92,14 @@ const ticketSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    aiEscalated: {
+      type: Boolean,
+      default: false,
+    },
+    aiChatSummary: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

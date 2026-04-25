@@ -41,6 +41,7 @@ import voiceRouter from "./routes/voice.route.js";
 import certificateRouter from "./routes/certificate.routes.js";
 import predictionRoutes from "./routes/prediction.routes.js";
 import ticketRouter from "./routes/ticket.routes.js";
+import supportRouter from "./routes/support.routes.js";
 
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
@@ -110,6 +111,7 @@ app.use("/api/voice", voiceRouter);
 app.use("/api/certificates", certificateRouter);
 app.use("/api/prediction", predictionRoutes);
 app.use("/api/tickets", ticketRouter);
+app.use("/api/support", supportRouter);
 
 // ================= SOCKET EVENTS =================
 let onlineUsers = 0;

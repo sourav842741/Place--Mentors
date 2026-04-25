@@ -23,6 +23,7 @@ import {
   ArrowDownUp,
   BarChart3,
   Reply,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -362,6 +363,15 @@ export default function AdminTickets() {
                           </span>
                           <TicketStatusBadge status={ticket.status} />
                           <TicketPriorityBadge priority={ticket.priority} />
+                          {ticket.aiEscalated && (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300"
+                            >
+                              <Bot className="w-3 h-3 mr-1" />
+                              AI Escalated
+                            </Badge>
+                          )}
                           {ticket.isReopened && (
                             <Badge
                               variant="outline"

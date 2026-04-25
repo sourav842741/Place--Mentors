@@ -17,7 +17,7 @@ import {
    HELPERS
 ===================================================== */
 
-const generateTicketId = async () => {
+export const generateTicketId = async () => {
   const prefix = "PM";
   let attempts = 0;
   const maxAttempts = 10;

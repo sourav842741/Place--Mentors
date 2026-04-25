@@ -3,39 +3,46 @@ import axios from "axios";
 export const askAi = async (messages) => {
   try {
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      console.error(" Messages invalid");
-      return ""; 
+      throw new Error("Messages invalid");
+    }
+
+    const apiKey = process.env.OPENROUTER_API_KEY;
+
+    if (!apiKey) {
+      throw new Error("OPENROUTER_API_KEY missing");
     }
 
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
         model: "openai/gpt-4o-mini",
-        messages: messages,
+        messages,
+        temperature: 0.7,
+        max_tokens: 500
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
+          "HTTP-Referer": "http://localhost:5173",
+          "X-Title": "PlaceMentor Support AI"
         },
+        timeout: 30000
       }
     );
 
-    const content = response?.data?.choices?.[0]?.message?.content;
+    const content = response?.data?.choices?.[0]?.message?.content?.trim();
 
-    if (!content || !content.trim()) {
-      console.error(" Empty AI response");
-      return ""; 
+    if (!content) {
+      throw new Error("Empty AI response");
     }
 
     return content;
-  } catch (error) {
-    console.error(
-      " OpenRouter Error:",
-      error.response?.data || error.message
-    );
 
-    return ""; 
+  } catch (error) {
+    console.error("OpenRouter Error:");
+    console.error(error.response?.data || error.message);
+    return null;
   }
 };
 

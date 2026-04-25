@@ -9,6 +9,8 @@ import {
   MessageSquare,
   ChevronLeft,
 } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function InterviewExperienceComingSoon() {
   const navigate = useNavigate();
@@ -20,7 +22,9 @@ export default function InterviewExperienceComingSoon() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300">
+    <>
+    <Navbar/>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300 lg:ml-64 mt-8">
       
       <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
 
@@ -149,5 +153,7 @@ export default function InterviewExperienceComingSoon() {
         </p>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
