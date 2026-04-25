@@ -25,18 +25,15 @@ import {
   verifyRecoveryCode,
   generateDeviceId,
 } from "../utils/twoFactor.js";
+import {
+  validateEmail,
+  validatePassword,
+  validateSkills,
+  generateOTP,
+  sanitizeUser,
+} from "../utils/authValidators.js";
 
-// ================= HELPERS =================
-const sanitizeUser = (user) => {
-  const obj = user.toObject();
-  delete obj.password;
-  delete obj.twoFactorSecret;
-  delete obj.twoFactorTempSecret;
-  delete obj.twoFactorRecoveryCodes;
-  delete obj.trustedDevices;
-  return obj;
-};
-
+// ================= COOKIE OPTIONS =================
 const cookieOptions = {
   httpOnly: true,
   secure: true,
@@ -44,14 +41,6 @@ const cookieOptions = {
   path: "/",
   maxAge: 10 * 24 * 60 * 60 * 1000,
 };
-
-const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validatePassword = (password) => password && password.length >= 6;
-const validateSkills = (skills) =>
-  Array.isArray(skills) &&
-  skills.length > 0 &&
-  skills.every((skill) => skill && skill.trim().length > 0);
-const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 const handleImageUploads = async (req) => {
   let avatarUrl = "";
