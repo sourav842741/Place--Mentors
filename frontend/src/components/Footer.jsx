@@ -12,7 +12,7 @@ const Footer = () => {
         {/*  Logo + About */}
         <div>
           <h2 className="text-xl font-bold text-indigo-600">
-            Practice Mentor
+            Place Mentor
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 transition-colors">
             AI-powered placement preparation platform.
@@ -64,7 +64,7 @@ const Footer = () => {
 
       {/*  Bottom */}
       <div className="border-t py-4 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} Practice Mentor. All rights reserved.
+        © {new Date().getFullYear()} Place Mentor. All rights reserved.
       </div>
     </footer>
   );
