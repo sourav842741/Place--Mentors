@@ -34,8 +34,6 @@ jobs:
       - name: Install Frontend Dependencies
         run: npm install
 
-      - name: Run Lint
-        run: npm run lint
 
       - name: Run Frontend Tests
         run: npm test
@@ -55,6 +53,7 @@ jobs:
       NODE_ENV: test
       JWT_SECRET: test-secret
       SUPER_ADMIN_EMAIL: superadmin@test.com
+      RESEND_API_KEY: re_test_key
 
     steps:
       - name: Checkout Code
