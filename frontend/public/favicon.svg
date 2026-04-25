@@ -1,18 +1,29 @@
-<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6366f1"></stop>
-      <stop offset="100%" stop-color="#22c55e"></stop>
+    <linearGradient id="g1" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed"></stop>
+      <stop offset="50%" stop-color="#2563eb"></stop>
+      <stop offset="100%" stop-color="#22d3ee"></stop>
+    </linearGradient>
+
+    <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4f46e5"></stop>
+      <stop offset="100%" stop-color="#22d3ee"></stop>
     </linearGradient>
   </defs>
 
-  <circle cx="50" cy="50" r="45" fill="url(#grad2)"></circle>
+  <!-- Background -->
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="#050816"></rect>
 
-  <!-- Lightning -->
-  <polygon points="50,20 40,50 55,50 45,80 70,40 55,40" fill="white"></polygon>
+  <!-- Stylized P -->
+  <path d="M20 50V18H37C46 18 50 23 50 30C50 38 45 42 37 42H28V50H20ZM28 35H36C40 35 42 33 42 30C42 27 40 25 36 25H28V35Z" fill="url(#g1)"></path>
 
-  <!-- PM -->
-  <text x="50%" y="92%" text-anchor="middle" fill="white" font-size="16" font-weight="bold">
-    PM
-  </text>
+  <!-- Growth bars -->
+  <rect x="26" y="42" width="4" height="8" rx="1" fill="url(#g2)"></rect>
+  <rect x="33" y="38" width="4" height="12" rx="1" fill="url(#g2)"></rect>
+  <rect x="40" y="33" width="4" height="17" rx="1" fill="url(#g2)"></rect>
+
+  <!-- Arrow -->
+  <path d="M31 39L39 31L44 34L51 24" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+  <path d="M47 24H51V28" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
 </svg>
