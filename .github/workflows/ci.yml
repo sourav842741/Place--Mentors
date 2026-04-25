@@ -1,6 +1,5 @@
 name: Place Mentor CI
 
-
 on:
   push:
     branches: [main, master]
@@ -34,7 +33,6 @@ jobs:
       - name: Install Frontend Dependencies
         run: npm install
 
-
       - name: Run Frontend Tests
         run: npm test
 
@@ -54,6 +52,8 @@ jobs:
       JWT_SECRET: test-secret
       SUPER_ADMIN_EMAIL: superadmin@test.com
       RESEND_API_KEY: re_test_key
+      RAZORPAY_KEY_ID: test_key
+      RAZORPAY_KEY_SECRET: test_secret
 
     steps:
       - name: Checkout Code
