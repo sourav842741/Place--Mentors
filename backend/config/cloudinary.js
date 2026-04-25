@@ -69,4 +69,5 @@ export const deleteFromCloudinary = async (
   }
 };
 
+
 export default uploadOnCloudinary;
