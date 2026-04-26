@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+import architectureSvg from "../../assets/diagram/architecture-design.svg";
+import architecturePng from "../../assets/diagram/architecture-design.png";
+
+import erSvg from "../../assets/diagram/er-diagram.svg";
+import erPng from "../../assets/diagram/er-diagram.png";
+
+import flowSvg from "../../assets/diagram/flow-chart-pm.svg";
+import flowPng from "../../assets/diagram/flow-chart-pm.png";
 import {
   X,
   Layers,
@@ -28,24 +37,24 @@ const diagrams = [
     id: "architecture",
     title: "Architecture Diagram",
     icon: LayoutTemplate,
-    svg: "/src/assets/diagram/Archictecture-design.svg",
-    png: "/src/assets/diagram/Architecture-design.png",
+    svg: architectureSvg,
+    png: architecturePng,
     accent: "from-emerald-500 to-teal-600",
   },
   {
     id: "er",
     title: "ER Diagram",
     icon: Database,
-    svg: "/src/assets/diagram/E-R diagram.svg",
-    png: "/src/assets/diagram/E-R diagram.png",
+    svg: erSvg,
+    png: erPng,
     accent: "from-violet-500 to-purple-600",
   },
   {
     id: "flowchart",
     title: "Flowchart Diagram",
     icon: GitBranch,
-    svg: "/src/assets/diagram/flow-chart-PM.svg",
-    png: "/src/assets/diagram/Flow-chart PM.png",
+    svg: flowSvg,
+    png: flowPng,
     accent: "from-amber-500 to-orange-600",
   },
 ];
@@ -472,12 +481,16 @@ export default function DiagramViewer({ isOpen, onClose }) {
                       {/* Scrollable Canvas */}
                       <div
                         className="min-w-full min-h-full flex items-start justify-center p-8"
-                        onWheel={(e) => {
+                        onWheelCapture={(e) => {
                           e.preventDefault();
+
                           if (Math.abs(e.deltaY) < 5) return;
 
-                          if (e.deltaY < 0) handleZoomIn();
-                          else handleZoomOut();
+                          if (e.deltaY < 0) {
+                            handleZoomIn();
+                          } else {
+                            handleZoomOut();
+                          }
                         }}
                       >
                         <img
