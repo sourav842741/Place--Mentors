@@ -5,7 +5,6 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * FULL STRUCTURED FALLBACK (15 QUESTIONS)
- * 5 aptitude + 5 reasoning + 5 verbal
  */
 const FULL_FALLBACK_QUESTIONS = [
   {
@@ -149,11 +148,26 @@ Each question must contain:
 - category
 - difficulty
 
-Return ONLY JSON:
+Return ONLY raw JSON.
+No markdown.
+
 {
   "questions": [...]
 }
 `;
+
+const isValidQuestion = (q) => {
+  return (
+    q &&
+    q.question &&
+    Array.isArray(q.options) &&
+    q.options.length === 4 &&
+    q.answer &&
+    q.explanation &&
+    q.category &&
+    q.difficulty
+  );
+};
 
 export const getOrCreateTodayPotd = async () => {
   console.log(" [POTD-SVC] Weekly check...");
@@ -161,7 +175,6 @@ export const getOrCreateTodayPotd = async () => {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - WEEK_MS);
 
-  //  Reuse last POTD within 7 days
   let potd = await Potd.findOne({
     createdAt: { $gte: sevenDaysAgo },
   }).sort({ createdAt: -1 });
@@ -181,7 +194,7 @@ export const getOrCreateTodayPotd = async () => {
   try {
     let questions = [];
 
-    //  AI try 3 times
+    // AI try 3 times
     for (let i = 0; i < 3; i++) {
       const aiResponse = await askAi([
         { role: "user", content: POTD_PROMPT },
@@ -189,48 +202,56 @@ export const getOrCreateTodayPotd = async () => {
 
       const data = extractJSON(aiResponse);
 
-      if (data?.questions?.length === 15) {
-        questions = data.questions;
+      const validQuestions = (data?.questions || []).filter(isValidQuestion);
+
+      if (validQuestions.length >= 8) {
+        questions = validQuestions;
         break;
       }
 
-      console.log(`[POTD-SVC] Retry ${i + 1}`);
+      console.log(
+        `[POTD-SVC] Retry ${i + 1}: received ${validQuestions.length}`
+      );
     }
 
-    //  Partial AI fill
-    if (questions.length < 15 && questions.length > 0) {
+    // Fill remaining from AI
+    if (questions.length > 0 && questions.length < 15) {
       try {
         const extraRes = await askAi([
           {
             role: "user",
             content: `Generate ${
               15 - questions.length
-            } more MCQs in same JSON format only.`,
+            } more MCQs in same raw JSON format only.`,
           },
         ]);
 
         const extraData = extractJSON(extraRes);
 
-        questions = [
-          ...questions,
-          ...(extraData?.questions || []),
-        ];
-      } catch (error) {
-        console.log(
-          " [POTD-SVC] Extra AI fill failed"
+        const extraQuestions = (extraData?.questions || []).filter(
+          isValidQuestion
         );
+
+        questions = [...questions, ...extraQuestions];
+      } catch {
+        console.log(" [POTD-SVC] Extra AI fill failed");
       }
     }
 
-    //  Final fallback
+    // Final fallback fill to exactly 15
     if (questions.length < 15) {
-      console.log(" [POTD-SVC] Using fallback set");
-      questions = FULL_FALLBACK_QUESTIONS;
+      console.log(" [POTD-SVC] Using fallback fill");
+
+      const needed = 15 - questions.length;
+
+      questions = [
+        ...questions,
+        ...FULL_FALLBACK_QUESTIONS.slice(0, needed),
+      ];
     }
 
     questions = questions.slice(0, 15);
 
-    //  Create new weekly record
     potd = await Potd.create({
       date: now.toISOString().split("T")[0],
       questions,
@@ -245,7 +266,7 @@ export const getOrCreateTodayPotd = async () => {
   }
 };
 
-//  Manual trigger = force fresh weekly POTD
+// Manual trigger
 export const generateTodayPotd = async () => {
   await Potd.deleteMany({});
   return await getOrCreateTodayPotd();

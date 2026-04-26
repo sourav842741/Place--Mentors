@@ -21,7 +21,11 @@ export const getAllTickets = (params = {}) => {
 };
 
 export const getTicketStats = () => api.get("/api/tickets/admin/stats");
-export const updateTicketStatus = (id, data) => api.patch(`/api/tickets/admin/${id}/status`, data);
+export const updateTicketStatus = (id, status) =>
+  api.patch(`/api/tickets/admin/${id}/status`, {
+    status,
+  });
+
 export const deleteTicket = (id) => api.delete(`/api/tickets/admin/${id}`);
 
 export default api;

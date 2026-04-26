@@ -1,6 +1,7 @@
 import React, {
   useState,
   useEffect,
+  useRef,
 } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -76,9 +77,13 @@ export default function AdminSettings() {
 
   /* =========================
      LOAD SETTINGS INTO FORM
+     (one-time only)
   ========================= */
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
-    if (settings) {
+    if (settings && !hasInitialized.current) {
+      hasInitialized.current = true;
       setFormData((prev) => ({
         ...prev,
         ...settings,
@@ -95,7 +100,15 @@ export default function AdminSettings() {
   ========================= */
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateSettings(formData);
+    // Strip MongoDB metadata before sending
+    const {
+      _id,
+      __v,
+      createdAt,
+      updatedAt,
+      ...cleanData
+    } = formData;
+    updateSettings(cleanData);
   };
 
   /* =========================
@@ -555,3 +568,4 @@ export default function AdminSettings() {
     </div>
   );
 }
+

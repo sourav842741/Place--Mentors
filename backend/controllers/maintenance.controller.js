@@ -127,28 +127,69 @@ export const listQuestions = asyncHandler(async (req, res) => {
 // @desc    Add new question
 // @route   POST /api/maintenance/add
 export const addQuestion = asyncHandler(async (req, res) => {
-  const question = await MaintenanceQuestion.create(req.body);
-  
+  const { type, question, answer, active, tags, difficulty } = req.body;
+
+  if (!type || !question) {
+    throw new ApiError(400, "Type and question are required");
+  }
+
+  const validTypes = ['hr', 'aptitude', 'coding', 'vocab', 'myth', 'shortcut', 'quote'];
+  if (!validTypes.includes(type)) {
+    throw new ApiError(400, "Invalid question type");
+  }
+
+  const created = await MaintenanceQuestion.create({
+    type,
+    question: String(question).trim(),
+    answer: answer ? String(answer).trim() : "",
+    active: typeof active === "boolean" ? active : true,
+    tags: Array.isArray(tags) ? tags.filter(t => typeof t === "string").map(t => t.trim()) : [],
+    difficulty: ["easy", "medium", "hard"].includes(difficulty) ? difficulty : "medium",
+  });
+
   res.status(201).json(
-    new ApiResponse(201, question, 'Question added successfully')
+    new ApiResponse(201, created, 'Question added successfully')
   );
 });
 
 // @desc    Update question
 // @route   PUT /api/maintenance/:id
 export const updateQuestion = asyncHandler(async (req, res) => {
-  const question = await MaintenanceQuestion.findByIdAndUpdate(
+  const { type, question, answer, active, tags, difficulty } = req.body;
+  const updateData = {};
+
+  if (type !== undefined) {
+    const validTypes = ['hr', 'aptitude', 'coding', 'vocab', 'myth', 'shortcut', 'quote'];
+    if (!validTypes.includes(type)) {
+      throw new ApiError(400, "Invalid question type");
+    }
+    updateData.type = type;
+  }
+  if (question !== undefined) updateData.question = String(question).trim();
+  if (answer !== undefined) updateData.answer = String(answer).trim();
+  if (active !== undefined) updateData.active = Boolean(active);
+  if (tags !== undefined) {
+    updateData.tags = Array.isArray(tags) ? tags.filter(t => typeof t === "string").map(t => t.trim()) : [];
+  }
+  if (difficulty !== undefined) {
+    if (!["easy", "medium", "hard"].includes(difficulty)) {
+      throw new ApiError(400, "Invalid difficulty");
+    }
+    updateData.difficulty = difficulty;
+  }
+
+  const updated = await MaintenanceQuestion.findByIdAndUpdate(
     req.params.id,
-    req.body,
+    { $set: updateData },
     { new: true, runValidators: true }
   );
 
-  if (!question) {
+  if (!updated) {
     throw new ApiError(404, 'Question not found');
   }
 
   res.status(200).json(
-    new ApiResponse(200, question, 'Question updated')
+    new ApiResponse(200, updated, 'Question updated')
   );
 });
 
@@ -165,4 +206,3 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
     new ApiResponse(200, null, 'Question deleted')
   );
 });
-

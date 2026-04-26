@@ -59,6 +59,20 @@ export const updateSettings = asyncHandler(async (req, res) => {
 
   await settings.save();
 
+  /* =========================
+     REAL-TIME BROADCAST
+  ========================= */
+  if (req.io) {
+    req.io.emit("maintenance_updated", {
+      maintenanceMode: settings.maintenanceMode,
+      maintenanceTitle: settings.maintenanceTitle,
+      maintenanceMessage: settings.maintenanceMessage,
+      maintenanceImage: settings.maintenanceImage,
+      maintenanceAllowAdminAccess: settings.maintenanceAllowAdminAccess,
+      updatedAt: settings.updatedAt,
+    });
+  }
+
   res.status(200).json(
     new ApiResponse(200, settings, "Settings updated successfully")
   );

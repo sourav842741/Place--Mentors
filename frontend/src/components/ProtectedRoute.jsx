@@ -8,5 +8,14 @@ export default function ProtectedRoute() {
     return <div className="text-white p-10">Loading...</div>;
   }
 
-  return user ? <Outlet /> : <Navigate to="/login" />;
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // Banned users cannot access protected routes
+  if (user?.isBanned) {
+    return <Navigate to="/login" />;
+  }
+
+  return <Outlet />;
 }

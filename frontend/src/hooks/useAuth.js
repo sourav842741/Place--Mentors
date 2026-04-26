@@ -6,6 +6,7 @@ import { auth, provider } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { socket } from "../socket";
+import { toast } from "sonner";
 
 const getDeviceId = () => {
   let deviceId = localStorage.getItem("pm_device_id");
@@ -47,7 +48,14 @@ const useAuth = () => {
         localStorage.setItem("pm_device_id", data.deviceId);
       }
 
-      dispatch(setUserData(data));
+     dispatch(setUserData(data));
+
+if (data?._id) {
+  socket.emit("join", data._id);
+  console.log("Socket joined room after login:", data._id);
+}
+
+
 
       return res.data;
     } catch (err) {
@@ -77,6 +85,9 @@ const useAuth = () => {
       }
 
       dispatch(setUserData(data));
+      if (data?._id) {
+  socket.emit("join", data._id);
+}
 
       return { success: true, data };
     } catch (err) {
@@ -143,42 +154,62 @@ const useAuth = () => {
   };
 
   // ================= LOGOUT =================
-  const logout = async () => {
-    try {
-      await api.get("/api/auth/signout");
-    } catch (err) {
-      console.error("Logout Error:", err);
-    } finally {
-      dispatch(logoutUser());
-      navigate("/");
-    }
-  };
+ const logout = async () => {
+  try {
+    await api.get("/api/auth/signout");
+  } catch (err) {
+    console.error("Logout Error:", err);
+  } finally {
+    dispatch(logoutUser());
+    navigate("/");
+  }
+};
 
   // ================= GET CURRENT USER =================
-  const getCurrentUser = useCallback(async () => {
-    try {
-      dispatch(setLoading(true));
+const getCurrentUser = useCallback(async () => {
+  try {
+    dispatch(setLoading(true));
 
-      const res = await api.get("/api/auth/me", {
-        withCredentials: true,
-      });
+    const res = await api.get("/api/auth/me", {
+      withCredentials: true,
+    });
 
-      const userData = res.data?.data || res.data;
+    const userData = res.data?.data || res.data;
 
-      dispatch(setUserData(userData));
+    dispatch(setUserData(userData));
 
-      // Join socket room
-      if (userData?._id) {
-        socket.emit("join", userData._id);
-        console.log("Socket joined room for user", userData._id);
-      }
-    } catch (err) {
-      console.error(err);
-      dispatch(logoutUser());
-    } finally {
-      dispatch(setLoading(false));
+    if (userData?._id) {
+      socket.emit("join", userData._id);
+      console.log("Socket joined room for user", userData._id);
     }
-  }, [dispatch]);
+
+  } catch (err) {
+    console.error(err);
+
+    if (err.response?.status === 403) {
+      const msg =
+        err.response?.data?.message ||
+        "Your account has been suspended.";
+
+      if (
+        msg.toLowerCase().includes("suspended") ||
+        msg.toLowerCase().includes("banned")
+      ) {
+        toast.error(msg, { duration: 8000 });
+      }
+    }
+
+    if (
+      err.response?.status === 401 ||
+      err.response?.status === 403
+    ) {
+      dispatch(logoutUser());
+    }
+
+  } finally {
+    dispatch(setLoading(false));
+  }
+}, [dispatch]);
 
   // ================= SIGNUP SEND OTP =================
   const sendSignupOtp = async (data) => {
@@ -328,6 +359,9 @@ const useAuth = () => {
     // ✅ Normal Success Login
     if (data?.success) {
       dispatch(setUserData(data.user));
+      if (data.user?._id) {
+  socket.emit("join", data.user._id);
+      }
       return data;
     }
 

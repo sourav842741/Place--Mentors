@@ -26,9 +26,6 @@ import {
   generateDeviceId,
 } from "../utils/twoFactor.js";
 import {
-  validateEmail,
-  validatePassword,
-  validateSkills,
   generateOTP,
   sanitizeUser,
 } from "../utils/authValidators.js";
@@ -48,9 +45,6 @@ const handleImageUploads = async (req) => {
 
   if (req.files?.avatar?.[0]?.path) {
     const avatar = await uploadOnCloudinary(req.files.avatar[0].path);
-
-    console.log("Avatar response:", avatar);
-
     if (avatar?.secure_url || avatar?.url) {
       avatarUrl = avatar.secure_url || avatar.url;
     }
@@ -58,9 +52,6 @@ const handleImageUploads = async (req) => {
 
   if (req.files?.coverImage?.[0]?.path) {
     const cover = await uploadOnCloudinary(req.files.coverImage[0].path);
-
-    console.log("Cover response:", cover);
-
     if (cover?.secure_url || cover?.url) {
       coverUrl = cover.secure_url || cover.url;
     }
@@ -72,25 +63,6 @@ const handleImageUploads = async (req) => {
 // ================= SEND SIGNUP OTP =================
 export const sendSignupOtp = asyncHandler(async (req, res) => {
   const { fullName, email, password, skills } = req.body;
-
-  if (!fullName?.trim() || !email || !password) {
-    throw new ApiError(400, "All fields are required");
-  }
-
-  if (!validateEmail(email)) {
-    throw new ApiError(400, "Invalid email format");
-  }
-
-  if (!validatePassword(password)) {
-    throw new ApiError(400, "Password must be at least 6 characters");
-  }
-
-  if (!validateSkills(skills)) {
-    throw new ApiError(
-      400,
-      "Skills must be non-empty array with valid entries",
-    );
-  }
 
   const existingUser = await User.findOne({
     email: email.toLowerCase().trim(),
@@ -115,13 +87,10 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
   );
 
   try {
-  await sendSignupOtpMail(email, otp);
-} catch (error) {
-  throw new ApiError(
-    500,
-    "Failed to send signup OTP"
-  );
-}
+    await sendSignupOtpMail(email, otp);
+  } catch (error) {
+    throw new ApiError(500, "Failed to send signup OTP");
+  }
 
   return res.status(200).json(new ApiResponse(200, null, "OTP sent to email"));
 });
@@ -142,7 +111,7 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid or expired OTP");
   }
 
-  const hashedPassword = await bcrypt.hash(tempUser.password, 12); // stronger salt
+  const hashedPassword = await bcrypt.hash(tempUser.password, 12);
 
   const { avatarUrl, coverUrl } = await handleImageUploads(req);
 
@@ -154,41 +123,28 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
     avatar: avatarUrl,
     coverImage: coverUrl,
     isEmailVerified: true,
-
     streakCount: 1,
     lastLoginDate: new Date(),
-
     xp: 0,
     level: 1,
   });
 
-  //  Give signup reward
-  addXP(user, 10); //
-
-  //  check badges
+  addXP(user, 10);
   checkAndAssignBadges(user);
-
   await user.save();
 
-  // BAN CHECK - Should never happen on signup but safety
   if (user.isBanned) {
     throw new ApiError(403, "Account issue. Contact support.");
   }
 
- await sendWelcomeMail(
-  user.email,
-  user.fullName
-);
-
+  await sendWelcomeMail(user.email, user.fullName);
   await TempUser.deleteOne({ email: tempUser.email });
 
   user.streakCount = 1;
-user.lastLoginDate = new Date();
-
-await user.save();
+  user.lastLoginDate = new Date();
+  await user.save();
 
   const token = await genToken(user._id);
-
   res.cookie("token", token, cookieOptions);
 
   const userData = {
@@ -198,20 +154,11 @@ await user.save();
   return res
     .status(201)
     .json(new ApiResponse(201, userData, "Signup successful"));
-
 });
 
 // ================= SIGNIN =================
 export const signIn = asyncHandler(async (req, res) => {
   const { email, password, deviceId } = req.body;
-
-  if (!email || !password) {
-    throw new ApiError(400, "Email and password are required");
-  }
-
-  if (!validateEmail(email)) {
-    throw new ApiError(400, "Invalid email format");
-  }
 
   const user = await User.findOne({ email: email.toLowerCase().trim() });
 
@@ -225,7 +172,6 @@ export const signIn = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid credentials");
   }
 
-  // BAN CHECK - Block banned users at login
   if (user.isBanned) {
     throw new ApiError(
       403,
@@ -237,16 +183,13 @@ export const signIn = asyncHandler(async (req, res) => {
 
   const isPrivileged = isPrivilegedRole(user.role) || user.email === process.env.SUPER_ADMIN_EMAIL;
 
-  // 2FA CHECK for privileged accounts
   if (isPrivileged && user.twoFactorEnabled) {
-    // Check trusted device
     const now = new Date();
     const trusted = user.trustedDevices?.find(
       (d) => d.deviceId === deviceId && d.expiresAt > now
     );
 
     if (!trusted) {
-      // Return temp token for 2FA verification
       const tempAuthToken = genTempToken(user._id);
       return res.status(200).json(
         new ApiResponse(200, {
@@ -259,7 +202,6 @@ export const signIn = asyncHandler(async (req, res) => {
     }
   }
 
-  // Show warning banner if privileged but 2FA not enabled (soft enforcement)
   const twoFactorWarning = isPrivileged && !user.twoFactorEnabled;
 
   await handleLoginStreak(user);
@@ -272,7 +214,6 @@ export const signIn = asyncHandler(async (req, res) => {
   await user.save();
 
   const token = genToken(user._id);
-
   res.cookie("token", token, cookieOptions);
 
   const userData = {
@@ -295,13 +236,6 @@ export const signIn = asyncHandler(async (req, res) => {
 export const updateSkills = asyncHandler(async (req, res) => {
   const { skills } = req.body;
 
-  if (!validateSkills(skills)) {
-    throw new ApiError(
-      400,
-      "Skills must be non-empty array with valid entries",
-    );
-  }
-
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { $set: { skills } },
@@ -319,12 +253,13 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   const updateData = {};
 
-  if (fullName) updateData.fullName = fullName.trim();
+  if (fullName) {
+    updateData.fullName = fullName.trim();
+  }
 
   if (skills) {
     let parsedSkills = skills;
 
-    //  CASE 1: string → parse
     if (typeof skills === "string") {
       try {
         parsedSkills = JSON.parse(skills);
@@ -333,38 +268,25 @@ export const updateProfile = asyncHandler(async (req, res) => {
       }
     }
 
-    //  CASE 2: ensure array
     if (!Array.isArray(parsedSkills)) {
       parsedSkills = [parsedSkills];
-    }
-
-    if (!validateSkills(parsedSkills)) {
-      throw new ApiError(400, "Skills must be valid");
     }
 
     updateData.skills = parsedSkills;
   }
 
-  // ================= AVATAR =================
   if (req.files?.avatar?.[0]?.path) {
     const avatar = await uploadOnCloudinary(req.files.avatar[0].path);
-
     if (avatar?.secure_url) {
-      //  delete old image
       await deleteFromCloudinary(user.avatar);
-
       updateData.avatar = avatar.secure_url;
     }
   }
 
-  // ================= COVER IMAGE =================
   if (req.files?.coverImage?.[0]?.path) {
     const cover = await uploadOnCloudinary(req.files.coverImage[0].path);
-
     if (cover?.secure_url) {
-      //  delete old image
       await deleteFromCloudinary(user.coverImage);
-
       updateData.coverImage = cover.secure_url;
     }
   }
@@ -382,7 +304,6 @@ export const updateProfile = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, userData, "Profile updated"));
-
 });
 
 // ================= SIGNOUT =================
@@ -409,19 +330,12 @@ export const signOut = asyncHandler(async (req, res) => {
 export const googleAuth = asyncHandler(async (req, res) => {
   const { fullName, email, avatar, deviceId } = req.body;
 
-  /* ================= VALIDATION ================= */
-  if (!email || !validateEmail(email)) {
-    throw new ApiError(400, "Valid email is required");
-  }
-
-  /* ================= FIND USER ================= */
   let user = await User.findOne({
     email: email.toLowerCase().trim(),
   });
 
   let isNewUser = false;
 
-  /* ================= BAN CHECK (EXISTING USER) ================= */
   if (user && user.isBanned) {
     throw new ApiError(
       403,
@@ -431,7 +345,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
     );
   }
 
-  /* ================= CREATE NEW USER ================= */
   if (!user) {
     isNewUser = true;
 
@@ -445,22 +358,14 @@ export const googleAuth = asyncHandler(async (req, res) => {
     );
 
     user = await User.create({
-      fullName:
-        fullName?.trim() || "Google User",
-
+      fullName: fullName?.trim() || "Google User",
       email: email.toLowerCase().trim(),
-
       password: hashedPassword,
-
       avatar: avatar || "",
-
       skills: ["Beginner"],
-
       isEmailVerified: true,
-
       streakCount: 1,
       lastLoginDate: new Date(),
-
       credits: 100,
     });
 
@@ -470,7 +375,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
     );
   }
 
-  /* ================= SAFETY CHECK ================= */
   if (user.isBanned) {
     throw new ApiError(
       403,
@@ -482,7 +386,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   const isPrivileged = isPrivilegedRole(user.role) || user.email === process.env.SUPER_ADMIN_EMAIL;
 
-  // 2FA CHECK for privileged accounts on Google login
   if (!isNewUser && isPrivileged && user.twoFactorEnabled) {
     const now = new Date();
     const trusted = user.trustedDevices?.find(
@@ -501,14 +404,12 @@ export const googleAuth = asyncHandler(async (req, res) => {
     }
   }
 
-  /* ================= XP + STREAK ================= */
   if (isNewUser) {
     addXP(user, 10);
   } else {
     await handleLoginStreak(user);
   }
 
-  /* ================= BADGES ================= */
   checkAndAssignBadges(user);
 
   if (isPrivileged) {
@@ -517,14 +418,12 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  /* ================= TOKEN ================= */
   const token = genToken(user._id);
 
   res.cookie("token", token, cookieOptions);
 
   const twoFactorWarning = isPrivileged && !user.twoFactorEnabled;
 
-  /* ================= RESPONSE ================= */
   const userData = {
     ...sanitizeUser(user),
     xp: user.xp,
@@ -551,10 +450,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
 // ================= PASSWORD RESET OTP =================
 export const sendResetOtp = asyncHandler(async (req, res) => {
   const { email } = req.body;
-
-  if (!email || !validateEmail(email)) {
-    throw new ApiError(400, "Valid email is required");
-  }
 
   const user = await User.findOne({ email: email.toLowerCase().trim() });
 
@@ -586,15 +481,6 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
 export const resetPassword = asyncHandler(async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
-  // ================= VALIDATION =================
-  if (!email || !otp || !newPassword) {
-    throw new ApiError(400, "All fields are required");
-  }
-
-  if (!validateEmail(email) || !validatePassword(newPassword)) {
-    throw new ApiError(400, "Invalid email or password format");
-  }
-
   const user = await User.findOne({
     email: email.toLowerCase().trim(),
   });
@@ -603,12 +489,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid or expired OTP");
   }
 
-  // ================= PASSWORD UPDATE =================
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
   user.password = hashedPassword;
 
-  // ================= OTP CLEANUP =================
   user.resetOtp = undefined;
   user.resetOtpExpires = undefined;
 
@@ -751,17 +635,14 @@ export const verifyTwoFactorLogin = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
-  // Try TOTP first
   let isValid = verifyTOTP(user.twoFactorSecret, token);
 
-  // Try recovery code if TOTP fails
   let usedRecoveryCode = false;
   if (!isValid && user.twoFactorRecoveryCodes?.length > 0) {
     const codeIndex = verifyRecoveryCode(token, user.twoFactorRecoveryCodes);
     if (codeIndex !== -1) {
       isValid = true;
       usedRecoveryCode = true;
-      // Remove used recovery code
       user.twoFactorRecoveryCodes.splice(codeIndex, 1);
     }
   }
@@ -770,13 +651,11 @@ export const verifyTwoFactorLogin = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid OTP or recovery code");
   }
 
-  // Handle trusted device
   let deviceId = null;
   if (rememberDevice) {
     deviceId = generateDeviceId();
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    // Clean expired devices
     user.trustedDevices = user.trustedDevices?.filter((d) => d.expiresAt > new Date()) || [];
 
     user.trustedDevices.push({

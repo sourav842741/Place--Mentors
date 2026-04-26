@@ -85,6 +85,7 @@ import AdminMaintenanceManager from "./pages/admin/AdminMaintenanceManager.jsx";
 import AdminSecurity from "./pages/admin/AdminSecurity";
 import Certificates from "./pages/Certificates.jsx";
 import CookieConsent from "./components/CookieConsent";
+import MaintenanceProductivityHub from "./pages/MaintenanceProductivityHub";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -97,7 +98,14 @@ function App() {
   /* SETTINGS */
   const { data: settingsData, isLoading: settingsLoading } = useSettings();
 
-  const maintenanceActive = settingsData?.data?.maintenanceMode;
+  /* REAL-TIME MAINTENANCE STATE */
+  const maintenanceRealtime = useSelector((state) => state.maintenance);
+
+  // Combine: real-time socket state takes priority, fallback to API data
+  const maintenanceActive =
+    maintenanceRealtime?.maintenanceMode !== null
+      ? maintenanceRealtime.maintenanceMode
+      : settingsData?.data?.maintenanceMode;
 
   const isAdminRoute = location.pathname.startsWith("/admin");
 
@@ -208,14 +216,19 @@ function App() {
 
   /* MAINTENANCE BLOCK
      ADMIN ROUTES ALWAYS ALLOWED */
-  if (
-    maintenanceActive &&
-    !isAdminRoute &&
-    user?.role !== "admin" &&
-    user?.role !== "superadmin"
-  ) {
-    return <MaintenancePage />;
-  }
+ const isMaintenanceHub = location.pathname === "/maintenance-hub";
+  const isSupportRoute = location.pathname.startsWith("/support");
+
+if (
+  maintenanceActive &&
+  !isAdminRoute &&
+  !isMaintenanceHub &&
+  !isSupportRoute &&
+  user?.role !== "admin" &&
+  user?.role !== "superadmin"
+) {
+  return <MaintenancePage />;
+}
 
   return (
     <>
@@ -301,10 +314,8 @@ function App() {
           <Route path="/voice-report/:id" element={<CallReport />} />
           <Route path="/support" element={<SupportPage />} />
           <Route path="/support/ticket/:id" element={<TicketDetailPage />} />
-          <Route
-            path="/interview-experience"
-            element={<InterviewExperienceComingSoon />}
-          />
+          <Route path="/interview-experience" element={<InterviewExperienceComingSoon />} />
+          <Route path="/maintenance-hub" element={<MaintenanceProductivityHub />} />
         </Route>
 
         {/* SPECIAL */}

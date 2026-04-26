@@ -15,7 +15,7 @@ export default function useAdminSettings() {
      GET ADMIN SETTINGS
   =========================== */
   const {
-    data: settings,
+    data: response,
     isLoading,
     isError,
     error,
@@ -35,6 +35,7 @@ export default function useAdminSettings() {
     },
 
     staleTime: 30 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -97,7 +98,7 @@ export default function useAdminSettings() {
   =========================== */
   return {
     settings:
-      settings?.data || {},
+      response?.data ?? null,
 
     isLoading,
 
@@ -117,3 +118,4 @@ export default function useAdminSettings() {
       updateMutation.isPending,
   };
 }
+

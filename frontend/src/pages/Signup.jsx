@@ -233,9 +233,24 @@ export default function Signup() {
         {/* GOOGLE */}
         <button
           onClick={async () => {
-            const res = await googleLogin();
-            if (res.success) window.location.reload();
-          }}
+  const res = await googleLogin();
+
+  if (res.success) {
+    toast.success("Login successful");
+
+    navigate("/splash");
+  } else if (res.requiresTwoFactor) {
+    navigate("/verify-2fa", {
+      state: {
+        tempAuthToken: res.tempAuthToken,
+        role: res.role,
+        isSuperAdmin: res.isSuperAdmin,
+      },
+    });
+  } else {
+    toast.error(res.message || "Google login failed");
+  }
+}}
           className="w-full flex items-center justify-center gap-3
           bg-white dark:bg-gray-800
           border border-gray-300 dark:border-gray-700

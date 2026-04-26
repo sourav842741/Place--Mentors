@@ -239,34 +239,40 @@ Company-specific data:
 - Use real hiring processes if known.`;
 
   try {
-    const aiResponse = await generateAI(prompt);
+  const aiResponse = await generateAI(prompt);
 
-    //  safe parse
-    let companyData = safeParseJSON(aiResponse);
+  // Safe parse
+  let companyData = safeParseJSON(aiResponse);
 
-    if (!companyData) {
-      throw new Error("Invalid AI JSON");
-    }
-
-    //  validate
-    companyData = validateCompanyData(companyData, companyName);
-
-    return {
-      ...companyData,
-      name: companyName.toLowerCase().trim()
-    };
-
-  } catch (error) {
-    console.error('AI Company generation failed:', error.message);
-
-    return {
-      name: companyName.toLowerCase().trim(),
-      overview: { name: companyName },
-      hiring: { pattern: [], difficulty: 'Medium', importantPoints: [] },
-      salary: { average: 'N/A' },
-      preparation: { roadmap: 'Standard prep' },
-      strategy: { finalTips: [], mistakesToAvoid: [] },
-      aiFeatures: { resumeTips: 'Tailor to company' }
-    };
+  if (!companyData) {
+    throw new Error("Invalid AI JSON");
   }
+
+  // Validate + clean response
+  companyData = validateCompanyData(companyData, companyName);
+
+  return {
+    ...companyData,
+    name: companyName.toLowerCase().trim(),
+  };
+
+} catch (error) {
+  console.error(
+    "AI Company generation failed:",
+    error.response?.data || error.message
+  );
+
+  // Billing / quota issue
+  if (error.response?.status === 402) {
+    throw new Error("AI quota exceeded. Please recharge API credits.");
+  }
+
+  // Invalid JSON response
+  if (error.message === "Invalid AI JSON") {
+    throw new Error("AI returned invalid company data. Please try again.");
+  }
+
+  // Generic fallback
+  throw new Error("Unable to generate company data right now.");
+}
 };

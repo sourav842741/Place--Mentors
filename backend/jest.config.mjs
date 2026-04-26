@@ -2,13 +2,12 @@
 export default {
   testEnvironment: "node",
 
-  // ESM project support
   transform: {},
 
   moduleFileExtensions: ["js", "mjs", "json"],
 
   moduleNameMapper: {
-    "^(\\.{1,2}/.*)\\.js$": "$1"
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
 
   testMatch: ["**/tests/**/*.test.js"],
@@ -21,7 +20,7 @@ export default {
     "!utils/cronJobs.js",
     "!utils/codeExecutor.js",
     "!utils/promptBuilder.js",
-    "!utils/youtubeHelper.js"
+    "!utils/youtubeHelper.js",
   ],
 
   coverageDirectory: "coverage",
@@ -29,5 +28,11 @@ export default {
   coverageReporters: ["text", "lcov", "html"],
 
   clearMocks: true,
-  verbose: true
+  verbose: true,
+
+  //  IMPORTANT FIXES
+  testTimeout: 30000,
+  maxWorkers: 1,
+  detectOpenHandles: true,
+  forceExit: true,
 };

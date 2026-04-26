@@ -1,5 +1,4 @@
 import Settings from "../models/Settings.model.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 // Maintenance mode middleware
@@ -22,8 +21,13 @@ const maintenanceCheck = async (req, res, next) => {
     }
 
     if (settings?.maintenanceMode) {
-      // Check if user is admin (after auth middleware)
-      if (!req.user || req.user.role !== "admin") {
+      // Check if user is admin or superadmin (after auth middleware)
+      const isAdmin = req.user && (
+        req.user.role === "admin" || 
+        req.user.role === "superadmin" ||
+        req.user.email === process.env.SUPER_ADMIN_EMAIL
+      );
+      if (!isAdmin) {
         return res.status(503).json(
           new ApiResponse(503, null, "Site under maintenance", {
             maintenance: true,
@@ -42,4 +46,3 @@ const maintenanceCheck = async (req, res, next) => {
 };
 
 export default maintenanceCheck;
-

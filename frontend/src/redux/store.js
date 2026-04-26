@@ -19,6 +19,7 @@ import tasksSlice from "./tasksSlice";
 import aiCoachSlice from "./aiCoachSlice";
 import voiceSlice from "./voiceSlice";
 import ticketSlice from "./ticketSlice";
+import maintenanceSlice from "./maintenanceSlice";
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -45,9 +46,9 @@ const store = configureStore({
     aiCoach: aiCoachSlice,
     voice: voiceSlice,
     tickets: ticketSlice,
+    maintenance: maintenanceSlice,
   },
 
 });
 
 export default store;
-

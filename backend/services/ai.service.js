@@ -1,11 +1,14 @@
 import axios from "axios";
+import { withSafetyInstruction, filterSafeContent } from "../utils/contentSafety.js";
 
 export const generateAI = async (prompt) => {
   try {
+    const safePrompt = withSafetyInstruction(prompt);
+
     const res = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        contents: [{ parts: [{ text: prompt }] }]
+        contents: [{ parts: [{ text: safePrompt }] }]
       }
     );
 
@@ -14,21 +17,23 @@ export const generateAI = async (prompt) => {
     if (!text) throw new Error("Invalid Gemini response");
 
     const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const safeText = filterSafeContent(cleanText, "coach");
 
     try {
-      return JSON.parse(cleanText);
+      return JSON.parse(safeText);
     } catch {
-      return cleanText;
+      return safeText;
     }
 
   } catch (err) {
-    console.log("Gemini failed, fallback...");
-
     const fallback = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
         model: "openai/gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }]
+        messages: [
+          { role: "system", content: withSafetyInstruction("You are a helpful AI assistant.") },
+          { role: "user", content: prompt }
+        ]
       },
       {
         headers: {
@@ -38,16 +43,16 @@ export const generateAI = async (prompt) => {
     );
 
     const fallbackText = fallback.data.choices[0].message.content;
-
-    const cleanFallback = fallbackText
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+    const safeFallback = filterSafeContent(
+      fallbackText.replace(/```json/g, "").replace(/```/g, "").trim(),
+      "coach"
+    );
 
     try {
-      return JSON.parse(cleanFallback);
+      return JSON.parse(safeFallback);
     } catch {
-      return cleanFallback;
+      return safeFallback;
     }
   }
 };
+

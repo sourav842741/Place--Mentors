@@ -1,5 +1,7 @@
+import "./config/env.js";
 import express from "express";
-import dotenv from "dotenv";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
 import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -42,11 +44,11 @@ import certificateRouter from "./routes/certificate.routes.js";
 import predictionRoutes from "./routes/prediction.routes.js";
 import ticketRouter from "./routes/ticket.routes.js";
 import supportRouter from "./routes/support.routes.js";
+import setupSecurity from "./middlewares/security.js";
+import { attachSocketAuth } from "./middlewares/socketAuth.js";
 
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -57,10 +59,19 @@ const server = http.createServer(app);
 //  SOCKET.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: [
+      process.env.CLIENT_URL,
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ].filter(Boolean),
     credentials: true,
   },
+  transports: ["polling", "websocket"],
+  pingTimeout: 60000,
+  pingInterval: 25000,
 });
+
+attachSocketAuth(io);
 
 //  pass io to routes
 app.use((req, res, next) => {
@@ -68,7 +79,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// ================= MIDDLEWARE =================
+// ================= SECURITY MIDDLEWARE =================
+
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -76,7 +89,18 @@ app.use(
   }),
 );
 
-app.use(express.json());
+setupSecurity(app);
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
+app.use((req, res, next) => {
+  if (req.body) mongoSanitize.sanitize(req.body);
+  if (req.params) mongoSanitize.sanitize(req.params);
+  next();
+});
+app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 
 // ================= ROUTES =================
@@ -114,94 +138,109 @@ app.use("/api/tickets", ticketRouter);
 app.use("/api/support", supportRouter);
 
 // ================= SOCKET EVENTS =================
-let onlineUsers = 0;
-const connectedSockets = new Map();
+const connectedSockets = new Map(); // userId -> Set(socket.id)
 const activeBattles = new Map();
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-  onlineUsers++;
-  io.emit("online_users", onlineUsers);
-
   // FRIENDS EVENTS
   socket.on("friend_request_received", () => {
-    console.log("Friend request received event");
+    // Event handler
   });
 
   socket.on("friend_request_accepted", () => {
-    console.log("Friend request accepted event");
+    // Event handler
   });
 
   //  JOIN ROOM (user room + doubt room prefix + admin room if applicable)
   socket.on("join", async (userId) => {
-    const id = userId.toString();
+    try {
+      // Verify socket user matches requested userId
+      if (!socket.userId || socket.userId.toString() !== userId.toString()) {
+        socket.emit("error", "Unauthorized join attempt");
+        return;
+      }
 
-    socket.join(id);
-    socket.join(`doubt-${id}`);
+      const id = userId.toString();
+      socket.join(id);
+      socket.join(`doubt-${id}`);
 
-    connectedSockets.set(id, socket.id);
+      let socketSet = connectedSockets.get(id);
+      const wasOffline = !socketSet || socketSet.size === 0;
+      if (!socketSet) {
+        socketSet = new Set();
+        connectedSockets.set(id, socketSet);
+      }
+      socketSet.add(socket.id);
 
-    await User.findByIdAndUpdate(id, {
-      socketId: socket.id,
-      isOnline: true,
-    });
+      if (wasOffline) {
+        await User.findByIdAndUpdate(id, {
+          socketId: socket.id,
+          isOnline: true,
+        });
 
-    const user = await User.findById(id).select('-password');
-    if (!user) return;
+        const user = await User.findById(id).select('-password');
+        if (user) {
+          const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
+          if (isAdmin) {
+            socket.join("admins");
+          }
 
-    // Join admin room for ticket/admin real-time updates
-    const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
-    if (isAdmin) {
-      socket.join("admins");
-     
+          io.emit("admin:user:online", { 
+            _id: user._id,
+            isOnline: true,
+            lastSeen: user.lastSeen,
+            isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+          });
+        }
+      }
+
+      io.emit("online_users", connectedSockets.size);
+    } catch (error) {
+      // Silently handle error
     }
-
-    io.emit("admin:user:online", { 
-      _id: user._id,
-      isOnline: true,
-      lastSeen: user.lastSeen,
-      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
-    });
-    io.emit("online_users", onlineUsers);
   });
 
   // JOIN TICKET ROOM for real-time ticket updates
   socket.on("join_ticket", (ticketId) => {
-    if (ticketId) {
+    if (ticketId && mongoose.Types.ObjectId.isValid(ticketId)) {
       socket.join(`ticket-${ticketId}`);
-     
     }
   });
 
   // LEAVE TICKET ROOM
   socket.on("leave_ticket", (ticketId) => {
-    if (ticketId) {
+    if (ticketId && mongoose.Types.ObjectId.isValid(ticketId)) {
       socket.leave(`ticket-${ticketId}`);
-      
     }
   });
 
   //  CHAT
   socket.on("send_message", (data) => {
+    if (!data?.toUserId || !mongoose.Types.ObjectId.isValid(data.toUserId)) {
+      return;
+    }
+    // Verify sender is authenticated
+    if (!socket.userId) return;
     io.to(data.toUserId).emit("receive_message", data);
   });
 
-  //  NEW REPLY - emit to doubt room (handle reply.doubt or data.doubtId)
+  //  NEW REPLY - emit to doubt room
   socket.on("send_reply", (data) => {
-    const doubtId =
-      data.doubtId || (data.doubt && data.doubt._id) || data.doubt;
-    if (doubtId) {
-      io.to(`doubt-${doubtId}`).emit("new_reply", { doubtId });
-     
+    const doubtId = data?.doubtId || (data?.doubt && data.doubt._id) || data?.doubt;
+    if (doubtId && mongoose.Types.ObjectId.isValid(doubtId)) {
+      io.to(`doubt-${doubtId}`).emit("new_reply", {
+        doubtId,
+        reply: data?.reply || null,
+      });
     }
   });
 
   //  JOIN SPECIFIC DOUBT ROOM
   socket.on("join_doubt", (doubtId) => {
-    socket.join(`doubt-${doubtId}`);
+    if (doubtId && mongoose.Types.ObjectId.isValid(doubtId)) {
+      socket.join(`doubt-${doubtId}`);
+    }
   });
-
-  
 
   // ================= BATTLE EVENTS =================
   socket.on("challenge:accept", async (data) => {
@@ -212,6 +251,12 @@ io.on("connection", (socket) => {
         !mongoose.Types.ObjectId.isValid(challengedId)
       ) {
         socket.emit("battle:error", "Invalid user ID");
+        return;
+      }
+
+      // Verify socket user is the challenged user
+      if (!socket.userId || socket.userId.toString() !== challengedId.toString()) {
+        socket.emit("battle:error", "Unauthorized");
         return;
       }
 
@@ -355,7 +400,6 @@ io.on("connection", (socket) => {
 
       socket.emit("battle:started", { roomId });
     } catch (error) {
-      console.error("Battle start error:", error);
       socket.emit("battle:error", "Failed to start battle");
     }
   });
@@ -372,6 +416,12 @@ io.on("connection", (socket) => {
         return;
       }
 
+      // Verify socket user is the challenged user
+      if (!socket.userId || socket.userId.toString() !== challengedId.toString()) {
+        socket.emit("challenge:error", "Unauthorized");
+        return;
+      }
+
       const challengedUser = await User.findById(challengedId).select(
         "challenges socketId",
       );
@@ -380,7 +430,6 @@ io.on("connection", (socket) => {
       );
 
       if (!challengedUser || !challengerUser) {
-        console.log(" User not found");
         return;
       }
 
@@ -390,11 +439,10 @@ io.on("connection", (socket) => {
           (r) => r.toString() === challengerId,
         )
       ) {
-        console.log(" No pending challenge found");
         return;
       }
 
-      // Remove from BOTH users (mirror accept logic)
+      // Remove from BOTH users
       challengedUser.challenges.received =
         challengedUser.challenges.received.filter(
           (r) => r.toString() !== challengerId,
@@ -408,13 +456,15 @@ io.on("connection", (socket) => {
       await challengedUser.save();
       await challengerUser.save();
 
-      console.log(" Challenge removed from both users");
-
       // Get socket IDs and notify both
-      const challengerSocketId =
-        connectedSockets.get(challengerId) || challengerUser.socketId;
-      const challengedSocketId =
-        connectedSockets.get(challengedId) || challengedUser.socketId;
+      const challengerSocketSet = connectedSockets.get(challengerId);
+      const challengerSocketId = challengerSocketSet
+        ? challengerSocketSet.values().next().value
+        : challengerUser.socketId;
+      const challengedSocketSet = connectedSockets.get(challengedId);
+      const challengedSocketId = challengedSocketSet
+        ? challengedSocketSet.values().next().value
+        : challengedUser.socketId;
 
       const rejectData = { challengerId, challengedId };
 
@@ -425,26 +475,21 @@ io.on("connection", (socket) => {
         io.to(challengedSocketId).emit("challenge:rejected", rejectData);
       }
     } catch (error) {
-      console.error(" Reject error:", error);
+      // Silently handle
     }
   });
 
   socket.on("join_battle", async (roomId) => {
     socket.join(roomId);
-    console.log(`Socket ${socket.id} joined battle room ${roomId}`);
 
     // Re-emit battle state for refresh
     try {
       const battle = await Battle.findOne({ roomId });
       if (battle) {
         const TOTAL_TIME = 900000; // 15 min in ms
-
         const now = Date.now();
-
         const startedAt = new Date(battle.createdAt).getTime();
-
         const elapsed = now - startedAt;
-
         const remainingTime = Math.max(
           0,
           Math.floor((TOTAL_TIME - elapsed) / 1000),
@@ -456,7 +501,7 @@ io.on("connection", (socket) => {
         });
       }
     } catch (error) {
-      console.error("Battle rejoin error:", error);
+      // Silently handle
     }
   });
 
@@ -464,31 +509,33 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("opponent_code_change", { code, language });
   });
 
-  //  TYPING EVENTS ADD KAR
-  socket.on("typing:start", ({ roomId, userId }) => {
+  //  TYPING EVENTS
+  socket.on("typing:start", ({ roomId }) => {
     socket.to(roomId).emit("opponent_typing", true);
   });
 
-  socket.on("typing:stop", ({ roomId, userId }) => {
+  socket.on("typing:stop", ({ roomId }) => {
     socket.to(roomId).emit("opponent_typing", false);
   });
 
   socket.on("battle:submit", async (data) => {
     const { roomId, code, language, playerId } = data;
-    console.log("SUBMIT RECEIVED:", data);
 
     try {
+      // Verify socket user is the player
+      if (!socket.userId || socket.userId.toString() !== playerId.toString()) {
+        socket.emit("battle:error", "Unauthorized");
+        return;
+      }
+
       const battle = await Battle.findOne({ roomId });
 
       if (!battle || !battle.problem) {
-        console.log("ERROR: Battle or problem not found");
         socket.emit("battle:error", "Battle not found");
         return;
       }
 
       const testCases = battle.problem.testCases;
-
-      console.log(" Found testCases:", testCases.length);
 
       const { results } = await executeTests({
         code,
@@ -497,11 +544,6 @@ io.on("connection", (socket) => {
       });
 
       const allPassed = results.every((r) => r.passed);
-
-      console.log("EMITTING RESULT:", {
-        resultsCount: results.length,
-        isWinner: allPassed,
-      });
 
       io.to(roomId).emit("battle:result", {
         results,
@@ -527,45 +569,48 @@ io.on("connection", (socket) => {
         setTimeout(async () => {
           try {
             await Battle.deleteOne({ roomId });
-            console.log(`Battle ${roomId} cleaned up`);
           } catch (error) {
-            console.error("Battle cleanup error:", error);
+            // Silently handle
           }
         }, 120000);
       }
     } catch (error) {
-      console.error("Battle submit error:", error);
       socket.emit("battle:error", "Submission failed");
     }
   });
 
   socket.on("disconnect", async () => {
-    console.log("User disconnected:", socket.id);
+    for (const [userId, socketSet] of connectedSockets.entries()) {
+      if (socketSet.has(socket.id)) {
+        socketSet.delete(socket.id);
 
-    // Find userId and update online status + lastSeen
-    for (let [userId, sockId] of connectedSockets.entries()) {
-      if (sockId === socket.id) {
-        await User.findByIdAndUpdate(userId, {
-          socketId: null,
-          isOnline: false,
-          lastSeen: new Date()
-        });
-        
-        // Emit admin updates
-        const updatedUser = await User.findById(userId).select('isOnline lastSeen');
-        io.emit('admin:user:offline', updatedUser);
-        
-        connectedSockets.delete(userId);
+        if (socketSet.size === 0) {
+          connectedSockets.delete(userId);
+
+          await User.findByIdAndUpdate(userId, {
+            socketId: null,
+            isOnline: false,
+            lastSeen: new Date(),
+          });
+
+          const updatedUser = await User.findById(userId).select("isOnline lastSeen");
+          io.emit("admin:user:offline", updatedUser);
+        }
+
         break;
       }
     }
 
-    onlineUsers = Math.max(0, onlineUsers - 1);
-    io.emit("online_users", onlineUsers);
+    io.emit("online_users", connectedSockets.size);
   });
 
   // ADMIN EVENTS - emit full user for Redux update
   socket.on('admin:user:join', async (userId) => {
+    // Verify socket user matches
+    if (!socket.userId || socket.userId.toString() !== userId.toString()) {
+      return;
+    }
+
     await User.findByIdAndUpdate(userId, {
       isOnline: true,
       socketId: socket.id
@@ -590,35 +635,29 @@ const startServer = async () => {
     await connectDb();
 
     //  Startup recovery for missed POTD/CPOTD
-    console.log(" [STARTUP] Checking POTD/CPOTD recovery...");
     try {
       await import("./services/potd.service.js").then(
         ({ getOrCreateTodayPotd }) => getOrCreateTodayPotd(),
       );
-      console.log(" [STARTUP] POTD recovered");
     } catch (e) {
-      console.error(" [STARTUP] POTD recovery failed:", e.message);
+      // Silently handle
     }
     try {
       await import("./services/cpotd.service.js").then(
         ({ getOrCreateTodayCpotd }) => getOrCreateTodayCpotd(),
       );
-      console.log(" [STARTUP] CPOTD recovered");
     } catch (e) {
-      console.error(" [STARTUP] CPOTD recovery failed:", e.message);
+      // Silently handle
     }
 
     cronJobs.startCronJobs();
 
     server.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-      console.log(" Self-healing cron started (10min cycles)");
+      // Server started
     });
   } catch (error) {
-    console.error("DB connection failed:", error.message);
     process.exit(1);
   }
 };
 
 startServer();
-

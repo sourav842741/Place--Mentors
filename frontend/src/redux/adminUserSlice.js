@@ -53,6 +53,26 @@ export const demoteUser = createAsyncThunk(
 );
 
 /* ===============================
+   ADJUST USER CREDITS
+================================= */
+export const adjustUserCredits = createAsyncThunk(
+  "adminUsers/adjustUserCredits",
+  async ({ userId, amount, type }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch(`/api/admin/users/${userId}/credits`, {
+        amount,
+        type,
+      });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to adjust credits"
+      );
+    }
+  }
+);
+
+/* ===============================
    BAN USER
 ================================= */
 export const banUser = createAsyncThunk(
@@ -155,6 +175,15 @@ const adminUserSlice = createSlice({
 
       /* DEMOTE */
       .addCase(demoteUser.fulfilled, (state, action) => {
+        const updatedUser = action.payload;
+
+        state.data = state.data.map((user) =>
+          user._id === updatedUser._id ? updatedUser : user
+        );
+      })
+
+      /* ADJUST CREDITS */
+      .addCase(adjustUserCredits.fulfilled, (state, action) => {
         const updatedUser = action.payload;
 
         state.data = state.data.map((user) =>

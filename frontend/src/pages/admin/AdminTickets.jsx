@@ -145,7 +145,7 @@ export default function AdminTickets() {
   };
 
   const handleStatusChange = (ticketId, newStatus) => {
-    changeStatus(ticketId, newStatus, "");
+    changeStatus(ticketId, newStatus);
   };
 
   const handleReply = () => {

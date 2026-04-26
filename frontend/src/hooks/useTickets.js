@@ -94,13 +94,22 @@ export const useAdminTickets = () => {
   } = useSelector((state) => state.tickets);
 
   const loadAllTickets = useCallback((params = {}) => dispatch(fetchAllTickets(params)), [dispatch]);
+
   const loadTicketStats = useCallback(() => dispatch(fetchTicketStats()), [dispatch]);
+
   const loadTicketDetail = useCallback((id) => dispatch(fetchTicketDetail(id)), [dispatch]);
-  const changeStatus = useCallback((id, status, internalNote) =>
-    dispatch(updateAdminTicketStatus({ id, status, internalNote })), [dispatch]);
+
+ const changeStatus = useCallback(
+  (id, status) =>
+    dispatch(updateAdminTicketStatus({ id, status })),
+  [dispatch]
+);
+
   const removeTicket = useCallback((id) => dispatch(deleteAdminTicket(id)), [dispatch]);
+
   const addReply = useCallback((id, message, isInternal = false) =>
     dispatch(replyTicket({ id, message, isInternal })), [dispatch]);
+  
   const resetTicketDetail = useCallback(() => dispatch(clearTicketDetail()), [dispatch]);
 
   // Socket listener for real-time ticket updates

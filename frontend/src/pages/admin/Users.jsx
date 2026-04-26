@@ -219,9 +219,13 @@ const Users = () => {
                   >
                     Unban
                   </Button>
-                ) : currentUser?.role === "admin" &&
-                  !user.isSuperAdmin &&
-                  user.role !== "admin" ? (
+                ) : (
+                    currentUser?.isSuperAdmin
+                      ? !user.isSuperAdmin && user._id !== currentUser?._id
+                      : currentUser?.role === "admin" &&
+                        user.role === "user" &&
+                        !user.isSuperAdmin
+                  ) ? (
                   <Button
                     size="sm"
                     variant="destructive"
@@ -269,6 +273,16 @@ const Users = () => {
 
   // Modal States
   const [profileModal, setProfileModal] = useState({ open: false, user: null });
+
+  // Live user reference so the modal updates instantly when Redux state changes
+  const liveProfileUser = useMemo(() => {
+    if (!profileModal.user) return null;
+    return (
+      allUsers?.find((u) => u._id === profileModal.user._id) ||
+      profileModal.user
+    );
+  }, [profileModal.user, allUsers]);
+
   const [banModal, setBanModal] = useState({
     open: false,
     userId: null,
@@ -860,9 +874,14 @@ const Users = () => {
                                 >
                                   Unban
                                 </Button>
-                              ) : currentUser?.role === "admin" &&
-                                !user.isSuperAdmin &&
-                                user.role !== "admin" ? (
+                              ) : (
+                                  currentUser?.isSuperAdmin
+                                    ? !user.isSuperAdmin &&
+                                      user._id !== currentUser?._id
+                                    : currentUser?.role === "admin" &&
+                                      user.role === "user" &&
+                                      !user.isSuperAdmin
+                                ) ? (
                                 <Button
                                   size="sm"
                                   variant="destructive"
@@ -951,7 +970,7 @@ const Users = () => {
 
       {/* PROFILE MODAL */}
       <UserProfileModal
-        user={profileModal.user}
+        user={liveProfileUser}
         isOpen={profileModal.open}
         onClose={() => setProfileModal({ open: false, user: null })}
       />

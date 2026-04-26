@@ -1,9 +1,10 @@
 import express from "express";
-const router = express.Router();
-
+import validate from "../middlewares/validate.js";
+import { submitContactForm as submitContactFormSchema } from "../validators/contact.validator.js";
 import { submitContactForm } from "../controllers/contact.controller.js";
 
-router.post("/", submitContactForm);
+const router = express.Router();
+
+router.post("/", validate(submitContactFormSchema), submitContactForm);
 
 export default router;
-

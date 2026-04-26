@@ -152,8 +152,22 @@ Make it:
       },
     ];
 
-    const aiResponse = await askAi(messages);
-    const parsed = extractJSON(aiResponse);
+   const aiResponse = await askAi(messages);
+const parsed = extractJSON(aiResponse);
+
+// AI returned invalid response
+if (!parsed || !parsed.plan || !Array.isArray(parsed.plan)) {
+  throw new Error(
+    "Planner AI returned invalid plan. Please try again."
+  );
+}
+
+// Empty plan protection
+if (parsed.plan.length === 0) {
+  throw new Error(
+    "Planner AI returned empty plan. Please try again."
+  );
+}
 
     // Ensure minimum fields
     for (let day of parsed.plan) {

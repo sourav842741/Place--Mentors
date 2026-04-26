@@ -1,4 +1,5 @@
 import axios from "axios";
+import { withSafetyInstruction, filterSafeContent } from "../utils/contentSafety.js";
 
 export const askAi = async (messages) => {
   try {
@@ -12,19 +13,27 @@ export const askAi = async (messages) => {
       throw new Error("OPENROUTER_API_KEY missing");
     }
 
+    // Apply safety instruction to system prompts
+    const safeMessages = messages.map((msg) => {
+      if (msg.role === "system") {
+        return { ...msg, content: withSafetyInstruction(msg.content) };
+      }
+      return msg;
+    });
+
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
         model: "openai/gpt-4o-mini",
-        messages,
+        messages: safeMessages,
         temperature: 0.7,
-        max_tokens: 500
+        max_tokens: 2000
       },
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:5173",
+          "HTTP-Referer": process.env.CLIENT_URL || "http://localhost:5173",
           "X-Title": "PlaceMentor Support AI"
         },
         timeout: 30000
@@ -37,13 +46,25 @@ export const askAi = async (messages) => {
       throw new Error("Empty AI response");
     }
 
-    return content;
+    // Apply content safety filter
+    return filterSafeContent(content, "default");
 
-  } catch (error) {
-    console.error("OpenRouter Error:");
-    console.error(error.response?.data || error.message);
-    return null;
+  }catch (error) {
+  console.error(
+    "OpenRouter AI Error:",
+    error.response?.data || error.message
+  );
+
+  if (error.response?.status === 402) {
+    throw new Error("AI quota exceeded. Please recharge credits.");
   }
+
+  if (error.code === "ECONNABORTED") {
+    throw new Error("AI request timeout. Please try again.");
+  }
+
+  throw new Error("AI service unavailable right now.");
+}
 };
 
 // ================= SAFE JSON =================
@@ -63,7 +84,7 @@ export const extractJSON = (response) => {
 
     return null;
   } catch (err) {
-    console.error(" JSON parse failed");
     return null;
   }
 };
+

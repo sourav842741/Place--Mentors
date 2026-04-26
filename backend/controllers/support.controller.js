@@ -289,10 +289,6 @@ export const chatWithSupportAI = asyncHandler(async (req, res) => {
   const { message, history = [] } = req.body;
   const userId = req.user._id;
 
-  if (!message?.trim()) {
-    throw new ApiError(400, "Message is required");
-  }
-
   // Track analytics: ai_chat_started on first message
   if (!history || history.length === 0) {
     AnalyticsEvent.create({
@@ -355,23 +351,6 @@ export const escalateToTicket = asyncHandler(async (req, res) => {
 
   const userId = req.user._id;
 
-  if (!subject?.trim()) throw new ApiError(400, "Subject is required");
-  if (!category) throw new ApiError(400, "Category is required");
-
-  const validCategories = [
-    "Login Issue",
-    "Payment",
-    "Premium",
-    "Bug Report",
-    "Resume",
-    "Interview",
-    "Account",
-    "Other",
-  ];
-  if (!validCategories.includes(category)) {
-    throw new ApiError(400, "Invalid category");
-  }
-
   const validPriorities = ["Low", "Medium", "High"];
   const ticketPriority = validPriorities.includes(priority) ? priority : "Low";
 
@@ -385,7 +364,6 @@ export const escalateToTicket = asyncHandler(async (req, res) => {
 
   const ticketId = await generateTicketId();
 
-  // Build rich description with AI conversation summary
   const baseDescription = description?.trim() || "";
   const summary = aiChatSummary?.trim() || "";
 
@@ -411,17 +389,15 @@ export const escalateToTicket = asyncHandler(async (req, res) => {
     .populate("user", "fullName email avatar")
     .lean();
 
-  // Send confirmation email to user (existing logic reused)
   try {
     await sendTicketCreatedEmail(populatedTicket.email, {
       ...populatedTicket,
       userName: populatedTicket.user?.fullName,
     });
-  } catch (emailErr) {
-    console.error("[ESCALATE] Ticket created email failed:", emailErr.message);
+  } catch {
+    // Silently fail email
   }
 
-  // Notify admins via socket (existing logic reused)
   if (req.io) {
     req.io.to("admins").emit("ticket:updated", {
       ticketId: ticket._id,
@@ -430,7 +406,6 @@ export const escalateToTicket = asyncHandler(async (req, res) => {
     });
   }
 
-  // Track analytics
   AnalyticsEvent.create({
     eventType: "ai_escalated",
     userId,
@@ -441,4 +416,3 @@ export const escalateToTicket = asyncHandler(async (req, res) => {
     new ApiResponse(201, populatedTicket, "Ticket created from AI escalation")
   );
 });
-

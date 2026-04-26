@@ -116,14 +116,25 @@ export const fetchTicketStats = createAsyncThunk(
 
 export const updateAdminTicketStatus = createAsyncThunk(
   "tickets/updateAdminTicketStatus",
-  async ({ id, status, internalNote }, { rejectWithValue }) => {
+  async ({ id, status }, { rejectWithValue }) => {
     try {
-      const response = await ticketApi.updateTicketStatus(id, { status, internalNote });
+      const response = await ticketApi.updateTicketStatus(
+        id,
+        status
+      );
+
       toast.success(`Status updated to ${status}`);
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update status");
-      return rejectWithValue(error.response?.data?.message || "Failed to update status");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update status"
+      );
+
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to update status"
+      );
     }
   }
 );

@@ -241,6 +241,13 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    // ADMIN CREDIT ADJUSTMENTS
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
     // 2FA SYSTEM (privileged accounts only)
     twoFactorEnabled: {
       type: Boolean,

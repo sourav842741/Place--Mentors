@@ -44,24 +44,6 @@ export const createTicket = asyncHandler(async (req, res) => {
   const { subject, category, priority, description, email, mobile } = req.body;
   const userId = req.user._id;
 
-  if (!subject?.trim()) throw new ApiError(400, "Subject is required");
-  if (!category) throw new ApiError(400, "Category is required");
-  if (!description?.trim()) throw new ApiError(400, "Description is required");
-
-  const validCategories = [
-    "Login Issue",
-    "Payment",
-    "Premium",
-    "Bug Report",
-    "Resume",
-    "Interview",
-    "Account",
-    "Other",
-  ];
-  if (!validCategories.includes(category)) {
-    throw new ApiError(400, "Invalid category");
-  }
-
   const validPriorities = ["Low", "Medium", "High"];
   const ticketPriority = validPriorities.includes(priority) ? priority : "Low";
 
@@ -91,17 +73,15 @@ export const createTicket = asyncHandler(async (req, res) => {
     .populate("user", "fullName email avatar")
     .lean();
 
-  // Send confirmation email to user
   try {
     await sendTicketCreatedEmail(populatedTicket.email, {
       ...populatedTicket,
       userName: populatedTicket.user?.fullName,
     });
-  } catch (emailErr) {
-    console.error("Ticket created email failed:", emailErr.message);
+  } catch {
+    // Silently fail email
   }
 
-  // Notify admins via socket
   if (req.io) {
     req.io.to("admins").emit("ticket:updated", {
       ticketId: ticket._id,
@@ -206,8 +186,6 @@ export const replyToTicket = asyncHandler(async (req, res) => {
     req.user.role === "superadmin" ||
     req.user.email === process.env.SUPER_ADMIN_EMAIL;
 
-  if (!message?.trim()) throw new ApiError(400, "Message is required");
-
   const ticket = await Ticket.findById(id).populate("user", "fullName email");
   if (!ticket) throw new ApiError(404, "Ticket not found");
 
@@ -231,7 +209,6 @@ export const replyToTicket = asyncHandler(async (req, res) => {
     isInternal: isInternal === true,
   });
 
-  // Update ticket
   ticket.replyCount = (ticket.replyCount || 0) + 1;
   ticket.lastReplyAt = new Date();
 
@@ -246,27 +223,22 @@ export const replyToTicket = asyncHandler(async (req, res) => {
     .populate("sender", "fullName email avatar role")
     .lean();
 
-  // Send email notifications (CORRECTED LOGIC)
   try {
     if (isAdmin && !isInternal) {
-      // Admin reply -> notify user
       await sendTicketRepliedEmail(ticket.email, {
         ...ticket.toObject(),
         userName: ticket.user?.fullName,
       }, message.trim(), true);
     } else if (!isAdmin && !isInternal) {
-      // User reply -> notify admins via email (not self)
       await sendAdminNotificationEmail({
         ...ticket.toObject(),
         userName: ticket.user?.fullName,
       }, message.trim());
     }
-    // Internal notes -> no email
-  } catch (emailErr) {
-    console.error("Reply email failed:", emailErr.message);
+  } catch {
+    // Silently fail email
   }
 
-  // Real-time socket updates (ROOM-BASED)
   if (req.io) {
     const eventPayload = {
       ticketId: id,
@@ -276,9 +248,7 @@ export const replyToTicket = asyncHandler(async (req, res) => {
       replyCount: ticket.replyCount,
     };
 
-    // Notify ticket owner
     req.io.to(ticket.user.toString()).emit("ticket:updated", eventPayload);
-    // Notify admins
     req.io.to("admins").emit("ticket:updated", eventPayload);
   }
 
@@ -316,17 +286,15 @@ export const reopenTicket = asyncHandler(async (req, res) => {
     .populate("user", "fullName email avatar")
     .lean();
 
-  // Notify admins via email that ticket was reopened
   try {
     await sendTicketReopenedEmail(updatedTicket.email, {
       ...updatedTicket,
       userName: updatedTicket.user?.fullName,
     });
-  } catch (emailErr) {
-    console.error("Reopen email failed:", emailErr.message);
+  } catch {
+    // Silently fail email
   }
 
-  // Real-time socket updates
   if (req.io) {
     req.io.to(ticket.user.toString()).emit("ticket:updated", {
       ticketId: id,
@@ -421,30 +389,25 @@ export const getAllTickets = asyncHandler(async (req, res) => {
   );
 });
 
-
-  // ADMIN: UPDATE TICKET STATUS
-
+/* =====================================================
+   ADMIN: UPDATE TICKET STATUS
+===================================================== */
 
 export const updateTicketStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status, internalNote } = req.body;
 
-  console.log(`[TICKET STATUS] Received request: ticket=${id}, newStatus=${status}`);
-
   const validStatuses = ["Open", "In Progress", "Solved", "Rejected"];
   if (!validStatuses.includes(status)) {
-    console.error(`[TICKET STATUS] Invalid status received: "${status}"`);
     throw new ApiError(400, `Invalid status: ${status}`);
   }
 
   const ticket = await Ticket.findById(id).populate("user", "fullName email");
   if (!ticket) {
-    console.error(`[TICKET STATUS] Ticket not found: ${id}`);
     throw new ApiError(404, "Ticket not found");
   }
 
   const oldStatus = ticket.status;
- 
 
   ticket.status = status;
 
@@ -459,44 +422,30 @@ export const updateTicketStatus = asyncHandler(async (req, res) => {
   }
 
   await ticket.save();
-  console.log(`[TICKET STATUS] Ticket saved successfully`);
 
   const updatedTicket = await Ticket.findById(id)
     .populate("user", "fullName email avatar")
     .lean();
 
- 
-
-  // Send email notification on status change
   const shouldSendSolvedEmail = status === "Solved" && oldStatus !== "Solved";
- 
+
   if (shouldSendSolvedEmail) {
     const toEmail = updatedTicket?.email || ticket?.email;
     const userName = updatedTicket?.user?.fullName || ticket?.user?.fullName || "User";
 
-    
-
-    if (!toEmail || !toEmail.includes("@")) {
-     
-    } else {
+    if (toEmail && toEmail.includes("@")) {
       try {
         const emailPayload = {
           ...updatedTicket,
           userName,
         };
-      
-        const emailResult = await sendTicketSolvedEmail(toEmail, emailPayload);
-        console.log(`[TICKET STATUS] Email sent successfully:`, emailResult);
-      } catch (emailErr) {
-        console.error(`[TICKET STATUS] Email sending FAILED:`, {
-          message: emailErr.message,
-          stack: emailErr.stack,
-        });
+        await sendTicketSolvedEmail(toEmail, emailPayload);
+      } catch {
+        // Silently fail email
       }
     }
   }
 
-  // Real-time socket updates (ROOM-BASED)
   if (req.io) {
     const payload = {
       ticketId: id,
@@ -507,7 +456,6 @@ export const updateTicketStatus = asyncHandler(async (req, res) => {
     };
     req.io.to(ticket.user.toString()).emit("ticket:updated", payload);
     req.io.to("admins").emit("ticket:updated", payload);
-   
   }
 
   res.status(200).json(
@@ -528,7 +476,6 @@ export const deleteTicket = asyncHandler(async (req, res) => {
   await TicketReply.deleteMany({ ticket: id });
   await Ticket.findByIdAndDelete(id);
 
-  // Real-time socket update
   if (req.io) {
     req.io.to(ticket.user.toString()).emit("ticket:updated", {
       ticketId: id,
@@ -580,4 +527,3 @@ export const getTicketStats = asyncHandler(async (req, res) => {
     }, "Ticket stats fetched successfully")
   );
 });
-
