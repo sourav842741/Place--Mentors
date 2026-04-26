@@ -86,6 +86,7 @@ import AdminSecurity from "./pages/admin/AdminSecurity";
 import Certificates from "./pages/Certificates.jsx";
 import CookieConsent from "./components/CookieConsent";
 import MaintenanceProductivityHub from "./pages/MaintenanceProductivityHub";
+import ProjectDocs from "./pages/ProjectDocs";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -254,6 +255,7 @@ if (
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify/:id" element={<CertificateVerifyPage />} />
+         <Route path="/project-docs" element={<ProjectDocs />} />
 
         {/* ADMIN */}
         <Route element={<AdminRoute />}>
