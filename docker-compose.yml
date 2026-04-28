@@ -1,12 +1,4 @@
-# =========================================
-# Place Mentors - Full Stack Docker Compose
-# Uses backend/.env and frontend/.env directly
-# =========================================
-
 services:
-  # =========================================
-  # MongoDB Database
-  # =========================================
   mongo:
     image: mongo:7
     container_name: placementor-mongo
@@ -26,13 +18,8 @@ services:
       retries: 5
       start_period: 10s
 
-  # =========================================
-  # Backend API Server
-  # =========================================
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: souravkumar09/placementor-backend:latest
     container_name: placementor-backend
     restart: unless-stopped
     ports:
@@ -40,7 +27,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 5000
       MONGOURL: mongodb://mongo:27017/placementor
       CLIENT_URL: http://localhost:3000
@@ -54,38 +41,21 @@ services:
     volumes:
       - backend_uploads:/app/uploads
 
-  # =========================================
-  # Frontend React App (Nginx)
-  # =========================================
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_SERVER_URL: http://localhost:5000
+    image: souravkumar09/placementor-frontend:latest
     container_name: placementor-frontend
     restart: unless-stopped
     ports:
       - "3000:80"
-    env_file:
-      - ./frontend/.env
     depends_on:
       - backend
     networks:
       - placementor-network
 
-# =========================================
-# Networks
-# =========================================
 networks:
   placementor-network:
     driver: bridge
 
-# =========================================
-# Volumes
-# =========================================
 volumes:
   mongo_data:
-    driver: local
   backend_uploads:
-    driver: local
