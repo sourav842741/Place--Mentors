@@ -328,7 +328,7 @@ function Step1SetUp({ onStart }) {
           </motion.div>
         </div>
       </motion.div>
-      <Footer />
+      
     </>
   );
 }

@@ -140,34 +140,139 @@ graph TB
 - [AI Planner](https://place-mentor-frontend.onrender.com/ai-planner)
 
 
-## 🚀 Quick Start
+## 🐳 Docker Quick Start (Recommended)
+
+The fastest way to get the entire stack running is with Docker Compose. All services (MongoDB, Backend, Frontend) are containerized and networked automatically.
+
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
+- Docker Compose v2+ (included with Docker Desktop)
+
+### One-Command Startup
+
+```bash
+# Clone the repository
+git clone https://github.com/sourav842741/Place--Mentors.git
+cd Place--Mentors
+
+# Start everything (builds images and starts containers)
+docker compose up --build
+```
+
+Wait for the build to complete, then open your browser:
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| Frontend | [http://localhost:3000](http://localhost:3000) | React app served by Nginx |
+| Backend API | [http://localhost:5000](http://localhost:5000) | Express API + Socket.io |
+| MongoDB | `mongodb://localhost:27017` | Database (exposed for local tools) |
+| Health Check | [http://localhost:5000/api/health](http://localhost:5000/api/health) | Backend health status |
+
+### Default Admin Accounts (Docker)
+
+When running with Docker, default fallback credentials are set:
+
+| Role | Email | Password |
+|------|-------|----------|
+| Super Admin | `superadmin@placementor.local` | `superadmin123` |
+| Admin | `admin@placementor.local` | `admin123` |
+
+> ⚠️ **Security Note**: Change these defaults before deploying to production by setting `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` environment variables.
+
+### Environment Variables (Optional)
+
+Create a `.env` file in the project root to override defaults:
+
+```env
+# Required for full functionality
+JWT_SECRET=your-super-secret-jwt-key
+RAZORPAY_KEY_ID=your_razorpay_key
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+RESEND_API_KEY=your_resend_key
+
+# External integrations (optional)
+OPENROUTER_API_KEY=your_openrouter_key
+GEMINI_API_KEY=your_gemini_key
+GOOGLE_CLIENT_ID=your_google_oauth_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloud_key
+CLOUDINARY_API_SECRET=your_cloud_secret
+YOUTUBE_API_KEY=your_youtube_key
+NEWS_API_KEY=your_news_api_key
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_token
+TWILIO_PHONE_NUMBER=your_twilio_phone
+VIDEOSDK_API_KEY=your_videosdk_key
+VIDEOSDK_SECRET_KEY=your_videosdk_secret
+ADZUNA_APP_ID=your_adzuna_id
+ADZUNA_APP_KEY=your_adzuna_key
+```
+
+### Useful Docker Commands
+
+```bash
+# Start in detached mode (background)
+docker compose up -d --build
+
+# View logs
+docker compose logs -f
+
+# View specific service logs
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f mongo
+
+# Stop all services
+docker compose down
+
+# Stop and remove volumes (⚠️ deletes database data)
+docker compose down -v
+
+# Restart a specific service
+docker compose restart backend
+
+# Access MongoDB shell
+docker exec -it placementor-mongo mongosh
+```
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Port 5000 already in use | Change `5000:5000` in `docker-compose.yml` to another port |
+| Port 3000 already in use | Change `3000:80` in `docker-compose.yml` to another port |
+| Build fails on Windows | Ensure Docker Desktop is using Windows containers or WSL2 backend |
+| Hot reload not working | Docker setup uses production build; for development, see Manual Setup below |
+
+---
+
+## 🚀 Quick Start (Manual Setup)
 
 ### Prerequisites
 - Node.js (v18+)
-- MongoDB Atlas account
-- Cloudinary account
+- MongoDB Atlas account (or local MongoDB)
+- Cloudinary account (for file uploads)
 - Razorpay account (for payments)
 
 ### Backend Setup
 ```bash
 cd backend
 npm install
-npm run db:seed  # Optional: Seed initial data
 cp .env.example .env
-# Configure environment variables
-npm run dev
+# Configure environment variables in .env
+npm run seed      # Optional: Seed initial data
+npm run dev       # Development mode
 # or
-npm run prod
+npm start         # Production mode
 ```
-
-
-```
-
 
 ### Frontend Setup
 ```bash
 cd frontend
 npm install
+cp .env.example .env
+# Set VITE_SERVER_URL=http://localhost:5000
 npm run dev
 ```
 
@@ -177,9 +282,14 @@ npm run dev
 ```env
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=your_mongodb_atlas_uri
+MONGOURL=your_mongodb_atlas_uri
 JWT_SECRET=your_jwt_secret
-JWT_EXPIRE=30d
+JWT_EXPIRES_IN=7d
+
+# Frontend URL (for CORS & redirects)
+CLIENT_URL=http://localhost:5173
+BASE_URL=http://localhost:5000
+FRONTEND_URL=http://localhost:5173
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -187,10 +297,8 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
 # Email
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
+RESEND_API_KEY=your_resend_key
+EMAIL_AUTH=PlaceMentor Security <security@placementor.online>
 
 # Razorpay (Live/Test)
 RAZORPAY_KEY_ID=your_key_id
@@ -198,15 +306,38 @@ RAZORPAY_KEY_SECRET=your_key_secret
 
 # AI Services
 OPENROUTER_API_KEY=your_openrouter_key
+GEMINI_API_KEY=your_gemini_key
 
-# Frontend URL (for production)
-FRONTEND_URL=https://your-vercel-app.vercel.app
+# Admin Accounts
+SUPER_ADMIN_EMAIL=superadmin@placementor.local
+SUPER_ADMIN_PASSWORD=superadmin123
+ADMIN_EMAIL=admin@placementor.local
+ADMIN_PASSWORD=admin123
+
+# External APIs
+YOUTUBE_API_KEY=your_youtube_key
+NEWS_API_KEY=your_news_key
+ADZUNA_APP_ID=your_adzuna_id
+ADZUNA_APP_KEY=your_adzuna_key
+
+# Twilio
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_token
+TWILIO_PHONE_NUMBER=your_twilio_phone
+
+# Video SDK
+VIDEOSDK_API_KEY=your_videosdk_key
+VIDEOSDK_SECRET_KEY=your_videosdk_secret
+VIDEOSDK_GATEWAY_ID=your_gateway_id
+
+# Google OAuth (Calendar Integration)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 ### Frontend `.env`
 ```env
-VITE_API_URL=http://localhost:5000/api
-VITE_SOCKET_URL=http://localhost:5000
+VITE_SERVER_URL=http://localhost:5000
 ```
 
 ## ☁️ Production Deployment
@@ -273,14 +404,15 @@ npm run test:e2e -- --config=cypress.config.js
 ```
 Place-Mentors/
 ├── frontend/          # React + Vite + Tailwind
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── .dockerignore
 ├── backend/           # Node + Express + MongoDB
-│   ├── controllers/   # Business Logic
-│   ├── models/        # Mongoose Schemas
-│   ├── routes/        # API Routes
-│   ├── services/      # External APIs
-│   └── utils/         # Helpers & Middleware
+│   ├── Dockerfile
+│   └── .dockerignore
 ├── docker-compose.yml # One-click deployment
-└── README.md          # You're reading it! 🚀
+├── README.md          # You're reading it! 🚀
+└── TODO.md            # Docker implementation plan
 ```
 
 ## 🤝 Contributing
@@ -328,5 +460,3 @@ MIT License - See [LICENSE](LICENSE) for details.
 </div>
 
 ![Footer](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/footer.png)
-
-

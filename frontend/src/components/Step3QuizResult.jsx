@@ -439,7 +439,7 @@ function Step3Report({ result }) {
         </div>
       </div>
     </div>
-    <Footer/>
+    
     </>
   );
 }

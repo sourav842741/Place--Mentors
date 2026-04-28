@@ -84,7 +84,11 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: [
+      process.env.CLIENT_URL,
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ].filter(Boolean),
     credentials: true,
   }),
 );
@@ -102,6 +106,11 @@ app.use((req, res, next) => {
 });
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+
+// ================= HEALTH CHECK =================
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
@@ -153,13 +162,20 @@ io.on("connection", (socket) => {
 
   //  JOIN ROOM (user room + doubt room prefix + admin room if applicable)
   socket.on("join", async (userId) => {
+    
     try {
       // Verify socket user matches requested userId
-      if (!socket.userId || socket.userId.toString() !== userId.toString()) {
-        socket.emit("error", "Unauthorized join attempt");
-        return;
-      }
+     if (!socket.userId) {
+ 
+  socket.emit("error", "Unauthorized join attempt");
+  return;
+}
 
+if (socket.userId.toString() !== userId.toString()) {
+ 
+  socket.emit("error", "Unauthorized join attempt");
+  return;
+}
       const id = userId.toString();
       socket.join(id);
       socket.join(`doubt-${id}`);
@@ -171,21 +187,22 @@ io.on("connection", (socket) => {
         connectedSockets.set(id, socketSet);
       }
       socketSet.add(socket.id);
+     
 
-      if (wasOffline) {
-        await User.findByIdAndUpdate(id, {
-          socketId: socket.id,
-          isOnline: true,
-        });
+      const user = await User.findById(id).select('-password');
+      if (user) {
+        const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
+        if (isAdmin) {
+          socket.join("admins");
+        }
 
-        const user = await User.findById(id).select('-password');
-        if (user) {
-          const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
-          if (isAdmin) {
-            socket.join("admins");
-          }
+        if (wasOffline) {
+          await User.findByIdAndUpdate(id, {
+            socketId: socket.id,
+            isOnline: true,
+          });
 
-          io.emit("admin:user:online", { 
+          io.to("admins").emit("admin:user:online", { 
             _id: user._id,
             isOnline: true,
             lastSeen: user.lastSeen,
@@ -198,6 +215,12 @@ io.on("connection", (socket) => {
     } catch (error) {
       // Silently handle error
     }
+  });
+
+  // ADMIN PRESENCE INIT — send current online snapshot
+  socket.on("admin:presence:init", () => {
+    const onlineIds = [...connectedSockets.keys()];
+    socket.emit("admin:presence:list", onlineIds);
   });
 
   // JOIN TICKET ROOM for real-time ticket updates
@@ -579,7 +602,8 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("disconnect", async () => {
+  socket.on("disconnect", async (reason) => {
+  console.log("SOCKET DISCONNECTED:", socket.id, reason);
     for (const [userId, socketSet] of connectedSockets.entries()) {
       if (socketSet.has(socket.id)) {
         socketSet.delete(socket.id);
@@ -593,8 +617,11 @@ io.on("connection", (socket) => {
             lastSeen: new Date(),
           });
 
-          const updatedUser = await User.findById(userId).select("isOnline lastSeen");
-          io.emit("admin:user:offline", updatedUser);
+          io.to("admins").emit("admin:user:offline", {
+            _id: userId,
+            isOnline: false,
+            lastSeen: new Date()
+          });
         }
 
         break;
@@ -604,26 +631,7 @@ io.on("connection", (socket) => {
     io.emit("online_users", connectedSockets.size);
   });
 
-  // ADMIN EVENTS - emit full user for Redux update
-  socket.on('admin:user:join', async (userId) => {
-    // Verify socket user matches
-    if (!socket.userId || socket.userId.toString() !== userId.toString()) {
-      return;
-    }
-
-    await User.findByIdAndUpdate(userId, {
-      isOnline: true,
-      socketId: socket.id
-    });
-    
-    const user = await User.findById(userId).select('-password');
-    io.emit('admin:user:online', { 
-      _id: user._id,
-      isOnline: true,
-      lastSeen: user.lastSeen,
-      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
-    });
-  });
+  // NOTE: admin:user:join removed — presence is handled exclusively via the "join" event above
 });
 
 // ================= ERROR HANDLER =================

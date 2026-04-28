@@ -623,7 +623,7 @@ function Step2Interview({ interviewData, onFinish }) {
         </div>
       </div>
     </div>
-    <Footer/>
+   
     </>
   );
 }

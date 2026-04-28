@@ -1,8 +1,8 @@
-
 import dns from "dns";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import readline from "readline";
 
 import User from "../models/user.model.js";
 import connectDb from "../config/db.js";
@@ -11,8 +11,37 @@ dotenv.config();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const askSecret = () => {
+  return new Promise((resolve) => {
+    rl.question("Enter secret: ", (answer) => {
+      resolve(answer.trim());
+    });
+  });
+};
+
 const createOrUpdateAdmin = async () => {
   try {
+    // Seed permission check
+    if (process.env.ALLOW_SEED !== "true") {
+      console.log("❌ Seeder is disabled. Set ALLOW_SEED=true");
+      process.exit(1);
+    }
+
+    // Secret check
+    const enteredSecret = await askSecret();
+
+    if (enteredSecret !== process.env.SEED_SECRET) {
+      console.log("❌ Invalid secret");
+      process.exit(1);
+    }
+
+    rl.close();
+
     await connectDb();
     console.log("✅ Connected to MongoDB");
 
@@ -38,7 +67,7 @@ const createOrUpdateAdmin = async () => {
       existingAdmin.skills = ["admin", "superuser"];
       existingAdmin.role = "admin";
       existingAdmin.isEmailVerified = true;
-      existingAdmin.credits = 999;
+      existingAdmin.credits = 99;
 
       await existingAdmin.save();
 
@@ -53,7 +82,7 @@ const createOrUpdateAdmin = async () => {
         skills: ["admin", "superuser"],
         role: "admin",
         isEmailVerified: true,
-        credits: 999,
+        credits: 99,
       });
 
       console.log("✅ New admin created successfully");

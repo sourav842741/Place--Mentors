@@ -1,6 +1,8 @@
+
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import dns from "dns";
+import readline from "readline";
 
 import connectDb from "../config/db.js";
 import MaintenanceQuestion from "../models/MaintenanceQuestion.js";
@@ -8,14 +10,18 @@ import MaintenanceQuestion from "../models/MaintenanceQuestion.js";
 dotenv.config();
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-/*
-  Clean + Valid Seed Data
-  Every record has:
-  - type
-  - question
-  - answer
-  - explanation
-*/
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const askSecret = () => {
+  return new Promise((resolve) => {
+    rl.question("Enter secret: ", (answer) => {
+      resolve(answer.trim());
+    });
+  });
+};
 
 const seedData = [
   // ================= HR =================
@@ -239,6 +245,22 @@ const seedData = [
 
 const runSeed = async () => {
   try {
+    // Seeder enabled check
+    if (process.env.ALLOW_SEED !== "true") {
+      console.log("❌ Seeder is disabled. Set ALLOW_SEED=true");
+      process.exit(1);
+    }
+
+    // Secret prompt
+    const enteredSecret = await askSecret();
+
+    if (enteredSecret !== process.env.SEED_SECRET) {
+      console.log("❌ Invalid secret");
+      process.exit(1);
+    }
+
+    rl.close();
+
     await connectDb();
     console.log("🗄️ MongoDB Connected");
 
@@ -246,16 +268,23 @@ const runSeed = async () => {
     console.log("🗑️ Old data deleted");
 
     await MaintenanceQuestion.insertMany(seedData);
-    console.log(`${seedData.length} records inserted successfully`);
+    console.log(`✅ ${seedData.length} records inserted successfully`);
 
     const stats = await MaintenanceQuestion.aggregate([
-      { $group: { _id: "$type", count: { $sum: 1 } } },
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
     console.log("📊 Type Stats:");
     console.table(stats);
 
     await mongoose.connection.close();
+
+    console.log("🚀 Seeder Completed");
     process.exit(0);
   } catch (error) {
     console.error("❌ Seed Failed:", error.message);

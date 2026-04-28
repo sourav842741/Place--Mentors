@@ -11,9 +11,13 @@
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "dev": "nodemon index.js",
+    "start": "node index.js",
     "create-admin": "node scripts/createAdmin.js",
     "create-superadmin": "node scripts/createSuperAdmin.js",
-    "seed": "node scripts/seedMaintenance.js"
+    "seed": "node scripts/seedMaintenance.js",
+    "seed:companies": "node scripts/seedCompanies.js",
+    "seed:news": "node scripts/seedNews.js",
+    "seed:jobs": "node scripts/seedJobs.js"
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",

@@ -1,8 +1,8 @@
-
 import dns from "dns";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import readline from "readline";
 
 import connectDb from "../config/db.js";
 import User from "../models/user.model.js";
@@ -11,8 +11,37 @@ dotenv.config();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const askSecret = () => {
+  return new Promise((resolve) => {
+    rl.question("Enter secret: ", (answer) => {
+      resolve(answer.trim());
+    });
+  });
+};
+
 const createSuperAdmin = async () => {
   try {
+    // Seed access check
+    if (process.env.ALLOW_SEED !== "true") {
+      console.log("❌ Seeder is disabled. Set ALLOW_SEED=true");
+      process.exit(1);
+    }
+
+    // Secret prompt
+    const enteredSecret = await askSecret();
+
+    if (enteredSecret !== process.env.SEED_SECRET) {
+      console.log("❌ Invalid secret");
+      process.exit(1);
+    }
+
+    rl.close();
+
     await connectDb();
     console.log("✅ Connected to MongoDB");
 
@@ -39,8 +68,10 @@ const createSuperAdmin = async () => {
       existingUser.email = normalizedEmail;
       existingUser.password = hashedPassword;
       existingUser.role = "superadmin";
+      existingUser.isSuperAdmin = true;
       existingUser.isEmailVerified = true;
-      existingUser.credits = 9999;
+      existingUser.credits = 99;
+      existingUser.skills = ["owner", "superadmin"];
 
       await existingUser.save();
 
@@ -53,8 +84,9 @@ const createSuperAdmin = async () => {
         email: normalizedEmail,
         password: hashedPassword,
         role: "superadmin",
+        isSuperAdmin: true,
         isEmailVerified: true,
-        credits: 9999,
+        credits: 99,
         skills: ["owner", "superadmin"],
       });
 
@@ -64,7 +96,8 @@ const createSuperAdmin = async () => {
     }
 
     await mongoose.connection.close();
-    console.log("🚀 Done");
+
+    console.log("🚀 Super Admin Seeder Completed");
     process.exit(0);
   } catch (error) {
     console.log("❌ Failed:", error.message);

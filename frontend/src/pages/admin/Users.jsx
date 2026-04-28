@@ -71,7 +71,12 @@ import {
 
 const Users = () => {
   const dispatch = useDispatch();
-  const { data: allUsers, loading, error, refetch } = useAdminUsers();
+  const { loading, error, refetch } = useAdminUsers();
+
+  const allUsers = useSelector((state) => state.adminUsers.data);
+
+  
+
   const currentUser = useSelector((state) => state.user.user);
 
   // Filter & Search State
@@ -81,6 +86,10 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const PER_PAGE = 10;
+  const isUserOnline = (user) =>
+    user?.isOnline === true ||
+    user?.isOnline === "true" ||
+    user?.isOnline === 1;
 
   const UserCard = ({ user }) => {
     const statusIcon = getStatusIcon(user);
@@ -130,11 +139,11 @@ const Users = () => {
               <div className="flex items-center gap-2">
                 {statusIcon}
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium shadow-md ${user.isBanned ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300" : user.isOnline ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300" : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium shadow-md ${user.isBanned ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300" : isUserOnline(user) ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300" : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"}`}
                 >
                   {user.isBanned
                     ? "BANNED"
-                    : user.isOnline
+                    : isUserOnline(user)
                       ? "ONLINE"
                       : "OFFLINE"}
                 </span>
@@ -258,7 +267,7 @@ const Users = () => {
 
   // Stats counts
   const totalUsers = allUsers?.length ?? 0;
-  const onlineUsers = allUsers?.filter((u) => u.isOnline).length ?? 0;
+  const onlineUsers = allUsers?.filter((u) => isUserOnline(u)).length ?? 0;
   const adminUsers =
     allUsers?.filter((u) => u.role === "admin" || u.isSuperAdmin).length ?? 0;
   const bannedUsers = allUsers?.filter((u) => u.isBanned).length ?? 0;
@@ -277,8 +286,9 @@ const Users = () => {
   // Live user reference so the modal updates instantly when Redux state changes
   const liveProfileUser = useMemo(() => {
     if (!profileModal.user) return null;
+
     return (
-      allUsers?.find((u) => u._id === profileModal.user._id) ||
+      allUsers?.find((u) => String(u._id) === String(profileModal.user._id)) ||
       profileModal.user
     );
   }, [profileModal.user, allUsers]);
@@ -296,7 +306,7 @@ const Users = () => {
   const [banReason, setBanReason] = useState("");
 
   // Derived filtered users
-  const filteredUsers = useMemo(() => {
+  const filteredUsers = (() => {
     let filtered = allUsers || [];
 
     // Search
@@ -315,18 +325,19 @@ const Users = () => {
     else if (filter === "user")
       filtered = filtered.filter((u) => u.role === "user" && !u.isSuperAdmin);
     else if (filter === "banned") filtered = filtered.filter((u) => u.isBanned);
-    else if (filter === "online") filtered = filtered.filter((u) => u.isOnline);
+    else if (filter === "online")
+      filtered = filtered.filter((u) => isUserOnline(u));
     else if (filter === "offline")
-      filtered = filtered.filter((u) => !u.isOnline && !u.isBanned);
+      filtered = filtered.filter((u) => !isUserOnline(u) && !u.isBanned);
 
     return filtered;
-  }, [allUsers, searchDebounced, filter]);
+  })();
 
   // Pagination
-  const paginatedUsers = useMemo(() => {
-    const start = (page - 1) * PER_PAGE;
-    return filteredUsers.slice(start, start + PER_PAGE);
-  }, [filteredUsers, page]);
+  const paginatedUsers = [...filteredUsers].slice(
+    (page - 1) * PER_PAGE,
+    page * PER_PAGE,
+  );
 
   const totalPages = Math.ceil(filteredUsers.length / PER_PAGE);
 
@@ -351,7 +362,7 @@ const Users = () => {
   const getStatusIcon = (user) => {
     if (user.isBanned)
       return <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />;
-    if (user.isOnline)
+    if (isUserOnline(user))
       return (
         <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
       );
@@ -377,7 +388,7 @@ const Users = () => {
         `"${user.isSuperAdmin ? "OWNER" : user.role || "USER"}"`,
         `"${user.level || 1}"`,
         `"${user.credits || 0}"`,
-        `"${user.isBanned ? "BANNED" : user.isOnline ? "ACTIVE NOW" : "OFFLINE"}"`,
+        `${user.isBanned ? "BANNED" : isUserOnline(user) ? "ACTIVE NOW" : "OFFLINE"}`,
         `"${user.lastSeen ? new Date(user.lastSeen).toLocaleString() : "Never"}"`,
         `"${
           user.createdAt
@@ -659,7 +670,10 @@ const Users = () => {
             ) : isMobile ? (
               <div className="p-6 space-y-4">
                 {paginatedUsers.map((user) => (
-                  <UserCard key={user._id} user={user} />
+                  <UserCard
+                    key={`${user._id}-${String(user.isOnline)}`}
+                    user={user}
+                  />
                 ))}
               </div>
             ) : (
@@ -701,7 +715,7 @@ const Users = () => {
 
                       return (
                         <TableRow
-                          key={user._id}
+                          key={`${user._id}-${String(user.isOnline)}`}
                           className="group hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-all duration-200 border-b hover:border-indigo-200 dark:hover:border-indigo-800"
                         >
                           <TableCell>
@@ -776,14 +790,14 @@ const Users = () => {
                                 className={`px-3 py-1 shadow-md ${
                                   user.isBanned
                                     ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                                    : user.isOnline
+                                    : isUserOnline(user)
                                       ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 shadow-emerald-200"
                                       : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
                                 }`}
                               >
                                 {user.isBanned
                                   ? "BANNED"
-                                  : user.isOnline
+                                  : isUserOnline(user)
                                     ? "ACTIVE NOW"
                                     : "OFFLINE"}
                               </Badge>

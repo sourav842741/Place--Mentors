@@ -4,6 +4,7 @@ import Confetti from "react-confetti";
 import { useNavigate } from "react-router-dom";
 
 import { useMaintenanceDashboard } from "../hooks/useMaintenanceQuestions";
+import api from "../services/api";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -216,9 +217,7 @@ export default function MaintenanceProductivityHub() {
     type
   ) => {
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/maintenance/random/${type}`
-      );
+      const res = await api.get(`/api/maintenance/random/${type}`);
 
       const data =
         await res.json();
