@@ -121,43 +121,21 @@ const adminUserSlice = createSlice({
       state.error = null;
     },
     // SOCKET REAL-TIME UPDATES
-  setPresenceList: (state, action) => {
-  const ids = action.payload.map(String);
-
-  state.data.forEach((user) => {
-    user.isOnline = ids.includes(String(user._id));
-  });
-},
-
-setUserOnline: (state, action) => {
-  const userId = String(action.payload._id);
-
-  const index = state.data.findIndex(
-    (u) => String(u._id) === userId
-  );
-
- 
-
-  if (index !== -1) {
-    state.data[index].isOnline = true;
-  }
-},
-
-setUserOffline: (state, action) => {
-  const userId = String(action.payload._id);
-
-  const index = state.data.findIndex(
-    (u) => String(u._id) === userId
-  );
-
-  
-
-  if (index !== -1) {
-    state.data[index].isOnline = false;
-    state.data[index].lastSeen =
-      action.payload.lastSeen || new Date();
-  }
-},
+    setUserOnline: (state, action) => {
+      const userId = action.payload._id;
+      const userIndex = state.data.findIndex(u => u._id === userId);
+      if (userIndex !== -1) {
+        state.data[userIndex].isOnline = true;
+      }
+    },
+    setUserOffline: (state, action) => {
+      const userId = action.payload._id || action.payload;
+      const userIndex = state.data.findIndex(u => u._id === userId);
+      if (userIndex !== -1) {
+        state.data[userIndex].isOnline = false;
+        state.data[userIndex].lastSeen = action.payload.lastSeen || new Date();
+      }
+    },
     updateUserFromSocket: (state, action) => {
       const updatedUser = action.payload;
       const userIndex = state.data.findIndex(u => u._id === updatedUser._id);
@@ -241,7 +219,6 @@ setUserOffline: (state, action) => {
 
 export const {
   clearError,
-  setPresenceList,
   setUserOnline,
   setUserOffline,
   updateUserFromSocket,

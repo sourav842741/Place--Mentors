@@ -128,12 +128,9 @@ function App() {
     getCurrentUser();
   }, []);
 
-/* SOCKET JOIN */
+  /* SOCKET JOIN */
   useEffect(() => {
     if (user?._id) {
-      if (!socket.connected) {
-        socket.connect();
-      }
       socket.emit("join", user._id);
     }
   }, [user]);

@@ -162,20 +162,13 @@ io.on("connection", (socket) => {
 
   //  JOIN ROOM (user room + doubt room prefix + admin room if applicable)
   socket.on("join", async (userId) => {
-    
     try {
       // Verify socket user matches requested userId
-     if (!socket.userId) {
- 
-  socket.emit("error", "Unauthorized join attempt");
-  return;
-}
+      if (!socket.userId || socket.userId.toString() !== userId.toString()) {
+        socket.emit("error", "Unauthorized join attempt");
+        return;
+      }
 
-if (socket.userId.toString() !== userId.toString()) {
- 
-  socket.emit("error", "Unauthorized join attempt");
-  return;
-}
       const id = userId.toString();
       socket.join(id);
       socket.join(`doubt-${id}`);
@@ -187,22 +180,21 @@ if (socket.userId.toString() !== userId.toString()) {
         connectedSockets.set(id, socketSet);
       }
       socketSet.add(socket.id);
-     
 
-      const user = await User.findById(id).select('-password');
-      if (user) {
-        const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
-        if (isAdmin) {
-          socket.join("admins");
-        }
+      if (wasOffline) {
+        await User.findByIdAndUpdate(id, {
+          socketId: socket.id,
+          isOnline: true,
+        });
 
-        if (wasOffline) {
-          await User.findByIdAndUpdate(id, {
-            socketId: socket.id,
-            isOnline: true,
-          });
+        const user = await User.findById(id).select('-password');
+        if (user) {
+          const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
+          if (isAdmin) {
+            socket.join("admins");
+          }
 
-          io.to("admins").emit("admin:user:online", { 
+          io.emit("admin:user:online", { 
             _id: user._id,
             isOnline: true,
             lastSeen: user.lastSeen,
@@ -215,12 +207,6 @@ if (socket.userId.toString() !== userId.toString()) {
     } catch (error) {
       // Silently handle error
     }
-  });
-
-  // ADMIN PRESENCE INIT — send current online snapshot
-  socket.on("admin:presence:init", () => {
-    const onlineIds = [...connectedSockets.keys()];
-    socket.emit("admin:presence:list", onlineIds);
   });
 
   // JOIN TICKET ROOM for real-time ticket updates
@@ -602,8 +588,7 @@ if (socket.userId.toString() !== userId.toString()) {
     }
   });
 
-  socket.on("disconnect", async (reason) => {
-  console.log("SOCKET DISCONNECTED:", socket.id, reason);
+  socket.on("disconnect", async () => {
     for (const [userId, socketSet] of connectedSockets.entries()) {
       if (socketSet.has(socket.id)) {
         socketSet.delete(socket.id);
@@ -617,11 +602,8 @@ if (socket.userId.toString() !== userId.toString()) {
             lastSeen: new Date(),
           });
 
-          io.to("admins").emit("admin:user:offline", {
-            _id: userId,
-            isOnline: false,
-            lastSeen: new Date()
-          });
+          const updatedUser = await User.findById(userId).select("isOnline lastSeen");
+          io.emit("admin:user:offline", updatedUser);
         }
 
         break;
@@ -631,7 +613,26 @@ if (socket.userId.toString() !== userId.toString()) {
     io.emit("online_users", connectedSockets.size);
   });
 
-  // NOTE: admin:user:join removed — presence is handled exclusively via the "join" event above
+  // ADMIN EVENTS - emit full user for Redux update
+  socket.on('admin:user:join', async (userId) => {
+    // Verify socket user matches
+    if (!socket.userId || socket.userId.toString() !== userId.toString()) {
+      return;
+    }
+
+    await User.findByIdAndUpdate(userId, {
+      isOnline: true,
+      socketId: socket.id
+    });
+    
+    const user = await User.findById(userId).select('-password');
+    io.emit('admin:user:online', { 
+      _id: user._id,
+      isOnline: true,
+      lastSeen: user.lastSeen,
+      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+    });
+  });
 });
 
 // ================= ERROR HANDLER =================

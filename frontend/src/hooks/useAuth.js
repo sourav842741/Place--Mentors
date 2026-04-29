@@ -5,7 +5,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import { socket, connectSocketSafely } from "../socket";
+import { socket } from "../socket";
 import { toast } from "sonner";
 
 const getDeviceId = () => {
@@ -51,13 +51,8 @@ const useAuth = () => {
      dispatch(setUserData(data));
 
 if (data?._id) {
-  connectSocketSafely();
-
-  if (socket.connected) {
-    socket.emit("join", data._id);
-  }
-
-  console.log("Socket join requested after login:", data._id);
+  socket.emit("join", data._id);
+  console.log("Socket joined room after login:", data._id);
 }
 
 
@@ -90,12 +85,8 @@ if (data?._id) {
       }
 
       dispatch(setUserData(data));
-     if (data?._id) {
-  connectSocketSafely();
-
-  if (socket.connected) {
-    socket.emit("join", data._id);
-  }
+      if (data?._id) {
+  socket.emit("join", data._id);
 }
 
       return { success: true, data };
@@ -169,9 +160,8 @@ if (data?._id) {
   } catch (err) {
     console.error("Logout Error:", err);
   } finally {
-    socket.disconnect();
-dispatch(logoutUser());
-navigate("/");
+    dispatch(logoutUser());
+    navigate("/");
   }
 };
 
@@ -188,15 +178,10 @@ const getCurrentUser = useCallback(async () => {
 
     dispatch(setUserData(userData));
 
-   if (userData?._id) {
-  connectSocketSafely();
-
-  if (socket.connected) {
-    socket.emit("join", userData._id);
-  }
-
- 
-}
+    if (userData?._id) {
+      socket.emit("join", userData._id);
+      console.log("Socket joined room for user", userData._id);
+    }
 
   } catch (err) {
     console.error(err);
@@ -371,16 +356,12 @@ const getCurrentUser = useCallback(async () => {
       };
     }
 
-    //  Normal Success Login
+    // ✅ Normal Success Login
     if (data?.success) {
       dispatch(setUserData(data.user));
-     if (data.user?._id) {
-  connectSocketSafely();
-
-  if (socket.connected) {
-    socket.emit("join", data.user._id);
-  }
-}
+      if (data.user?._id) {
+  socket.emit("join", data.user._id);
+      }
       return data;
     }
 

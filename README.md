@@ -170,12 +170,14 @@ Wait for the build to complete, then open your browser:
 
 ### Default Admin Accounts (Docker)
 
+## ⚠️ These accounts are for testing/demo purposes only.
+
 When running with Docker, default fallback credentials are set:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Super Admin | `superadmin@placementor.local` | `superadmin123` |
-| Admin | `admin@placementor.local` | `admin123` |
+| Super Admin | ` owner@placementor.com` | `owner6239@@` |
+| Admin | `admin.placementor@gmail.com` | `Admin6239@@` |
 
 > ⚠️ **Security Note**: Change these defaults before deploying to production by setting `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` environment variables.
 
