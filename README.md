@@ -398,12 +398,15 @@ curl -X POST http://localhost:5000/api/battles \
 
 ```bash
 # Backend
-npm run test:unit
-npm run test:e2e
+npm run test
+
 
 # Frontend
 npm run test
-npm run test:e2e -- --config=cypress.config.js
+
+
+# Coverage report
+npm run coverage
 ```
 
 **Coverage:** 85%+ (Unit + Integration)
