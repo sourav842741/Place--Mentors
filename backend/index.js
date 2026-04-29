@@ -47,6 +47,9 @@ import supportRouter from "./routes/support.routes.js";
 import setupSecurity from "./middlewares/security.js";
 import { attachSocketAuth } from "./middlewares/socketAuth.js";
 
+const isSuperAdminUser = (user) =>
+  user?.isSuperAdmin === true || user?.role === "superadmin";
+
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -189,7 +192,7 @@ io.on("connection", (socket) => {
 
         const user = await User.findById(id).select('-password');
         if (user) {
-          const isAdmin = user.role === "admin" || user.role === "superadmin" || user.email === process.env.SUPER_ADMIN_EMAIL;
+         const isAdmin = user.role === "admin" || isSuperAdminUser(user);
           if (isAdmin) {
             socket.join("admins");
           }
@@ -198,7 +201,7 @@ io.on("connection", (socket) => {
             _id: user._id,
             isOnline: true,
             lastSeen: user.lastSeen,
-            isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+           isSuperAdmin: isSuperAdminUser(user)
           });
         }
       }

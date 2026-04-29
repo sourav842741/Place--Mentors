@@ -140,6 +140,8 @@ graph TB
 - [AI Planner](https://place-mentor-frontend.onrender.com/ai-planner)
 
 
+
+
 ## 🐳 Docker Quick Start (Recommended)
 
 The fastest way to get the entire stack running is with Docker Compose. All services (MongoDB, Backend, Frontend) are containerized and networked automatically.
@@ -148,7 +150,10 @@ The fastest way to get the entire stack running is with Docker Compose. All serv
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
 - Docker Compose v2+ (included with Docker Desktop)
 
-### One-Command Startup
+- No need to install node_modules manually when using Docker.
+
+
+## ⚡ 30 Second Start Setup
 
 ```bash
 # Clone the repository
@@ -159,7 +164,9 @@ cd Place--Mentors
 docker compose up --build
 ```
 
-Wait for the build to complete, then open your browser:
+### Open Docker Desktop first, then run commands--for Window users Compulsary.
+
+## Wait for the build to complete, then open your browser:
 
 | Service | URL | Description |
 |---------|-----|-------------|
@@ -176,8 +183,8 @@ When running with Docker, default fallback credentials are set:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Super Admin | ` owner@placementor.com` | `owner6239@@` |
-| Admin | `admin.placementor@gmail.com` | `Admin6239@@` |
+| Super Admin | ` owner.placementor@gmail.com` | `owner5173@@` |
+| Admin | `admin.placementor@gmail.com` | `admin@08092004@` |
 
 > ⚠️ **Security Note**: Change these defaults before deploying to production by setting `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` environment variables.
 
