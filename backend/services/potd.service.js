@@ -196,9 +196,7 @@ export const getOrCreateTodayPotd = async () => {
 
     // AI try 3 times
     for (let i = 0; i < 3; i++) {
-      const aiResponse = await askAi([
-        { role: "user", content: POTD_PROMPT },
-      ]);
+      const aiResponse = await askAi([{ role: "user", content: POTD_PROMPT }]);
 
       const data = extractJSON(aiResponse);
 
@@ -209,9 +207,7 @@ export const getOrCreateTodayPotd = async () => {
         break;
       }
 
-      console.log(
-        `[POTD-SVC] Retry ${i + 1}: received ${validQuestions.length}`
-      );
+      console.log(`[POTD-SVC] Retry ${i + 1}: received ${validQuestions.length}`);
     }
 
     // Fill remaining from AI
@@ -220,17 +216,13 @@ export const getOrCreateTodayPotd = async () => {
         const extraRes = await askAi([
           {
             role: "user",
-            content: `Generate ${
-              15 - questions.length
-            } more MCQs in same raw JSON format only.`,
+            content: `Generate ${15 - questions.length} more MCQs in same raw JSON format only.`,
           },
         ]);
 
         const extraData = extractJSON(extraRes);
 
-        const extraQuestions = (extraData?.questions || []).filter(
-          isValidQuestion
-        );
+        const extraQuestions = (extraData?.questions || []).filter(isValidQuestion);
 
         questions = [...questions, ...extraQuestions];
       } catch {
@@ -244,10 +236,7 @@ export const getOrCreateTodayPotd = async () => {
 
       const needed = 15 - questions.length;
 
-      questions = [
-        ...questions,
-        ...FULL_FALLBACK_QUESTIONS.slice(0, needed),
-      ];
+      questions = [...questions, ...FULL_FALLBACK_QUESTIONS.slice(0, needed)];
     }
 
     questions = questions.slice(0, 15);

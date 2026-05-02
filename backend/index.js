@@ -47,9 +47,7 @@ import supportRouter from "./routes/support.routes.js";
 import setupSecurity from "./middlewares/security.js";
 import { attachSocketAuth } from "./middlewares/socketAuth.js";
 
-const isSuperAdminUser = (user) =>
-  user?.isSuperAdmin === true || user?.role === "superadmin";
-
+const isSuperAdminUser = (user) => user?.isSuperAdmin === true || user?.role === "superadmin";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -62,11 +60,9 @@ const server = http.createServer(app);
 //  SOCKET.IO
 const io = new Server(server, {
   cors: {
-    origin: [
-      process.env.CLIENT_URL,
-      "http://localhost:5173",
-      "http://localhost:3000",
-    ].filter(Boolean),
+    origin: [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"].filter(
+      Boolean
+    ),
     credentials: true,
   },
   transports: ["polling", "websocket"],
@@ -84,24 +80,23 @@ app.use((req, res, next) => {
 
 // ================= SECURITY MIDDLEWARE =================
 
-
 app.use(
   cors({
-    origin: [
-      process.env.CLIENT_URL,
-      "http://localhost:5173",
-      "http://localhost:3000",
-    ].filter(Boolean),
+    origin: [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"].filter(
+      Boolean
+    ),
     credentials: true,
-  }),
+  })
 );
 
 setupSecurity(app);
 
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false,
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use((req, res, next) => {
   if (req.body) mongoSanitize.sanitize(req.body);
   if (req.params) mongoSanitize.sanitize(req.params);
@@ -190,18 +185,18 @@ io.on("connection", (socket) => {
           isOnline: true,
         });
 
-        const user = await User.findById(id).select('-password');
+        const user = await User.findById(id).select("-password");
         if (user) {
-         const isAdmin = user.role === "admin" || isSuperAdminUser(user);
+          const isAdmin = user.role === "admin" || isSuperAdminUser(user);
           if (isAdmin) {
             socket.join("admins");
           }
 
-          io.emit("admin:user:online", { 
+          io.emit("admin:user:online", {
             _id: user._id,
             isOnline: true,
             lastSeen: user.lastSeen,
-           isSuperAdmin: isSuperAdminUser(user)
+            isSuperAdmin: isSuperAdminUser(user),
           });
         }
       }
@@ -273,10 +268,10 @@ io.on("connection", (socket) => {
       }
 
       const challengedUser = await User.findById(challengedId).select(
-        "fullName avatar xp level streakCount challenges friends",
+        "fullName avatar xp level streakCount challenges friends"
       );
       const challengerUser = await User.findById(challengerId).select(
-        "fullName avatar xp level streakCount challenges lastChallengeTime",
+        "fullName avatar xp level streakCount challenges lastChallengeTime"
       );
 
       if (!challengedUser || !challengerUser) {
@@ -285,22 +280,17 @@ io.on("connection", (socket) => {
       }
 
       // Validate pending challenge
-      if (
-        !challengedUser.challenges.received.some(
-          (r) => r.toString() === challengerId,
-        )
-      ) {
+      if (!challengedUser.challenges.received.some((r) => r.toString() === challengerId)) {
         socket.emit("battle:error", "No pending challenge");
         return;
       }
 
       // Remove challenge from both users
-      challengedUser.challenges.received =
-        challengedUser.challenges.received.filter(
-          (r) => r.toString() !== challengerId,
-        );
+      challengedUser.challenges.received = challengedUser.challenges.received.filter(
+        (r) => r.toString() !== challengerId
+      );
       challengerUser.challenges.sent = challengerUser.challenges.sent.filter(
-        (r) => r.toString() !== challengedId,
+        (r) => r.toString() !== challengedId
       );
 
       challengerUser.lastChallengeTime = null;
@@ -332,21 +322,19 @@ io.on("connection", (socket) => {
       const randomIdx = Math.floor(Math.random() * allQuestions.length);
       const randomProblem = allQuestions[randomIdx];
 
-      const testCases = [
-        ...randomProblem.sampleTestCases,
-        ...randomProblem.hiddenTestCases,
-      ].map((tc) => ({
-        input: tc.input,
-        expectedOutput: tc.expectedOutput,
-      }));
+      const testCases = [...randomProblem.sampleTestCases, ...randomProblem.hiddenTestCases].map(
+        (tc) => ({
+          input: tc.input,
+          expectedOutput: tc.expectedOutput,
+        })
+      );
 
-     const problem = {
-  title: randomProblem.title,
-  description: randomProblem.description,
-  testCases,
-  difficulty:
-    randomProblem.difficulty?.toLowerCase() || "easy",
-};
+      const problem = {
+        title: randomProblem.title,
+        description: randomProblem.description,
+        testCases,
+        difficulty: randomProblem.difficulty?.toLowerCase() || "easy",
+      };
 
       // Create battle
       const battle = new Battle({
@@ -434,11 +422,9 @@ io.on("connection", (socket) => {
         return;
       }
 
-      const challengedUser = await User.findById(challengedId).select(
-        "challenges socketId",
-      );
+      const challengedUser = await User.findById(challengedId).select("challenges socketId");
       const challengerUser = await User.findById(challengerId).select(
-        "challenges socketId lastChallengeTime",
+        "challenges socketId lastChallengeTime"
       );
 
       if (!challengedUser || !challengerUser) {
@@ -446,21 +432,16 @@ io.on("connection", (socket) => {
       }
 
       // Validate pending challenge exists
-      if (
-        !challengedUser.challenges.received.some(
-          (r) => r.toString() === challengerId,
-        )
-      ) {
+      if (!challengedUser.challenges.received.some((r) => r.toString() === challengerId)) {
         return;
       }
 
       // Remove from BOTH users
-      challengedUser.challenges.received =
-        challengedUser.challenges.received.filter(
-          (r) => r.toString() !== challengerId,
-        );
+      challengedUser.challenges.received = challengedUser.challenges.received.filter(
+        (r) => r.toString() !== challengerId
+      );
       challengerUser.challenges.sent = challengerUser.challenges.sent.filter(
-        (r) => r.toString() !== challengedId,
+        (r) => r.toString() !== challengedId
       );
 
       challengerUser.lastChallengeTime = null;
@@ -502,10 +483,7 @@ io.on("connection", (socket) => {
         const now = Date.now();
         const startedAt = new Date(battle.createdAt).getTime();
         const elapsed = now - startedAt;
-        const remainingTime = Math.max(
-          0,
-          Math.floor((TOTAL_TIME - elapsed) / 1000),
-        );
+        const remainingTime = Math.max(0, Math.floor((TOTAL_TIME - elapsed) / 1000));
 
         io.to(roomId).emit("battle:data", {
           ...battle.toObject(),
@@ -617,7 +595,7 @@ io.on("connection", (socket) => {
   });
 
   // ADMIN EVENTS - emit full user for Redux update
-  socket.on('admin:user:join', async (userId) => {
+  socket.on("admin:user:join", async (userId) => {
     // Verify socket user matches
     if (!socket.userId || socket.userId.toString() !== userId.toString()) {
       return;
@@ -625,15 +603,15 @@ io.on("connection", (socket) => {
 
     await User.findByIdAndUpdate(userId, {
       isOnline: true,
-      socketId: socket.id
+      socketId: socket.id,
     });
-    
-    const user = await User.findById(userId).select('-password');
-    io.emit('admin:user:online', { 
+
+    const user = await User.findById(userId).select("-password");
+    io.emit("admin:user:online", {
       _id: user._id,
       isOnline: true,
       lastSeen: user.lastSeen,
-      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+      isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
     });
   });
 });
@@ -648,15 +626,15 @@ const startServer = async () => {
 
     //  Startup recovery for missed POTD/CPOTD
     try {
-      await import("./services/potd.service.js").then(
-        ({ getOrCreateTodayPotd }) => getOrCreateTodayPotd(),
+      await import("./services/potd.service.js").then(({ getOrCreateTodayPotd }) =>
+        getOrCreateTodayPotd()
       );
     } catch (e) {
       // Silently handle
     }
     try {
-      await import("./services/cpotd.service.js").then(
-        ({ getOrCreateTodayCpotd }) => getOrCreateTodayCpotd(),
+      await import("./services/cpotd.service.js").then(({ getOrCreateTodayCpotd }) =>
+        getOrCreateTodayCpotd()
       );
     } catch (e) {
       // Silently handle

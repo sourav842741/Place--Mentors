@@ -326,11 +326,15 @@ export const chatWithSupportAI = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(
-    new ApiResponse(200, {
-      response: parsed.response,
-      shouldEscalate: parsed.shouldEscalate,
-      isResolved: parsed.isResolved,
-    }, "AI response generated")
+    new ApiResponse(
+      200,
+      {
+        response: parsed.response,
+        shouldEscalate: parsed.shouldEscalate,
+        isResolved: parsed.isResolved,
+      },
+      "AI response generated"
+    )
   );
 });
 
@@ -339,15 +343,7 @@ export const chatWithSupportAI = asyncHandler(async (req, res) => {
 ===================================================== */
 
 export const escalateToTicket = asyncHandler(async (req, res) => {
-  const {
-    subject,
-    category,
-    priority,
-    description,
-    email,
-    mobile,
-    aiChatSummary,
-  } = req.body;
+  const { subject, category, priority, description, email, mobile, aiChatSummary } = req.body;
 
   const userId = req.user._id;
 
@@ -412,7 +408,5 @@ export const escalateToTicket = asyncHandler(async (req, res) => {
     metadata: { ticketId, category, source: "escalation_endpoint" },
   }).catch(() => {});
 
-  res.status(201).json(
-    new ApiResponse(201, populatedTicket, "Ticket created from AI escalation")
-  );
+  res.status(201).json(new ApiResponse(201, populatedTicket, "Ticket created from AI escalation"));
 });

@@ -1,13 +1,13 @@
-import React from "react";
-import Navbar from "../components/Navbar";
-import useFruitbox from "../hooks/useFruitbox";
-import LevelCard from "../components/Fruitbox/LevelCard";
-import MonacoCodeEditor from "../components/Fruitbox/MonacoCodeEditor";
-import GameBoard from "../components/Fruitbox/GameBoard";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
-import { toast } from "sonner";
-import Footer from "@/components/Footer";
+import React from 'react';
+import Navbar from '../components/Navbar';
+import useFruitbox from '../hooks/useFruitbox';
+import LevelCard from '../components/Fruitbox/LevelCard';
+import MonacoCodeEditor from '../components/Fruitbox/MonacoCodeEditor';
+import GameBoard from '../components/Fruitbox/GameBoard';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
+import Footer from '@/components/Footer';
 
 const FruitboxFlex = () => {
   const {
@@ -27,20 +27,20 @@ const FruitboxFlex = () => {
   } = useFruitbox();
 
   //  Run solution
- const handleRunSolution = async (cssCode) => {
-  const isCorrect = validateSolution(cssCode);
+  const handleRunSolution = async (cssCode) => {
+    const isCorrect = validateSolution(cssCode);
 
-  if (!isCorrect) {
-    toast.error("Wrong answer. Try again!");
-    return;
-  }
+    if (!isCorrect) {
+      toast.error('Wrong answer. Try again!');
+      return;
+    }
 
-  if (!progress?.completedLevels?.includes(currentLevelId)) {
-    await completeLevel(currentLevelId, currentLevel.xpReward);
-  } else {
-    toast.success("Already completed ");
-  }
-};
+    if (!progress?.completedLevels?.includes(currentLevelId)) {
+      await completeLevel(currentLevelId, currentLevel.xpReward);
+    } else {
+      toast.success('Already completed ');
+    }
+  };
 
   //  Previous Level
   const goPrevLevel = () => {
@@ -54,7 +54,7 @@ const FruitboxFlex = () => {
     if (currentLevelId < levels.length) {
       setCurrentLevelId((prev) => prev + 1);
     } else {
-      toast.success("🎉 All Levels Completed!");
+      toast.success('🎉 All Levels Completed!');
     }
   };
 
@@ -77,7 +77,6 @@ const FruitboxFlex = () => {
 
       <div className="min-h-screen pt-20 lg:pl-64 bg-gradient-to-br from-slate-50/30 via-blue-50/20 to-indigo-100/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-all duration-500">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-6">
-
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
             <div>
@@ -103,16 +102,9 @@ const FruitboxFlex = () => {
                 />
               </div>
 
-              <div className="font-semibold text-sm">
-                {progress?.totalXP || 0} XP
-              </div>
+              <div className="font-semibold text-sm">{progress?.totalXP || 0} XP</div>
 
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={resetProgress}
-                className="h-10 px-4"
-              >
+              <Button variant="destructive" size="sm" onClick={resetProgress} className="h-10 px-4">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Reset
               </Button>
@@ -121,7 +113,6 @@ const FruitboxFlex = () => {
 
           {/* Main Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-
             {/* Game Board */}
             <div className="order-1 xl:order-2">
               <GameBoard
@@ -161,10 +152,9 @@ const FruitboxFlex = () => {
               onRun={handleRunSolution}
             />
           </div>
-
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

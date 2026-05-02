@@ -1,7 +1,7 @@
-import { describe, it, expect } from '@jest/globals';
-import { handleLoginStreak } from '../../utils/streakManager.js';
+import { describe, it, expect } from "@jest/globals";
+import { handleLoginStreak } from "../../utils/streakManager.js";
 
-describe('streakManager', () => {
+describe("streakManager", () => {
   const createUser = (overrides = {}) => ({
     streakCount: 0,
     longestStreak: 0,
@@ -14,20 +14,20 @@ describe('streakManager', () => {
   });
 
   /* ================= FIRST LOGIN ================= */
-  describe('first login', () => {
-    it('sets streakCount to 1 on first login', () => {
+  describe("first login", () => {
+    it("sets streakCount to 1 on first login", () => {
       const user = createUser();
       handleLoginStreak(user);
       expect(user.streakCount).toBe(1);
     });
 
-    it('awards XP on first login', () => {
+    it("awards XP on first login", () => {
       const user = createUser();
       handleLoginStreak(user);
       expect(user.xp).toBe(10);
     });
 
-    it('sets longestStreak to 1 on first login', () => {
+    it("sets longestStreak to 1 on first login", () => {
       const user = createUser();
       handleLoginStreak(user);
       expect(user.longestStreak).toBe(1);
@@ -35,8 +35,8 @@ describe('streakManager', () => {
   });
 
   /* ================= CONSECUTIVE DAYS ================= */
-  describe('consecutive day login', () => {
-    it('increments streak by 1 for next day login', () => {
+  describe("consecutive day login", () => {
+    it("increments streak by 1 for next day login", () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
@@ -46,7 +46,7 @@ describe('streakManager', () => {
       expect(user.streakCount).toBe(6);
     });
 
-    it('awards XP for consecutive day login', () => {
+    it("awards XP for consecutive day login", () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
@@ -58,8 +58,8 @@ describe('streakManager', () => {
   });
 
   /* ================= STREAK RESET ================= */
-  describe('streak reset on gap', () => {
-    it('resets streak to 1 after missing a day', () => {
+  describe("streak reset on gap", () => {
+    it("resets streak to 1 after missing a day", () => {
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       twoDaysAgo.setHours(0, 0, 0, 0);
@@ -69,7 +69,7 @@ describe('streakManager', () => {
       expect(user.streakCount).toBe(1);
     });
 
-    it('does NOT award XP when streak resets', () => {
+    it("does NOT award XP when streak resets", () => {
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       twoDaysAgo.setHours(0, 0, 0, 0);
@@ -81,8 +81,8 @@ describe('streakManager', () => {
   });
 
   /* ================= SAME DAY LOGIN ================= */
-  describe('same day login', () => {
-    it('does not change streak on same day login', () => {
+  describe("same day login", () => {
+    it("does not change streak on same day login", () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -94,8 +94,8 @@ describe('streakManager', () => {
   });
 
   /* ================= LONGEST STREAK TRACKING ================= */
-  describe('longestStreak tracking', () => {
-    it('updates longestStreak when current exceeds', () => {
+  describe("longestStreak tracking", () => {
+    it("updates longestStreak when current exceeds", () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
@@ -105,7 +105,7 @@ describe('streakManager', () => {
       expect(user.longestStreak).toBe(10);
     });
 
-    it('preserves longestStreak when current is lower', () => {
+    it("preserves longestStreak when current is lower", () => {
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       twoDaysAgo.setHours(0, 0, 0, 0);
@@ -117,8 +117,8 @@ describe('streakManager', () => {
   });
 
   /* ================= LAST LOGIN DATE ================= */
-  describe('lastLoginDate update', () => {
-    it('sets lastLoginDate to today after any login', () => {
+  describe("lastLoginDate update", () => {
+    it("sets lastLoginDate to today after any login", () => {
       const user = createUser();
       handleLoginStreak(user);
       const today = new Date();
@@ -127,4 +127,3 @@ describe('streakManager', () => {
     });
   });
 });
-

@@ -11,11 +11,11 @@ export const getCompany = async (req, res) => {
     }
 
     const result = await getCompanyByName(name, req.user._id);
-    
+
     if (result.error) {
-      return res.status(403).json({ 
-        success: false, 
-        error: result.error 
+      return res.status(403).json({
+        success: false,
+        error: result.error,
       });
     }
 
@@ -23,7 +23,7 @@ export const getCompany = async (req, res) => {
       success: true,
       company: result.company,
       usedCredits: result.usedCredits,
-      remainingCredits: result.remainingCredits
+      remainingCredits: result.remainingCredits,
     });
   } catch (error) {
     console.error("Company controller error:", error);
@@ -31,17 +31,15 @@ export const getCompany = async (req, res) => {
   }
 };
 
-
 // Get all companies (existing)
 export const getCompanies = async (req, res) => {
   try {
     const companies = await Company.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
-      companies
+      companies,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-

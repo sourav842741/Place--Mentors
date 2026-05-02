@@ -13,15 +13,15 @@ export const getEmailTemplate = (type, data = {}) => {
   const logo =
     "https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png";
 
- const layout = ({
-  gradient,
-  heading,
-  subheading,
-  body,
-  buttonText,
-  buttonUrl,
-  hideStats = false,
-}) => `
+  const layout = ({
+    gradient,
+    heading,
+    subheading,
+    body,
+    buttonText,
+    buttonUrl,
+    hideStats = false,
+  }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -278,55 +278,55 @@ Your Placement Partner for Coding, Practice & Growth
       buttonText: "Explore Now",
       buttonUrl: `${appUrl}/dashboard`,
     }),
-ticket_created: layout({
-  gradient: "linear-gradient(135deg,#3b82f6,#8b5cf6)",
-  heading: "Ticket Created 🎫",
-  subheading: "Your support request has been received successfully.",
-  body: message,
-  buttonText: ctaText,
-  buttonUrl: ctaUrl,
-  hideStats: true,
-}),
+    ticket_created: layout({
+      gradient: "linear-gradient(135deg,#3b82f6,#8b5cf6)",
+      heading: "Ticket Created 🎫",
+      subheading: "Your support request has been received successfully.",
+      body: message,
+      buttonText: ctaText,
+      buttonUrl: ctaUrl,
+      hideStats: true,
+    }),
 
-ticket_replied: layout({
-  gradient: "linear-gradient(135deg,#06b6d4,#3b82f6)",
-  heading: "New Reply 💬",
-  subheading: "Our support team has responded to your ticket.",
-  body: message,
-  buttonText: ctaText,
-  buttonUrl: ctaUrl,
-  hideStats: true,
-}),
+    ticket_replied: layout({
+      gradient: "linear-gradient(135deg,#06b6d4,#3b82f6)",
+      heading: "New Reply 💬",
+      subheading: "Our support team has responded to your ticket.",
+      body: message,
+      buttonText: ctaText,
+      buttonUrl: ctaUrl,
+      hideStats: true,
+    }),
 
-ticket_solved: layout({
-  gradient: "linear-gradient(135deg,#22c55e,#16a34a)",
-  heading: "Ticket Resolved ✅",
-  subheading: "Your issue has been successfully resolved.",
-  body: message,
-  buttonText: ctaText,
-  buttonUrl: ctaUrl,
-  hideStats: true,
-}),
+    ticket_solved: layout({
+      gradient: "linear-gradient(135deg,#22c55e,#16a34a)",
+      heading: "Ticket Resolved ✅",
+      subheading: "Your issue has been successfully resolved.",
+      body: message,
+      buttonText: ctaText,
+      buttonUrl: ctaUrl,
+      hideStats: true,
+    }),
 
-ticket_reopened: layout({
-  gradient: "linear-gradient(135deg,#f59e0b,#ef4444)",
-  heading: "Ticket Reopened 🔄",
-  subheading: "This ticket has been reopened and needs attention.",
-  body: message,
-  buttonText: ctaText,
-  buttonUrl: ctaUrl,
-  hideStats: true,
-}),
+    ticket_reopened: layout({
+      gradient: "linear-gradient(135deg,#f59e0b,#ef4444)",
+      heading: "Ticket Reopened 🔄",
+      subheading: "This ticket has been reopened and needs attention.",
+      body: message,
+      buttonText: ctaText,
+      buttonUrl: ctaUrl,
+      hideStats: true,
+    }),
 
-admin_notification: layout({
-  gradient: "linear-gradient(135deg,#ef4444,#dc2626)",
-  heading: "Admin Alert 🔔",
-  subheading: "A user activity requires your immediate attention.",
-  body: message,
-  buttonText: ctaText,
-  buttonUrl: ctaUrl,
-  hideStats: true,
-}),
+    admin_notification: layout({
+      gradient: "linear-gradient(135deg,#ef4444,#dc2626)",
+      heading: "Admin Alert 🔔",
+      subheading: "A user activity requires your immediate attention.",
+      body: message,
+      buttonText: ctaText,
+      buttonUrl: ctaUrl,
+      hideStats: true,
+    }),
   };
 
   return templates[type] || templates.custom_broadcast;

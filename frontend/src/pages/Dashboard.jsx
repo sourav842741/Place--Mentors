@@ -1,20 +1,13 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import Autoplay from "embla-carousel-autoplay";
-import * as React from "react";
-import useAuth from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { trackEvent } from "../hooks/useAnalytics";
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+import Autoplay from 'embla-carousel-autoplay';
+import * as React from 'react';
+import useAuth from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { trackEvent } from '../hooks/useAnalytics';
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 import {
   Play,
@@ -29,29 +22,25 @@ import {
   Loader2,
   Mic,
   Sparkles,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import api from "../services/api";
-import Footer from "@/components/Footer";
-import SuccessStories from "@/components/SuccessStories";
-import PotdCard from "@/components/PotdCard";
-import CpotdCard from "@/components/CpotdCard";
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import api from '../services/api';
+import Footer from '@/components/Footer';
+import SuccessStories from '@/components/SuccessStories';
+import PotdCard from '@/components/PotdCard';
+import CpotdCard from '@/components/CpotdCard';
 
-import { fetchNews, fetchNewsStats } from "../redux/newsSlice.js";
-import { Button } from "@/components/ui/button.jsx";
-import { Badge } from "@/components/ui/badge.jsx";
-import ContactUs from "@/components/ContactUs";
-import StreakCalendar from "@/components/StreakCalendar.jsx";
-import { fetchStreak } from "../redux/streakSlice.js";
+import { fetchNews, fetchNewsStats } from '../redux/newsSlice.js';
+import { Button } from '@/components/ui/button.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import ContactUs from '@/components/ContactUs';
+import StreakCalendar from '@/components/StreakCalendar.jsx';
+import { fetchStreak } from '../redux/streakSlice.js';
 
-import AnnouncementBar from "../components/AnnouncementBar";
-import useSettings from "../hooks/useSettings";
-import { useQueryClient } from "@tanstack/react-query";
+import AnnouncementBar from '../components/AnnouncementBar';
+import useSettings from '../hooks/useSettings';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -63,7 +52,7 @@ export default function Dashboard() {
   const [weeklyData, setWeeklyData] = React.useState([]);
 
   const [unlockedBadges, setUnlockedBadges] = React.useState([]);
-  const [motivation, setMotivation] = React.useState("");
+  const [motivation, setMotivation] = React.useState('');
   const [loadingMotivation, setLoadingMotivation] = React.useState(true);
 
   // News
@@ -75,7 +64,7 @@ export default function Dashboard() {
     stats,
     statsLoading,
   } = useSelector((state) => state.news);
-  const [activeFilter, setActiveFilter] = React.useState("all");
+  const [activeFilter, setActiveFilter] = React.useState('all');
 
   const streak = user?.streakCount || 0;
 
@@ -93,101 +82,101 @@ export default function Dashboard() {
 
   const companies = [
     {
-      name: "Google",
-      role: "Software Engineer",
-      rating: "4.8",
-      logo: "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png",
+      name: 'Google',
+      role: 'Software Engineer',
+      rating: '4.8',
+      logo: 'https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png',
     },
     {
-      name: "Microsoft",
-      role: "Cloud Architect",
-      rating: "4.7",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
+      name: 'Microsoft',
+      role: 'Cloud Architect',
+      rating: '4.7',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
     },
     {
-      name: "Amazon",
-      role: "SDE-II",
-      rating: "4.5",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+      name: 'Amazon',
+      role: 'SDE-II',
+      rating: '4.5',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg',
     },
     {
-      name: "Apple",
-      role: "iOS Developer",
-      rating: "4.9",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+      name: 'Apple',
+      role: 'iOS Developer',
+      rating: '4.9',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
     },
     {
-      name: "Meta",
-      role: "Product Manager",
-      rating: "4.6",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
+      name: 'Meta',
+      role: 'Product Manager',
+      rating: '4.6',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg',
     },
     {
-      name: "Netflix",
-      role: "UI/UX Designer",
-      rating: "4.7",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+      name: 'Netflix',
+      role: 'UI/UX Designer',
+      rating: '4.7',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
     },
     {
-      name: "Tesla",
-      role: "Hardware Engineer",
-      rating: "4.3",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg",
+      name: 'Tesla',
+      role: 'Hardware Engineer',
+      rating: '4.3',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg',
     },
     {
-      name: "Spotify",
-      role: "Data Scientist",
-      rating: "4.8",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
+      name: 'Spotify',
+      role: 'Data Scientist',
+      rating: '4.8',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg',
     },
     {
-      name: "Adobe",
-      role: "Product Designer",
-      rating: "4.6",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Adobe_Inc._logo_2020.svg",
+      name: 'Adobe',
+      role: 'Product Designer',
+      rating: '4.6',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Adobe_Inc._logo_2020.svg',
     },
     {
-      name: "LinkedIn",
-      role: "Full Stack Developer",
-      rating: "4.5",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+      name: 'LinkedIn',
+      role: 'Full Stack Developer',
+      rating: '4.5',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png',
     },
     {
-      name: "Uber",
-      role: "Backend Engineer",
-      rating: "4.4",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png",
+      name: 'Uber',
+      role: 'Backend Engineer',
+      rating: '4.4',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png',
     },
     {
-      name: "Airbnb",
-      role: "Frontend Engineer",
-      rating: "4.7",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Belo.svg",
+      name: 'Airbnb',
+      role: 'Frontend Engineer',
+      rating: '4.7',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Belo.svg',
     },
     {
-      name: "NVIDIA",
-      role: "AI Researcher",
-      rating: "4.9",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg",
+      name: 'NVIDIA',
+      role: 'AI Researcher',
+      rating: '4.9',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg',
     },
     {
-      name: "Slack",
-      role: "DevOps Engineer",
-      rating: "4.6",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg",
+      name: 'Slack',
+      role: 'DevOps Engineer',
+      rating: '4.6',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg',
     },
     {
-      name: "PayPal",
-      role: "Fintech Analyst",
-      rating: "4.4",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg",
+      name: 'PayPal',
+      role: 'Fintech Analyst',
+      rating: '4.4',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg',
     },
   ];
 
   const plugin = Autoplay({ delay: 3000, stopOnInteraction: false });
 
   const playSound = () => {
-    const audio = new Audio("/sounds/badge.mp3");
+    const audio = new Audio('/sounds/badge.mp3');
     audio.play();
   };
 
@@ -196,28 +185,28 @@ export default function Dashboard() {
     let interval;
 
     const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === 'visible') {
         interval = setInterval(() => {
-          api.post("/api/xp/time", { minutes: 1 });
+          api.post('/api/xp/time', { minutes: 1 });
         }, 60000);
       } else {
         clearInterval(interval);
       }
     };
 
-    document.addEventListener("visibilitychange", handleVisibility);
+    document.addEventListener('visibilitychange', handleVisibility);
     handleVisibility();
 
     return () => {
       clearInterval(interval);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 
   React.useEffect(() => {
     const fetchWeekly = async () => {
       try {
-        const res = await api.get("/api/dashboard/weekly", {
+        const res = await api.get('/api/dashboard/weekly', {
           withCredentials: true,
         });
 
@@ -240,15 +229,15 @@ export default function Dashboard() {
       try {
         setLoadingMotivation(true);
 
-        const res = await api.get("/api/ai/motivation", {
+        const res = await api.get('/api/ai/motivation', {
           withCredentials: true,
         });
 
-        const message = res.data.message || "Keep pushing forward! 🚀";
+        const message = res.data.message || 'Keep pushing forward! 🚀';
 
         setMotivation(message);
       } catch (err) {
-        console.error("Motivation fetch error:", err);
+        console.error('Motivation fetch error:', err);
         setMotivation("Stay consistent, you're doing great! 💪");
       } finally {
         setLoadingMotivation(false);
@@ -267,9 +256,9 @@ export default function Dashboard() {
     dispatch(fetchStreak());
     dispatch(
       fetchNews({
-        tag: activeFilter === "all" ? undefined : activeFilter,
+        tag: activeFilter === 'all' ? undefined : activeFilter,
         limit: 50,
-      }),
+      })
     );
   }, [dispatch, activeFilter]);
 
@@ -277,16 +266,12 @@ export default function Dashboard() {
     if (!weeklyData || weeklyData.length === 0) return 0;
 
     const currentAvg = Number(
-      (
-        weeklyData.reduce((sum, d) => sum + Number(d.avgScore), 0) /
-        weeklyData.length
-      ).toFixed(2),
+      (weeklyData.reduce((sum, d) => sum + Number(d.avgScore), 0) / weeklyData.length).toFixed(2)
     );
 
     const previousAvg =
-      weeklyData
-        .slice(0, weeklyData.length - 1)
-        .reduce((sum, d) => sum + d.avgScore, 0) / (weeklyData.length - 1 || 1);
+      weeklyData.slice(0, weeklyData.length - 1).reduce((sum, d) => sum + d.avgScore, 0) /
+      (weeklyData.length - 1 || 1);
 
     //  FIX HERE
     if (previousAvg === 0) {
@@ -298,12 +283,10 @@ export default function Dashboard() {
 
   const percentChange = calculateWeeklyChange();
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   const todayData =
-    weeklyData.find((d) => d.date === today) ||
-    weeklyData[weeklyData.length - 1] ||
-    {};
+    weeklyData.find((d) => d.date === today) || weeklyData[weeklyData.length - 1] || {};
   // ======================================================
 
   return (
@@ -395,7 +378,7 @@ export default function Dashboard() {
             {/* ACTION */}
             <div className="grid md:grid-cols-2 gap-6">
               <div
-                onClick={() => navigate("/quiz")}
+                onClick={() => navigate('/quiz')}
                 className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
               >
                 <div className="flex items-center gap-4">
@@ -403,9 +386,7 @@ export default function Dashboard() {
                     <Play className="w-6 h-6 text-gray-900 dark:text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      Practice
-                    </h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Practice</h3>
                     <p className="text-gray-500 dark:text-gray-400 font-medium">
                       Daily quiz challenges
                     </p>
@@ -416,8 +397,8 @@ export default function Dashboard() {
 
               <div
                 onClick={() => {
-                  trackEvent("jobs_page_clicked");
-                  navigate("/jobs");
+                  trackEvent('jobs_page_clicked');
+                  navigate('/jobs');
                 }}
                 className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
               >
@@ -426,12 +407,8 @@ export default function Dashboard() {
                     <Briefcase className="w-6 h-6 text-gray-900 dark:text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      Jobs
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">
-                      Latest openings
-                    </p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Jobs</h3>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">Latest openings</p>
                   </div>
                 </div>
 
@@ -440,7 +417,7 @@ export default function Dashboard() {
             </div>
 
             <div
-              onClick={() => navigate("/ai-voice-coach")}
+              onClick={() => navigate('/ai-voice-coach')}
               className="relative overflow-hidden flex items-center justify-between
   bg-white dark:bg-gray-900
   border border-gray-200 dark:border-white/10
@@ -478,7 +455,7 @@ export default function Dashboard() {
 
             {/* NEW PLACEMENT PREDICTOR PREMIUM CARD */}
             <div
-              onClick={() => navigate("/placement-predictor")}
+              onClick={() => navigate('/placement-predictor')}
               className="relative overflow-hidden flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-[1.02] group"
             >
               {/* Hover Glow */}
@@ -521,72 +498,71 @@ export default function Dashboard() {
               </div>
             </div>
 
- <div
-  onClick={() => navigate("/interview-experience")}
-  className="relative overflow-hidden flex items-center justify-between
+            <div
+              onClick={() => navigate('/interview-experience')}
+              className="relative overflow-hidden flex items-center justify-between
   bg-white dark:bg-gray-900
   border border-gray-200 dark:border-white/10
   p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-500
   cursor-pointer transition-all duration-300 hover:scale-[1.02] group min-h-[170px]"
->
-  {/* Hover Glow */}
-  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-blue-50 dark:bg-blue-900/10"></div>
+            >
+              {/* Hover Glow */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-blue-50 dark:bg-blue-900/10"></div>
 
-  {/* Left */}
-  <div className="relative z-10 flex items-center gap-5 flex-1">
+              {/* Left */}
+              <div className="relative z-10 flex items-center gap-5 flex-1">
+                {/* Icon */}
+                <div className="p-4 rounded-2xl bg-blue-100 dark:bg-blue-900/30 shadow-sm shrink-0">
+                  <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </div>
 
-    {/* Icon */}
-    <div className="p-4 rounded-2xl bg-blue-100 dark:bg-blue-900/30 shadow-sm shrink-0">
-      <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-    </div>
+                {/* Text */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                      Interview Experience
+                    </h3>
 
-    {/* Text */}
-    <div className="flex-1">
-      <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-          Interview Experience
-        </h3>
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-600 text-white shadow">
+                      NEW
+                    </span>
+                  </div>
 
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-600 text-white shadow">
-          NEW
-        </span>
-      </div>
+                  <p className="text-gray-500 dark:text-gray-400 font-medium mt-2 text-base md:text-lg">
+                    Real company rounds, HR questions & student success stories
+                  </p>
 
-      <p className="text-gray-500 dark:text-gray-400 font-medium mt-2 text-base md:text-lg">
-        Real company rounds, HR questions & student success stories
-      </p>
+                  {/* Tags */}
+                  <div className="flex gap-2 mt-4 flex-wrap">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                      TCS
+                    </span>
 
-      {/* Tags */}
-      <div className="flex gap-2 mt-4 flex-wrap">
-        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-          TCS
-        </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                      Infosys
+                    </span>
 
-        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-          Infosys
-        </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+                      Wipro
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
-          Wipro
-        </span>
-      </div>
-    </div>
-  </div>
+              {/* Right */}
+              <div className="hidden md:flex flex-col items-end justify-center relative z-10 ml-6">
+                <span className="text-purple-600 dark:text-purple-400 font-bold text-2xl">
+                  Explore Now
+                </span>
 
-  {/* Right */}
-  <div className="hidden md:flex flex-col items-end justify-center relative z-10 ml-6">
-    <span className="text-purple-600 dark:text-purple-400 font-bold text-2xl">
-      Explore Now
-    </span>
-
-    <ArrowRight className="w-8 h-8 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all mt-3" />
-  </div>
-</div>
+                <ArrowRight className="w-8 h-8 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all mt-3" />
+              </div>
+            </div>
 
             {/*  POTD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              <CpotdCard onClick={() => navigate("/coding-potd")} />
-              <PotdCard onClick={() => navigate("/potd")} />
+              <CpotdCard onClick={() => navigate('/coding-potd')} />
+              <PotdCard onClick={() => navigate('/potd')} />
               <StreakCalendar />
             </div>
 
@@ -595,20 +571,17 @@ export default function Dashboard() {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <TrendingUp size={20} className="text-gray-900" /> Weekly
-                    Performance
+                    <TrendingUp size={20} className="text-gray-900" /> Weekly Performance
                   </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Score & Time (last 7 days)
-                  </p>
+                  <p className="text-sm text-gray-500 mt-1">Score & Time (last 7 days)</p>
                 </div>
 
                 <div
-                  className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? "bg-green-100 text-green-700" : percentChange >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                  className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? 'bg-green-100 text-green-700' : percentChange >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
                 >
                   {percentChange === null
-                    ? "New Activity "
-                    : `${percentChange >= 0 ? "+" : ""}${percentChange}%`}
+                    ? 'New Activity '
+                    : `${percentChange >= 0 ? '+' : ''}${percentChange}%`}
                 </div>
               </div>
 
@@ -697,18 +670,18 @@ export default function Dashboard() {
 
               {/* FILTERS */}
               <div className="flex flex-wrap gap-2 mb-7">
-                {["all", "AI", "Layoff", "Hiring"].map((t) => (
+                {['all', 'AI', 'Layoff', 'Hiring'].map((t) => (
                   <Button
                     key={t}
                     size="sm"
                     onClick={() => setActiveFilter(t)}
                     className={`rounded-full px-4 text-xs font-semibold transition-all duration-300 ${
                       activeFilter === t
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                     }`}
                   >
-                    {t === "all" ? "All" : t}
+                    {t === 'all' ? 'All' : t}
 
                     {newsLoading && activeFilter === t && (
                       <Loader2 className="w-4 h-4 ml-1 animate-spin" />
@@ -744,10 +717,9 @@ export default function Dashboard() {
                     onClick={() =>
                       dispatch(
                         fetchNews({
-                          tag:
-                            activeFilter === "all" ? undefined : activeFilter,
+                          tag: activeFilter === 'all' ? undefined : activeFilter,
                           limit: 50,
-                        }),
+                        })
                       )
                     }
                     className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full px-5"
@@ -760,7 +732,7 @@ export default function Dashboard() {
                   {/* NEWS CAROUSEL */}
                   <Carousel
                     opts={{
-                      align: "start",
+                      align: 'start',
                       loop: true,
                       dragFree: true,
                     }}
@@ -769,10 +741,7 @@ export default function Dashboard() {
                   >
                     <CarouselContent className="-ml-2">
                       {news?.map((article, index) => (
-                        <CarouselItem
-                          key={index}
-                          className="basis-[320px] md:basis-[380px] pl-2"
-                        >
+                        <CarouselItem key={index} className="basis-[320px] md:basis-[380px] pl-2">
                           <a
                             href={article.url}
                             target="_blank"
@@ -786,13 +755,13 @@ export default function Dashboard() {
                               {/* TAG */}
                               <Badge
                                 className={`absolute top-4 right-4 text-white border-0 text-xs px-3 py-1 ${
-                                  article.tag === "AI"
-                                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
-                                    : article.tag === "Layoff"
-                                      ? "bg-gradient-to-r from-red-500 to-orange-500"
-                                      : article.tag === "Hiring"
-                                        ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                                        : "bg-gradient-to-r from-blue-500 to-indigo-500"
+                                  article.tag === 'AI'
+                                    ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                                    : article.tag === 'Layoff'
+                                      ? 'bg-gradient-to-r from-red-500 to-orange-500'
+                                      : article.tag === 'Hiring'
+                                        ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                                        : 'bg-gradient-to-r from-blue-500 to-indigo-500'
                                 }`}
                               >
                                 {article.tag}
@@ -810,19 +779,17 @@ export default function Dashboard() {
 
                                 <div className="pt-4 border-t border-gray-100 dark:border-white/10 flex items-center justify-between">
                                   <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                                    {article.company !== "Various" && (
+                                    {article.company !== 'Various' && (
                                       <p className="font-semibold text-gray-900 dark:text-white">
                                         {article.company}
                                       </p>
                                     )}
 
                                     <p>
-                                      {new Date(
-                                        article.publishedAt,
-                                      ).toLocaleDateString("en-US", {
-                                        month: "short",
-                                        day: "numeric",
-                                        hour: "numeric",
+                                      {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: 'numeric',
                                       })}
                                     </p>
                                   </div>
@@ -842,11 +809,7 @@ export default function Dashboard() {
               )}
 
               {/* ERROR */}
-              {newsError && (
-                <p className="text-center text-sm text-red-500 mt-5">
-                  {newsError}
-                </p>
-              )}
+              {newsError && <p className="text-center text-sm text-red-500 mt-5">{newsError}</p>}
             </div>
 
             <div>
@@ -854,7 +817,7 @@ export default function Dashboard() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Recommended{" "}
+                    Recommended{' '}
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       Companies
                     </span>
@@ -876,9 +839,7 @@ export default function Dashboard() {
                   {[...companies, ...companies].map((company, index) => (
                     <div
                       key={index}
-                      onClick={() =>
-                        navigate(`/company/${company.name.toLowerCase()}`)
-                      }
+                      onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
                       className="min-w-[330px] cursor-pointer"
                     >
                       <Card className="group border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
@@ -935,9 +896,7 @@ export default function Dashboard() {
                   {[...companies, ...companies].map((company, index) => (
                     <div
                       key={index}
-                      onClick={() =>
-                        navigate(`/company/${company.name.toLowerCase()}`)
-                      }
+                      onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
                       className="min-w-[330px] cursor-pointer"
                     >
                       <Card className="group border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">

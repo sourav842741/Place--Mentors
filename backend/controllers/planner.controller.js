@@ -11,12 +11,10 @@ import { addXP } from "../utils/xpManager.js";
 export const getCalendarStatus = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select(
-      "googleCalendarAccessToken googleCalendarRefreshToken",
+      "googleCalendarAccessToken googleCalendarRefreshToken"
     );
 
-    const authorized = !!(
-      user.googleCalendarAccessToken && user.googleCalendarRefreshToken
-    );
+    const authorized = !!(user.googleCalendarAccessToken && user.googleCalendarRefreshToken);
 
     res.json({
       authorized,
@@ -152,22 +150,18 @@ Make it:
       },
     ];
 
-   const aiResponse = await askAi(messages);
-const parsed = extractJSON(aiResponse);
+    const aiResponse = await askAi(messages);
+    const parsed = extractJSON(aiResponse);
 
-// AI returned invalid response
-if (!parsed || !parsed.plan || !Array.isArray(parsed.plan)) {
-  throw new Error(
-    "Planner AI returned invalid plan. Please try again."
-  );
-}
+    // AI returned invalid response
+    if (!parsed || !parsed.plan || !Array.isArray(parsed.plan)) {
+      throw new Error("Planner AI returned invalid plan. Please try again.");
+    }
 
-// Empty plan protection
-if (parsed.plan.length === 0) {
-  throw new Error(
-    "Planner AI returned empty plan. Please try again."
-  );
-}
+    // Empty plan protection
+    if (parsed.plan.length === 0) {
+      throw new Error("Planner AI returned empty plan. Please try again.");
+    }
 
     // Ensure minimum fields
     for (let day of parsed.plan) {
@@ -246,7 +240,7 @@ export const syncCalendar = async (req, res) => {
     const auth = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`,
+      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`
     );
 
     let needsSave = false;
@@ -303,27 +297,19 @@ export const syncCalendar = async (req, res) => {
         const existingEvents = await calendar.events.list({
           calendarId: "primary",
           timeMin: eventDate.toISOString(),
-          timeMax: new Date(
-            eventDate.getTime() + 24 * 60 * 60 * 1000,
-          ).toISOString(),
+          timeMax: new Date(eventDate.getTime() + 24 * 60 * 60 * 1000).toISOString(),
           singleEvents: true,
           q: summary,
         });
 
         if (existingEvents.data.items.length === 0) {
           // Parse time e.g. "1h 30m" → duration
-          const timeMatch = task.time.match(/(\\d+)h\\s*(\\d+)m?/i) || [
-            null,
-            "1",
-            "0",
-          ];
+          const timeMatch = task.time.match(/(\\d+)h\\s*(\\d+)m?/i) || [null, "1", "0"];
           const durationHours = parseInt(timeMatch[1]);
           const durationMinutes = parseInt(timeMatch[2] || 0);
           const durationMs = (durationHours * 60 + durationMinutes) * 60 * 1000;
 
-          const startTime = new Date(
-            eventDate.getTime() + Math.random() * 8 * 60 * 60 * 1000,
-          ); // Random start 0-8hr
+          const startTime = new Date(eventDate.getTime() + Math.random() * 8 * 60 * 60 * 1000); // Random start 0-8hr
           const endTime = new Date(startTime.getTime() + durationMs);
 
           await calendar.events.insert({
@@ -368,7 +354,7 @@ export const getCalendarAuthUrl = async (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`,
+      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`
     );
 
     const authUrl = oauth2Client.generateAuthUrl({
@@ -393,7 +379,7 @@ export const calendarCallback = async (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`,
+      `${process.env.BASE_URL || "http://localhost:5000"}/api/planner/calendar/callback`
     );
 
     const { tokens } = await oauth2Client.getToken(code);
@@ -410,9 +396,9 @@ export const calendarCallback = async (req, res) => {
     await user.save();
 
     // Redirect to frontend
-   res.redirect(
-  `${process.env.FRONTEND_URL || "http://localhost:5173"}/planner-history?calendar=connected`,
-);
+    res.redirect(
+      `${process.env.FRONTEND_URL || "http://localhost:5173"}/planner-history?calendar=connected`
+    );
   } catch (error) {
     console.error("Callback error:", error);
     res.status(500).json({ message: "Auth failed" });
@@ -424,9 +410,7 @@ export const getAllPlanners = async (req, res) => {
   try {
     const planners = await Planner.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
-      .select(
-        "goal company daysLeft dailyHours level progress currentDay createdAt",
-      );
+      .select("goal company daysLeft dailyHours level progress currentDay createdAt");
 
     res.json(planners);
   } catch (error) {
@@ -443,9 +427,7 @@ export const getPlannerById = async (req, res) => {
     });
 
     if (!planner) {
-      return res
-        .status(404)
-        .json({ message: "Planner not found or access denied" });
+      return res.status(404).json({ message: "Planner not found or access denied" });
     }
 
     res.json(planner);
@@ -495,9 +477,7 @@ export const completeTask = async (req, res) => {
 
     //  TASK VALIDATION
     if (taskIndex < 0 || taskIndex >= day.tasks.length) {
-      return res
-        .status(400)
-        .json({ message: `Invalid taskIndex: ${taskIndex}` });
+      return res.status(400).json({ message: `Invalid taskIndex: ${taskIndex}` });
     }
 
     const task = day.tasks[taskIndex];
@@ -544,7 +524,7 @@ export const completeTask = async (req, res) => {
 
     const completedTasks = planner.plan.reduce(
       (acc, d) => acc + d.tasks.filter((t) => t.completed).length,
-      0,
+      0
     );
 
     planner.progress = Math.round((completedTasks / totalTasks) * 100);
@@ -595,9 +575,7 @@ export const analyzeResume = async (req, res) => {
     const user = await User.findById(req.user._id);
 
     if (user.credits < 20) {
-      return res
-        .status(400)
-        .json({ message: "Not enough credits. Need 20 credits." });
+      return res.status(400).json({ message: "Not enough credits. Need 20 credits." });
     }
 
     if (!req.file) {
@@ -664,8 +642,7 @@ ${resumeText}`,
     res.json({
       success: true,
       analysis,
-      extractedText:
-        resumeText.substring(0, 500) + (resumeText.length > 500 ? "..." : ""),
+      extractedText: resumeText.substring(0, 500) + (resumeText.length > 500 ? "..." : ""),
       creditsLeft: user.credits,
     });
   } catch (error) {

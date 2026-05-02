@@ -9,4 +9,3 @@ router.post("/run", maintenanceCheck, isAuth, runCode);
 router.post("/runTests", maintenanceCheck, isAuth, runCodeTests);
 
 export default router;
-

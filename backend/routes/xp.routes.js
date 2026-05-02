@@ -1,5 +1,5 @@
 import express from "express";
-import { updateTimeSpent, completeQuiz , getUserBadges } from "../controllers/xp.controller.js";
+import { updateTimeSpent, completeQuiz, getUserBadges } from "../controllers/xp.controller.js";
 import isAuth from "../middlewares/isAuth.js";
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 

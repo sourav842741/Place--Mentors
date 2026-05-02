@@ -45,15 +45,15 @@ const potdSchema = new mongoose.Schema(
     questions: [questionSchema],
     isManual: {
       type: Boolean,
-      default: false
+      default: false,
     },
     generatedAt: {
       type: Date,
       default: Date.now,
-      expires: 7 * 24 * 60 * 60
+      expires: 7 * 24 * 60 * 60,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model("Potd", potdSchema);

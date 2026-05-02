@@ -8,10 +8,10 @@ export const generateYoutubeSummary = createAsyncThunk(
     try {
       const state = getState();
       const credits = state.user.user?.credits || 0;
-      
+
       if (credits < 1) {
-        toast.error("No credits left!");
-        return rejectWithValue("No credits");
+        toast.error('No credits left!');
+        return rejectWithValue('No credits');
       }
 
       const response = await api.post('/api/ai/youtube-summary', { url });
@@ -30,14 +30,14 @@ const youtubeSlice = createSlice({
     loading: false,
     data: null, // {title, thumbnail, duration, videoId, summary: {english, hindi}, timestamps:[], highlights:[]}
     error: null,
-    creditsLeft: null
+    creditsLeft: null,
   },
   reducers: {
     clearSummary: (state) => {
       state.data = null;
       state.error = null;
       state.creditsLeft = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -48,19 +48,17 @@ const youtubeSlice = createSlice({
       .addCase(generateYoutubeSummary.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data.data;
-        state.creditsLeft = action.payload.data.creditsLeft; 
+        state.creditsLeft = action.payload.data.creditsLeft;
         state.apiResponse = action.payload;
-        
-        toast.success("Pro Summary generated!");
 
+        toast.success('Pro Summary generated!');
       })
       .addCase(generateYoutubeSummary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
-  }
+  },
 });
 
 export const { clearSummary } = youtubeSlice.actions;
 export default youtubeSlice.reducer;
-

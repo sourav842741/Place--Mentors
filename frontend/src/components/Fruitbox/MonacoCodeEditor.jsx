@@ -1,16 +1,11 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Editor from "@monaco-editor/react";
-import {
-  Play,
-  RotateCcw,
-  HelpCircle,
-  CheckCircle2,
-} from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Editor from '@monaco-editor/react';
+import { Play, RotateCcw, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 const MonacoCodeEditor = ({
-  starterCode = "display: flex;",
+  starterCode = 'display: flex;',
   userCSS,
   setUserCSS,
   level,
@@ -19,14 +14,14 @@ const MonacoCodeEditor = ({
   onRun,
 }) => {
   const [editorValue, setEditorValue] = useState(userCSS || starterCode);
-  const [theme, setTheme] = useState("vs-dark");
+  const [theme, setTheme] = useState('vs-dark');
   const [isValid, setIsValid] = useState(false);
 
   // detect theme
   useEffect(() => {
     const applyTheme = () => {
-      const dark = document.documentElement.classList.contains("dark");
-      setTheme(dark ? "vs-dark" : "vs");
+      const dark = document.documentElement.classList.contains('dark');
+      setTheme(dark ? 'vs-dark' : 'vs');
     };
 
     applyTheme();
@@ -34,7 +29,7 @@ const MonacoCodeEditor = ({
     const observer = new MutationObserver(applyTheme);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ['class'],
     });
 
     return () => observer.disconnect();
@@ -60,28 +55,28 @@ const MonacoCodeEditor = ({
   }, [editorValue, validateSolution]);
 
   const handleChange = useCallback((value) => {
-    setEditorValue(value || "");
+    setEditorValue(value || '');
   }, []);
 
- const handleRun = useCallback(() => {
-  setUserCSS(editorValue);
+  const handleRun = useCallback(() => {
+    setUserCSS(editorValue);
 
-  if (isValid) {
-    onRun?.(editorValue);   
-    toast.success("Correct solution! 🚀");
-  } else {
-    toast.error("Not correct yet. Try again.");
-  }
-}, [editorValue, isValid, onRun, setUserCSS]);
+    if (isValid) {
+      onRun?.(editorValue);
+      toast.success('Correct solution! 🚀');
+    } else {
+      toast.error('Not correct yet. Try again.');
+    }
+  }, [editorValue, isValid, onRun, setUserCSS]);
 
   const handleReset = useCallback(() => {
     setEditorValue(starterCode);
     setUserCSS(starterCode);
-    toast.success("Editor reset");
+    toast.success('Editor reset');
   }, [starterCode, setUserCSS]);
 
   const handleHint = useCallback(() => {
-    toast.info(level?.hint || "Try using flex properties.");
+    toast.info(level?.hint || 'Try using flex properties.');
   }, [level]);
 
   const editorOptions = useMemo(
@@ -91,11 +86,11 @@ const MonacoCodeEditor = ({
       lineHeight: 24,
       automaticLayout: true,
       scrollBeyondLastLine: false,
-      wordWrap: "on",
+      wordWrap: 'on',
       roundedSelection: true,
       smoothScrolling: true,
-      cursorBlinking: "smooth",
-      cursorSmoothCaretAnimation: "on",
+      cursorBlinking: 'smooth',
+      cursorSmoothCaretAnimation: 'on',
       padding: { top: 16, bottom: 16 },
       tabSize: 2,
       insertSpaces: true,
@@ -103,8 +98,7 @@ const MonacoCodeEditor = ({
       quickSuggestions: true,
       contextmenu: true,
       folding: false,
-      fontFamily:
-        'JetBrains Mono, Consolas, Monaco, "Courier New", monospace',
+      fontFamily: 'JetBrains Mono, Consolas, Monaco, "Courier New", monospace',
     }),
     []
   );
@@ -114,9 +108,7 @@ const MonacoCodeEditor = ({
       {/* Header */}
       <div className="rounded-2xl border bg-white dark:bg-slate-900 shadow-sm px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-lg text-slate-900 dark:text-white">
-            CSS Editor
-          </h3>
+          <h3 className="font-semibold text-lg text-slate-900 dark:text-white">CSS Editor</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Live Preview Enabled • Ctrl + Enter to Run
           </p>
@@ -125,11 +117,11 @@ const MonacoCodeEditor = ({
         <div
           className={`px-3 py-1 rounded-full text-sm font-medium ${
             isValid
-              ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
-              : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+              ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
           }`}
         >
-          {isValid ? "Valid Solution" : "Editing"}
+          {isValid ? 'Valid Solution' : 'Editing'}
         </div>
       </div>
 
@@ -145,8 +137,7 @@ const MonacoCodeEditor = ({
           options={editorOptions}
           onMount={(editor) => {
             editor.addCommand(
-              window.monaco?.KeyMod.CtrlCmd |
-                window.monaco?.KeyCode.Enter,
+              window.monaco?.KeyMod.CtrlCmd | window.monaco?.KeyCode.Enter,
               handleRun
             );
           }}
@@ -158,33 +149,19 @@ const MonacoCodeEditor = ({
         <Button
           onClick={handleRun}
           className={`h-12 text-base font-semibold ${
-            isValid && !isWon
-              ? "bg-green-600 hover:bg-green-700"
-              : ""
+            isValid && !isWon ? 'bg-green-600 hover:bg-green-700' : ''
           }`}
         >
-          {isValid ? (
-            <CheckCircle2 className="w-5 h-5 mr-2" />
-          ) : (
-            <Play className="w-5 h-5 mr-2" />
-          )}
-          {isValid ? "Complete Level" : "Run Code"}
+          {isValid ? <CheckCircle2 className="w-5 h-5 mr-2" /> : <Play className="w-5 h-5 mr-2" />}
+          {isValid ? 'Complete Level' : 'Run Code'}
         </Button>
 
-        <Button
-          variant="outline"
-          onClick={handleReset}
-          className="h-12 text-base font-semibold"
-        >
+        <Button variant="outline" onClick={handleReset} className="h-12 text-base font-semibold">
           <RotateCcw className="w-4 h-4 mr-2" />
           Reset
         </Button>
 
-        <Button
-          variant="outline"
-          onClick={handleHint}
-          className="h-12 text-base font-semibold"
-        >
+        <Button variant="outline" onClick={handleHint} className="h-12 text-base font-semibold">
           <HelpCircle className="w-4 h-4 mr-2" />
           Hint
         </Button>

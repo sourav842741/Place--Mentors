@@ -149,7 +149,7 @@ export const startCronJobs = () => {
 
   // Start email cron jobs
   startEmailCronJobs();
-  
+
   console.log(" [CRON] Self-healing + Email started (10min cycles)");
 };
 

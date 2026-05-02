@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../services/api";
-import { FaArrowLeft } from "react-icons/fa";
-import Footer from "@/components/Footer";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+import { FaArrowLeft } from 'react-icons/fa';
+import Footer from '@/components/Footer';
 
 function InterviewHistory() {
   const [interviews, setInterviews] = useState([]);
@@ -11,7 +11,7 @@ function InterviewHistory() {
   useEffect(() => {
     const getMyInterviews = async () => {
       try {
-        const result = await api.get("/api/interview/get-interview", {
+        const result = await api.get('/api/interview/get-interview', {
           withCredentials: true,
         });
 
@@ -26,17 +26,16 @@ function InterviewHistory() {
 
   return (
     <>
-      <div className="min-h-screen 
+      <div
+        className="min-h-screen 
       bg-gray-50 dark:bg-gray-950
-      py-10 transition-colors duration-300">
-
+      py-10 transition-colors duration-300"
+      >
         <div className="w-[90vw] lg:w-[70vw] max-w-[90%] mx-auto">
-
           {/* HEADER */}
           <div className="mb-10 w-full flex items-start gap-4 flex-wrap">
-
             <button
-              onClick={() => navigate("/quiz")}
+              onClick={() => navigate('/quiz')}
               className="mt-1 p-3 rounded-full 
               bg-white dark:bg-gray-900
               shadow-sm hover:shadow-md
@@ -59,17 +58,16 @@ function InterviewHistory() {
 
           {/* EMPTY STATE */}
           {interviews.length === 0 ? (
-            <div className="bg-white dark:bg-gray-900
+            <div
+              className="bg-white dark:bg-gray-900
             p-10 rounded-2xl shadow-sm text-center
-            border border-gray-200 dark:border-white/10 transition-all">
-
+            border border-gray-200 dark:border-white/10 transition-all"
+            >
               <p className="text-gray-500 dark:text-gray-400">
                 No interviews found. Start your first interview.
               </p>
             </div>
-
           ) : (
-
             /* LIST */
             <div className="grid gap-6">
               {interviews.map((item, index) => (
@@ -82,9 +80,7 @@ function InterviewHistory() {
                   border border-gray-200 dark:border-white/10
                   hover:-translate-y-1"
                 >
-
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
                     {/* LEFT */}
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -102,37 +98,30 @@ function InterviewHistory() {
 
                     {/* RIGHT */}
                     <div className="flex items-center gap-6">
-
                       {/* SCORE */}
                       <div className="text-right">
                         <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                           {item.finalScore || 0}/10
                         </p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">
-                          Overall Score
-                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">Overall Score</p>
                       </div>
 
                       {/* STATUS */}
                       <span
                         className={`px-4 py-1 rounded-full text-xs font-medium ${
-                          item.status === "completed"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                          item.status === 'completed'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                         }`}
                       >
                         {item.status}
                       </span>
-
                     </div>
-
                   </div>
-
                 </div>
               ))}
             </div>
           )}
-
         </div>
       </div>
 

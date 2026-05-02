@@ -1,9 +1,9 @@
-import axios from "axios";
-import { SERVER_URL } from "../config/api";
+import axios from 'axios';
+import { SERVER_URL } from '../config/api';
 
 const api = axios.create({
   baseURL: SERVER_URL,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 export default api;
@@ -29,17 +29,19 @@ export const sendBulkEmail = (data) => api.post('/api/admin/email/send-bulk', da
 export const testTemplate = (data) => api.post('/api/admin/email/test-template', data);
 
 // ========== BAN/UNBAN USERS ==========
-export const banUser = (userId, banReason) => api.patch(`/api/admin/users/${userId}/ban`, { banReason });
+export const banUser = (userId, banReason) =>
+  api.patch(`/api/admin/users/${userId}/ban`, { banReason });
 export const unbanUser = (userId) => api.patch(`/api/admin/users/${userId}/unban`);
 
 // ========== CSV EXPORT ==========
-export const exportUsersCSV = () => api.get('/api/admin/users/export', { 
-  responseType: 'blob',
-  headers: { 
-    'Content-Type': 'text/csv'
-  }
-});
+export const exportUsersCSV = () =>
+  api.get('/api/admin/users/export', {
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'text/csv',
+    },
+  });
 
 // ========== ANALYTICS TRACKING ==========
-export const trackAnalyticsEvent = (eventType, metadata = {}) => 
+export const trackAnalyticsEvent = (eventType, metadata = {}) =>
   api.post('/api/admin/track-event', { eventType, metadata });

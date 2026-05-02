@@ -21,4 +21,3 @@ export const sanitizeUser = (user) => {
   delete obj.trustedDevices;
   return obj;
 };
-

@@ -45,12 +45,14 @@ describe("Leaderboard Integration Tests", () => {
         email: "active1@example.com",
         password: "hashedpass",
         skills: ["React"],
-        dailyStats: [{
-          date: today,
-          timeSpent: 60,
-          avgScore: 8,
-          quizzesGiven: 2,
-        }],
+        dailyStats: [
+          {
+            date: today,
+            timeSpent: 60,
+            avgScore: 8,
+            quizzesGiven: 2,
+          },
+        ],
         streakCount: 3,
       });
 
@@ -59,12 +61,14 @@ describe("Leaderboard Integration Tests", () => {
         email: "active2@example.com",
         password: "hashedpass",
         skills: ["Node.js"],
-        dailyStats: [{
-          date: today,
-          timeSpent: 30,
-          avgScore: 6,
-          quizzesGiven: 1,
-        }],
+        dailyStats: [
+          {
+            date: today,
+            timeSpent: 30,
+            avgScore: 6,
+            quizzesGiven: 1,
+          },
+        ],
         streakCount: 1,
       });
 
@@ -104,12 +108,14 @@ describe("Leaderboard Integration Tests", () => {
         email: "high@example.com",
         password: "hashedpass",
         skills: ["React"],
-        dailyStats: [{
-          date: today,
-          timeSpent: 120,
-          avgScore: 10,
-          quizzesGiven: 5,
-        }],
+        dailyStats: [
+          {
+            date: today,
+            timeSpent: 120,
+            avgScore: 10,
+            quizzesGiven: 5,
+          },
+        ],
         streakCount: 10,
       });
 
@@ -118,12 +124,14 @@ describe("Leaderboard Integration Tests", () => {
         email: "low@example.com",
         password: "hashedpass",
         skills: ["Node.js"],
-        dailyStats: [{
-          date: today,
-          timeSpent: 10,
-          avgScore: 2,
-          quizzesGiven: 0,
-        }],
+        dailyStats: [
+          {
+            date: today,
+            timeSpent: 10,
+            avgScore: 2,
+            quizzesGiven: 0,
+          },
+        ],
         streakCount: 1,
       });
 
@@ -146,12 +154,14 @@ describe("Leaderboard Integration Tests", () => {
         email: "yesterday@example.com",
         password: "hashedpass",
         skills: ["Python"],
-        dailyStats: [{
-          date: yesterdayStr,
-          timeSpent: 45,
-          avgScore: 7,
-          quizzesGiven: 1,
-        }],
+        dailyStats: [
+          {
+            date: yesterdayStr,
+            timeSpent: 45,
+            avgScore: 7,
+            quizzesGiven: 1,
+          },
+        ],
         streakCount: 2,
       });
 

@@ -27,7 +27,6 @@ const parseInput = (inputStr) => {
   }
 };
 
-
 const generateSolutionWrapper = (userCode, parsedInput, language) => {
   const inputStr =
     language.toLowerCase() === "java"
@@ -35,7 +34,6 @@ const generateSolutionWrapper = (userCode, parsedInput, language) => {
       : JSON.stringify(parsedInput);
 
   switch (language.toLowerCase()) {
-
     // ================= JS =================
     case "javascript":
       return `
@@ -66,7 +64,6 @@ except Exception as e:
   print("Runtime Error:", e)
 `;
 
-  
     case "java":
       return `
 import java.util.*;
@@ -85,7 +82,6 @@ public class Main {
 }
 `;
 
-   
     case "c++":
       return userCode;
 
@@ -114,20 +110,16 @@ export const executeCodeWithInput = async (userCode, language, input) => {
       {
         source_code: encodedCode,
         language_id: langId,
-        stdin: encodedInput, 
+        stdin: encodedInput,
       }
     );
 
     const result = response.data;
 
-    const decode = (data) =>
-      data ? Buffer.from(data, "base64").toString("utf-8") : "";
+    const decode = (data) => (data ? Buffer.from(data, "base64").toString("utf-8") : "");
 
     const output =
-      decode(result.stdout) ||
-      decode(result.stderr) ||
-      decode(result.compile_output) ||
-      "";
+      decode(result.stdout) || decode(result.stderr) || decode(result.compile_output) || "";
 
     return {
       success: true,
@@ -136,7 +128,6 @@ export const executeCodeWithInput = async (userCode, language, input) => {
       time: result.time,
       memory: result.memory || "N/A",
     };
-
   } catch (error) {
     console.error("Compiler error:", error.response?.data || error.message);
     throw new Error("Compilation failed");
@@ -166,8 +157,7 @@ export const executeCode = async (code, language, input = "") => {
 
     const result = response.data;
 
-    const decode = (data) =>
-      data ? Buffer.from(data, "base64").toString("utf-8") : "";
+    const decode = (data) => (data ? Buffer.from(data, "base64").toString("utf-8") : "");
 
     const output =
       decode(result.stdout) ||
@@ -196,16 +186,11 @@ export const executeTests = async ({ code, language, testCases }) => {
     const tc = testCases[i];
 
     try {
-      const execution = await executeCodeWithInput(
-        code,
-        language,
-        tc.input
-      );
+      const execution = await executeCodeWithInput(code, language, tc.input);
 
       const output = execution.output;
 
-      const passed =
-        String(output).trim() === String(tc.expectedOutput).trim();
+      const passed = String(output).trim() === String(tc.expectedOutput).trim();
 
       results.push({
         input: tc.input,
@@ -213,7 +198,6 @@ export const executeTests = async ({ code, language, testCases }) => {
         got: output,
         passed,
       });
-
     } catch (err) {
       results.push({
         input: tc.input,

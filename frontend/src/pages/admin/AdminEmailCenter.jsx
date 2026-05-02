@@ -1,35 +1,26 @@
-import React, { useState, useMemo, useEffect } from "react";
-import {
-  Mail,
-  BarChart3,
-  Users,
-  Send,
-  Loader2,
-  Zap,
-  AlertCircle,
-  Eye,
-} from "lucide-react";
+import React, { useState, useMemo, useEffect } from 'react';
+import { Mail, BarChart3, Users, Send, Loader2, Zap, AlertCircle, Eye } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { useAdminEmail } from "../../hooks/useAdminEmail.js";
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { useAdminEmail } from '../../hooks/useAdminEmail.js';
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
 
-const isValidEmail = (email = "") => emailRegex.test(email.trim());
+const isValidEmail = (email = '') => emailRegex.test(email.trim());
 
 const AdminEmailCenter = () => {
   useEffect(() => {
@@ -51,91 +42,91 @@ const AdminEmailCenter = () => {
   } = useAdminEmail();
 
   const [form, setForm] = useState({
-    email: "",
-    subject: "",
-    message: "",
-    template: "custom_broadcast",
-    segment: "all_users",
+    email: '',
+    subject: '',
+    message: '',
+    template: 'custom_broadcast',
+    segment: 'all_users',
   });
 
   const templates = [
     {
-      value: "daily_reminder",
-      label: "Daily Reminder 🚀",
-      subject: "Time To Practice 🚀",
+      value: 'daily_reminder',
+      label: 'Daily Reminder 🚀',
+      subject: 'Time To Practice 🚀',
     },
     {
-      value: "streak_warning",
-      label: "Streak Warning 🔥",
-      subject: "Your Streak Is At Risk 🔥",
+      value: 'streak_warning',
+      label: 'Streak Warning 🔥',
+      subject: 'Your Streak Is At Risk 🔥',
     },
     {
-      value: "comeback_email",
-      label: "Comeback Email 💙",
-      subject: "We Miss You 💙",
+      value: 'comeback_email',
+      label: 'Comeback Email 💙',
+      subject: 'We Miss You 💙',
     },
     {
-      value: "achievement_7d",
-      label: "7 Day Achievement 🏆",
-      subject: "7 Day Streak Unlocked 🏆",
+      value: 'achievement_7d',
+      label: '7 Day Achievement 🏆',
+      subject: '7 Day Streak Unlocked 🏆',
     },
     {
-      value: "achievement_30d",
-      label: "30 Day Legend 👑",
-      subject: "30 Day Legend 🔥",
+      value: 'achievement_30d',
+      label: '30 Day Legend 👑',
+      subject: '30 Day Legend 🔥',
     },
     {
-      value: "potd_alert",
-      label: "POTD Alert 💡",
+      value: 'potd_alert',
+      label: 'POTD Alert 💡',
       subject: "Today's POTD Is Live 💡",
     },
     {
-      value: "coding_motivation",
-      label: "Coding Motivation 💻",
-      subject: "Code Something Today 💻",
+      value: 'coding_motivation',
+      label: 'Coding Motivation 💻',
+      subject: 'Code Something Today 💻',
     },
     {
-      value: "placement_motivation",
-      label: "Placement Motivation 🚀",
-      subject: "Your Dream Job Needs Today 🚀",
+      value: 'placement_motivation',
+      label: 'Placement Motivation 🚀',
+      subject: 'Your Dream Job Needs Today 🚀',
     },
     {
-      value: "resume_reminder",
-      label: "Resume Reminder 📄",
-      subject: "Update Your Resume 📄",
+      value: 'resume_reminder',
+      label: 'Resume Reminder 📄',
+      subject: 'Update Your Resume 📄',
     },
     {
-      value: "interview_reminder",
-      label: "Interview Reminder 🎯",
-      subject: "Interview Prep Time 🎯",
+      value: 'interview_reminder',
+      label: 'Interview Reminder 🎯',
+      subject: 'Interview Prep Time 🎯',
     },
     {
-      value: "feature_announcement",
-      label: "Feature Announcement ✨",
-      subject: "New Feature Is Live ✨",
+      value: 'feature_announcement',
+      label: 'Feature Announcement ✨',
+      subject: 'New Feature Is Live ✨',
     },
     {
-      value: "custom_broadcast",
-      label: "Custom Message 📢",
-      subject: "",
+      value: 'custom_broadcast',
+      label: 'Custom Message 📢',
+      subject: '',
     },
   ];
 
   const segments = [
-    { value: "all_users", label: "All Users" },
-    { value: "premium_users", label: "Premium Users" },
+    { value: 'all_users', label: 'All Users' },
+    { value: 'premium_users', label: 'Premium Users' },
     {
-      value: "daily_practice_reminder",
-      label: "Daily Reminder List",
+      value: 'daily_practice_reminder',
+      label: 'Daily Reminder List',
     },
     {
-      value: "streak_warning",
-      label: "Streak Warning List",
+      value: 'streak_warning',
+      label: 'Streak Warning List',
     },
   ];
 
   const handleChange = (key, value) => {
-    if (key === "template") {
+    if (key === 'template') {
       const selected = templates.find((item) => item.value === value);
 
       setForm((prev) => ({
@@ -154,8 +145,8 @@ const AdminEmailCenter = () => {
 
   const preview = useMemo(() => {
     return {
-      title: form.subject || "Email Subject",
-      message: form.message || "Your message preview will appear here.",
+      title: form.subject || 'Email Subject',
+      message: form.message || 'Your message preview will appear here.',
     };
   }, [form]);
 
@@ -163,25 +154,25 @@ const AdminEmailCenter = () => {
     e.preventDefault();
 
     if (!form.subject.trim() || !form.message.trim()) {
-      toast.error("Subject and message required");
+      toast.error('Subject and message required');
       return;
     }
 
     try {
       await sendBulk(form).unwrap();
 
-      toast.success("Campaign sent successfully");
+      toast.success('Campaign sent successfully');
       clearErrors();
       fetchStats();
       fetchLogs({});
     } catch (err) {
-      toast.error(err || "Failed to send");
+      toast.error(err || 'Failed to send');
     }
   };
 
   const handleTest = async () => {
     if (!isValidEmail(form.email)) {
-      toast.error("Enter valid email");
+      toast.error('Enter valid email');
       return;
     }
 
@@ -191,9 +182,9 @@ const AdminEmailCenter = () => {
         testEmail: form.email,
       }).unwrap();
 
-      toast.success("Test email sent");
+      toast.success('Test email sent');
     } catch {
-      toast.error("Failed");
+      toast.error('Failed');
     }
   };
 
@@ -211,33 +202,19 @@ const AdminEmailCenter = () => {
 
         <div>
           <h1 className="text-3xl font-bold">Email Center</h1>
-          <p className="text-gray-500 dark:text-zinc-400">
-            Smart campaign system
-          </p>
+          <p className="text-gray-500 dark:text-zinc-400">Smart campaign system</p>
         </div>
       </div>
 
       {/* STATS */}
       <div className="grid md:grid-cols-5 gap-4">
-        <StatCard
-          title="Total Sent"
-          value={stats?.totalSent || 0}
-          icon={Send}
-        />
+        <StatCard title="Total Sent" value={stats?.totalSent || 0} icon={Send} />
 
         <StatCard title="Today Sent" value={stats?.todaySent || 0} icon={Zap} />
 
-        <StatCard
-          title="Failed"
-          value={stats?.totalFailed || 0}
-          icon={AlertCircle}
-        />
+        <StatCard title="Failed" value={stats?.totalFailed || 0} icon={AlertCircle} />
 
-        <StatCard
-          title="Users"
-          value={stats?.validEmailUsers || 0}
-          icon={Users}
-        />
+        <StatCard title="Users" value={stats?.validEmailUsers || 0} icon={Users} />
 
         <StatCard
           title="Open Rate"
@@ -256,10 +233,7 @@ const AdminEmailCenter = () => {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <Select
-                value={form.segment}
-                onValueChange={(v) => handleChange("segment", v)}
-              >
+              <Select value={form.segment} onValueChange={(v) => handleChange('segment', v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Segment" />
                 </SelectTrigger>
@@ -273,10 +247,7 @@ const AdminEmailCenter = () => {
                 </SelectContent>
               </Select>
 
-              <Select
-                value={form.template}
-                onValueChange={(v) => handleChange("template", v)}
-              >
+              <Select value={form.template} onValueChange={(v) => handleChange('template', v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Template" />
                 </SelectTrigger>
@@ -293,20 +264,20 @@ const AdminEmailCenter = () => {
               <Input
                 placeholder="Subject"
                 value={form.subject}
-                onChange={(e) => handleChange("subject", e.target.value)}
+                onChange={(e) => handleChange('subject', e.target.value)}
               />
 
               <Textarea
                 rows={8}
                 placeholder="Message"
                 value={form.message}
-                onChange={(e) => handleChange("message", e.target.value)}
+                onChange={(e) => handleChange('message', e.target.value)}
               />
 
               <Input
                 placeholder="Test Email"
                 value={form.email}
-                onChange={(e) => handleChange("email", e.target.value)}
+                onChange={(e) => handleChange('email', e.target.value)}
               />
 
               <div className="flex gap-3">
@@ -342,9 +313,7 @@ const AdminEmailCenter = () => {
 
               <h2 className="text-2xl font-bold mt-4">{preview.title}</h2>
 
-              <p className="mt-6 whitespace-pre-line text-zinc-700 leading-7">
-                {preview.message}
-              </p>
+              <p className="mt-6 whitespace-pre-line text-zinc-700 leading-7">{preview.message}</p>
 
               <button className="mt-8 px-5 py-3 bg-black text-white rounded-xl hover:opacity-90">
                 Open Dashboard

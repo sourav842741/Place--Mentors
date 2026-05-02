@@ -11,9 +11,7 @@ const getDiscoverUsers = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   //  current user
-  const user = await User.findById(userId).select(
-    "friends friendRequests.sent"
-  );
+  const user = await User.findById(userId).select("friends friendRequests.sent");
 
   if (!user) {
     throw new ApiError(404, "User not found");

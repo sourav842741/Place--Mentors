@@ -3,7 +3,12 @@ import request from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
-import { createTestApp, clearCollections, createTestUser, createAdminUser } from "../helpers/testApp.js";
+import {
+  createTestApp,
+  clearCollections,
+  createTestUser,
+  createAdminUser,
+} from "../helpers/testApp.js";
 import User from "../../models/user.model.js";
 import Settings from "../../models/Settings.model.js";
 
@@ -61,9 +66,7 @@ describe("Admin Integration Tests", () => {
   /* ================= GET ALL USERS ================= */
   describe("GET /api/admin/users", () => {
     it("admin can list all users", async () => {
-      const res = await request(app)
-        .get("/api/admin/users")
-        .set("Cookie", adminCookies);
+      const res = await request(app).get("/api/admin/users").set("Cookie", adminCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data).toBeInstanceOf(Array);
@@ -71,9 +74,7 @@ describe("Admin Integration Tests", () => {
     });
 
     it("non-admin cannot list users", async () => {
-      const res = await request(app)
-        .get("/api/admin/users")
-        .set("Cookie", userCookies);
+      const res = await request(app).get("/api/admin/users").set("Cookie", userCookies);
 
       expect(res.status).toBe(403);
     });
@@ -173,9 +174,7 @@ describe("Admin Integration Tests", () => {
   /* ================= SETTINGS ================= */
   describe("GET /api/admin/settings", () => {
     it("admin can get settings", async () => {
-      const res = await request(app)
-        .get("/api/admin/settings")
-        .set("Cookie", adminCookies);
+      const res = await request(app).get("/api/admin/settings").set("Cookie", adminCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data).toBeDefined();
@@ -223,9 +222,7 @@ describe("Admin Integration Tests", () => {
   /* ================= ANALYTICS ================= */
   describe("GET /api/admin/analytics", () => {
     it("admin can view dashboard analytics", async () => {
-      const res = await request(app)
-        .get("/api/admin/analytics")
-        .set("Cookie", adminCookies);
+      const res = await request(app).get("/api/admin/analytics").set("Cookie", adminCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.userMetrics).toBeDefined();
@@ -234,9 +231,7 @@ describe("Admin Integration Tests", () => {
     });
 
     it("non-admin blocked from analytics", async () => {
-      const res = await request(app)
-        .get("/api/admin/analytics")
-        .set("Cookie", userCookies);
+      const res = await request(app).get("/api/admin/analytics").set("Cookie", userCookies);
 
       expect(res.status).toBe(403);
     });

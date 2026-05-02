@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import api from "../services/api";
+import { useQuery } from '@tanstack/react-query';
+import api from '../services/api';
 
 export default function useSettings() {
   return useQuery({
-    queryKey: ["settings"],
+    queryKey: ['settings'],
     queryFn: async () => {
-      const { data } = await api.get("/api/admin/public-settings");
+      const { data } = await api.get('/api/admin/public-settings');
       return data;
     },
 
@@ -20,4 +20,3 @@ export default function useSettings() {
     refetchOnMount: false,
   });
 }
-

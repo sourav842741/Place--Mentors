@@ -85,10 +85,7 @@ describe("XP & Gamification Integration Tests", () => {
     });
 
     it("tracks daily stats correctly", async () => {
-      await request(app)
-        .post("/api/xp/time")
-        .set("Cookie", cookies)
-        .send({ minutes: 15 });
+      await request(app).post("/api/xp/time").set("Cookie", cookies).send({ minutes: 15 });
 
       const updated = await User.findById(user._id);
       const today = new Date().toISOString().split("T")[0];
@@ -102,10 +99,7 @@ describe("XP & Gamification Integration Tests", () => {
   /* ================= QUIZ COMPLETION ================= */
   describe("POST /api/xp/quiz", () => {
     it("awards XP for quiz score", async () => {
-      const res = await request(app)
-        .post("/api/xp/quiz")
-        .set("Cookie", cookies)
-        .send({ score: 8 });
+      const res = await request(app).post("/api/xp/quiz").set("Cookie", cookies).send({ score: 8 });
 
       expect(res.status).toBe(200);
       expect(res.body.score).toBe(8);
@@ -142,10 +136,7 @@ describe("XP & Gamification Integration Tests", () => {
     });
 
     it("tracks quiz count in daily stats", async () => {
-      await request(app)
-        .post("/api/xp/quiz")
-        .set("Cookie", cookies)
-        .send({ score: 7 });
+      await request(app).post("/api/xp/quiz").set("Cookie", cookies).send({ score: 7 });
 
       const updated = await User.findById(user._id);
       const today = new Date().toLocaleDateString("en-CA");
@@ -156,15 +147,9 @@ describe("XP & Gamification Integration Tests", () => {
     });
 
     it("calculates running average for multiple quizzes", async () => {
-      await request(app)
-        .post("/api/xp/quiz")
-        .set("Cookie", cookies)
-        .send({ score: 6 });
+      await request(app).post("/api/xp/quiz").set("Cookie", cookies).send({ score: 6 });
 
-      await request(app)
-        .post("/api/xp/quiz")
-        .set("Cookie", cookies)
-        .send({ score: 8 });
+      await request(app).post("/api/xp/quiz").set("Cookie", cookies).send({ score: 8 });
 
       const updated = await User.findById(user._id);
       const today = new Date().toLocaleDateString("en-CA");
@@ -179,23 +164,16 @@ describe("XP & Gamification Integration Tests", () => {
   describe("GET /api/xp/badges", () => {
     it("returns user badges", async () => {
       // First earn some XP to trigger badges
-      await request(app)
-        .post("/api/xp/time")
-        .set("Cookie", cookies)
-        .send({ minutes: 30 });
+      await request(app).post("/api/xp/time").set("Cookie", cookies).send({ minutes: 30 });
 
-      const res = await request(app)
-        .get("/api/xp/badges")
-        .set("Cookie", cookies);
+      const res = await request(app).get("/api/xp/badges").set("Cookie", cookies);
 
       expect(res.status).toBe(200);
       expect(res.body.badges).toBeInstanceOf(Array);
     });
 
     it("returns empty array for new user", async () => {
-      const res = await request(app)
-        .get("/api/xp/badges")
-        .set("Cookie", cookies);
+      const res = await request(app).get("/api/xp/badges").set("Cookie", cookies);
 
       expect(res.status).toBe(200);
       expect(res.body.badges).toEqual([]);

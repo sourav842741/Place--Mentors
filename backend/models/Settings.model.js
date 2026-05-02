@@ -19,8 +19,7 @@ const settingsSchema = new mongoose.Schema(
     maintenanceMessage: {
       type: String,
       trim: true,
-      default:
-        "We're working on improvements. Back soon! 🚀",
+      default: "We're working on improvements. Back soon! 🚀",
     },
 
     maintenanceImage: {
@@ -56,12 +55,7 @@ const settingsSchema = new mongoose.Schema(
 
     announcementType: {
       type: String,
-      enum: [
-        "info",
-        "warning",
-        "success",
-        "danger",
-      ],
+      enum: ["info", "warning", "success", "danger"],
       default: "info",
     },
 
@@ -92,18 +86,15 @@ const settingsSchema = new mongoose.Schema(
    STATIC METHOD:
    Always return single settings doc
 ===================================== */
-settingsSchema.statics.getSingleton =
-  async function () {
-    let settings =
-      await this.findOne();
+settingsSchema.statics.getSingleton = async function () {
+  let settings = await this.findOne();
 
-    if (!settings) {
-      settings =
-        await this.create({});
-    }
+  if (!settings) {
+    settings = await this.create({});
+  }
 
-    return settings;
-  };
+  return settings;
+};
 
 /* =====================================
    PREVENT MULTIPLE DOCUMENTS
@@ -111,21 +102,13 @@ settingsSchema.statics.getSingleton =
 settingsSchema.pre("save", async function () {
   if (!this.isNew) return;
 
-  const count =
-    await this.constructor.countDocuments();
+  const count = await this.constructor.countDocuments();
 
   if (count > 0) {
-    throw new Error(
-      "Only one Settings document allowed"
-    );
+    throw new Error("Only one Settings document allowed");
   }
 });
 
-const Settings =
-  mongoose.models.Settings ||
-  mongoose.model(
-    "Settings",
-    settingsSchema
-  );
+const Settings = mongoose.models.Settings || mongoose.model("Settings", settingsSchema);
 
 export default Settings;

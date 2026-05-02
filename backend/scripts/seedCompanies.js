@@ -60,24 +60,16 @@ const seedCompanies = async () => {
     console.log("🗑️ Old companies removed");
 
     const companiesArray = Object.values(companyData).map((item) => {
-      const difficulty = normalizeDifficulty(
-        item?.hiring?.difficulty
-      );
+      const difficulty = normalizeDifficulty(item?.hiring?.difficulty);
 
       return {
         ...item,
 
-        name:
-          item?.name ||
-          item?.overview?.name ||
-          "unknown-company",
+        name: item?.name || item?.overview?.name || "unknown-company",
 
         overview: {
           ...item?.overview,
-          name:
-            item?.overview?.name ||
-            item?.name ||
-            "Unknown Company",
+          name: item?.overview?.name || item?.name || "Unknown Company",
         },
 
         hiring: {
@@ -89,9 +81,7 @@ const seedCompanies = async () => {
 
     await Company.insertMany(companiesArray);
 
-    console.log(
-      `🚀 ${companiesArray.length} Companies Inserted Successfully`
-    );
+    console.log(`🚀 ${companiesArray.length} Companies Inserted Successfully`);
 
     await mongoose.connection.close();
 

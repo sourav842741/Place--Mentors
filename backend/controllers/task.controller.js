@@ -1,5 +1,5 @@
 import Task from "../models/Task.model.js";
-import {asyncHandler} from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import crypto from "crypto";
@@ -38,9 +38,7 @@ export const createTask = asyncHandler(async (req, res) => {
     dueDate: dueDate ? new Date(dueDate) : null,
   });
 
-  return res.status(201).json(
-    new ApiResponse(201, task, "Task created successfully")
-  );
+  return res.status(201).json(new ApiResponse(201, task, "Task created successfully"));
 });
 
 // ===============================
@@ -51,9 +49,7 @@ export const getMyTasks = asyncHandler(async (req, res) => {
     userId: req.user._id,
   }).sort({ createdAt: -1 });
 
-  return res.status(200).json(
-    new ApiResponse(200, tasks, "Tasks fetched successfully")
-  );
+  return res.status(200).json(new ApiResponse(200, tasks, "Tasks fetched successfully"));
 });
 
 // ===============================
@@ -69,9 +65,7 @@ export const getTaskById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Task not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, task, "Task fetched successfully")
-  );
+  return res.status(200).json(new ApiResponse(200, task, "Task fetched successfully"));
 });
 
 // ===============================
@@ -120,9 +114,7 @@ export const updateTask = asyncHandler(async (req, res) => {
 
   await task.save();
 
-  return res.status(200).json(
-    new ApiResponse(200, task, "Task updated successfully")
-  );
+  return res.status(200).json(new ApiResponse(200, task, "Task updated successfully"));
 });
 
 // ===============================
@@ -138,9 +130,7 @@ export const deleteTask = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Task not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, null, "Task deleted successfully")
-  );
+  return res.status(200).json(new ApiResponse(200, null, "Task deleted successfully"));
 });
 
 // ===============================
@@ -160,9 +150,7 @@ export const toggleTask = asyncHandler(async (req, res) => {
 
   await task.save();
 
-  return res.status(200).json(
-    new ApiResponse(200, task, "Task status updated")
-  );
+  return res.status(200).json(new ApiResponse(200, task, "Task status updated"));
 });
 
 // ===============================
@@ -196,9 +184,7 @@ export const shareTask = asyncHandler(async (req, res) => {
 
   await task.save();
 
-  return res.status(200).json(
-    new ApiResponse(200, task, "Task shared successfully")
-  );
+  return res.status(200).json(new ApiResponse(200, task, "Task shared successfully"));
 });
 
 // ===============================

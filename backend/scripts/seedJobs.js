@@ -83,17 +83,13 @@ const generateJobs = () => {
   const jobs = [];
 
   for (let i = 1; i <= 30; i++) {
-    const company =
-      companies[Math.floor(Math.random() * companies.length)];
+    const company = companies[Math.floor(Math.random() * companies.length)];
 
-    const title =
-      roles[Math.floor(Math.random() * roles.length)];
+    const title = roles[Math.floor(Math.random() * roles.length)];
 
-    const location =
-      locations[Math.floor(Math.random() * locations.length)];
+    const location = locations[Math.floor(Math.random() * locations.length)];
 
-    const salary =
-      salaries[Math.floor(Math.random() * salaries.length)];
+    const salary = salaries[Math.floor(Math.random() * salaries.length)];
 
     jobs.push({
       title,

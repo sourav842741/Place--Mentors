@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import * as ticketApi from "../services/ticketApi.js";
-import * as supportApi from "../services/supportApi.js";
-import { toast } from "sonner";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import * as ticketApi from '../services/ticketApi.js';
+import * as supportApi from '../services/supportApi.js';
+import { toast } from 'sonner';
 
 const initialState = {
   tickets: [],
@@ -24,145 +24,136 @@ const initialState = {
 // ================= ASYNC THUNKS =================
 
 export const fetchMyTickets = createAsyncThunk(
-  "tickets/fetchMyTickets",
+  'tickets/fetchMyTickets',
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await ticketApi.getMyTickets(params);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch tickets");
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch tickets');
     }
   }
 );
 
 export const fetchTicketDetail = createAsyncThunk(
-  "tickets/fetchTicketDetail",
+  'tickets/fetchTicketDetail',
   async (id, { rejectWithValue }) => {
     try {
       const response = await ticketApi.getTicketDetail(id);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch ticket detail");
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch ticket detail');
     }
   }
 );
 
 export const createNewTicket = createAsyncThunk(
-  "tickets/createNewTicket",
+  'tickets/createNewTicket',
   async (formData, { rejectWithValue }) => {
     try {
       const response = await ticketApi.createTicket(formData);
       toast.success(`Ticket created: ${response.data.data.ticketId}`);
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create ticket");
-      return rejectWithValue(error.response?.data?.message || "Failed to create ticket");
+      toast.error(error.response?.data?.message || 'Failed to create ticket');
+      return rejectWithValue(error.response?.data?.message || 'Failed to create ticket');
     }
   }
 );
 
 export const replyTicket = createAsyncThunk(
-  "tickets/replyTicket",
+  'tickets/replyTicket',
   async ({ id, message, isInternal }, { rejectWithValue }) => {
     try {
       const response = await ticketApi.replyToTicket(id, { message, isInternal });
-      toast.success(isInternal ? "Internal note added" : "Reply sent successfully");
+      toast.success(isInternal ? 'Internal note added' : 'Reply sent successfully');
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to send reply");
-      return rejectWithValue(error.response?.data?.message || "Failed to send reply");
+      toast.error(error.response?.data?.message || 'Failed to send reply');
+      return rejectWithValue(error.response?.data?.message || 'Failed to send reply');
     }
   }
 );
 
 export const reopenUserTicket = createAsyncThunk(
-  "tickets/reopenUserTicket",
+  'tickets/reopenUserTicket',
   async (id, { rejectWithValue }) => {
     try {
       const response = await ticketApi.reopenTicket(id);
-      toast.success("Ticket reopened successfully");
+      toast.success('Ticket reopened successfully');
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to reopen ticket");
-      return rejectWithValue(error.response?.data?.message || "Failed to reopen ticket");
+      toast.error(error.response?.data?.message || 'Failed to reopen ticket');
+      return rejectWithValue(error.response?.data?.message || 'Failed to reopen ticket');
     }
   }
 );
 
 // Admin thunks
 export const fetchAllTickets = createAsyncThunk(
-  "tickets/fetchAllTickets",
+  'tickets/fetchAllTickets',
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await ticketApi.getAllTickets(params);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch tickets");
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch tickets');
     }
   }
 );
 
 export const fetchTicketStats = createAsyncThunk(
-  "tickets/fetchTicketStats",
+  'tickets/fetchTicketStats',
   async (_, { rejectWithValue }) => {
     try {
       const response = await ticketApi.getTicketStats();
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch stats");
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch stats');
     }
   }
 );
 
 export const updateAdminTicketStatus = createAsyncThunk(
-  "tickets/updateAdminTicketStatus",
+  'tickets/updateAdminTicketStatus',
   async ({ id, status }, { rejectWithValue }) => {
     try {
-      const response = await ticketApi.updateTicketStatus(
-        id,
-        status
-      );
+      const response = await ticketApi.updateTicketStatus(id, status);
 
       toast.success(`Status updated to ${status}`);
       return response.data.data;
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to update status"
-      );
+      toast.error(error.response?.data?.message || 'Failed to update status');
 
-      return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to update status"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to update status');
     }
   }
 );
 
 export const deleteAdminTicket = createAsyncThunk(
-  "tickets/deleteAdminTicket",
+  'tickets/deleteAdminTicket',
   async (id, { rejectWithValue }) => {
     try {
       await ticketApi.deleteTicket(id);
-      toast.success("Ticket deleted successfully");
+      toast.success('Ticket deleted successfully');
       return id;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete ticket");
-      return rejectWithValue(error.response?.data?.message || "Failed to delete ticket");
+      toast.error(error.response?.data?.message || 'Failed to delete ticket');
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete ticket');
     }
   }
 );
 
 export const escalateToTicket = createAsyncThunk(
-  "tickets/escalateToTicket",
+  'tickets/escalateToTicket',
   async (formData, { rejectWithValue }) => {
     try {
       const response = await supportApi.escalateTicket(formData);
       toast.success(`Ticket escalated: ${response.data.data.ticketId}`);
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to escalate ticket");
-      return rejectWithValue(error.response?.data?.message || "Failed to escalate ticket");
+      toast.error(error.response?.data?.message || 'Failed to escalate ticket');
+      return rejectWithValue(error.response?.data?.message || 'Failed to escalate ticket');
     }
   }
 );
@@ -170,7 +161,7 @@ export const escalateToTicket = createAsyncThunk(
 // ================= SLICE =================
 
 const ticketSlice = createSlice({
-  name: "tickets",
+  name: 'tickets',
   initialState,
   reducers: {
     clearTicketDetail: (state) => {
@@ -183,10 +174,20 @@ const ticketSlice = createSlice({
     },
     // For real-time socket updates
     updateTicketFromSocket: (state, action) => {
-      const { ticketId, action: socketAction, ticket: socketTicket, reply, newStatus, replyCount, status } = action.payload;
+      const {
+        ticketId,
+        action: socketAction,
+        ticket: socketTicket,
+        reply,
+        newStatus,
+        replyCount,
+        status,
+      } = action.payload;
 
       // Update in ticket list
-      const listIdx = state.tickets.findIndex((t) => t._id === ticketId || t._id === socketTicket?._id);
+      const listIdx = state.tickets.findIndex(
+        (t) => t._id === ticketId || t._id === socketTicket?._id
+      );
       if (listIdx !== -1) {
         if (socketTicket) {
           state.tickets[listIdx] = { ...state.tickets[listIdx], ...socketTicket };
@@ -200,14 +201,17 @@ const ticketSlice = createSlice({
         if (replyCount !== undefined) {
           state.tickets[listIdx].replyCount = replyCount;
         }
-      } else if (socketAction === "created" && socketTicket) {
+      } else if (socketAction === 'created' && socketTicket) {
         // New ticket from socket (admin view)
         state.tickets.unshift(socketTicket);
         state.pagination.total += 1;
       }
 
       // Update ticket detail if currently viewing
-      if (state.ticketDetail && (state.ticketDetail._id === ticketId || state.ticketDetail._id === socketTicket?._id)) {
+      if (
+        state.ticketDetail &&
+        (state.ticketDetail._id === ticketId || state.ticketDetail._id === socketTicket?._id)
+      ) {
         if (socketTicket) {
           state.ticketDetail = { ...state.ticketDetail, ...socketTicket };
         }
@@ -313,9 +317,9 @@ const ticketSlice = createSlice({
           state.ticketDetail.replyCount = (state.ticketDetail.replyCount || 0) + 1;
           state.ticketDetail.lastReplyAt = new Date().toISOString();
           // If admin reply auto-changed status to In Progress
-          if (reply.senderRole === "admin" || reply.senderRole === "superadmin") {
-            if (state.ticketDetail.status === "Open") {
-              state.ticketDetail.status = "In Progress";
+          if (reply.senderRole === 'admin' || reply.senderRole === 'superadmin') {
+            if (state.ticketDetail.status === 'Open') {
+              state.ticketDetail.status = 'In Progress';
             }
           }
         }
@@ -325,9 +329,9 @@ const ticketSlice = createSlice({
         if (listIdx !== -1) {
           state.tickets[listIdx].replyCount = (state.tickets[listIdx].replyCount || 0) + 1;
           state.tickets[listIdx].lastReplyAt = new Date().toISOString();
-          if (reply.senderRole === "admin" || reply.senderRole === "superadmin") {
-            if (state.tickets[listIdx].status === "Open") {
-              state.tickets[listIdx].status = "In Progress";
+          if (reply.senderRole === 'admin' || reply.senderRole === 'superadmin') {
+            if (state.tickets[listIdx].status === 'Open') {
+              state.tickets[listIdx].status = 'In Progress';
             }
           }
         }
@@ -427,6 +431,10 @@ const ticketSlice = createSlice({
   },
 });
 
-export const { clearTicketDetail, clearTicketError, updateTicketFromSocket, removeTicketFromSocket } = ticketSlice.actions;
+export const {
+  clearTicketDetail,
+  clearTicketError,
+  updateTicketFromSocket,
+  removeTicketFromSocket,
+} = ticketSlice.actions;
 export default ticketSlice.reducer;
-

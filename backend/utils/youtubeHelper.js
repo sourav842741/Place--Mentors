@@ -3,8 +3,7 @@ import axios from "axios";
 //  Extract Video ID
 export const extractVideoId = (url) => {
   try {
-    const regExp =
-      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
+    const regExp = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
     const match = url.match(regExp);
     return match ? match[1] : null;
   } catch {
@@ -25,7 +24,7 @@ export const getFullVideoInfo = async (videoId) => {
       return {
         title: "Video Title",
         duration: "00:00",
-        thumbnail: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`
+        thumbnail: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
       };
     }
 
@@ -34,8 +33,8 @@ export const getFullVideoInfo = async (videoId) => {
         key: process.env.YOUTUBE_API_KEY,
         id: videoId,
         part: "snippet,contentDetails",
-        maxResults: 1
-      }
+        maxResults: 1,
+      },
     });
 
     const item = response.data.items[0];
@@ -48,7 +47,7 @@ export const getFullVideoInfo = async (videoId) => {
     const minutes = parseInt(durationMatch[2] || 0);
     const seconds = parseInt(durationMatch[3] || 0);
     const totalMinutes = hours * 60 + minutes;
-    const durationStr = `${totalMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const durationStr = `${totalMinutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
     // Best thumbnail
     const thumbnails = item.snippet.thumbnails;
@@ -58,14 +57,14 @@ export const getFullVideoInfo = async (videoId) => {
       title: item.snippet.title,
       duration: durationStr,
       thumbnail,
-      channel: item.snippet.channelTitle
+      channel: item.snippet.channelTitle,
     };
   } catch (error) {
     console.error("Full video info error:", error.message);
     return {
       title: "Video Preview",
       duration: "--:--",
-      thumbnail: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`
+      thumbnail: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
     };
   }
 };
@@ -79,9 +78,9 @@ export const getVideoMetadata = async (videoId) => {
     if (!process.env.YOUTUBE_API_KEY) {
       return {
         success: true,
-        source: 'metadata',
+        source: "metadata",
         text: `${videoInfo.title}`,
-        ...videoInfo
+        ...videoInfo,
       };
     }
 
@@ -90,21 +89,21 @@ export const getVideoMetadata = async (videoId) => {
         key: process.env.YOUTUBE_API_KEY,
         id: videoId,
         part: "snippet",
-        maxResults: 1
-      }
+        maxResults: 1,
+      },
     });
 
     const item = response.data.items[0];
     if (!item) return null;
 
     const snippet = item.snippet;
-    const text = `${snippet.title}\n\n${snippet.description.replace(/\n/g, ' ')}`;
-    
+    const text = `${snippet.title}\n\n${snippet.description.replace(/\n/g, " ")}`;
+
     return {
       success: true,
-      source: 'metadata',
+      source: "metadata",
       text: text.substring(0, 15000),
-      ...videoInfo
+      ...videoInfo,
     };
   } catch (error) {
     console.error("Metadata fetch error:", error.message);
@@ -114,21 +113,18 @@ export const getVideoMetadata = async (videoId) => {
 
 //  Unified Content Fetch - Enhanced with Full Info
 export const fetchTranscriptOrMetadata = async (videoId) => {
-  
-  
   // Always get full video info FIRST
   const videoInfo = await getFullVideoInfo(videoId);
-  
+
   // 1. Try transcript first
   const transcriptResult = await fetchTranscript(videoId);
   if (transcriptResult.success) {
-   
     return {
       success: true,
-      source: 'transcript',
+      source: "transcript",
       text: transcriptResult.text,
       length: transcriptResult.text.length,
-      videoInfo
+      videoInfo,
     };
   }
 
@@ -139,27 +135,25 @@ export const fetchTranscriptOrMetadata = async (videoId) => {
     console.log(" Using metadata");
     return {
       success: true,
-      source: 'metadata',
+      source: "metadata",
       text: metadataResult.text,
-      videoInfo: metadataResult.videoInfo || videoInfo
+      videoInfo: metadataResult.videoInfo || videoInfo,
     };
   }
 
   // 3. Final fallback
   return {
     success: true,
-    source: 'fallback',
-    text: `YouTube video: ${videoInfo.title || 'Unknown'}`,
-    videoInfo
+    source: "fallback",
+    text: `YouTube video: ${videoInfo.title || "Unknown"}`,
+    videoInfo,
   };
 };
 
 // Fetch Transcript (BACKWARD COMPATIBLE)
 export const fetchTranscript = async (videoId) => {
   try {
-    const response = await axios.get(
-      `https://youtubetranscript.com/?server_vid2=${videoId}`
-    );
+    const response = await axios.get(`https://youtubetranscript.com/?server_vid2=${videoId}`);
 
     const data = response.data;
 
@@ -184,4 +178,3 @@ export const fetchTranscript = async (videoId) => {
     };
   }
 };
-

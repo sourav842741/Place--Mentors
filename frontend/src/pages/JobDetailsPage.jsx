@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSingleJob, bookmarkJob, unbookmarkJob } from "../redux/jobSlice";
-import Navbar from "../components/Navbar";
-import useJobs from "../hooks/useJobs";
-import { Button } from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Skeleton } from "../components/ui/skeleton";
-import { Separator } from "../components/ui/separator";
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchSingleJob, bookmarkJob, unbookmarkJob } from '../redux/jobSlice';
+import Navbar from '../components/Navbar';
+import useJobs from '../hooks/useJobs';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
+import { Skeleton } from '../components/ui/skeleton';
+import { Separator } from '../components/ui/separator';
 import {
   ArrowLeft,
   Briefcase,
@@ -30,9 +24,9 @@ import {
   Zap,
   Building,
   FileText,
-} from "lucide-react";
-import { toast } from "sonner";
-import Footer from "@/components/Footer";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import Footer from '@/components/Footer';
 
 const JobDetailsPage = () => {
   const { id } = useParams();
@@ -57,13 +51,12 @@ const JobDetailsPage = () => {
     if (!job) return;
     await toggleBookmark(job._id, isBookmarked);
     setIsBookmarked(!isBookmarked);
-    toast.success(isBookmarked ? "Removed from bookmarks" : "Bookmarked!");
+    toast.success(isBookmarked ? 'Removed from bookmarks' : 'Bookmarked!');
   };
 
   const formatDate = (dateStr) =>
-    dateStr ? new Date(dateStr).toLocaleDateString() : "Recently Posted";
-  const formatSalary = (salary) =>
-    salary ? `$${parseInt(salary).toLocaleString()}+ / yr` : null;
+    dateStr ? new Date(dateStr).toLocaleDateString() : 'Recently Posted';
+  const formatSalary = (salary) => (salary ? `$${parseInt(salary).toLocaleString()}+ / yr` : null);
 
   // Loading Skeleton
   if (loading) {
@@ -97,9 +90,7 @@ const JobDetailsPage = () => {
         <Navbar />
         <div className="text-center p-12 max-w-md">
           <Briefcase className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Job Not Found
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Job Not Found</h2>
           <p className="text-gray-500 mb-8">
             The job you're looking for doesn't exist or has been removed.
           </p>
@@ -118,9 +109,9 @@ const JobDetailsPage = () => {
     const jobUrl = `${window.location.origin}/jobs/${job._id}`;
     try {
       await navigator.clipboard.writeText(jobUrl);
-      toast.success("Job link copied!");
+      toast.success('Job link copied!');
     } catch {
-      toast.error("Share failed");
+      toast.error('Share failed');
     }
   };
 
@@ -145,13 +136,9 @@ const JobDetailsPage = () => {
                       <ArrowLeft className="h-5 w-5" />
                     </Link>
                   </Button>
-                  <h1 className="text-3xl lg:text-4xl font-bold leading-tight">
-                    {job.title}
-                  </h1>
+                  <h1 className="text-3xl lg:text-4xl font-bold leading-tight">{job.title}</h1>
                 </div>
-                <p className="text-2xl font-semibold opacity-95">
-                  {job.company}
-                </p>
+                <p className="text-2xl font-semibold opacity-95">{job.company}</p>
               </div>
               <div className="flex flex-wrap gap-3 items-center">
                 <Button
@@ -159,7 +146,7 @@ const JobDetailsPage = () => {
                   className="bg-white text-indigo-600 hover:bg-white/90 font-semibold shadow-lg"
                   onClick={() => {
                     if (job.applyLink || job.url) {
-                      window.open(job.applyLink || job.url, "_blank");
+                      window.open(job.applyLink || job.url, '_blank');
                     }
                   }}
                 >
@@ -182,9 +169,9 @@ const JobDetailsPage = () => {
                   onClick={handleBookmark}
                 >
                   <Star
-                    className={`mr-2 h-5 w-5 ${isBookmarked ? "fill-yellow-300 text-yellow-300" : "text-white/70"}`}
+                    className={`mr-2 h-5 w-5 ${isBookmarked ? 'fill-yellow-300 text-yellow-300' : 'text-white/70'}`}
                   />
-                  {isBookmarked ? "Saved" : "Save"}
+                  {isBookmarked ? 'Saved' : 'Save'}
                 </Button>
               </div>
             </div>
@@ -196,10 +183,7 @@ const JobDetailsPage = () => {
               {/* Meta Badges */}
               <Card className="shadow-lg border-0">
                 <CardContent className="p-8 flex flex-wrap gap-3 pt-8">
-                  <Badge
-                    variant="outline"
-                    className="text-lg px-4 py-2 flex items-center gap-2"
-                  >
+                  <Badge variant="outline" className="text-lg px-4 py-2 flex items-center gap-2">
                     <MapPin className="h-5 w-5" /> {job.location}
                   </Badge>
                   {job.jobType && (
@@ -208,27 +192,17 @@ const JobDetailsPage = () => {
                     </Badge>
                   )}
                   {formatSalary(job.salary) && (
-                    <Badge
-                      variant="outline"
-                      className="text-lg px-4 py-2 flex items-center gap-2"
-                    >
-                      <DollarSign className="h-5 w-5" />{" "}
-                      {formatSalary(job.salary)}
+                    <Badge variant="outline" className="text-lg px-4 py-2 flex items-center gap-2">
+                      <DollarSign className="h-5 w-5" /> {formatSalary(job.salary)}
                     </Badge>
                   )}
                   {job.remote && (
-                    <Badge
-                      variant="outline"
-                      className="text-lg px-4 py-2 flex items-center gap-2"
-                    >
+                    <Badge variant="outline" className="text-lg px-4 py-2 flex items-center gap-2">
                       <Globe className="h-5 w-5" /> Remote Friendly
                     </Badge>
                   )}
                   {job.date && (
-                    <Badge
-                      variant="ghost"
-                      className="text-lg px-4 py-2 flex items-center gap-2"
-                    >
+                    <Badge variant="ghost" className="text-lg px-4 py-2 flex items-center gap-2">
                       <Calendar className="h-5 w-5" /> {formatDate(job.date)}
                     </Badge>
                   )}
@@ -244,9 +218,7 @@ const JobDetailsPage = () => {
                 </CardHeader>
 
                 <CardContent className="prose prose-lg max-w-none text-gray-800 dark:text-gray-300 prose-headings:text-gray-900 dark:prose-headings:text-white">
-                  <div
-                    dangerouslySetInnerHTML={{ __html: job.description || "" }}
-                  />
+                  <div dangerouslySetInnerHTML={{ __html: job.description || '' }} />
                 </CardContent>
               </Card>
 
@@ -261,11 +233,7 @@ const JobDetailsPage = () => {
                   </CardHeader>
                   <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-0 pt-4">
                     {job.tags.map((tag, i) => (
-                      <Badge
-                        key={i}
-                        variant="outline"
-                        className="justify-center py-3 text-sm"
-                      >
+                      <Badge key={i} variant="outline" className="justify-center py-3 text-sm">
                         {tag}
                       </Badge>
                     ))}
@@ -291,12 +259,8 @@ const JobDetailsPage = () => {
                     </div>
 
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">
-                        {job.company}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {job.location}
-                      </p>
+                      <p className="font-semibold text-gray-900 dark:text-white">{job.company}</p>
+                      <p className="text-gray-600 dark:text-gray-400">{job.location}</p>
                     </div>
                   </div>
 
@@ -328,9 +292,9 @@ const JobDetailsPage = () => {
                     onClick={handleBookmark}
                   >
                     <Star
-                      className={`mr-2 h-4 w-4 ${isBookmarked ? "fill-yellow-400 text-yellow-400" : ""}`}
+                      className={`mr-2 h-4 w-4 ${isBookmarked ? 'fill-yellow-400 text-yellow-400' : ''}`}
                     />
-                    {isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
+                    {isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
                   </Button>
                 </CardContent>
               </Card>
@@ -342,12 +306,7 @@ const JobDetailsPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <p>5 more jobs like this one</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    asChild
-                  >
+                  <Button variant="outline" size="sm" className="w-full" asChild>
                     <Link to="/jobs" className="w-full block">
                       Browse Similar Jobs
                     </Link>

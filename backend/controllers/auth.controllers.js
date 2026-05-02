@@ -1,11 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import TempUser from "../models/tempUser.model.js";
-import {
-  sendSignupOtpMail,
-  sendResetOtpMail,
-  sendWelcomeMail,
-} from "../config/mail.js";
+import { sendSignupOtpMail, sendResetOtpMail, sendWelcomeMail } from "../config/mail.js";
 import genToken, { genTempToken, verifyTempToken } from "../config/token.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import { deleteFromCloudinary } from "../config/cloudinary.js";
@@ -25,10 +21,7 @@ import {
   verifyRecoveryCode,
   generateDeviceId,
 } from "../utils/twoFactor.js";
-import {
-  generateOTP,
-  sanitizeUser,
-} from "../utils/authValidators.js";
+import { generateOTP, sanitizeUser } from "../utils/authValidators.js";
 
 // ================= COOKIE OPTIONS =================
 const cookieOptions = {
@@ -83,7 +76,7 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
       otp,
       otpExpires: Date.now() + 5 * 60 * 1000,
     },
-    { upsert: true, returnDocument: "after" },
+    { upsert: true, returnDocument: "after" }
   );
 
   try {
@@ -149,11 +142,9 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
 
   const userData = {
     ...sanitizeUser(user),
-    isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
+    isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
   };
-  return res
-    .status(201)
-    .json(new ApiResponse(201, userData, "Signup successful"));
+  return res.status(201).json(new ApiResponse(201, userData, "Signup successful"));
 });
 
 // ================= SIGNIN =================
@@ -185,19 +176,21 @@ export const signIn = asyncHandler(async (req, res) => {
 
   if (isPrivileged && user.twoFactorEnabled) {
     const now = new Date();
-    const trusted = user.trustedDevices?.find(
-      (d) => d.deviceId === deviceId && d.expiresAt > now
-    );
+    const trusted = user.trustedDevices?.find((d) => d.deviceId === deviceId && d.expiresAt > now);
 
     if (!trusted) {
       const tempAuthToken = genTempToken(user._id);
       return res.status(200).json(
-        new ApiResponse(200, {
-          requiresTwoFactor: true,
-          role: user.role,
-          isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
-          tempAuthToken,
-        }, "Two-factor authentication required")
+        new ApiResponse(
+          200,
+          {
+            requiresTwoFactor: true,
+            role: user.role,
+            isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
+            tempAuthToken,
+          },
+          "Two-factor authentication required"
+        )
       );
     }
   }
@@ -227,9 +220,7 @@ export const signIn = asyncHandler(async (req, res) => {
     twoFactorWarning,
   };
 
-  return res.status(200).json(
-    new ApiResponse(200, userData, "Login successful"),
-  );
+  return res.status(200).json(new ApiResponse(200, userData, "Login successful"));
 });
 
 // ================= UPDATE SKILLS =================
@@ -239,7 +230,7 @@ export const updateSkills = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { $set: { skills } },
-    { returnDocument: "after" },
+    { returnDocument: "after" }
   ).select("-password");
 
   return res.status(200).json(new ApiResponse(200, user, "Skills updated"));
@@ -294,16 +285,14 @@ export const updateProfile = asyncHandler(async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
     { $set: updateData },
-    { returnDocument: "after" },
+    { returnDocument: "after" }
   ).select("-password");
 
   const userData = {
     ...updatedUser.toObject(),
-    isSuperAdmin: updatedUser.email === process.env.SUPER_ADMIN_EMAIL
+    isSuperAdmin: updatedUser.email === process.env.SUPER_ADMIN_EMAIL,
   };
-  return res
-    .status(200)
-    .json(new ApiResponse(200, userData, "Profile updated"));
+  return res.status(200).json(new ApiResponse(200, userData, "Profile updated"));
 });
 
 // ================= SIGNOUT =================
@@ -321,9 +310,7 @@ export const signOut = asyncHandler(async (req, res) => {
     path: "/",
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "Logged out successfully"));
+  return res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
 });
 
 // ================= GOOGLE AUTH =================
@@ -339,23 +326,16 @@ export const googleAuth = asyncHandler(async (req, res) => {
   if (user && user.isBanned) {
     throw new ApiError(
       403,
-      user.banReason?.trim()
-        ? user.banReason
-        : "Your account has been suspended. Contact support."
+      user.banReason?.trim() ? user.banReason : "Your account has been suspended. Contact support."
     );
   }
 
   if (!user) {
     isNewUser = true;
 
-    const randomPassword = Math.random()
-      .toString(36)
-      .slice(-8);
+    const randomPassword = Math.random().toString(36).slice(-8);
 
-    const hashedPassword = await bcrypt.hash(
-      randomPassword,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
     user = await User.create({
       fullName: fullName?.trim() || "Google User",
@@ -369,18 +349,13 @@ export const googleAuth = asyncHandler(async (req, res) => {
       credits: 100,
     });
 
-    await sendWelcomeMail(
-      user.email,
-      user.fullName
-    );
+    await sendWelcomeMail(user.email, user.fullName);
   }
 
   if (user.isBanned) {
     throw new ApiError(
       403,
-      user.banReason?.trim()
-        ? user.banReason
-        : "Your account has been suspended. Contact support."
+      user.banReason?.trim() ? user.banReason : "Your account has been suspended. Contact support."
     );
   }
 
@@ -388,9 +363,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   if (!isNewUser && isPrivileged && user.twoFactorEnabled) {
     const now = new Date();
-    const trusted = user.trustedDevices?.find(
-      (d) => d.deviceId === deviceId && d.expiresAt > now
-    );
+    const trusted = user.trustedDevices?.find((d) => d.deviceId === deviceId && d.expiresAt > now);
 
     if (!trusted) {
       const tempAuthToken = genTempToken(user._id);
@@ -430,9 +403,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
     level: user.level,
     streak: user.streakCount,
     badges: user.badges,
-    isSuperAdmin:
-      user.email ===
-      process.env.SUPER_ADMIN_EMAIL,
+    isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
     twoFactorEnabled: user.twoFactorEnabled,
     twoFactorWarning,
   };
@@ -463,18 +434,13 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
   user.resetOtpExpires = Date.now() + 5 * 60 * 1000;
   await user.save();
 
- try {
-  await sendResetOtpMail(email, otp);
-} catch (error) {
-  throw new ApiError(
-    500,
-    "Failed to send reset OTP"
-  );
-}
+  try {
+    await sendResetOtpMail(email, otp);
+  } catch (error) {
+    throw new ApiError(500, "Failed to send reset OTP");
+  }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "Reset OTP sent to email"));
+  return res.status(200).json(new ApiResponse(200, null, "Reset OTP sent to email"));
 });
 
 // ================= RESET PASSWORD =================
@@ -500,9 +466,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "Password reset successful"));
+  return res.status(200).json(new ApiResponse(200, null, "Password reset successful"));
 });
 
 // ================= VERIFY RESET OTP =================
@@ -521,9 +485,7 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "OTP verified successfully"));
+  return res.status(200).json(new ApiResponse(200, null, "OTP verified successfully"));
 });
 
 // ================= GET CURRENT USER =================
@@ -543,9 +505,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     twoFactorWarning: isPrivileged && !user.twoFactorEnabled,
   };
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, userData, "Current user fetched successfully"));
+  return res.status(200).json(new ApiResponse(200, userData, "Current user fetched successfully"));
 });
 
 // ================= 2FA SETUP =================
@@ -564,10 +524,14 @@ export const setupTwoFactor = asyncHandler(async (req, res) => {
   const qrCode = await generateQRCode(secret.otpauth_url);
 
   return res.status(200).json(
-    new ApiResponse(200, {
-      qrCode,
-      manualKey: secret.base32,
-    }, "Scan QR code with your authenticator app")
+    new ApiResponse(
+      200,
+      {
+        qrCode,
+        manualKey: secret.base32,
+      },
+      "Scan QR code with your authenticator app"
+    )
   );
 });
 
@@ -604,9 +568,13 @@ export const enableTwoFactor = asyncHandler(async (req, res) => {
   await user.save();
 
   return res.status(200).json(
-    new ApiResponse(200, {
-      recoveryCodes,
-    }, "Two-factor authentication enabled successfully")
+    new ApiResponse(
+      200,
+      {
+        recoveryCodes,
+      },
+      "Two-factor authentication enabled successfully"
+    )
   );
 });
 
@@ -702,9 +670,7 @@ export const verifyTwoFactorLogin = asyncHandler(async (req, res) => {
     deviceId,
   };
 
-  return res.status(200).json(
-    new ApiResponse(200, userData, "Login successful"),
-  );
+  return res.status(200).json(new ApiResponse(200, userData, "Login successful"));
 });
 
 // ================= 2FA DISABLE =================
@@ -713,10 +679,7 @@ export const disableTwoFactor = asyncHandler(async (req, res) => {
 
   const currentUser = req.user;
 
-  if (
-    !isPrivilegedRole(currentUser.role) &&
-    currentUser.email !== process.env.SUPER_ADMIN_EMAIL
-  ) {
+  if (!isPrivilegedRole(currentUser.role) && currentUser.email !== process.env.SUPER_ADMIN_EMAIL) {
     throw new ApiError(403, "2FA is only available for privileged accounts");
   }
 
@@ -746,23 +709,16 @@ export const disableTwoFactor = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      null,
-      "Two-factor authentication disabled successfully"
-    )
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Two-factor authentication disabled successfully"));
 });
 
 // ================= 2FA STATUS =================
 export const getTwoFactorStatus = asyncHandler(async (req, res) => {
   const user = req.user;
 
-  if (
-    !isPrivilegedRole(user.role) &&
-    user.email !== process.env.SUPER_ADMIN_EMAIL
-  ) {
+  if (!isPrivilegedRole(user.role) && user.email !== process.env.SUPER_ADMIN_EMAIL) {
     throw new ApiError(403, "2FA is only available for privileged accounts");
   }
 
@@ -774,10 +730,7 @@ export const getTwoFactorStatus = asyncHandler(async (req, res) => {
         hasTempSecret: !!user.twoFactorTempSecret,
         trustedDevicesCount: user.trustedDevices?.length || 0,
         lastPrivilegedLoginAt: user.lastPrivilegedLoginAt || null,
-        role:
-          user.email === process.env.SUPER_ADMIN_EMAIL
-            ? "superadmin"
-            : user.role,
+        role: user.email === process.env.SUPER_ADMIN_EMAIL ? "superadmin" : user.role,
         recoveryCodesLeft: user.twoFactorRecoveryCodes?.length || 0,
         isEmailVerified: user.isEmailVerified,
       },

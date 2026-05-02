@@ -11,7 +11,7 @@ import {
   getCalendarAuthUrl,
   calendarCallback,
   getCalendarStatus,
-  analyzeResume
+  analyzeResume,
 } from "../controllers/planner.controller.js";
 import { upload } from "../middlewares/multer.js";
 import isAuth from "../middlewares/isAuth.js";
@@ -19,7 +19,7 @@ import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 
 const router = express.Router();
 
-router.post("/create", maintenanceCheck, isAuth ,createPlanner);
+router.post("/create", maintenanceCheck, isAuth, createPlanner);
 router.get("/my", maintenanceCheck, isAuth, getMyPlanner);
 router.post("/complete", maintenanceCheck, isAuth, completeTask);
 router.post("/calendar", maintenanceCheck, isAuth, syncCalendar);
@@ -31,6 +31,5 @@ router.get("/user", maintenanceCheck, isAuth, getAllPlanners);
 router.get("/:id", maintenanceCheck, isAuth, getPlannerById);
 
 router.post("/analyze-resume", maintenanceCheck, isAuth, upload.single("resume"), analyzeResume);
-
 
 export default router;

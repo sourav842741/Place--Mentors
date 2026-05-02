@@ -1,4 +1,4 @@
-import api from "./api.js";
+import api from './api.js';
 
 // Voice call APIs
 export const startVoiceCall = (data) => api.post('/api/voice/start-call', data);
@@ -11,6 +11,5 @@ export default {
   startVoiceCall,
   getVoiceHistory,
   getVoiceReport,
-  updateVoiceStatus
+  updateVoiceStatus,
 };
-

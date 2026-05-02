@@ -21,7 +21,7 @@ const sendFriendRequest = asyncHandler(async (req, res) => {
   const user = await User.findById(userId).select("friends friendRequests");
 
   const friend = await User.findById(friendId).select(
-    "fullName avatar xp level streakCount friendRequests socketId",
+    "fullName avatar xp level streakCount friendRequests socketId"
   );
 
   if (!user || !friend) {
@@ -81,8 +81,8 @@ const sendFriendRequest = asyncHandler(async (req, res) => {
           streakCount: friend.streakCount,
         },
       },
-      "Friend request sent",
-    ),
+      "Friend request sent"
+    )
   );
 });
 
@@ -122,9 +122,7 @@ const acceptFriendRequest = asyncHandler(async (req, res) => {
   }
 
   // already friends check
-  const alreadyFriends = user.friends.some(
-    (id) => id.toString() === requesterId.toString()
-  );
+  const alreadyFriends = user.friends.some((id) => id.toString() === requesterId.toString());
 
   if (alreadyFriends) {
     throw new ApiError(400, "Already friends");
@@ -144,21 +142,18 @@ const acceptFriendRequest = asyncHandler(async (req, res) => {
   // =========================
   user.friendRequests.received.splice(index, 1);
 
-  requester.friendRequests.sent =
-    requester.friendRequests.sent.filter(
-      (id) => id.toString() !== userId.toString()
-    );
+  requester.friendRequests.sent = requester.friendRequests.sent.filter(
+    (id) => id.toString() !== userId.toString()
+  );
 
   // optional cleanup reverse accidental request
-  user.friendRequests.sent =
-    user.friendRequests.sent.filter(
-      (id) => id.toString() !== requesterId.toString()
-    );
+  user.friendRequests.sent = user.friendRequests.sent.filter(
+    (id) => id.toString() !== requesterId.toString()
+  );
 
-  requester.friendRequests.received =
-    requester.friendRequests.received.filter(
-      (id) => id.toString() !== userId.toString()
-    );
+  requester.friendRequests.received = requester.friendRequests.received.filter(
+    (id) => id.toString() !== userId.toString()
+  );
 
   // =========================
   // ADD FRIENDS
@@ -225,20 +220,18 @@ const rejectFriendRequest = asyncHandler(async (req, res) => {
 
   // remove received
   user.friendRequests.received = user.friendRequests.received.filter(
-    (r) => r.toString() !== requesterId,
+    (r) => r.toString() !== requesterId
   );
 
   // remove sender side
   requester.friendRequests.sent = requester.friendRequests.sent.filter(
-    (r) => r.toString() !== userId.toString(),
+    (r) => r.toString() !== userId.toString()
   );
 
   await user.save();
   await requester.save();
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Friend request rejected"));
+  return res.status(200).json(new ApiResponse(200, {}, "Friend request rejected"));
 });
 
 //  SEND CHALLENGE
@@ -282,18 +275,14 @@ const sendChallenge = asyncHandler(async (req, res) => {
   // ===============================
   const twoMinAgo = new Date(Date.now() - 2 * 60 * 1000);
 
-  if (
-    user.lastChallengeTime &&
-    user.lastChallengeTime < twoMinAgo
-  ) {
+  if (user.lastChallengeTime && user.lastChallengeTime < twoMinAgo) {
     user.challenges.sent = user.challenges.sent.filter(
       (id) => id.toString() !== challengedId.toString()
     );
 
-    challenged.challenges.received =
-      challenged.challenges.received.filter(
-        (id) => id.toString() !== userId.toString()
-      );
+    challenged.challenges.received = challenged.challenges.received.filter(
+      (id) => id.toString() !== userId.toString()
+    );
   }
 
   // ===============================
@@ -304,10 +293,7 @@ const sendChallenge = asyncHandler(async (req, res) => {
   );
 
   if (alreadyPending) {
-    throw new ApiError(
-      400,
-      "Challenge already sent. Wait 2 minutes or ask user to respond."
-    );
+    throw new ApiError(400, "Challenge already sent. Wait 2 minutes or ask user to respond.");
   }
 
   // ===============================
@@ -332,22 +318,14 @@ const sendChallenge = asyncHandler(async (req, res) => {
   };
 
   // room emit
-  io.to(challengedId.toString()).emit(
-    "challenge_received",
-    challengerData
-  );
+  io.to(challengedId.toString()).emit("challenge_received", challengerData);
 
   // fallback direct socket
   if (challenged.socketId) {
-    io.to(challenged.socketId).emit(
-      "challenge_received",
-      challengerData
-    );
+    io.to(challenged.socketId).emit("challenge_received", challengerData);
   }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Challenge sent successfully"));
+  return res.status(200).json(new ApiResponse(200, {}, "Challenge sent successfully"));
 });
 
 //  REJECT CHALLENGE
@@ -369,19 +347,17 @@ const rejectChallenge = asyncHandler(async (req, res) => {
   }
 
   // remove received
-  user.challenges.received = user.challenges.received.filter(
-    (r) => r.toString() !== challengerId,
-  );
+  user.challenges.received = user.challenges.received.filter((r) => r.toString() !== challengerId);
 
   // remove sender side
   challenger.challenges.sent = challenger.challenges.sent.filter(
-    (r) => r.toString() !== userId.toString(),
+    (r) => r.toString() !== userId.toString()
   );
 
-challenger.lastChallengeTime = null;
+  challenger.lastChallengeTime = null;
 
-await user.save();
-await challenger.save();
+  await user.save();
+  await challenger.save();
 
   return res.status(200).json(new ApiResponse(200, {}, "Challenge rejected"));
 });
@@ -415,8 +391,8 @@ const getFriends = asyncHandler(async (req, res) => {
         },
         suggestedUsers: [],
       },
-      "Friends data",
-    ),
+      "Friends data"
+    )
   );
 });
 

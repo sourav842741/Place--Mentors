@@ -16,38 +16,29 @@ const UserCard = ({ user, isPending, isFriend, onAddFriend }) => {
         <div className="flex items-center gap-3">
           <Avatar className="h-14 w-14">
             <AvatarImage src={user.avatar} />
-            <AvatarFallback>
-              {user.fullName?.charAt(0)?.toUpperCase()}
-            </AvatarFallback>
+            <AvatarFallback>{user.fullName?.charAt(0)?.toUpperCase()}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1">
-            <CardTitle className="text-lg truncate">
-              {user.fullName}
-            </CardTitle>
+            <CardTitle className="text-lg truncate">{user.fullName}</CardTitle>
 
             <div className="flex gap-2 mt-1">
               <Badge variant="secondary">Lvl {user.level}</Badge>
-              <Badge variant="outline">
-                {user.streakCount}🔥
-              </Badge>
+              <Badge variant="outline">{user.streakCount}🔥</Badge>
             </div>
           </div>
         </div>
       </CardHeader>
 
       <CardContent>
-        <p className="text-sm mb-3">
-          XP: {user.xp?.toLocaleString()}
-        </p>
+        <p className="text-sm mb-3">XP: {user.xp?.toLocaleString()}</p>
 
-        <Button
-          size="sm"
-          className="w-full"
-          disabled={isPending || isFriend}
-          onClick={onAddFriend}
-        >
-          {isPending ? 'Pending...' : isFriend ? 'Friends' : (
+        <Button size="sm" className="w-full" disabled={isPending || isFriend} onClick={onAddFriend}>
+          {isPending ? (
+            'Pending...'
+          ) : isFriend ? (
+            'Friends'
+          ) : (
             <>
               <UserPlus className="w-4 h-4 mr-1" />
               Add Friend
@@ -72,11 +63,11 @@ export default function UsersPage() {
       try {
         const res = await api.get('/api/users/discover');
 
-        console.log("DISCOVER API:", res.data);
+        console.log('DISCOVER API:', res.data);
 
         return res.data?.data?.users ?? [];
       } catch (err) {
-        console.log("Discover Error:", err);
+        console.log('Discover Error:', err);
         return [];
       }
     },
@@ -87,7 +78,7 @@ export default function UsersPage() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['discoverUsers'] });
         queryClient.invalidateQueries({ queryKey: ['friends'] });
-      }
+      },
     });
   };
 
@@ -103,7 +94,6 @@ export default function UsersPage() {
   // ================= UI =================
   return (
     <div className="min-h-screen p-6">
-      
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <Button onClick={() => navigate('/profile')}>
@@ -111,30 +101,20 @@ export default function UsersPage() {
           Back
         </Button>
 
-        <h1 className="text-2xl font-bold">
-          Find Friends
-        </h1>
+        <h1 className="text-2xl font-bold">Find Friends</h1>
       </div>
 
       {/* USERS GRID */}
       {users.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {users.map((user) => (
-            <UserCard
-              key={user._id}
-              user={user}
-              onAddFriend={() => handleAddFriend(user._id)}
-            />
+            <UserCard key={user._id} user={user} onAddFriend={() => handleAddFriend(user._id)} />
           ))}
         </div>
       ) : (
         <div className="text-center mt-20">
-          <h2 className="text-xl font-semibold mb-2">
-            No users found
-          </h2>
-          <p className="text-gray-500">
-            Try again later or check back soon.
-          </p>
+          <h2 className="text-xl font-semibold mb-2">No users found</h2>
+          <p className="text-gray-500">Try again later or check back soon.</p>
         </div>
       )}
     </div>

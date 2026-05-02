@@ -1,62 +1,55 @@
-import React from "react";
-import useTasks from "../../hooks/useTasks";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  LayoutDashboard,
-  CheckCircle2,
-  Clock,
-  BookOpen,
-  Briefcase,
-  User,
-} from "lucide-react";
+import React from 'react';
+import useTasks from '../../hooks/useTasks';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LayoutDashboard, CheckCircle2, Clock, BookOpen, Briefcase, User } from 'lucide-react';
 
-const TaskStats = ({ className = "" }) => {
+const TaskStats = ({ className = '' }) => {
   const { stats, isLoading } = useTasks();
 
   const statsData = [
     {
-      title: "Total Tasks",
+      title: 'Total Tasks',
       value: stats?.totalTasks || 0,
       icon: LayoutDashboard,
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-100 dark:bg-blue-900/20",
+      color: 'text-blue-600 dark:text-blue-400',
+      bg: 'bg-blue-100 dark:bg-blue-900/20',
     },
     {
-      title: "Completed",
+      title: 'Completed',
       value: stats?.completedTasks || 0,
       icon: CheckCircle2,
-      color: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-emerald-100 dark:bg-emerald-900/20",
+      color: 'text-emerald-600 dark:text-emerald-400',
+      bg: 'bg-emerald-100 dark:bg-emerald-900/20',
     },
     {
-      title: "Pending",
+      title: 'Pending',
       value: stats?.pendingTasks || 0,
       icon: Clock,
-      color: "text-orange-600 dark:text-orange-400",
-      bg: "bg-orange-100 dark:bg-orange-900/20",
+      color: 'text-orange-600 dark:text-orange-400',
+      bg: 'bg-orange-100 dark:bg-orange-900/20',
     },
     {
-      title: "Study",
+      title: 'Study',
       value: stats?.studyTasks || 0,
       icon: BookOpen,
-      color: "text-purple-600 dark:text-purple-400",
-      bg: "bg-purple-100 dark:bg-purple-900/20",
+      color: 'text-purple-600 dark:text-purple-400',
+      bg: 'bg-purple-100 dark:bg-purple-900/20',
     },
     {
-      title: "Job",
+      title: 'Job',
       value: stats?.jobTasks || 0,
       icon: Briefcase,
-      color: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-emerald-100 dark:bg-emerald-900/20",
+      color: 'text-emerald-600 dark:text-emerald-400',
+      bg: 'bg-emerald-100 dark:bg-emerald-900/20',
     },
     {
-      title: "Personal",
+      title: 'Personal',
       value: stats?.personalTasks || 0,
       icon: User,
-      color: "text-pink-600 dark:text-pink-400",
-      bg: "bg-pink-100 dark:bg-pink-900/20",
+      color: 'text-pink-600 dark:text-pink-400',
+      bg: 'bg-pink-100 dark:bg-pink-900/20',
     },
   ];
 
@@ -71,9 +64,7 @@ const TaskStats = ({ className = "" }) => {
   }
 
   return (
-    <div
-      className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 ${className}`}
-    >
+    <div className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 ${className}`}>
       {statsData.map((stat) => (
         <Card
           key={stat.title}
@@ -87,18 +78,13 @@ const TaskStats = ({ className = "" }) => {
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
 
-              <Badge
-                variant="secondary"
-                className="px-3 py-1 text-xs font-semibold rounded-full"
-              >
+              <Badge variant="secondary" className="px-3 py-1 text-xs font-semibold rounded-full">
                 Live
               </Badge>
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-4xl font-black tracking-tight text-foreground">
-                {stat.value}
-              </h3>
+              <h3 className="text-4xl font-black tracking-tight text-foreground">{stat.value}</h3>
 
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                 {stat.title}

@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Flame, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
-import api from "../services/api";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import React, { useEffect, useState, useCallback } from 'react';
+import { Flame, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import api from '../services/api';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export default function Leaderboard() {
   const [topThree, setTopThree] = useState([]);
@@ -22,7 +22,7 @@ export default function Leaderboard() {
       setLoading(true);
       setError(null);
 
-      const res = await api.get("/api/leaderboard/daily", {
+      const res = await api.get('/api/leaderboard/daily', {
         params: { page: targetPage, limit: LIMIT },
       });
 
@@ -35,8 +35,8 @@ export default function Leaderboard() {
       setMyRank(data.myRank ?? null);
       setMyTime(data.myTime ?? 0);
     } catch (err) {
-      setError("Failed to load leaderboard");
-      console.error("Leaderboard fetch error:", err);
+      setError('Failed to load leaderboard');
+      console.error('Leaderboard fetch error:', err);
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export default function Leaderboard() {
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > pages || newPage === page) return;
     setPage(newPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const safeLeaderboard = Array.isArray(leaderboard) ? leaderboard : [];
@@ -76,20 +76,14 @@ export default function Leaderboard() {
             <div className="flex flex-wrap gap-4 justify-center lg:justify-end">
               {/* TIME */}
               <div className="bg-white dark:bg-gray-900 px-5 py-3 rounded-xl shadow-md border dark:border-white/10 flex flex-col items-center hover:scale-105 transition">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  TOTAL TIME
-                </span>
-                <span className="text-lg font-bold text-blue-600">
-                  ⏱ {myTime} min
-                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">TOTAL TIME</span>
+                <span className="text-lg font-bold text-blue-600">⏱ {myTime} min</span>
               </div>
 
               {/* RANK */}
               <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-xl shadow-md text-white flex flex-col items-center hover:scale-105 transition">
                 <span className="text-xs opacity-80">MY RANK</span>
-                <span className="text-xl font-bold">
-                  #{myRank || "--"}
-                </span>
+                <span className="text-xl font-bold">#{myRank || '--'}</span>
               </div>
             </div>
           </div>
@@ -123,10 +117,10 @@ export default function Leaderboard() {
                     key={user.rank || i}
                     className={`flex flex-col items-center transition-all duration-300 ${
                       i === 0
-                        ? "md:scale-110 md:order-2 md:-mt-8"
+                        ? 'md:scale-110 md:order-2 md:-mt-8'
                         : i === 1
-                        ? "md:order-1"
-                        : "md:order-3"
+                          ? 'md:order-1'
+                          : 'md:order-3'
                     }`}
                   >
                     {/* BADGES */}
@@ -151,20 +145,18 @@ export default function Leaderboard() {
                       src={
                         user.avatar ||
                         `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user.name || "U"
+                          user.name || 'U'
                         )}&background=6366f1&color=fff`
                       }
-                      alt={user.name || "User"}
+                      alt={user.name || 'User'}
                       className={`rounded-full object-cover border-4 border-white dark:border-gray-900 shadow-lg ${
-                        i === 0
-                          ? "w-24 h-24 md:w-28 md:h-28"
-                          : "w-20 h-20 md:w-24 md:h-24"
+                        i === 0 ? 'w-24 h-24 md:w-28 md:h-28' : 'w-20 h-20 md:w-24 md:h-24'
                       }`}
                     />
 
                     {/* NAME */}
                     <h3 className="mt-3 text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white text-center">
-                      {user.name || "Anonymous"}
+                      {user.name || 'Anonymous'}
                     </h3>
 
                     {/* SCORE */}
@@ -186,9 +178,7 @@ export default function Leaderboard() {
           {/* TABLE */}
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border dark:border-white/10 overflow-hidden">
             <div className="p-6 border-b bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
-              <h2 className="font-bold text-xl text-gray-800 dark:text-white">
-                Top Performers
-              </h2>
+              <h2 className="font-bold text-xl text-gray-800 dark:text-white">Top Performers</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {total} ranked students
               </p>
@@ -209,10 +199,7 @@ export default function Leaderboard() {
                 <tbody>
                   {safeLeaderboard.length === 0 && !loading && (
                     <tr>
-                      <td
-                        colSpan={6}
-                        className="p-8 text-center text-gray-500 dark:text-gray-400"
-                      >
+                      <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-gray-400">
                         No more entries on this page.
                       </td>
                     </tr>
@@ -223,27 +210,23 @@ export default function Leaderboard() {
                       key={user.rank || user.userId || user.name}
                       className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
                     >
-                      <td className="p-4 font-bold text-gray-900 dark:text-white">
-                        #{user.rank}
-                      </td>
+                      <td className="p-4 font-bold text-gray-900 dark:text-white">#{user.rank}</td>
                       <td className="p-4 flex items-center gap-3">
                         <img
                           src={
                             user.avatar ||
                             `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              user.name || "U"
+                              user.name || 'U'
                             )}`
                           }
                           className="w-10 h-10 rounded-full object-cover"
-                          alt={user.name || "User"}
+                          alt={user.name || 'User'}
                         />
                         <span className="text-gray-900 dark:text-white">
-                          {user.name || "Anonymous"}
+                          {user.name || 'Anonymous'}
                         </span>
                       </td>
-                      <td className="p-4 text-blue-600 font-bold">
-                        {user.score ?? 0}
-                      </td>
+                      <td className="p-4 text-blue-600 font-bold">{user.score ?? 0}</td>
                       <td className="p-4 text-gray-700 dark:text-gray-300">
                         <span className="inline-flex items-center gap-1">
                           <Flame className="w-4 h-4 text-orange-500" />
@@ -266,9 +249,10 @@ export default function Leaderboard() {
             {pages > 1 && (
               <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Page <span className="font-semibold text-gray-700 dark:text-gray-300">{page}</span> of{" "}
+                  Page{' '}
+                  <span className="font-semibold text-gray-700 dark:text-gray-300">{page}</span> of{' '}
                   <span className="font-semibold text-gray-700 dark:text-gray-300">{pages}</span>
-                  {" · "}
+                  {' · '}
                   {total} entries
                 </p>
 
@@ -298,9 +282,7 @@ export default function Leaderboard() {
             {loading && safeTopThree.length > 0 && (
               <div className="p-6 text-center">
                 <Loader2 className="w-6 h-6 animate-spin text-blue-600 mx-auto" />
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  Loading...
-                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading...</p>
               </div>
             )}
           </div>
@@ -310,4 +292,3 @@ export default function Leaderboard() {
     </>
   );
 }
-

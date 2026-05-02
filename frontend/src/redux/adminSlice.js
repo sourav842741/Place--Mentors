@@ -46,4 +46,3 @@ const adminSlice = createSlice({
 
 export const { clearError } = adminSlice.actions;
 export default adminSlice.reducer;
-

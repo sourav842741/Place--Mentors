@@ -6,34 +6,33 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const maintenanceCheck = async (req, res, next) => {
   try {
     const settings = await Settings.findOne();
-    
-    if (settings?.maintenanceMode && 
-        settings.maintenanceAllowAdminAccess === false) {
+
+    if (settings?.maintenanceMode && settings.maintenanceAllowAdminAccess === false) {
       // Hard block all access
       return res.status(503).json(
         new ApiResponse(503, null, "Site under maintenance", {
           maintenance: true,
           title: settings.maintenanceTitle,
           message: settings.maintenanceMessage,
-          image: settings.maintenanceImage
+          image: settings.maintenanceImage,
         })
       );
     }
 
     if (settings?.maintenanceMode) {
       // Check if user is admin or superadmin (after auth middleware)
-      const isAdmin = req.user && (
-        req.user.role === "admin" || 
-        req.user.role === "superadmin" ||
-        req.user.email === process.env.SUPER_ADMIN_EMAIL
-      );
+      const isAdmin =
+        req.user &&
+        (req.user.role === "admin" ||
+          req.user.role === "superadmin" ||
+          req.user.email === process.env.SUPER_ADMIN_EMAIL);
       if (!isAdmin) {
         return res.status(503).json(
           new ApiResponse(503, null, "Site under maintenance", {
             maintenance: true,
             title: settings.maintenanceTitle,
             message: settings.maintenanceMessage,
-            image: settings.maintenanceImage
+            image: settings.maintenanceImage,
           })
         );
       }

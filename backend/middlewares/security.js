@@ -34,11 +34,7 @@ const createLimiter = ({ windowMs, max, message }) =>
 
           const ip = req.ip || "";
 
-          return (
-            ip === "::1" ||
-            ip === "127.0.0.1" ||
-            ip.includes("::ffff:127.0.0.1")
-          );
+          return ip === "::1" || ip === "127.0.0.1" || ip.includes("::ffff:127.0.0.1");
         },
       });
 

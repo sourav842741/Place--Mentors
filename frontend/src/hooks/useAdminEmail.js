@@ -5,20 +5,15 @@ import {
   fetchEmailLogs,
   sendSingleEmail as sendSingleThunk,
   sendBulkEmail as sendBulkThunk,
-  testTemplate as testTemplateThunk
+  testTemplate as testTemplateThunk,
 } from '../redux/slices/emailAdminSlice';
 import { clearError, clearSendResult } from '../redux/slices/emailAdminSlice';
 
 export const useAdminEmail = () => {
   const dispatch = useDispatch();
-  const {
-    stats,
-    logs,
-    loading,
-    error,
-    sending,
-    sendResult
-  } = useSelector((state) => state.emailAdmin);
+  const { stats, logs, loading, error, sending, sendResult } = useSelector(
+    (state) => state.emailAdmin
+  );
 
   const fetchStats = () => dispatch(fetchEmailStats());
   const fetchLogs = (params) => dispatch(fetchEmailLogs(params));
@@ -46,7 +41,6 @@ export const useAdminEmail = () => {
     sendBulk,
     testTemplateEmail,
     clearErrors,
-    clearSendResults
+    clearSendResults,
   };
 };
-

@@ -52,9 +52,7 @@ export const fetchNewsData = async () => {
     }
 
     // REMOVE DUPLICATES
-    const uniqueNews = Array.from(
-      new Map(allNews.map((item) => [item.link, item])).values()
-    );
+    const uniqueNews = Array.from(new Map(allNews.map((item) => [item.link, item])).values());
 
     console.log(`India news fetched: ${uniqueNews.length}`);
 
@@ -106,10 +104,7 @@ Description: ${description || ""}
 
     const aiRes = await askAi([{ role: "user", content: prompt }]);
 
-    const content =
-      typeof aiRes === "string"
-        ? aiRes
-        : aiRes?.choices?.[0]?.message?.content || "";
+    const content = typeof aiRes === "string" ? aiRes : aiRes?.choices?.[0]?.message?.content || "";
 
     const parsed = extractJSON(content) || {};
 
@@ -145,9 +140,7 @@ export const fetchAndProcessNews = async () => {
 
     console.log("🤖 Processing news...");
 
-    const processedNews = await Promise.all(
-      rawNews.map((article) => processArticleAI(article))
-    );
+    const processedNews = await Promise.all(rawNews.map((article) => processArticleAI(article)));
 
     const validNews = processedNews.filter(Boolean);
 
@@ -166,9 +159,7 @@ export const fetchAndProcessNews = async () => {
       }))
     );
 
-    console.log(
-      `Stored ${validNews.length} news (${result.modifiedCount} updated)`
-    );
+    console.log(`Stored ${validNews.length} news (${result.modifiedCount} updated)`);
 
     return validNews.length;
   } catch (error) {
@@ -185,9 +176,7 @@ export const getNews = async (filter = {}) => {
 
   if (tag) {
     match.tag =
-      typeof tag === "string"
-        ? { $regex: `(^|\\|\\s*)${tag}(\\s*\\||$)`, $options: "i" }
-        : tag;
+      typeof tag === "string" ? { $regex: `(^|\\|\\s*)${tag}(\\s*\\||$)`, $options: "i" } : tag;
   }
 
   if (company) {

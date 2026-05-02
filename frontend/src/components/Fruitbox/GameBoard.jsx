@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { CheckCircle, Sparkles } from 'lucide-react';
-import { toast } from "sonner";
+import { toast } from 'sonner';
 const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
   const [containerStyle, setContainerStyle] = useState({});
   const [fruitStyles, setFruitStyles] = useState({});
@@ -16,7 +16,7 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
       flexWrap: 'nowrap',
       gap: '0',
       height: '100%',
-      position: 'relative'
+      position: 'relative',
     };
     const fruitsStyle = {};
 
@@ -31,10 +31,22 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
 
       // Container selectors (body, .container, *)
       if (selector.match(/^(body|\*|div|\.container)/i)) {
-        const propPairs = props.split(';').filter(p => p.trim());
-        propPairs.forEach(pair => {
-          const [prop, value] = pair.split(':').map(p => p.trim());
-          if (prop && value && ['display', 'justify-content', 'align-items', 'flex-direction', 'flex-wrap', 'gap', 'height'].includes(prop)) {
+        const propPairs = props.split(';').filter((p) => p.trim());
+        propPairs.forEach((pair) => {
+          const [prop, value] = pair.split(':').map((p) => p.trim());
+          if (
+            prop &&
+            value &&
+            [
+              'display',
+              'justify-content',
+              'align-items',
+              'flex-direction',
+              'flex-wrap',
+              'gap',
+              'height',
+            ].includes(prop)
+          ) {
             const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
             container[camelProp] = value;
           }
@@ -46,9 +58,9 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
       if (classMatch) {
         const cls = classMatch[1];
         fruitsStyle[cls] = fruitsStyle[cls] || {};
-        const propPairs = props.split(';').filter(p => p.trim());
-        propPairs.forEach(pair => {
-          const [prop, value] = pair.split(':').map(p => p.trim());
+        const propPairs = props.split(';').filter((p) => p.trim());
+        propPairs.forEach((pair) => {
+          const [prop, value] = pair.split(':').map((p) => p.trim());
           if (prop && value && ['order', 'align-self', 'flex-grow', 'flex-shrink'].includes(prop)) {
             const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
             fruitsStyle[cls][camelProp] = value;
@@ -75,22 +87,34 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
   }, [isWon]);
 
   const getBasketPosition = (fruit, index) => ({
-    left: fruit.targetX === 'right' ? 'calc(75% - 2rem)' : fruit.targetX === 'center' ? 'calc(50% - 2rem)' : '1rem',
-    bottom: fruit.targetY === 'bottom' ? '1rem' : fruit.targetY === 'center' ? 'calc(50% - 2rem)' : 'calc(25% - 2rem)'
+    left:
+      fruit.targetX === 'right'
+        ? 'calc(75% - 2rem)'
+        : fruit.targetX === 'center'
+          ? 'calc(50% - 2rem)'
+          : '1rem',
+    bottom:
+      fruit.targetY === 'bottom'
+        ? '1rem'
+        : fruit.targetY === 'center'
+          ? 'calc(50% - 2rem)'
+          : 'calc(25% - 2rem)',
   });
 
   return (
-    <div className={`relative w-full aspect-[4/3] max-w-3xl mx-auto shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-gradient-1 via-gradient-2 to-gradient-3 border-4 border-white/20 dark:border-slate-800/50 ${className}`}>
+    <div
+      className={`relative w-full aspect-[4/3] max-w-3xl mx-auto shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-gradient-1 via-gradient-2 to-gradient-3 border-4 border-white/20 dark:border-slate-800/50 ${className}`}
+    >
       {/* Arena Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.3),transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.2),transparent_50%)] animate-pulse-slow" />
-      
+
       {/* Grid Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="w-full h-full bg-grid-slate-100 dark:bg-grid-slate-900 [background-size:40px_40px] bg-left-top [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,transparent_20%,black_60%)]" />
       </div>
 
       {/* Game Container */}
-      <div 
+      <div
         ref={boardRef}
         className={`
           relative w-full h-full rounded-2xl flex items-stretch justify-start p-8 box-border
@@ -130,7 +154,7 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
             flexShrink: 0,
             transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
             willChange: 'transform',
-            ...fruitStyles[fruitClass]
+            ...fruitStyles[fruitClass],
           };
 
           return (
@@ -209,4 +233,3 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
 };
 
 export default GameBoard;
-

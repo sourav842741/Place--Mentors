@@ -101,7 +101,4 @@ const placementPredictionSchema = new mongoose.Schema(
   }
 );
 
-export const PlacementPrediction = mongoose.model(
-  "PlacementPrediction",
-  placementPredictionSchema
-);
+export const PlacementPrediction = mongoose.model("PlacementPrediction", placementPredictionSchema);

@@ -4,7 +4,12 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
-import { createTestApp, clearCollections, createTestUser, createAdminUser } from "../helpers/testApp.js";
+import {
+  createTestApp,
+  clearCollections,
+  createTestUser,
+  createAdminUser,
+} from "../helpers/testApp.js";
 import User from "../../models/user.model.js";
 import TempUser from "../../models/tempUser.model.js";
 
@@ -96,14 +101,12 @@ describe("Auth Integration Tests", () => {
     });
 
     it("rejects empty skills array", async () => {
-      const res = await request(app)
-        .post("/api/auth/signup/send-otp")
-        .send({
-          fullName: "No Skills",
-          email: "noskills@example.com",
-          password: "SecurePass123!",
-          skills: [],
-        });
+      const res = await request(app).post("/api/auth/signup/send-otp").send({
+        fullName: "No Skills",
+        email: "noskills@example.com",
+        password: "SecurePass123!",
+        skills: [],
+      });
 
       expect(res.status).toBe(400);
     });
@@ -250,9 +253,7 @@ describe("Auth Integration Tests", () => {
 
       const cookies = loginRes.headers["set-cookie"];
 
-      const res = await request(app)
-        .get("/api/auth/me")
-        .set("Cookie", cookies);
+      const res = await request(app).get("/api/auth/me").set("Cookie", cookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.email).toBe("test@example.com");
@@ -265,9 +266,7 @@ describe("Auth Integration Tests", () => {
     });
 
     it("rejects invalid token", async () => {
-      const res = await request(app)
-        .get("/api/auth/me")
-        .set("Cookie", ["token=invalid-token"]);
+      const res = await request(app).get("/api/auth/me").set("Cookie", ["token=invalid-token"]);
 
       expect(res.status).toBe(401);
     });
@@ -281,7 +280,9 @@ describe("Auth Integration Tests", () => {
       expect(res.status).toBe(200);
       const cookies = res.headers["set-cookie"];
       if (cookies) {
-        const tokenCleared = cookies.some((c) => c.includes("token=") && c.includes("Expires=Thu, 01 Jan 1970"));
+        const tokenCleared = cookies.some(
+          (c) => c.includes("token=") && c.includes("Expires=Thu, 01 Jan 1970")
+        );
         expect(tokenCleared).toBe(true);
       }
     });
@@ -317,13 +318,11 @@ describe("Auth Integration Tests", () => {
         resetOtpExpires: Date.now() + 5 * 60 * 1000,
       });
 
-      const res = await request(app)
-        .post("/api/auth/password/reset")
-        .send({
-          email: "test@example.com",
-          otp: "5678",
-          newPassword: "NewSecurePass123!",
-        });
+      const res = await request(app).post("/api/auth/password/reset").send({
+        email: "test@example.com",
+        otp: "5678",
+        newPassword: "NewSecurePass123!",
+      });
 
       expect(res.status).toBe(200);
 
@@ -339,13 +338,11 @@ describe("Auth Integration Tests", () => {
         resetOtpExpires: Date.now() - 1000,
       });
 
-      const res = await request(app)
-        .post("/api/auth/password/reset")
-        .send({
-          email: "test@example.com",
-          otp: "5678",
-          newPassword: "NewPass123!",
-        });
+      const res = await request(app).post("/api/auth/password/reset").send({
+        email: "test@example.com",
+        otp: "5678",
+        newPassword: "NewPass123!",
+      });
 
       expect(res.status).toBe(400);
     });

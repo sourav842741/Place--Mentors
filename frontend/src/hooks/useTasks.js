@@ -15,7 +15,7 @@ import {
 
 const useTasks = () => {
   const dispatch = useDispatch();
-  
+
   const tasks = useSelector(selectAllTasks);
   const stats = useSelector(selectTasksStats);
   const status = useSelector(selectTasksStatus);
@@ -50,4 +50,3 @@ const useTasks = () => {
 };
 
 export default useTasks;
-

@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchJobs,
   matchJobs,
@@ -9,19 +9,14 @@ import {
   fetchSingleJob,
   setSelectedJobId,
   clearSelectedJob,
-} from "../redux/jobSlice";
+} from '../redux/jobSlice';
 
-import {
-  selectAllJobs,
-  selectSelectedJobId,
-  selectSingleJob,
-} from "../redux/jobSlice";
+import { selectAllJobs, selectSelectedJobId, selectSingleJob } from '../redux/jobSlice';
 
-import { useCallback } from "react";
+import { useCallback } from 'react';
 
 const useJobs = () => {
   const dispatch = useDispatch();
-
 
   const jobs = useSelector(selectAllJobs);
   const pagination = useSelector((state) => state.jobs.pagination);
@@ -32,14 +27,11 @@ const useJobs = () => {
   const selectedJobId = useSelector(selectSelectedJobId);
   const singleJob = useSelector(selectSingleJob);
 
-  const selectedJob =
-    singleJob || jobs.find((job) => job._id === selectedJobId);
-
+  const selectedJob = singleJob || jobs.find((job) => job._id === selectedJobId);
 
   const loadJobs = (page = 1, customFilters = {}) => {
     dispatch(fetchJobs({ page, filters: customFilters }));
   };
-
 
   const handleSearch = (searchTerm, location) => {
     dispatch(
@@ -52,11 +44,9 @@ const useJobs = () => {
     );
   };
 
-
   const getMatchedJobs = () => {
     dispatch(matchJobs());
   };
-
 
   const toggleBookmark = (jobId, isBookmarked) => {
     if (isBookmarked) {
@@ -66,11 +56,9 @@ const useJobs = () => {
     }
   };
 
-
   const applyToJob = (jobId, resumeUrl, coverLetter) => {
     dispatch(applyJob({ jobId, resumeUrl, coverLetter }));
   };
-
 
   const updateFilters = (newFilters) => {
     dispatch(setFilters(newFilters));
@@ -86,7 +74,6 @@ const useJobs = () => {
       dispatch(fetchSingleJob(jobId));
     }
   };
-
 
   const clearJobSelection = () => {
     dispatch(clearSelectedJob());

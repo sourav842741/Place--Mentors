@@ -9,12 +9,9 @@ const ADMIN_TICKETS_URL = `${APP_URL}/admin/tickets`;
    TICKET CREATED
 ===================================================== */
 export const sendTicketCreatedEmail = async (toEmail, ticketData) => {
- 
-
   const { ticketId, subject, category, priority, description } = ticketData;
 
   if (!ticketId || !subject) {
-    
     throw new Error("Missing ticket data for email");
   }
 
@@ -46,8 +43,6 @@ export const sendTicketCreatedEmail = async (toEmail, ticketData) => {
    TICKET REPLIED
 ===================================================== */
 export const sendTicketRepliedEmail = async (toEmail, ticketData, replyMessage, isAdminReply) => {
- 
-
   const { ticketId, subject } = ticketData;
 
   if (!ticketId || !subject) {
@@ -90,7 +85,6 @@ export const sendTicketSolvedEmail = async (toEmail, ticketData) => {
   }
 
   if (!toEmail || !toEmail.includes("@")) {
-   
     throw new Error(`Invalid recipient email: ${toEmail}`);
   }
 
@@ -109,14 +103,11 @@ export const sendTicketSolvedEmail = async (toEmail, ticketData) => {
     ctaUrl: `${SUPPORT_URL}/ticket/${ticketData._id}`,
   });
 
- 
-
   const result = await sendEmail(toEmail, `✅ Ticket Resolved - ${ticketId}`, html, {
     type: "ticket_solved",
     ticketId,
   });
 
- 
   return result;
 };
 
@@ -124,12 +115,9 @@ export const sendTicketSolvedEmail = async (toEmail, ticketData) => {
    TICKET REOPENED
 ===================================================== */
 export const sendTicketReopenedEmail = async (toEmail, ticketData) => {
- 
-
   const { ticketId, subject } = ticketData;
 
   if (!ticketId || !subject) {
-   
     throw new Error("Missing ticket data for reopened email");
   }
 
@@ -161,14 +149,11 @@ export const sendAdminNotificationEmail = async (ticketData, replyMessage) => {
   const { ticketId, subject } = ticketData;
   const adminEmail = process.env.ADMIN_EMAIL || process.env.SUPER_ADMIN_EMAIL;
 
-  
   if (!adminEmail) {
-  
     return { skipped: true, reason: "No admin email configured" };
   }
 
   if (!ticketId || !subject) {
-   
     throw new Error("Missing ticket data for admin notification");
   }
 
@@ -194,4 +179,3 @@ export const sendAdminNotificationEmail = async (ticketData, replyMessage) => {
     ticketId,
   });
 };
-

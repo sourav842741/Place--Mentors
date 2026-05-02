@@ -1,4 +1,3 @@
-
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCompany, clearCompany, fetchCompanies } from '../redux/companySlice';
 import useAuth from './useAuth';
@@ -25,35 +24,32 @@ const useCompany = () => {
     dispatch(clearCompany());
 
     try {
-      const res = await dispatch(
-        fetchCompany({ name: name.trim(), userId: user._id })
-      );
+      const res = await dispatch(fetchCompany({ name: name.trim(), userId: user._id }));
 
-    if (res?.error) {
-  let message = "Something went wrong";
+      if (res?.error) {
+        let message = 'Something went wrong';
 
-  if (typeof res.payload === "string") {
-    message = res.payload;
-  } else if (res.payload?.message) {
-    message = res.payload.message;
-  } else if (res.payload?.error) {
-    message = res.payload.error;
-  } else if (res.error?.message) {
-    message = res.error.message;
-  }
+        if (typeof res.payload === 'string') {
+          message = res.payload;
+        } else if (res.payload?.message) {
+          message = res.payload.message;
+        } else if (res.payload?.error) {
+          message = res.payload.error;
+        } else if (res.error?.message) {
+          message = res.error.message;
+        }
 
-  toast.error(message);
-  return null;
-}
+        toast.error(message);
+        return null;
+      }
 
       const data = res.payload;
 
       dispatch(fetchCompanies());
 
       return data;
-
     } catch (err) {
-      toast.error(err?.message || "Failed to fetch company");
+      toast.error(err?.message || 'Failed to fetch company');
       return null;
     }
   };
@@ -69,4 +65,3 @@ const useCompany = () => {
 };
 
 export default useCompany;
-

@@ -10,8 +10,7 @@ export const getDailyLeaderboard = asyncHandler(async (req, res) => {
   // ── Optional auth for myRank ──
   let currentUserId = null;
   try {
-    const token =
-      req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
+    const token = req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       currentUserId = decoded.userId;
@@ -33,9 +32,7 @@ export const getDailyLeaderboard = asyncHandler(async (req, res) => {
 
     //  fallback (IMPORTANT)
     if (!todayStat && stats.length > 0) {
-      todayStat = stats.sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-      )[0];
+      todayStat = stats.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
     }
 
     //  USE CORRECT FIELDS (dailyStats, NOT totalTimeSpent)
@@ -70,12 +67,12 @@ export const getDailyLeaderboard = asyncHandler(async (req, res) => {
   }));
 
   // ── Extract top 3 (always shown) ──
-const topThree = finalLeaderboard.slice(0, 3);
+  const topThree = finalLeaderboard.slice(0, 3);
 
-const total = finalLeaderboard.length;
-const pages = Math.ceil(total / limit) || 1;
-const skip = (page - 1) * limit;
-const paginated = finalLeaderboard.slice(skip, skip + limit);
+  const total = finalLeaderboard.length;
+  const pages = Math.ceil(total / limit) || 1;
+  const skip = (page - 1) * limit;
+  const paginated = finalLeaderboard.slice(skip, skip + limit);
 
   // ── Find current user's rank & time ──
   let myRank = null;

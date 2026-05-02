@@ -6,9 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { uploadResumeAndAnalyze, clearAnalysis, setFileName, selectResume } from '@/redux/resumeSlice';
+import {
+  uploadResumeAndAnalyze,
+  clearAnalysis,
+  setFileName,
+  selectResume,
+} from '@/redux/resumeSlice';
 import Navbar from '@/components/Navbar';
 import UploadArea from '@/components/ui/UploadArea';
 import Footer from '@/components/Footer';
@@ -21,11 +32,14 @@ export default function ResumeAnalyzer() {
   const [showResult, setShowResult] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleFileSelect = useCallback((file) => {
-    setSelectedFile(file);
-    dispatch(setFileName(file.name));
-    toast.success('Resume uploaded successfully!');
-  }, [dispatch]);
+  const handleFileSelect = useCallback(
+    (file) => {
+      setSelectedFile(file);
+      dispatch(setFileName(file.name));
+      toast.success('Resume uploaded successfully!');
+    },
+    [dispatch]
+  );
 
   const handleAnalyze = useCallback(() => {
     if (!selectedFile) {
@@ -53,7 +67,7 @@ export default function ResumeAnalyzer() {
   return (
     <>
       <Navbar />
-     <div className="pt-16 lg:pl-64 p-4  bg-gray-100 dark:bg-gray-950 min-h-screen transition-colors duration-300 lg:mt-14 md:mt-14">
+      <div className="pt-16 lg:pl-64 p-4  bg-gray-100 dark:bg-gray-950 min-h-screen transition-colors duration-300 lg:mt-14 md:mt-14">
         <div className="flex-1">
           <div className="max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-8">
@@ -61,9 +75,15 @@ export default function ResumeAnalyzer() {
                 <h1 className="text-4xl font-bold bg-linear-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                   AI Resume Analyzer <Sparkles className="inline ml-2" />
                 </h1>
-                <p className="text-gray-600 mt-2">Upload your PDF resume for FAANG-level feedback (20 credits)</p>
+                <p className="text-gray-600 mt-2">
+                  Upload your PDF resume for FAANG-level feedback (20 credits)
+                </p>
               </div>
-              <Button onClick={() => navigate('/dashboard')} variant="outline" className="bg-yellow-200 dark:bg-gray-950 cursor-pointer">
+              <Button
+                onClick={() => navigate('/dashboard')}
+                variant="outline"
+                className="bg-yellow-200 dark:bg-gray-950 cursor-pointer"
+              >
                 Dashboard
               </Button>
             </div>
@@ -74,15 +94,10 @@ export default function ResumeAnalyzer() {
                   <FileText className="w-6 h-6" />
                   Upload PDF Resume
                 </CardTitle>
-                <CardDescription>
-                  Drag & drop or click to select. Max 5MB PDF only.
-                </CardDescription>
+                <CardDescription>Drag & drop or click to select. Max 5MB PDF only.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <UploadArea 
-                  onFileSelect={handleFileSelect} 
-                  fileName={fileName}
-                />
+                <UploadArea onFileSelect={handleFileSelect} fileName={fileName} />
 
                 {user && (
                   <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -91,7 +106,7 @@ export default function ResumeAnalyzer() {
                   </div>
                 )}
 
-                <Button 
+                <Button
                   onClick={handleAnalyze}
                   disabled={loading || !selectedFile || !user?.credits || user.credits < 20}
                   className="w-full"
@@ -123,7 +138,9 @@ export default function ResumeAnalyzer() {
                       <div className="text-5xl font-bold text-gray-900 mb-2">
                         {analysis.score}/100
                       </div>
-                      <Badge className={`text-lg px-4 py-2 ${analysis.interviewReady ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                      <Badge
+                        className={`text-lg px-4 py-2 ${analysis.interviewReady ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+                      >
                         {analysis.interviewReady ? 'Interview Ready' : 'Needs Work'}
                       </Badge>
                       <p className="text-sm text-gray-500 mt-2">{analysis.recommendedRole}</p>
@@ -175,8 +192,10 @@ export default function ResumeAnalyzer() {
                       </CardHeader>
                       <CardContent>
                         <ul className="space-y-2">
-                            {analysis.suggestions.map((suggestion, i) => (
-                            <li key={i} className="text-sm">{"• " + suggestion}</li>
+                          {analysis.suggestions.map((suggestion, i) => (
+                            <li key={i} className="text-sm">
+                              {'• ' + suggestion}
+                            </li>
                           ))}
                         </ul>
                       </CardContent>
@@ -186,8 +205,8 @@ export default function ResumeAnalyzer() {
                       <Button className="flex-1 " onClick={() => setShowResult(false)}>
                         Analyze Again
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         className="flex-1"
                         onClick={() => navigate('/planner-history')}
                       >
@@ -201,7 +220,7 @@ export default function ResumeAnalyzer() {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

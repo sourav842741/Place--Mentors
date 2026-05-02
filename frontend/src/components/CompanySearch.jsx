@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, X ,Brain} from 'lucide-react';
+import { Search, X, Brain } from 'lucide-react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 const CompanySearch = ({ onSearch, showAIBtn, onAIGenerate }) => {
   const [companyName, setCompanyName] = useState('');
   const { getCompany, loading, company } = useCompany();
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,7 +57,7 @@ const CompanySearch = ({ onSearch, showAIBtn, onAIGenerate }) => {
         </Button>
       </form>
       {showAIBtn && !company && (
-        <Button 
+        <Button
           onClick={onAIGenerate}
           className="w-full mt-2 bg-black text-white hover:bg-gray-800 rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md transition-all"
         >
@@ -68,8 +67,6 @@ const CompanySearch = ({ onSearch, showAIBtn, onAIGenerate }) => {
       )}
     </>
   );
-
 };
 
 export default CompanySearch;
-

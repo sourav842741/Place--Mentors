@@ -1,27 +1,20 @@
-import { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Eye,
-  EyeOff,
-  Sun,
-  Moon,
-  ArrowLeft,
-  LockKeyhole,
-} from "lucide-react";
-import { toast } from "sonner";
-import useAuth from "../hooks/useAuth";
+import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Eye, EyeOff, Sun, Moon, ArrowLeft, LockKeyhole } from 'lucide-react';
+import { toast } from 'sonner';
+import useAuth from '../hooks/useAuth';
 
 export default function ResetPassword() {
   const { resetPassword } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const email = location.state?.email || "";
+  const email = location.state?.email || '';
 
-  const [otp, setOtp] = useState(Array(4).fill(""));
-  const [newPassword, setNewPassword] = useState("");
+  const [otp, setOtp] = useState(Array(4).fill(''));
+  const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isDark, setIsDark] = useState(false);
@@ -30,28 +23,28 @@ export default function ResetPassword() {
 
   /* THEME LOAD */
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem('theme');
 
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
       setIsDark(false);
     }
   }, []);
 
   /* THEME TOGGLE */
   const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
+    const isNowDark = document.documentElement.classList.toggle('dark');
     setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
+    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
   };
 
   useEffect(() => {
     if (!email) {
-      toast.error("Session expired");
-      navigate("/forgot-password");
+      toast.error('Session expired');
+      navigate('/forgot-password');
     }
   }, [email, navigate]);
 
@@ -68,16 +61,16 @@ export default function ResetPassword() {
   };
 
   const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
   const handlePaste = (e) => {
-    const paste = e.clipboardData.getData("text").slice(0, 4);
+    const paste = e.clipboardData.getData('text').slice(0, 4);
     if (!/^\d+$/.test(paste)) return;
 
-    const newOtp = paste.split("");
+    const newOtp = paste.split('');
     setOtp(newOtp);
 
     newOtp.forEach((val, i) => {
@@ -88,10 +81,10 @@ export default function ResetPassword() {
   };
 
   const handleReset = async () => {
-    const finalOtp = otp.join("");
+    const finalOtp = otp.join('');
 
     if (!email || finalOtp.length !== 4 || !newPassword) {
-      return toast.warning("All fields are required ❗");
+      return toast.warning('All fields are required ❗');
     }
 
     setLoading(true);
@@ -104,13 +97,13 @@ export default function ResetPassword() {
       });
 
       if (res.success) {
-        toast.success("Password Reset Successful 🎉");
-        navigate("/login");
+        toast.success('Password Reset Successful 🎉');
+        navigate('/login');
       } else {
-        toast.error(res.message || "Invalid OTP");
+        toast.error(res.message || 'Invalid OTP');
       }
     } catch {
-      toast.error("Server error");
+      toast.error('Server error');
     } finally {
       setLoading(false);
     }
@@ -154,7 +147,7 @@ export default function ResetPassword() {
 
           {/* BACK */}
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate('/login')}
             className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -163,9 +156,7 @@ export default function ResetPassword() {
 
           {/* HEADING */}
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Reset Password
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Reset Password</h2>
 
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               Enter OTP and create your new password
@@ -180,10 +171,7 @@ export default function ResetPassword() {
           />
 
           {/* OTP */}
-          <div
-            onPaste={handlePaste}
-            className="flex justify-between gap-3"
-          >
+          <div onPaste={handlePaste} className="flex justify-between gap-3">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -205,7 +193,7 @@ export default function ResetPassword() {
           {/* PASSWORD */}
           <div className="relative">
             <Input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -227,7 +215,7 @@ export default function ResetPassword() {
             className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
           >
             <LockKeyhole className="w-4 h-4 mr-2" />
-            {loading ? "Resetting..." : "Reset Password"}
+            {loading ? 'Resetting...' : 'Reset Password'}
           </Button>
         </div>
       </div>
@@ -242,9 +230,7 @@ function FullScreenLoader() {
       <div className="bg-white dark:bg-gray-900 px-8 py-6 rounded-2xl shadow-2xl text-center">
         <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
 
-        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">
-          Resetting password...
-        </p>
+        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">Resetting password...</p>
       </div>
     </div>
   );

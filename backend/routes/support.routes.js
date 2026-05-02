@@ -8,10 +8,7 @@ import {
   escalateToTicket as escalateToTicketSchema,
 } from "../validators/support.validator.js";
 
-import {
-  chatWithSupportAI,
-  escalateToTicket,
-} from "../controllers/support.controller.js";
+import { chatWithSupportAI, escalateToTicket } from "../controllers/support.controller.js";
 
 const router = express.Router();
 

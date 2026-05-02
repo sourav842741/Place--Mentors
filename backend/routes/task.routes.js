@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {asyncHandler} from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import isAuth from "../middlewares/isAuth.js";
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 import {
@@ -29,4 +29,3 @@ router.post("/:id/share", asyncHandler(shareTask));
 router.get("/public/:shareId", asyncHandler(getPublicTask));
 
 export default router;
-

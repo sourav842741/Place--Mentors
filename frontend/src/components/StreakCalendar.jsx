@@ -11,12 +11,12 @@ const StreakCalendar = () => {
   const dispatch = useDispatch();
   const { data: streakData = {}, loading } = useSelector((state) => state.streak);
 
-  const { 
-    currentStreak = 0, 
-    bestStreak = 0, 
-    completedDays = [], 
-    todaySolved = false, 
-    remainingTime 
+  const {
+    currentStreak = 0,
+    bestStreak = 0,
+    completedDays = [],
+    todaySolved = false,
+    remainingTime,
   } = streakData;
 
   // Countdown to midnight
@@ -121,7 +121,6 @@ const StreakCalendar = () => {
       </CardHeader>
 
       <CardContent className="space-y-6">
-
         {/* Stats */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <div className="flex items-center gap-2">
@@ -131,9 +130,7 @@ const StreakCalendar = () => {
             </Badge>
 
             {todaySolved && (
-              <Badge className="border-green-400 text-green-700 bg-green-50">
-                Today ✓
-              </Badge>
+              <Badge className="border-green-400 text-green-700 bg-green-50">Today ✓</Badge>
             )}
           </div>
 
@@ -158,9 +155,11 @@ const StreakCalendar = () => {
           </div>
 
           <div className="grid grid-cols-7 gap-1">
-
             {['S', 'M', 'T', 'W', 'Th', 'F', 'S'].map((day, i) => (
-              <div key={i} className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">
+              <div
+                key={i}
+                className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center"
+              >
                 {day}
               </div>
             ))}
@@ -173,9 +172,7 @@ const StreakCalendar = () => {
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all mx-auto ${getDayClass(dateStr)}`}
                   >
                     {dateStr && (
-                      <span className="text-xs font-medium">
-                        {new Date(dateStr).getDate()}
-                      </span>
+                      <span className="text-xs font-medium">{new Date(dateStr).getDate()}</span>
                     )}
                   </div>
                 ))}
@@ -183,7 +180,6 @@ const StreakCalendar = () => {
             ))}
           </div>
         </div>
-
       </CardContent>
     </Card>
   );

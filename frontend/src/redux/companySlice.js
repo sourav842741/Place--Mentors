@@ -21,7 +21,7 @@ export const fetchCompanies = createAsyncThunk(
   'company/fetchCompanies',
   async (_, { rejectWithValue }) => {
     try {
-const response = await api.get('/api/all');
+      const response = await api.get('/api/all');
       if (response.data.success) {
         return response.data.companies;
       }
@@ -31,7 +31,6 @@ const response = await api.get('/api/all');
     }
   }
 );
-
 
 const companySlice = createSlice({
   name: 'company',
@@ -87,9 +86,7 @@ const companySlice = createSlice({
         toast.error(state.companiesError);
       });
   },
-
 });
 
 export const { clearCompany, setCredits } = companySlice.actions;
 export default companySlice.reducer;
-

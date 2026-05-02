@@ -6,14 +6,8 @@ export const privilegedRoles = ["admin", "superadmin"];
 
 export const isPrivilegedRole = (role) => privilegedRoles.includes(role);
 
-export const generateSecret = (
-  email = "admin@placementmentor.com",
-  role = "admin"
-) => {
-  const safeRole =
-    role === "superadmin"
-      ? "Super Admin"
-      : "Admin";
+export const generateSecret = (email = "admin@placementmentor.com", role = "admin") => {
+  const safeRole = role === "superadmin" ? "Super Admin" : "Admin";
 
   return speakeasy.generateSecret({
     issuer: "Place Mentor",
@@ -46,9 +40,7 @@ export const generateRecoveryCodes = (count = 8) => {
 };
 
 export const hashRecoveryCodes = (codes) => {
-  return codes.map((code) =>
-    crypto.createHash("sha256").update(code).digest("hex")
-  );
+  return codes.map((code) => crypto.createHash("sha256").update(code).digest("hex"));
 };
 
 export const verifyRecoveryCode = (inputCode, hashedCodes) => {
@@ -62,4 +54,3 @@ export const verifyRecoveryCode = (inputCode, hashedCodes) => {
 export const generateDeviceId = () => {
   return crypto.randomBytes(32).toString("hex");
 };
-

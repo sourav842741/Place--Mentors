@@ -3,7 +3,12 @@ import request from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
-import { createTestApp, clearCollections, createTestUser, createAdminUser } from "../helpers/testApp.js";
+import {
+  createTestApp,
+  clearCollections,
+  createTestUser,
+  createAdminUser,
+} from "../helpers/testApp.js";
 import User from "../../models/user.model.js";
 import Ticket from "../../models/Ticket.model.js";
 import TicketReply from "../../models/TicketReply.model.js";
@@ -49,16 +54,13 @@ describe("Ticket Integration Tests", () => {
   /* ================= CREATE TICKET ================= */
   describe("POST /api/tickets/", () => {
     it("creates ticket with valid data", async () => {
-      const res = await request(app)
-        .post("/api/tickets/")
-        .set("Cookie", userCookies)
-        .send({
-          subject: "Login Issue",
-          category: "Login Issue",
-          priority: "High",
-          description: "Cannot login to my account",
-          email: "test@example.com",
-        });
+      const res = await request(app).post("/api/tickets/").set("Cookie", userCookies).send({
+        subject: "Login Issue",
+        category: "Login Issue",
+        priority: "High",
+        description: "Cannot login to my account",
+        email: "test@example.com",
+      });
 
       expect(res.status).toBe(201);
       expect(res.body.data.ticketId).toMatch(/^PM-\d{4}$/);
@@ -67,68 +69,54 @@ describe("Ticket Integration Tests", () => {
     });
 
     it("rejects ticket without subject", async () => {
-      const res = await request(app)
-        .post("/api/tickets/")
-        .set("Cookie", userCookies)
-        .send({
-          category: "Login Issue",
-          description: "Cannot login",
-        });
+      const res = await request(app).post("/api/tickets/").set("Cookie", userCookies).send({
+        category: "Login Issue",
+        description: "Cannot login",
+      });
 
       expect(res.status).toBe(400);
       expect(res.body.message).toMatch(/Subject is required/);
     });
 
     it("rejects ticket without description", async () => {
-      const res = await request(app)
-        .post("/api/tickets/")
-        .set("Cookie", userCookies)
-        .send({
-          subject: "Login Issue",
-          category: "Login Issue",
-        });
+      const res = await request(app).post("/api/tickets/").set("Cookie", userCookies).send({
+        subject: "Login Issue",
+        category: "Login Issue",
+      });
 
       expect(res.status).toBe(400);
       expect(res.body.message).toMatch(/Description is required/);
     });
 
     it("rejects invalid category", async () => {
-      const res = await request(app)
-        .post("/api/tickets/")
-        .set("Cookie", userCookies)
-        .send({
-          subject: "Issue",
-          category: "InvalidCategory",
-          description: "Test",
-        });
+      const res = await request(app).post("/api/tickets/").set("Cookie", userCookies).send({
+        subject: "Issue",
+        category: "InvalidCategory",
+        description: "Test",
+      });
 
       expect(res.status).toBe(400);
       expect(res.body.message).toMatch(/Invalid category/);
     });
 
     it("defaults priority to Low when invalid", async () => {
-      const res = await request(app)
-        .post("/api/tickets/")
-        .set("Cookie", userCookies)
-        .send({
-          subject: "Issue",
-          category: "Bug Report",
-          priority: "Critical",
-          description: "Test description",
-        });
+      const res = await request(app).post("/api/tickets/").set("Cookie", userCookies).send({
+        subject: "Issue",
+        category: "Bug Report",
+        priority: "Critical",
+        description: "Test description",
+      });
 
       expect(res.status).toBe(201);
       expect(res.body.data.priority).toBe("Low");
     });
 
     it("rejects unauthenticated request", async () => {
-      const res = await request(app)
-        .post("/api/tickets/")
-        .send({
-          subject: "Issue",
-          category: "Bug Report",
-          description: "Test",
-        });
+      const res = await request(app).post("/api/tickets/").send({
+        subject: "Issue",
+        category: "Bug Report",
+        description: "Test",
+      });
 
       expect(res.status).toBe(401);
     });
@@ -155,9 +143,7 @@ describe("Ticket Integration Tests", () => {
         email: "test@example.com",
       });
 
-      const res = await request(app)
-        .get("/api/tickets/my")
-        .set("Cookie", userCookies);
+      const res = await request(app).get("/api/tickets/my").set("Cookie", userCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.tickets).toHaveLength(2);
@@ -185,9 +171,7 @@ describe("Ticket Integration Tests", () => {
         status: "Solved",
       });
 
-      const res = await request(app)
-        .get("/api/tickets/my?status=Open")
-        .set("Cookie", userCookies);
+      const res = await request(app).get("/api/tickets/my?status=Open").set("Cookie", userCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.tickets).toHaveLength(1);
@@ -207,9 +191,7 @@ describe("Ticket Integration Tests", () => {
         email: "test@example.com",
       });
 
-      const res = await request(app)
-        .get(`/api/tickets/${ticket._id}`)
-        .set("Cookie", userCookies);
+      const res = await request(app).get(`/api/tickets/${ticket._id}`).set("Cookie", userCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.ticket.subject).toBe("My Issue");
@@ -225,9 +207,7 @@ describe("Ticket Integration Tests", () => {
         email: "test@example.com",
       });
 
-      const res = await request(app)
-        .get(`/api/tickets/${ticket._id}`)
-        .set("Cookie", adminCookies);
+      const res = await request(app).get(`/api/tickets/${ticket._id}`).set("Cookie", adminCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.ticket.subject).toBe("User Issue");
@@ -253,9 +233,7 @@ describe("Ticket Integration Tests", () => {
         .send({ email: "other@example.com", password: "TestPass123!" });
       const otherCookies = otherLogin.headers["set-cookie"];
 
-      const res = await request(app)
-        .get(`/api/tickets/${ticket._id}`)
-        .set("Cookie", otherCookies);
+      const res = await request(app).get(`/api/tickets/${ticket._id}`).set("Cookie", otherCookies);
 
       expect(res.status).toBe(403);
     });
@@ -399,18 +377,14 @@ describe("Ticket Integration Tests", () => {
         email: "test@example.com",
       });
 
-      const res = await request(app)
-        .get("/api/tickets/admin/all")
-        .set("Cookie", adminCookies);
+      const res = await request(app).get("/api/tickets/admin/all").set("Cookie", adminCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.tickets).toHaveLength(1);
     });
 
     it("blocks non-admin from admin routes", async () => {
-      const res = await request(app)
-        .get("/api/tickets/admin/all")
-        .set("Cookie", userCookies);
+      const res = await request(app).get("/api/tickets/admin/all").set("Cookie", userCookies);
 
       expect(res.status).toBe(403);
     });
@@ -481,9 +455,7 @@ describe("Ticket Integration Tests", () => {
         priority: "Low",
       });
 
-      const res = await request(app)
-        .get("/api/tickets/admin/stats")
-        .set("Cookie", adminCookies);
+      const res = await request(app).get("/api/tickets/admin/stats").set("Cookie", adminCookies);
 
       expect(res.status).toBe(200);
       expect(res.body.data.total).toBe(2);

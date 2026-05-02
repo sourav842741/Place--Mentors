@@ -2,11 +2,7 @@ import jwt from "jsonwebtoken";
 
 const genToken = (userId) => {
   try {
-    return jwt.sign(
-      { userId },
-      process.env.JWT_SECRET,
-      { expiresIn: "10d" }
-    );
+    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "10d" });
   } catch (error) {
     throw new Error(`gen token error: ${error.message}`);
   }
@@ -14,11 +10,7 @@ const genToken = (userId) => {
 
 export const genTempToken = (userId) => {
   try {
-    return jwt.sign(
-      { userId, type: "2fa_temp" },
-      process.env.JWT_SECRET,
-      { expiresIn: "5m" }
-    );
+    return jwt.sign({ userId, type: "2fa_temp" }, process.env.JWT_SECRET, { expiresIn: "5m" });
   } catch (error) {
     throw new Error(`gen temp token error: ${error.message}`);
   }

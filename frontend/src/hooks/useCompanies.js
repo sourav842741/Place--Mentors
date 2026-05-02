@@ -23,9 +23,8 @@ const useCompanies = () => {
     loading,
     error,
     getCompanies,
-    refetch: getCompanies
+    refetch: getCompanies,
   };
 };
 
 export default useCompanies;
-

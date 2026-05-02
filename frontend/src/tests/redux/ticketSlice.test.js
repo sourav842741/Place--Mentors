@@ -73,7 +73,13 @@ describe('ticketSlice - reducers', () => {
       const payload = {
         ticketId: 't1',
         action: 'replied',
-        reply: { _id: 'r1', ticket: 't1', message: 'Thanks', isInternal: false, senderRole: 'admin' },
+        reply: {
+          _id: 'r1',
+          ticket: 't1',
+          message: 'Thanks',
+          isInternal: false,
+          senderRole: 'admin',
+        },
         replyCount: 1,
       };
       const state = ticketReducer(baseState, updateTicketFromSocket(payload));
@@ -126,4 +132,3 @@ describe('ticketSlice - reducers', () => {
     });
   });
 });
-

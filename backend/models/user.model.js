@@ -282,7 +282,7 @@ const userSchema = new mongoose.Schema(
     ],
   },
 
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model("User", userSchema);

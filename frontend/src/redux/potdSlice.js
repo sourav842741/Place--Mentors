@@ -1,38 +1,31 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../services/api.js";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../services/api.js';
 
-export const fetchPotd = createAsyncThunk(
-  "potd/fetchPotd",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get("/api/potd");
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response.data.message || "Failed to fetch POTD",
-      );
-    }
-  },
-);
+export const fetchPotd = createAsyncThunk('potd/fetchPotd', async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/api/potd');
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response.data.message || 'Failed to fetch POTD');
+  }
+});
 
 export const submitPotd = createAsyncThunk(
-  "potd/submitPotd",
+  'potd/submitPotd',
   async (userAnswers, { rejectWithValue }) => {
     try {
-      const response = await api.post("/api/potd/submit", {
+      const response = await api.post('/api/potd/submit', {
         answers: userAnswers,
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response.data.message || "Submission failed",
-      );
+      return rejectWithValue(error.response.data.message || 'Submission failed');
     }
-  },
+  }
 );
 
 const potdSlice = createSlice({
-  name: "potd",
+  name: 'potd',
   initialState: {
     questions: [],
     userAnswers: {},

@@ -85,9 +85,7 @@ export const generateQuestion = async (req, res) => {
     mode = mode?.trim();
 
     if (!role || !experience || !mode) {
-      return res
-        .status(400)
-        .json({ message: "Role, Experience and Mode are required." });
+      return res.status(400).json({ message: "Role, Experience and Mode are required." });
     }
 
     const user = req.user;
@@ -104,11 +102,9 @@ export const generateQuestion = async (req, res) => {
       });
     }
 
-    const projectText =
-      Array.isArray(projects) && projects.length ? projects.join(", ") : "None";
+    const projectText = Array.isArray(projects) && projects.length ? projects.join(", ") : "None";
 
-    const skillsText =
-      Array.isArray(skills) && skills.length ? skills.join(", ") : "None";
+    const skillsText = Array.isArray(skills) && skills.length ? skills.join(", ") : "None";
 
     const safeResume = resumeText?.trim() || "None";
 
@@ -234,9 +230,7 @@ Use the candidate details provided in the next message to generate highly releva
       questions: interview.questions,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `failed to create interview ${error}` });
+    return res.status(500).json({ message: `failed to create interview ${error}` });
   }
 };
 
@@ -347,9 +341,7 @@ Answer: ${answer}
 
     return res.status(200).json({ feedback: parsed.feedback });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `failed to submit answer ${error}` });
+    return res.status(500).json({ message: `failed to submit answer ${error}` });
   }
 };
 
@@ -390,12 +382,8 @@ export const finishInterview = async (req, res) => {
     const finalScore = totalQuestions ? totalScore / totalQuestions : 0;
 
     const avgConfidence = totalQuestions ? totalConfidence / totalQuestions : 0;
-    const avgCommunication = totalQuestions
-      ? totalCommunication / totalQuestions
-      : 0;
-    const avgCorrectness = totalQuestions
-      ? totalCorrectness / totalQuestions
-      : 0;
+    const avgCommunication = totalQuestions ? totalCommunication / totalQuestions : 0;
+    const avgCorrectness = totalQuestions ? totalCorrectness / totalQuestions : 0;
 
     // ================= UPDATE INTERVIEW =================
     interview.finalScore = finalScore;
@@ -434,8 +422,7 @@ export const finishInterview = async (req, res) => {
       todayData.quizzesGiven = prevCount + 1;
 
       //  interview time add
-      const duration =
-        (new Date() - new Date(interview.createdAt)) / (1000 * 60);
+      const duration = (new Date() - new Date(interview.createdAt)) / (1000 * 60);
 
       todayData.timeSpent += Math.round(duration);
 
@@ -507,13 +494,9 @@ export const getInterviewReport = async (req, res) => {
     });
     const avgConfidence = totalQuestions ? totalConfidence / totalQuestions : 0;
 
-    const avgCommunication = totalQuestions
-      ? totalCommunication / totalQuestions
-      : 0;
+    const avgCommunication = totalQuestions ? totalCommunication / totalQuestions : 0;
 
-    const avgCorrectness = totalQuestions
-      ? totalCorrectness / totalQuestions
-      : 0;
+    const avgCorrectness = totalQuestions ? totalCorrectness / totalQuestions : 0;
 
     return res.json({
       finalScore: interview.finalScore,

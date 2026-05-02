@@ -2,7 +2,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 import { executeCodeWithInput, executeCode } from "../utils/codeExecutor.js";
 
-
 export const runCodeTests = asyncHandler(async (req, res) => {
   const { code, language, testCases } = req.body;
 
@@ -19,23 +18,20 @@ export const runCodeTests = asyncHandler(async (req, res) => {
   for (let i = 0; i < testCases.length; i++) {
     const tc = testCases[i];
     try {
-     const result = await executeCodeWithInput(code, language, tc.input);
+      const result = await executeCodeWithInput(code, language, tc.input);
 
-
-
-const got = result.output !== undefined && result.output !== null
-  ? result.output
-  : "No output";
+      const got =
+        result.output !== undefined && result.output !== null ? result.output : "No output";
       const passed = String(got).trim() === String(tc.expectedOutput).trim();
-      
+
       if (!passed) allPassed = false;
-      
+
       results.push({
         testCase: i + 1,
         input: tc.input,
         expectedOutput: tc.expectedOutput,
         got,
-        passed
+        passed,
       });
     } catch (error) {
       allPassed = false;
@@ -44,7 +40,7 @@ const got = result.output !== undefined && result.output !== null
         input: tc.input,
         expectedOutput: tc.expectedOutput,
         got: `Error: ${error.message}`,
-        passed: false
+        passed: false,
       });
     }
   }
@@ -53,8 +49,8 @@ const got = result.output !== undefined && result.output !== null
     success: true,
     results,
     allPassed,
-    totalPassed: results.filter(r => r.passed).length,
-    totalTests: results.length
+    totalPassed: results.filter((r) => r.passed).length,
+    totalTests: results.length,
   });
 });
 

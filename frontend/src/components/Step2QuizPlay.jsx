@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
-import maleVideo from "../assets/videos/male-ai.mp4";
-import femaleVideo from "../assets/videos/female-ai.mp4";
-import Timer from "./Timer";
-import { motion } from "framer-motion";
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import { BsArrowRight } from "react-icons/bs";
-import api from "../services/api";
-import Footer from "./Footer";
+import React, { useState, useRef, useEffect } from 'react';
+import maleVideo from '../assets/videos/male-ai.mp4';
+import femaleVideo from '../assets/videos/female-ai.mp4';
+import Timer from './Timer';
+import { motion } from 'framer-motion';
+import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
+import { BsArrowRight } from 'react-icons/bs';
+import api from '../services/api';
+import Footer from './Footer';
 
 function Step2Interview({ interviewData, onFinish }) {
   const { interviewId, questions, userName } = interviewData;
@@ -16,23 +16,20 @@ function Step2Interview({ interviewData, onFinish }) {
   const [isAIPlaying, setIsAIPlaying] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [timeLeft, setTimeLeft] = useState(
-    questions[0]?.timeLimit || 60
-  );
+  const [answer, setAnswer] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [timeLeft, setTimeLeft] = useState(questions[0]?.timeLimit || 60);
 
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [voiceGender, setVoiceGender] = useState("female");
-  const [subtitle, setSubtitle] = useState("");
+  const [voiceGender, setVoiceGender] = useState('female');
+  const [subtitle, setSubtitle] = useState('');
 
   const recognitionRef = useRef(null);
   const videoRef = useRef(null);
 
   const currentQuestion = questions[currentIndex];
-  const videoSource =
-    voiceGender === "male" ? maleVideo : femaleVideo;
+  const videoSource = voiceGender === 'male' ? maleVideo : femaleVideo;
 
   /* VOICE LOAD */
   useEffect(() => {
@@ -43,24 +40,24 @@ function Step2Interview({ interviewData, onFinish }) {
       const femaleVoice =
         voices.find(
           (v) =>
-            v.name.toLowerCase().includes("zira") ||
-            v.name.toLowerCase().includes("samantha") ||
-            v.name.toLowerCase().includes("female")
+            v.name.toLowerCase().includes('zira') ||
+            v.name.toLowerCase().includes('samantha') ||
+            v.name.toLowerCase().includes('female')
         ) || voices[0];
 
       const maleVoice = voices.find(
         (v) =>
-          v.name.toLowerCase().includes("david") ||
-          v.name.toLowerCase().includes("mark") ||
-          v.name.toLowerCase().includes("male")
+          v.name.toLowerCase().includes('david') ||
+          v.name.toLowerCase().includes('mark') ||
+          v.name.toLowerCase().includes('male')
       );
 
       if (femaleVoice) {
         setSelectedVoice(femaleVoice);
-        setVoiceGender("female");
+        setVoiceGender('female');
       } else if (maleVoice) {
         setSelectedVoice(maleVoice);
-        setVoiceGender("male");
+        setVoiceGender('male');
       }
     };
 
@@ -78,8 +75,7 @@ function Step2Interview({ interviewData, onFinish }) {
 
       window.speechSynthesis.cancel();
 
-      const utterance =
-        new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(text);
 
       utterance.voice = selectedVoice;
       utterance.rate = 0.92;
@@ -100,7 +96,7 @@ function Step2Interview({ interviewData, onFinish }) {
         if (isMicOn) startMic();
 
         setTimeout(() => {
-          setSubtitle("");
+          setSubtitle('');
           resolve();
         }, 300);
       };
@@ -116,51 +112,30 @@ function Step2Interview({ interviewData, onFinish }) {
 
     const runIntro = async () => {
       if (isIntroPhase) {
-        await speakText(
-          `Hi ${userName}, it's great to meet you today.`
-        );
+        await speakText(`Hi ${userName}, it's great to meet you today.`);
 
-        await speakText(
-          "I'll ask you a few questions. Let's begin."
-        );
+        await speakText("I'll ask you a few questions. Let's begin.");
 
         setIsIntroPhase(false);
       } else if (currentQuestion) {
-        await new Promise((r) =>
-          setTimeout(r, 800)
-        );
+        await new Promise((r) => setTimeout(r, 800));
 
-        if (
-          currentIndex ===
-          questions.length - 1
-        ) {
-          await speakText(
-            "Alright, this one might be challenging."
-          );
+        if (currentIndex === questions.length - 1) {
+          await speakText('Alright, this one might be challenging.');
         }
 
-        await speakText(
-          currentQuestion.question
-        );
+        await speakText(currentQuestion.question);
 
         if (isMicOn) startMic();
       }
     };
 
     runIntro();
-  }, [
-    selectedVoice,
-    isIntroPhase,
-    currentIndex,
-  ]);
+  }, [selectedVoice, isIntroPhase, currentIndex]);
 
   /* TIMER */
   useEffect(() => {
-    if (
-      isIntroPhase ||
-      !currentQuestion
-    )
-      return;
+    if (isIntroPhase || !currentQuestion) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -177,57 +152,32 @@ function Step2Interview({ interviewData, onFinish }) {
   }, [isIntroPhase, currentIndex]);
 
   useEffect(() => {
-    if (
-      !isIntroPhase &&
-      currentQuestion
-    ) {
-      setTimeLeft(
-        currentQuestion.timeLimit ||
-          60
-      );
+    if (!isIntroPhase && currentQuestion) {
+      setTimeLeft(currentQuestion.timeLimit || 60);
     }
   }, [currentIndex]);
 
   /* SPEECH RECOGNITION */
   useEffect(() => {
-    if (
-      !(
-        "webkitSpeechRecognition" in
-        window
-      )
-    )
-      return;
+    if (!('webkitSpeechRecognition' in window)) return;
 
-    const recognition =
-      new window.webkitSpeechRecognition();
+    const recognition = new window.webkitSpeechRecognition();
 
-    recognition.lang = "en-US";
+    recognition.lang = 'en-US';
     recognition.continuous = true;
     recognition.interimResults = false;
 
-    recognition.onresult = (
-      event
-    ) => {
-      const transcript =
-        event.results[
-          event.results.length - 1
-        ][0].transcript;
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript;
 
-      setAnswer(
-        (prev) =>
-          prev + " " + transcript
-      );
+      setAnswer((prev) => prev + ' ' + transcript);
     };
 
-    recognitionRef.current =
-      recognition;
+    recognitionRef.current = recognition;
   }, []);
 
   const startMic = () => {
-    if (
-      recognitionRef.current &&
-      !isAIPlaying
-    ) {
+    if (recognitionRef.current && !isAIPlaying) {
       try {
         recognitionRef.current.start();
       } catch {}
@@ -254,27 +204,20 @@ function Step2Interview({ interviewData, onFinish }) {
 
     try {
       const result = await api.post(
-        "/api/interview/submit-answer",
+        '/api/interview/submit-answer',
         {
           interviewId,
-          questionIndex:
-            currentIndex,
+          questionIndex: currentIndex,
           answer,
-          timeTaken:
-            currentQuestion.timeLimit -
-            timeLeft,
+          timeTaken: currentQuestion.timeLimit - timeLeft,
         },
         {
           withCredentials: true,
         }
       );
 
-      setFeedback(
-        result.data.feedback
-      );
-      speakText(
-        result.data.feedback
-      );
+      setFeedback(result.data.feedback);
+      speakText(result.data.feedback);
     } catch (error) {
       console.log(error);
     } finally {
@@ -284,56 +227,41 @@ function Step2Interview({ interviewData, onFinish }) {
 
   /* NEXT */
   const handleNext = async () => {
-    setAnswer("");
-    setFeedback("");
+    setAnswer('');
+    setFeedback('');
 
-    if (
-      currentIndex + 1 >=
-      questions.length
-    ) {
+    if (currentIndex + 1 >= questions.length) {
       finishInterview();
       return;
     }
 
-    await speakText(
-      "Alright, next question."
-    );
+    await speakText('Alright, next question.');
 
-    setCurrentIndex(
-      currentIndex + 1
-    );
+    setCurrentIndex(currentIndex + 1);
   };
 
   /* FINISH */
-  const finishInterview =
-    async () => {
-      stopMic();
-      setIsMicOn(false);
+  const finishInterview = async () => {
+    stopMic();
+    setIsMicOn(false);
 
-      try {
-        const result =
-          await api.post(
-            "/api/interview/finish",
-            { interviewId },
-            {
-              withCredentials: true,
-            }
-          );
+    try {
+      const result = await api.post(
+        '/api/interview/finish',
+        { interviewId },
+        {
+          withCredentials: true,
+        }
+      );
 
-        onFinish(result.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+      onFinish(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    if (
-      !isIntroPhase &&
-      currentQuestion &&
-      timeLeft === 0 &&
-      !isSubmitting &&
-      !feedback
-    ) {
+    if (!isIntroPhase && currentQuestion && timeLeft === 0 && !isSubmitting && !feedback) {
       submitAnswer();
     }
   }, [timeLeft]);
@@ -348,282 +276,252 @@ function Step2Interview({ interviewData, onFinish }) {
 
   return (
     <>
-    <div
-      className="min-h-screen
+      <div
+        className="min-h-screen
       bg-gray-50 dark:bg-gray-950
       flex items-center justify-center
       p-4 sm:p-6 transition-colors duration-300"
-    >
-      <div
-        className="w-full max-w-[1400px]
+      >
+        <div
+          className="w-full max-w-[1400px]
         min-h-[80vh]
         bg-white dark:bg-gray-900
         rounded-3xl shadow-2xl
         border border-gray-200 dark:border-white/10
         flex flex-col lg:flex-row overflow-hidden"
-      >
-        {/* LEFT */}
-        <div
-          className="w-full lg:w-[35%]
+        >
+          {/* LEFT */}
+          <div
+            className="w-full lg:w-[35%]
           bg-white dark:bg-gray-900
           flex flex-col items-center
           p-6 space-y-6
           border-r border-gray-200 dark:border-white/10"
-        >
-          <div
-            className="w-full max-w-md
-            rounded-2xl overflow-hidden
-            shadow-xl"
           >
-            <video
-              src={videoSource}
-              key={videoSource}
-              ref={videoRef}
-              muted
-              playsInline
-              preload="auto"
-              className="w-full h-auto object-cover"
-            />
-          </div>
-
-          {/* Subtitle */}
-          {subtitle && (
             <div
               className="w-full max-w-md
+            rounded-2xl overflow-hidden
+            shadow-xl"
+            >
+              <video
+                src={videoSource}
+                key={videoSource}
+                ref={videoRef}
+                muted
+                playsInline
+                preload="auto"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+            {/* Subtitle */}
+            {subtitle && (
+              <div
+                className="w-full max-w-md
               bg-gray-50 dark:bg-gray-800
               border border-gray-200 dark:border-white/10
               rounded-xl p-4"
-            >
-              <p
-                className="text-gray-700 dark:text-gray-300
+              >
+                <p
+                  className="text-gray-700 dark:text-gray-300
                 text-sm sm:text-base
                 font-medium text-center"
-              >
-                {subtitle}
-              </p>
-            </div>
-          )}
+                >
+                  {subtitle}
+                </p>
+              </div>
+            )}
 
-          {/* Timer */}
-          <div
-            className="w-full max-w-md
+            {/* Timer */}
+            <div
+              className="w-full max-w-md
             bg-white dark:bg-gray-800
             border border-gray-200 dark:border-white/10
             rounded-2xl shadow-md
             p-6 space-y-5"
-          >
-            <div className="flex justify-between items-center">
-              <span
-                className="text-sm
+            >
+              <div className="flex justify-between items-center">
+                <span
+                  className="text-sm
                 text-gray-500 dark:text-gray-400"
-              >
-                Interview Status
-              </span>
+                >
+                  Interview Status
+                </span>
 
-              {isAIPlaying && (
-                <span
-                  className="text-sm font-semibold
+                {isAIPlaying && (
+                  <span
+                    className="text-sm font-semibold
                   text-blue-600 dark:text-blue-400"
-                >
-                  AI Speaking
-                </span>
-              )}
-            </div>
-
-            <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
-
-            <div className="flex justify-center">
-              <Timer
-                timeLeft={timeLeft}
-                totalTime={
-                  currentQuestion?.timeLimit
-                }
-              />
-            </div>
-
-            <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
-
-            <div className="grid grid-cols-2 gap-6 text-center">
-              <div>
-                <span
-                  className="text-2xl font-bold
-                  text-blue-600 dark:text-blue-400"
-                >
-                  {currentIndex + 1}
-                </span>
-
-                <span
-                  className="block text-xs
-                  text-gray-400 dark:text-gray-500"
-                >
-                  Current Question
-                </span>
+                  >
+                    AI Speaking
+                  </span>
+                )}
               </div>
 
-              <div>
-                <span
-                  className="text-2xl font-bold
-                  text-blue-600 dark:text-blue-400"
-                >
-                  {questions.length}
-                </span>
+              <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
 
-                <span
-                  className="block text-xs
+              <div className="flex justify-center">
+                <Timer timeLeft={timeLeft} totalTime={currentQuestion?.timeLimit} />
+              </div>
+
+              <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
+
+              <div className="grid grid-cols-2 gap-6 text-center">
+                <div>
+                  <span
+                    className="text-2xl font-bold
+                  text-blue-600 dark:text-blue-400"
+                  >
+                    {currentIndex + 1}
+                  </span>
+
+                  <span
+                    className="block text-xs
                   text-gray-400 dark:text-gray-500"
-                >
-                  Total Questions
-                </span>
+                  >
+                    Current Question
+                  </span>
+                </div>
+
+                <div>
+                  <span
+                    className="text-2xl font-bold
+                  text-blue-600 dark:text-blue-400"
+                  >
+                    {questions.length}
+                  </span>
+
+                  <span
+                    className="block text-xs
+                  text-gray-400 dark:text-gray-500"
+                  >
+                    Total Questions
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT */}
-        <div
-          className="flex-1 flex flex-col
+          {/* RIGHT */}
+          <div
+            className="flex-1 flex flex-col
           p-4 sm:p-6 md:p-8
           bg-white dark:bg-gray-900"
-        >
-          <h2
-            className="text-xl sm:text-2xl font-bold
-            text-blue-600 dark:text-blue-400 mb-6"
           >
-            AI Smart Interview
-          </h2>
+            <h2
+              className="text-xl sm:text-2xl font-bold
+            text-blue-600 dark:text-blue-400 mb-6"
+            >
+              AI Smart Interview
+            </h2>
 
-          {!isIntroPhase && (
-            <div
-              className="mb-6
+            {!isIntroPhase && (
+              <div
+                className="mb-6
               bg-gray-50 dark:bg-gray-800
               p-4 sm:p-6 rounded-2xl
               border border-gray-200 dark:border-white/10"
-            >
-              <p
-                className="text-xs sm:text-sm
+              >
+                <p
+                  className="text-xs sm:text-sm
                 text-gray-400 dark:text-gray-500 mb-2"
-              >
-                Question {currentIndex + 1} of{" "}
-                {questions.length}
-              </p>
+                >
+                  Question {currentIndex + 1} of {questions.length}
+                </p>
 
-              <div
-                className="text-base sm:text-lg font-semibold
+                <div
+                  className="text-base sm:text-lg font-semibold
                 text-gray-900 dark:text-white"
-              >
-                {
-                  currentQuestion?.question
-                }
+                >
+                  {currentQuestion?.question}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Answer */}
-          <textarea
-            placeholder="Type your answer here..."
-            onChange={(e) =>
-              setAnswer(
-                e.target.value
-              )
-            }
-            value={answer}
-            className="flex-1
+            {/* Answer */}
+            <textarea
+              placeholder="Type your answer here..."
+              onChange={(e) => setAnswer(e.target.value)}
+              value={answer}
+              className="flex-1
             bg-gray-100 dark:bg-gray-800
             text-gray-900 dark:text-white
             p-4 sm:p-6 rounded-2xl resize-none
             outline-none border
             border-gray-200 dark:border-white/10
             focus:ring-2 focus:ring-blue-500"
-          />
+            />
 
-          {!feedback ? (
-            <div className="flex items-center gap-4 mt-6">
-              <motion.button
-                onClick={toggleMic}
-                whileTap={{
-                  scale: 0.9,
-                }}
-                className="w-12 h-12 sm:w-14 sm:h-14
+            {!feedback ? (
+              <div className="flex items-center gap-4 mt-6">
+                <motion.button
+                  onClick={toggleMic}
+                  whileTap={{
+                    scale: 0.9,
+                  }}
+                  className="w-12 h-12 sm:w-14 sm:h-14
                 flex items-center justify-center
                 rounded-full
                 bg-black dark:bg-white
                 text-white dark:text-black
                 shadow-lg"
-              >
-                {isMicOn ? (
-                  <FaMicrophone size={20} />
-                ) : (
-                  <FaMicrophoneSlash
-                    size={20}
-                  />
-                )}
-              </motion.button>
+                >
+                  {isMicOn ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}
+                </motion.button>
 
-              <motion.button
-                onClick={
-                  submitAnswer
-                }
-                disabled={
-                  isSubmitting
-                }
-                whileTap={{
-                  scale: 0.95,
-                }}
-                className="flex-1
+                <motion.button
+                  onClick={submitAnswer}
+                  disabled={isSubmitting}
+                  whileTap={{
+                    scale: 0.95,
+                  }}
+                  className="flex-1
                 bg-gradient-to-r from-blue-600 to-indigo-600
                 hover:from-blue-700 hover:to-indigo-700
                 text-white py-3 sm:py-4
                 rounded-2xl shadow-lg
                 font-semibold
                 disabled:opacity-60"
-              >
-                {isSubmitting
-                  ? "Submitting..."
-                  : "Submit Answer"}
-              </motion.button>
-            </div>
-          ) : (
-            <motion.div
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              className="mt-6
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Answer'}
+                </motion.button>
+              </div>
+            ) : (
+              <motion.div
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                }}
+                className="mt-6
               bg-blue-50 dark:bg-gray-800
               border border-blue-200 dark:border-white/10
               p-5 rounded-2xl"
-            >
-              <p
-                className="text-blue-700 dark:text-blue-400
-                font-medium mb-4"
               >
-                {feedback}
-              </p>
+                <p
+                  className="text-blue-700 dark:text-blue-400
+                font-medium mb-4"
+                >
+                  {feedback}
+                </p>
 
-              <button
-                onClick={
-                  handleNext
-                }
-                className="w-full
+                <button
+                  onClick={handleNext}
+                  className="w-full
                 bg-gradient-to-r from-blue-600 to-indigo-600
                 hover:from-blue-700 hover:to-indigo-700
                 text-white py-3 rounded-xl
                 shadow-md transition
                 flex items-center justify-center gap-1"
-              >
-                Next Question{" "}
-                <BsArrowRight
-                  size={18}
-                />
-              </button>
-            </motion.div>
-          )}
+                >
+                  Next Question <BsArrowRight size={18} />
+                </button>
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-   
     </>
   );
 }

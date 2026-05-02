@@ -1,50 +1,50 @@
-import React, { useEffect, useRef, useState } from 'react'
-import mermaid from 'mermaid'
+import React, { useEffect, useRef, useState } from 'react';
+import mermaid from 'mermaid';
 
 const NoteDiagram = ({ diagramData, className = '' }) => {
-  const svgRef = useRef(null)
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const svgRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!diagramData) {
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
 
     const renderDiagram = async () => {
       try {
-        setLoading(true)
-        setError(false)
+        setLoading(true);
+        setError(false);
 
         // Mermaid config
-        mermaid.initialize({ 
+        mermaid.initialize({
           startOnLoad: false,
           theme: 'default',
-          securityLevel: 'loose'
-        })
+          securityLevel: 'loose',
+        });
 
         const { svg } = await mermaid.render(
           `diagram-${Math.random().toString(36).substr(2, 9)}`,
           diagramData
-        )
+        );
 
         if (svgRef.current) {
-          svgRef.current.innerHTML = svg
+          svgRef.current.innerHTML = svg;
         }
 
-        setLoading(false)
+        setLoading(false);
       } catch (err) {
-        setError(true)
-        setLoading(false)
+        setError(true);
+        setLoading(false);
       }
-    }
+    };
 
-    renderDiagram()
-  }, [diagramData])
+    renderDiagram();
+  }, [diagramData]);
 
   if (!diagramData) {
-    return null
+    return null;
   }
 
   return (
@@ -53,7 +53,7 @@ const NoteDiagram = ({ diagramData, className = '' }) => {
         <div className="w-2 h-6 bg-linear-to-b from-blue-500 to-purple-600 rounded" />
         <span className="font-semibold text-blue-900">Diagram</span>
       </div>
-      
+
       {loading && (
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -61,20 +61,14 @@ const NoteDiagram = ({ diagramData, className = '' }) => {
       )}
 
       {error && (
-        <div className="text-center py-8 text-red-500 text-sm">
-          Failed to render diagram
-        </div>
+        <div className="text-center py-8 text-red-500 text-sm">Failed to render diagram</div>
       )}
 
       {!loading && !error && (
-        <div 
-          ref={svgRef} 
-          className="mermaid w-full h-auto max-h-96 overflow-auto"
-        />
+        <div ref={svgRef} className="mermaid w-full h-auto max-h-96 overflow-auto" />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default NoteDiagram
-
+export default NoteDiagram;

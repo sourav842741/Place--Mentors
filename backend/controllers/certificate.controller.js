@@ -16,13 +16,9 @@ export const getCertificates = asyncHandler(async (req, res) => {
     .sort({ issuedAt: -1 })
     .lean();
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      certificates,
-      "Certificates fetched successfully"
-    )
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, certificates, "Certificates fetched successfully"));
 });
 
 /* =====================================================
@@ -38,24 +34,17 @@ export const generateCertificate = asyncHandler(async (req, res) => {
 
   const cleanBadgeName = badgeName.trim();
 
-  const user = await User.findById(req.user._id).select(
-    "badges"
-  );
+  const user = await User.findById(req.user._id).select("badges");
 
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
   /* Check badge earned */
-  const userBadge = user.badges.find(
-    (badge) => badge.name === cleanBadgeName
-  );
+  const userBadge = user.badges.find((badge) => badge.name === cleanBadgeName);
 
   if (!userBadge) {
-    throw new ApiError(
-      400,
-      `Badge "${cleanBadgeName}" not earned yet`
-    );
+    throw new ApiError(400, `Badge "${cleanBadgeName}" not earned yet`);
   }
 
   /* Existing Certificate */
@@ -65,13 +54,7 @@ export const generateCertificate = asyncHandler(async (req, res) => {
   });
 
   if (certificate) {
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        certificate,
-        "Certificate already exists"
-      )
-    );
+    return res.status(200).json(new ApiResponse(200, certificate, "Certificate already exists"));
   }
 
   /* Create New */
@@ -87,13 +70,9 @@ export const generateCertificate = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(201).json(
-    new ApiResponse(
-      201,
-      certificate,
-      "Certificate generated successfully"
-    )
-  );
+  return res
+    .status(201)
+    .json(new ApiResponse(201, certificate, "Certificate generated successfully"));
 });
 
 /* =====================================================
@@ -110,13 +89,9 @@ export const getCertificateById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Certificate not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      certificate,
-      "Certificate fetched successfully"
-    )
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, certificate, "Certificate fetched successfully"));
 });
 
 /* =====================================================
@@ -132,13 +107,7 @@ export const deleteCertificate = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Certificate not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      null,
-      "Certificate deleted successfully"
-    )
-  );
+  return res.status(200).json(new ApiResponse(200, null, "Certificate deleted successfully"));
 });
 
 /* =====================================================
@@ -178,25 +147,17 @@ export const verifyCertificate = asyncHandler(async (req, res) => {
         success: true,
         valid: true,
         certificate: {
-          certificateId:
-            certificate.certificateId,
+          certificateId: certificate.certificateId,
 
-          fullName:
-            certificate.userId?.fullName ||
-            "Unknown User",
+          fullName: certificate.userId?.fullName || "Unknown User",
 
-          avatar:
-            certificate.userId?.avatar || "",
+          avatar: certificate.userId?.avatar || "",
 
-          badgeName:
-            certificate.badgeName,
+          badgeName: certificate.badgeName,
 
-          issuedAt:
-            certificate.issuedAt,
+          issuedAt: certificate.issuedAt,
 
-          badgeIcon:
-            certificate.metadata?.badgeIcon ||
-            "",
+          badgeIcon: certificate.metadata?.badgeIcon || "",
         },
       },
       "Certificate verified successfully"

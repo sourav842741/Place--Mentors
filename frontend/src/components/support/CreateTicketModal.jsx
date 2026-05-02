@@ -1,48 +1,43 @@
-import React, { useState, useRef } from "react";
-import { useSelector } from "react-redux";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { X, Upload, ImageIcon, Loader2, Ticket } from "lucide-react";
+} from '@/components/ui/select';
+import { X, Upload, ImageIcon, Loader2, Ticket } from 'lucide-react';
 
 const CATEGORIES = [
-  "Login Issue",
-  "Payment",
-  "Premium",
-  "Bug Report",
-  "Resume",
-  "Interview",
-  "Account",
-  "Other",
+  'Login Issue',
+  'Payment',
+  'Premium',
+  'Bug Report',
+  'Resume',
+  'Interview',
+  'Account',
+  'Other',
 ];
 
-const PRIORITIES = ["Low", "Medium", "High"];
+const PRIORITIES = ['Low', 'Medium', 'High'];
 
 export default function CreateTicketModal({ open, onClose, onSubmit, loading }) {
   const { user } = useSelector((state) => state.user);
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
-    subject: "",
-    category: "",
-    priority: "Low",
-    description: "",
-    email: user?.email || "",
-    mobile: "",
+    subject: '',
+    category: '',
+    priority: 'Low',
+    description: '',
+    email: user?.email || '',
+    mobile: '',
   });
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -50,12 +45,12 @@ export default function CreateTicketModal({ open, onClose, onSubmit, loading }) 
 
   const resetForm = () => {
     setForm({
-      subject: "",
-      category: "",
-      priority: "Low",
-      description: "",
-      email: user?.email || "",
-      mobile: "",
+      subject: '',
+      category: '',
+      priority: 'Low',
+      description: '',
+      email: user?.email || '',
+      mobile: '',
     });
     setImage(null);
     setImagePreview(null);
@@ -72,29 +67,28 @@ export default function CreateTicketModal({ open, onClose, onSubmit, loading }) 
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, image: "Image must be under 5MB" }));
+      setErrors((prev) => ({ ...prev, image: 'Image must be under 5MB' }));
       return;
     }
 
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
-    setErrors((prev) => ({ ...prev, image: "" }));
+    setErrors((prev) => ({ ...prev, image: '' }));
   };
 
   const removeImage = () => {
     setImage(null);
     setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!form.subject.trim()) newErrors.subject = "Subject is required";
-    if (!form.category) newErrors.category = "Category is required";
-    if (!form.description.trim()) newErrors.description = "Description is required";
-    if (!form.email.trim()) newErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      newErrors.email = "Invalid email";
+    if (!form.subject.trim()) newErrors.subject = 'Subject is required';
+    if (!form.category) newErrors.category = 'Category is required';
+    if (!form.description.trim()) newErrors.description = 'Description is required';
+    if (!form.email.trim()) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -104,13 +98,13 @@ export default function CreateTicketModal({ open, onClose, onSubmit, loading }) 
     if (!validate()) return;
 
     const formData = new FormData();
-    formData.append("subject", form.subject.trim());
-    formData.append("category", form.category);
-    formData.append("priority", form.priority);
-    formData.append("description", form.description.trim());
-    formData.append("email", form.email.trim());
-    if (form.mobile.trim()) formData.append("mobile", form.mobile.trim());
-    if (image) formData.append("image", image);
+    formData.append('subject', form.subject.trim());
+    formData.append('category', form.category);
+    formData.append('priority', form.priority);
+    formData.append('description', form.description.trim());
+    formData.append('email', form.email.trim());
+    if (form.mobile.trim()) formData.append('mobile', form.mobile.trim());
+    if (image) formData.append('image', image);
 
     onSubmit(formData);
     resetForm();
@@ -199,9 +193,7 @@ export default function CreateTicketModal({ open, onClose, onSubmit, loading }) 
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               className="rounded-xl resize-none"
             />
-            {errors.description && (
-              <p className="text-xs text-red-500">{errors.description}</p>
-            )}
+            {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
           </div>
 
           {/* Email & Mobile */}
@@ -243,11 +235,7 @@ export default function CreateTicketModal({ open, onClose, onSubmit, loading }) 
               </div>
             ) : (
               <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-40 object-cover"
-                />
+                <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover" />
                 <button
                   type="button"
                   onClick={removeImage}
@@ -300,4 +288,3 @@ export default function CreateTicketModal({ open, onClose, onSubmit, loading }) 
     </Dialog>
   );
 }
-

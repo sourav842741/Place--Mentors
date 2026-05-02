@@ -27,16 +27,16 @@ export const askAi = async (messages) => {
         model: "openai/gpt-4o-mini",
         messages: safeMessages,
         temperature: 0.7,
-        max_tokens: 2000
+        max_tokens: 2000,
       },
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
           "HTTP-Referer": process.env.CLIENT_URL || "http://localhost:5173",
-          "X-Title": "PlaceMentor Support AI"
+          "X-Title": "PlaceMentor Support AI",
         },
-        timeout: 30000
+        timeout: 30000,
       }
     );
 
@@ -48,23 +48,19 @@ export const askAi = async (messages) => {
 
     // Apply content safety filter
     return filterSafeContent(content, "default");
+  } catch (error) {
+    console.error("OpenRouter AI Error:", error.response?.data || error.message);
 
-  }catch (error) {
-  console.error(
-    "OpenRouter AI Error:",
-    error.response?.data || error.message
-  );
+    if (error.response?.status === 402) {
+      throw new Error("AI quota exceeded. Please recharge credits.");
+    }
 
-  if (error.response?.status === 402) {
-    throw new Error("AI quota exceeded. Please recharge credits.");
+    if (error.code === "ECONNABORTED") {
+      throw new Error("AI request timeout. Please try again.");
+    }
+
+    throw new Error("AI service unavailable right now.");
   }
-
-  if (error.code === "ECONNABORTED") {
-    throw new Error("AI request timeout. Please try again.");
-  }
-
-  throw new Error("AI service unavailable right now.");
-}
 };
 
 // ================= SAFE JSON =================
@@ -73,9 +69,7 @@ export const extractJSON = (response) => {
     if (!response || typeof response !== "string") return null;
 
     // Try code block JSON
-    const match =
-      response.match(/```json\s*([\s\S]*?)\s*```/) ||
-      response.match(/\{[\s\S]*\}/);
+    const match = response.match(/```json\s*([\s\S]*?)\s*```/) || response.match(/\{[\s\S]*\}/);
 
     if (match) {
       const jsonStr = match[1] || match[0];
@@ -87,4 +81,3 @@ export const extractJSON = (response) => {
     return null;
   }
 };
-

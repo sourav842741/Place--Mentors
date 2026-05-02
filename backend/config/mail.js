@@ -7,23 +7,15 @@ dotenv.config();
    RESEND CONFIG
 ========================================= */
 
-const resend = new Resend(
-  process.env.RESEND_API_KEY
-);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const EMAIL_AUTH =
-  process.env.EMAIL_AUTH ||
-  "PlaceMentor Security <security@placementor.online>";
+const EMAIL_AUTH = process.env.EMAIL_AUTH || "PlaceMentor Security <security@placementor.online>";
 
 /* =========================================
    COMMON SEND FUNCTION
 ========================================= */
 
-const sendResendMail = async (
-  to,
-  subject,
-  html
-) => {
+const sendResendMail = async (to, subject, html) => {
   return await resend.emails.send({
     from: EMAIL_AUTH,
     to: [to],
@@ -36,9 +28,7 @@ const sendResendMail = async (
    BASE TEMPLATE
 ========================================= */
 
-const baseTemplate = (
-  content
-) => `
+const baseTemplate = (content) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,9 +80,8 @@ Made with ❤️ in India
    SIGNUP OTP
 ========================================= */
 
-export const sendSignupOtpMail =
-  async (email, otp) => {
-    const content = `
+export const sendSignupOtpMail = async (email, otp) => {
+  const content = `
 <h2 style="margin:0;color:#333;">Verify Your Email 🎉</h2>
 
 <p style="color:#555;font-size:14px;">
@@ -118,20 +107,15 @@ OTP valid for 5 minutes
 </p>
 `;
 
-    await sendResendMail(
-      email,
-      "🎉 Verify Your Email - PlaceMentor",
-      baseTemplate(content)
-    );
-  };
+  await sendResendMail(email, "🎉 Verify Your Email - PlaceMentor", baseTemplate(content));
+};
 
 /* =========================================
    RESET OTP
 ========================================= */
 
-export const sendResetOtpMail =
-  async (email, otp) => {
-    const content = `
+export const sendResetOtpMail = async (email, otp) => {
+  const content = `
 <h2 style="color:#e11d48;">Reset Password 🔒</h2>
 
 <p style="color:#555;font-size:14px;">
@@ -157,20 +141,15 @@ This OTP expires in 5 minutes
 </p>
 `;
 
-    await sendResendMail(
-      email,
-      "🔒 Reset Your Password - PlaceMentor",
-      baseTemplate(content)
-    );
-  };
+  await sendResendMail(email, "🔒 Reset Your Password - PlaceMentor", baseTemplate(content));
+};
 
 /* =========================================
    WELCOME MAIL
 ========================================= */
 
-export const sendWelcomeMail =
-  async (email, name) => {
-    const content = `
+export const sendWelcomeMail = async (email, name) => {
+  const content = `
 <h2 style="color:#333;">Welcome ${name} 🎉</h2>
 
 <p style="color:#555;font-size:15px;">
@@ -194,18 +173,10 @@ Explore Now
 </a>
 `;
 
-    await sendResendMail(
-      email,
-      "🎉 Welcome to PlaceMentor",
-      baseTemplate(content)
-    );
-  };
+  await sendResendMail(email, "🎉 Welcome to PlaceMentor", baseTemplate(content));
+};
 
-  export const sendContactMail = async (
-  name,
-  senderEmail,
-  message
-) => {
+export const sendContactMail = async (name, senderEmail, message) => {
   const content = `
 <h2 style="color:#10b981;">New Contact Message 📩</h2>
 
@@ -226,9 +197,7 @@ ${message}
 `;
 
   await resend.emails.send({
-    from:
-      process.env.EMAIL_AUTH ||
-      "PlaceMentor Security <security@placementor.online>",
+    from: process.env.EMAIL_AUTH || "PlaceMentor Security <security@placementor.online>",
 
     to: ["souravkumar85055@gmail.com"],
 

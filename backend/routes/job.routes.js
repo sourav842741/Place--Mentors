@@ -9,7 +9,6 @@ import {
 
 const router = express.Router();
 
-
 router.get("/", getJobs);
 router.get("/latest", getLatestJobs);
 router.get("/remote", getRemoteJobs);

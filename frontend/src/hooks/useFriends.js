@@ -12,34 +12,35 @@ export const useFriends = () => {
         const res = await api.get('/api/friends');
 
         //  never undefined
-        return res.data?.data || {
-          friends: [],
-          friendRequests: {
-            received: [],
-            sent: []
-          },
-          challenges: {
-            sent: [],
-            received: []
-          },
-          suggestedUsers: []
-        };
-
+        return (
+          res.data?.data || {
+            friends: [],
+            friendRequests: {
+              received: [],
+              sent: [],
+            },
+            challenges: {
+              sent: [],
+              received: [],
+            },
+            suggestedUsers: [],
+          }
+        );
       } catch (err) {
-        console.log("Friends Fetch Error:", err);
+        console.log('Friends Fetch Error:', err);
 
         //  fallback (IMPORTANT)
         return {
           friends: [],
           friendRequests: {
             received: [],
-            sent: []
+            sent: [],
           },
           challenges: {
             sent: [],
-            received: []
+            received: [],
           },
-          suggestedUsers: []
+          suggestedUsers: [],
         };
       }
     },
@@ -60,7 +61,7 @@ export const useSendFriendRequest = () => {
         const res = await api.post(`/api/friends/send/${friendId}`);
         return res.data;
       } catch (err) {
-        console.log("Send Request Error:", err);
+        console.log('Send Request Error:', err);
         throw err;
       }
     },
@@ -84,7 +85,7 @@ export const useAcceptFriendRequest = () => {
         const res = await api.post(`/api/friends/accept/${requesterId}`);
         return res.data;
       } catch (err) {
-        console.log("Accept Error:", err);
+        console.log('Accept Error:', err);
         throw err;
       }
     },
@@ -106,7 +107,7 @@ export const useRejectFriendRequest = () => {
         const res = await api.post(`/api/friends/reject/${requesterId}`);
         return res.data;
       } catch (err) {
-        console.log("Reject Error:", err);
+        console.log('Reject Error:', err);
         throw err;
       }
     },

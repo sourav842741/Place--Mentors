@@ -41,7 +41,13 @@ router.patch("/:id/reopen", isAuth, asyncHandler(reopenTicket));
 // ================= ADMIN ROUTES =================
 router.get("/admin/all", isAuth, isAdmin, asyncHandler(getAllTickets));
 router.get("/admin/stats", isAuth, isAdmin, asyncHandler(getTicketStats));
-router.patch("/admin/:id/status", isAuth, isAdmin, validate(updateTicketStatusSchema), asyncHandler(updateTicketStatus));
+router.patch(
+  "/admin/:id/status",
+  isAuth,
+  isAdmin,
+  validate(updateTicketStatusSchema),
+  asyncHandler(updateTicketStatus)
+);
 router.delete("/admin/:id", isAuth, isAdmin, asyncHandler(deleteTicket));
 
 export default router;

@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { SERVER_URL } from '../config/api'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { SERVER_URL } from '../config/api';
 
 // RTK Query API
 export const notesApi = createApi({
@@ -8,11 +8,11 @@ export const notesApi = createApi({
     baseUrl: SERVER_URL,
     credentials: 'include',
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('token');
       if (token) {
-        headers.set('authorization', `Bearer ${token}`)
+        headers.set('authorization', `Bearer ${token}`);
       }
-      return headers
+      return headers;
     },
   }),
   tagTypes: ['Notes'],
@@ -49,7 +49,7 @@ export const notesApi = createApi({
       }),
     }),
   }),
-})
+});
 
 // Auto-generated hooks
 export const {
@@ -57,5 +57,4 @@ export const {
   useGetSingleNoteQuery,
   useGenerateNotesMutation,
   useGeneratePDFMutation,
-} = notesApi
-
+} = notesApi;

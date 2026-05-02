@@ -6,9 +6,7 @@ export const trackEvent = asyncHandler(async (req, res) => {
   const { eventType, metadata = {} } = req.body;
 
   if (!eventType) {
-    return res.status(400).json(
-      new ApiResponse(400, null, "eventType is required")
-    );
+    return res.status(400).json(new ApiResponse(400, null, "eventType is required"));
   }
 
   // Detect device type from user-agent header
@@ -34,18 +32,16 @@ export const trackEvent = asyncHandler(async (req, res) => {
     metadata,
   });
 
-  res.status(201).json(
-    new ApiResponse(201, { tracked: true, eventId: event._id }, "Event tracked")
-  );
+  res
+    .status(201)
+    .json(new ApiResponse(201, { tracked: true, eventId: event._id }, "Event tracked"));
 });
 
 export const trackEventsBatch = asyncHandler(async (req, res) => {
   const { events } = req.body;
 
   if (!Array.isArray(events) || events.length === 0) {
-    return res.status(400).json(
-      new ApiResponse(400, null, "events array is required")
-    );
+    return res.status(400).json(new ApiResponse(400, null, "events array is required"));
   }
 
   const docs = events.map((e) => ({
@@ -58,8 +54,5 @@ export const trackEventsBatch = asyncHandler(async (req, res) => {
 
   const result = await AnalyticsEvent.insertMany(docs, { ordered: false });
 
-  res.status(201).json(
-    new ApiResponse(201, { count: result.length }, "Batch tracked")
-  );
+  res.status(201).json(new ApiResponse(201, { count: result.length }, "Batch tracked"));
 });
-

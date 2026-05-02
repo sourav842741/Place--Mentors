@@ -14,10 +14,7 @@ const requiredEnvVars = [
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
-  console.error(
-    "[FATAL] Missing required environment variables:",
-    missingVars.join(", ")
-  );
+  console.error("[FATAL] Missing required environment variables:", missingVars.join(", "));
   process.exit(1);
 }
 
@@ -37,4 +34,3 @@ const ENV = {
 };
 
 export default ENV;
-

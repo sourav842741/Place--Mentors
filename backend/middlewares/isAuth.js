@@ -4,8 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 
 const isAuth = async (req, res, next) => {
   try {
-    let token =
-      req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
+    let token = req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found");
@@ -35,14 +34,14 @@ const isAuth = async (req, res, next) => {
     await user.save();
 
     // BAN CHECK - Block banned users from all requests
-   if (user.isBanned) {
-  throw new ApiError(
-    403,
-    user.banReason?.trim()
-      ? user.banReason
-      : "Your account has been suspended. Contact support."
-  );
-}
+    if (user.isBanned) {
+      throw new ApiError(
+        403,
+        user.banReason?.trim()
+          ? user.banReason
+          : "Your account has been suspended. Contact support."
+      );
+    }
 
     req.user = user;
     req.userId = user._id.toString();

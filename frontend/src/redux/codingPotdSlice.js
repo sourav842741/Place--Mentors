@@ -1,21 +1,18 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchCpotdApi, submitCpotdApi } from "../services/cpotdApi";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchCpotdApi, submitCpotdApi } from '../services/cpotdApi';
 
 //  Fetch CPOTD
-export const fetchCpotd = createAsyncThunk(
-  "cpotd/fetch",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await fetchCpotdApi();
-    } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
+export const fetchCpotd = createAsyncThunk('cpotd/fetch', async (_, { rejectWithValue }) => {
+  try {
+    return await fetchCpotdApi();
+  } catch (err) {
+    return rejectWithValue(err.response?.data || err.message);
   }
-);
+});
 
 //  Submit Code
 export const submitCpotdCode = createAsyncThunk(
-  "cpotd/submit",
+  'cpotd/submit',
   async (data, { rejectWithValue }) => {
     try {
       return await submitCpotdApi(data);
@@ -39,7 +36,7 @@ const initialState = {
 
 // 🔥 Slice
 const codingPotdSlice = createSlice({
-  name: "codingPotd",
+  name: 'codingPotd',
   initialState,
   reducers: {
     setCurrentQuestion: (state, action) => {
@@ -66,7 +63,7 @@ const codingPotdSlice = createSlice({
       })
       .addCase(fetchCpotd.fulfilled, (state, action) => {
         state.loading = false;
-     state.questions = action.payload.data.questions;
+        state.questions = action.payload.data.questions;
       })
       .addCase(fetchCpotd.rejected, (state, action) => {
         state.loading = false;
@@ -79,7 +76,7 @@ const codingPotdSlice = createSlice({
       })
       .addCase(submitCpotdCode.fulfilled, (state, action) => {
         state.loading = false;
-    state.submissionResult = action.payload.data;
+        state.submissionResult = action.payload.data;
       })
       .addCase(submitCpotdCode.rejected, (state, action) => {
         state.loading = false;
@@ -89,13 +86,8 @@ const codingPotdSlice = createSlice({
 });
 
 // 🔥 Export actions
-export const {
-  setCurrentQuestion,
-  clearSubmission,
-  setTimer,
-  timeUp,
-  resetCodingPotd,
-} = codingPotdSlice.actions;
+export const { setCurrentQuestion, clearSubmission, setTimer, timeUp, resetCodingPotd } =
+  codingPotdSlice.actions;
 
 // 🔥 Export reducer
 export default codingPotdSlice.reducer;

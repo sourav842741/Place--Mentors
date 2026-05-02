@@ -1,12 +1,12 @@
-import React from 'react'
-import { BookOpen, Sparkles, Star, TrendingUp } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import NotesForm from '../components/NotesForm'
-import NotesList from '../components/NotesList'
-import { useGetMyNotesQuery } from '../redux/notesSlice'
+import React from 'react';
+import { BookOpen, Sparkles, Star, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import NotesForm from '../components/NotesForm';
+import NotesList from '../components/NotesList';
+import { useGetMyNotesQuery } from '../redux/notesSlice';
 
 function Notes() {
-  const { data: notes, isLoading, error } = useGetMyNotesQuery()
+  const { data: notes, isLoading, error } = useGetMyNotesQuery();
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 dark:from-gray-950 dark:to-gray-950 py-12 lg:mt-12 md:mt-16 transition-colors duration-300">
@@ -21,8 +21,8 @@ function Notes() {
             <Sparkles className="h-6 w-6 text-purple-600" />
           </div>
           <p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
-            Generate topper-level notes with diagrams, questions, and revision points. 
-            Powered by advanced AI tailored for your exams.
+            Generate topper-level notes with diagrams, questions, and revision points. Powered by
+            advanced AI tailored for your exams.
           </p>
         </div>
 
@@ -34,7 +34,7 @@ function Notes() {
           <Card className="border-0 shadow-xl md:ml-30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-2xl ">
-                <BookOpen className="h-8 w-8"  />
+                <BookOpen className="h-8 w-8" />
                 Your Notes Library
               </CardTitle>
             </CardHeader>
@@ -53,8 +53,7 @@ function Notes() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Notes
-
+export default Notes;

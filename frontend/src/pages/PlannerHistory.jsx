@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Calendar,
-  Eye,
-  Sparkles,
-  Clock,
-  CheckCircle,
-  RefreshCw,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import api from "../services/api";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Eye, Sparkles, Clock, CheckCircle, RefreshCw } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import api from '../services/api';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export default function PlannerHistory() {
   const navigate = useNavigate();
@@ -31,12 +24,12 @@ export default function PlannerHistory() {
 
       // Load calendar status
       try {
-        const res = await api.get("/api/planner/calendar/status", {
+        const res = await api.get('/api/planner/calendar/status', {
           withCredentials: true,
         });
         setCalendarStatus({ ...res.data, loading: false });
       } catch (err) {
-        console.error("Calendar status error:", err);
+        console.error('Calendar status error:', err);
         setCalendarStatus({ authorized: false, loading: false });
       }
     };
@@ -45,14 +38,14 @@ export default function PlannerHistory() {
 
   const fetchPlanners = async () => {
     try {
-      const res = await api.get("/api/planner/all", { withCredentials: true });
+      const res = await api.get('/api/planner/all', { withCredentials: true });
       if (Array.isArray(res.data)) {
         setPlanners(res.data);
       } else {
         setPlanners([]);
       }
     } catch (err) {
-      console.error("Failed to fetch planners");
+      console.error('Failed to fetch planners');
       setPlanners([]);
     } finally {
       setLoading(false);
@@ -61,31 +54,27 @@ export default function PlannerHistory() {
 
   const handleGoogleOAuth = async () => {
     try {
-      const res = await api.get("/api/planner/calendar/auth", {
+      const res = await api.get('/api/planner/calendar/auth', {
         withCredentials: true,
       });
       window.location.href = res.data.authUrl;
     } catch (err) {
-      alert("Failed to get auth URL");
+      alert('Failed to get auth URL');
     }
   };
 
   const syncPlannerToCalendar = async (plannerId) => {
     if (!planners.length) {
-      alert("No planners available");
+      alert('No planners available');
       return;
     }
     setSyncing((prev) => ({ ...prev, [plannerId]: true }));
     try {
-      const res = await api.post(
-        "/api/planner/calendar",
-        { plannerId },
-        { withCredentials: true },
-      );
+      const res = await api.post('/api/planner/calendar', { plannerId }, { withCredentials: true });
       alert(`Synced ${res.data.syncedCount} new events!`);
     } catch (err) {
-      console.error("Sync error:", err.response?.data);
-      alert(err.response?.data?.message || "Sync failed. Check server logs.");
+      console.error('Sync error:', err.response?.data);
+      alert(err.response?.data?.message || 'Sync failed. Check server logs.');
     } finally {
       setSyncing((prev) => ({ ...prev, [plannerId]: false }));
     }
@@ -100,9 +89,7 @@ export default function PlannerHistory() {
       <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center  dark:bg-gray-950">
         <div className="text-center">
           <RefreshCw className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-500" />
-          <p className="text-lg text-gray-700 dark:text-gray-300">
-            Loading planners...
-          </p>
+          <p className="text-lg text-gray-700 dark:text-gray-300">Loading planners...</p>
         </div>
       </div>
     );
@@ -111,11 +98,11 @@ export default function PlannerHistory() {
     <>
       <Navbar />
 
-    <div
-  className="pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8 pb-10
+      <div
+        className="pt-20 lg:pl-64 px-4 sm:px-6 lg:px-8 pb-10
   bg-gray-50 dark:bg-gray-950
   min-h-screen transition-colors duration-300"
->
+      >
         <main className="flex-1">
           <div className="max-w-6xl mx-auto w-full">
             {/* HEADER */}
@@ -124,10 +111,7 @@ export default function PlannerHistory() {
                 Planner History
               </h1>
 
-              <Button
-                onClick={() => navigate("/ai-planner")}
-                className="flex items-center gap-2"
-              >
+              <Button onClick={() => navigate('/ai-planner')} className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 New Plan
               </Button>
@@ -188,7 +172,7 @@ export default function PlannerHistory() {
                   Create your first mentor roadmap
                 </p>
 
-                <Button onClick={() => navigate("/ai-planner")} size="lg">
+                <Button onClick={() => navigate('/ai-planner')} size="lg">
                   Create First Plan
                 </Button>
               </Card>
@@ -209,11 +193,8 @@ export default function PlannerHistory() {
                           {planner.goal}
                         </span>
 
-                        <Badge
-                          variant="secondary"
-                          className="shrink-0 whitespace-nowrap"
-                        >
-                          {planner.company || "General"}
+                        <Badge variant="secondary" className="shrink-0 whitespace-nowrap">
+                          {planner.company || 'General'}
                         </Badge>
                       </CardTitle>
                     </CardHeader>
@@ -228,9 +209,7 @@ export default function PlannerHistory() {
                         </div>
 
                         <div className="flex items-center gap-2 text-xs">
-                          <span className="text-gray-500 dark:text-gray-400">
-                            Created:
-                          </span>
+                          <span className="text-gray-500 dark:text-gray-400">Created:</span>
                           <span className="text-gray-700 dark:text-gray-300">
                             {new Date(planner.createdAt).toLocaleDateString()}
                           </span>

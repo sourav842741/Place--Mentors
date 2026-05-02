@@ -15,10 +15,7 @@ import isSuperAdmin from "../middlewares/superAdmin.middleware.js";
 import { generatePotd } from "../controllers/potd.controller.js";
 import { generateCpotd } from "../controllers/cpotd.controller.js";
 import { getAdminDashboardAnalytics } from "../controllers/adminAnalytics.controller.js";
-import {
-  trackEvent,
-  trackEventsBatch,
-} from "../controllers/analytics.controller.js";
+import { trackEvent, trackEventsBatch } from "../controllers/analytics.controller.js";
 
 import {
   getEmailStats,
@@ -55,10 +52,8 @@ router.get(
       isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL,
     }));
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, usersWithFlag, "Users fetched successfully"));
-  }),
+    return res.status(200).json(new ApiResponse(200, usersWithFlag, "Users fetched successfully"));
+  })
 );
 
 // PROMOTE USER TO ADMIN
@@ -73,9 +68,7 @@ router.patch(
     }
 
     if (targetUser.email === process.env.SUPER_ADMIN_EMAIL) {
-      return res
-        .status(200)
-        .json(new ApiResponse(200, targetUser, "Super Admin role protected"));
+      return res.status(200).json(new ApiResponse(200, targetUser, "Super Admin role protected"));
     }
 
     const user = await User.findByIdAndUpdate(
@@ -84,16 +77,14 @@ router.patch(
       {
         new: true,
         runValidators: true,
-      },
+      }
     ).select("-password");
 
     // Real-time admin update
     req.io.emit("admin:user:updated", user);
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, user, "User promoted to admin successfully"));
-  }),
+    return res.status(200).json(new ApiResponse(200, user, "User promoted to admin successfully"));
+  })
 );
 
 // DEMOTE ADMIN TO USER
@@ -122,7 +113,7 @@ router.patch(
       {
         new: true,
         runValidators: true,
-      },
+      }
     ).select("-password");
 
     // Real-time admin update
@@ -130,10 +121,8 @@ router.patch(
 
     return res
       .status(200)
-      .json(
-        new ApiResponse(200, user, "User demoted to normal user successfully"),
-      );
-  }),
+      .json(new ApiResponse(200, user, "User demoted to normal user successfully"));
+  })
 );
 
 // BAN USER
@@ -147,9 +136,7 @@ router.patch(
     const targetId = req.params.id;
 
     // Fetch target
-    const targetUser = await User.findById(targetId).select(
-      "email role isBanned",
-    );
+    const targetUser = await User.findById(targetId).select("email role isBanned");
     if (!targetUser) {
       throw new ApiError(404, "User not found");
     }
@@ -161,8 +148,7 @@ router.patch(
 
     // Permission checks
     const isSuperAdmin = adminUser.email === process.env.SUPER_ADMIN_EMAIL;
-    const isTargetSuperAdmin =
-      targetUser.email === process.env.SUPER_ADMIN_EMAIL;
+    const isTargetSuperAdmin = targetUser.email === process.env.SUPER_ADMIN_EMAIL;
     const isTargetAdmin = targetUser.role === "admin";
     const canBanTargetAdmin = isSuperAdmin;
 
@@ -190,7 +176,7 @@ router.patch(
           },
         },
       },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     ).select("-password");
 
     // Real-time admin update
@@ -202,10 +188,8 @@ router.patch(
       reason: updatedUser.banReason || "No reason provided",
     });
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, updatedUser, "User banned successfully"));
-  }),
+    return res.status(200).json(new ApiResponse(200, updatedUser, "User banned successfully"));
+  })
 );
 
 // UNBAN USER
@@ -218,18 +202,13 @@ router.patch(
     const adminUser = req.user;
 
     // Fetch target
-    const targetUser = await User.findById(targetId).select(
-      "email role isBanned",
-    );
+    const targetUser = await User.findById(targetId).select("email role isBanned");
     if (!targetUser) {
       throw new ApiError(404, "User not found");
     }
 
     // Self check (optional)
-    if (
-      targetUser._id.toString() === adminUser._id.toString() &&
-      targetUser.isBanned
-    ) {
+    if (targetUser._id.toString() === adminUser._id.toString() && targetUser.isBanned) {
       throw new ApiError(403, "Contact super admin to unban yourself");
     }
 
@@ -242,7 +221,7 @@ router.patch(
         bannedAt: null,
         bannedBy: null,
       },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     ).select("-password");
 
     // Real-time admin update
@@ -253,10 +232,8 @@ router.patch(
       message: "Your account has been restored",
     });
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, updatedUser, "User unbanned successfully"));
-  }),
+    return res.status(200).json(new ApiResponse(200, updatedUser, "User unbanned successfully"));
+  })
 );
 
 // ADJUST USER CREDITS
@@ -270,8 +247,7 @@ router.patch(
     const { amount, type } = req.body;
 
     // Fetch target
-    const targetUser =
-      await User.findById(targetId).select("email role credits");
+    const targetUser = await User.findById(targetId).select("email role credits");
     if (!targetUser) {
       throw new ApiError(404, "User not found");
     }
@@ -283,11 +259,9 @@ router.patch(
 
     // Super admin protection (normal admin cannot edit super admin credits)
     const isSuperAdmin =
-      adminUser.email === process.env.SUPER_ADMIN_EMAIL ||
-      adminUser.role === "superadmin";
+      adminUser.email === process.env.SUPER_ADMIN_EMAIL || adminUser.role === "superadmin";
     const isTargetSuperAdmin =
-      targetUser.email === process.env.SUPER_ADMIN_EMAIL ||
-      targetUser.role === "superadmin";
+      targetUser.email === process.env.SUPER_ADMIN_EMAIL || targetUser.role === "superadmin";
 
     if (isTargetSuperAdmin && !isSuperAdmin) {
       throw new ApiError(403, "Cannot adjust super admin credits");
@@ -295,11 +269,7 @@ router.patch(
 
     // Validation
     const parsedAmount = Number(amount);
-    if (
-      !Number.isFinite(parsedAmount) ||
-      parsedAmount <= 0 ||
-      !Number.isInteger(parsedAmount)
-    ) {
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0 || !Number.isInteger(parsedAmount)) {
       throw new ApiError(400, "Amount must be a positive integer");
     }
 
@@ -322,7 +292,7 @@ router.patch(
         credits: newCredits,
         updatedBy: adminUser._id,
       },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     ).select("-password");
 
     // Real-time admin update
@@ -334,10 +304,10 @@ router.patch(
         new ApiResponse(
           200,
           updatedUser,
-          `Successfully ${type === "add" ? "added" : "removed"} ${parsedAmount} credits`,
-        ),
+          `Successfully ${type === "add" ? "added" : "removed"} ${parsedAmount} credits`
+        )
       );
-  }),
+  })
 );
 
 // AUTO GENERATE POTD
@@ -347,7 +317,7 @@ router.post(
   isAdmin,
   asyncHandler(async (req, res) => {
     await generatePotd(req, res);
-  }),
+  })
 );
 
 // MANUAL POTD
@@ -356,8 +326,7 @@ router.post(
   isAuth,
   isAdmin,
   asyncHandler(async (req, res) => {
-    const { date = new Date().toISOString().split("T")[0], questions } =
-      req.body;
+    const { date = new Date().toISOString().split("T")[0], questions } = req.body;
 
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
       throw new ApiError(400, "Questions array required");
@@ -375,15 +344,13 @@ router.post(
         upsert: true,
         new: true,
         runValidators: true,
-      },
+      }
     );
 
     return res
       .status(201)
-      .json(
-        new ApiResponse(201, potd, "Manual POTD created/updated successfully"),
-      );
-  }),
+      .json(new ApiResponse(201, potd, "Manual POTD created/updated successfully"));
+  })
 );
 
 // AUTO GENERATE CPOTD
@@ -393,7 +360,7 @@ router.post(
   isAdmin,
   asyncHandler(async (req, res) => {
     await generateCpotd(req, res);
-  }),
+  })
 );
 
 // MANUAL CPOTD
@@ -402,8 +369,7 @@ router.post(
   isAuth,
   isAdmin,
   asyncHandler(async (req, res) => {
-    const { date = new Date().toISOString().split("T")[0], questions } =
-      req.body;
+    const { date = new Date().toISOString().split("T")[0], questions } = req.body;
 
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
       throw new ApiError(400, "Questions array required");
@@ -421,19 +387,13 @@ router.post(
         upsert: true,
         new: true,
         runValidators: true,
-      },
+      }
     );
 
     return res
       .status(201)
-      .json(
-        new ApiResponse(
-          201,
-          cpotd,
-          "Manual CPOTD created/updated successfully",
-        ),
-      );
-  }),
+      .json(new ApiResponse(201, cpotd, "Manual CPOTD created/updated successfully"));
+  })
 );
 
 router.get("/email/stats", isAuth, isAdmin, getEmailStats);
@@ -467,11 +427,9 @@ router.get(
       Role: sanitizeCsvField(user.role?.toUpperCase() || "USER"),
       Level: sanitizeCsvField(user.level || 1),
       Credits: sanitizeCsvField(user.credits || 0),
-      Status: sanitizeCsvField(
-        user.isBanned ? "BANNED" : user.isOnline ? "ONLINE" : "OFFLINE",
-      ),
+      Status: sanitizeCsvField(user.isBanned ? "BANNED" : user.isOnline ? "ONLINE" : "OFFLINE"),
       "Last Seen": sanitizeCsvField(
-        user.lastSeen ? new Date(user.lastSeen).toLocaleString() : "Never",
+        user.lastSeen ? new Date(user.lastSeen).toLocaleString() : "Never"
       ),
       Joined: sanitizeCsvField(new Date(user.createdAt).toLocaleDateString()),
     }));
@@ -481,7 +439,7 @@ router.get(
       .map((row) =>
         Object.values(row)
           .map((val) => `"${String(val).replace(/"/g, '""')}"`)
-          .join(","),
+          .join(",")
       )
       .join("\n");
 
@@ -490,10 +448,10 @@ router.get(
     res.setHeader("Content-Type", "text/csv");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=users-${new Date().toISOString().split("T")[0]}.csv`,
+      `attachment; filename=users-${new Date().toISOString().split("T")[0]}.csv`
     );
     res.status(200).send(csvContent);
-  }),
+  })
 );
 
 export default router;

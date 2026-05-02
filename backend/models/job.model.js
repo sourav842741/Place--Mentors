@@ -62,8 +62,7 @@ const jobSchema = new mongoose.Schema(
 
     expiresAt: {
       type: Date,
-      default: () =>
-        new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     },
   },
   {

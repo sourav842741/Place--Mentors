@@ -6,11 +6,7 @@ import { ApiError } from "../../utils/ApiError.js";
    ENV VALIDATION (fail fast on startup)
 ===================================================== */
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM =
-  process.env.EMAIL_FROM ||
-  "PlaceMentor <noreply@placementor.online>";
-
-
+const EMAIL_FROM = process.env.EMAIL_FROM || "PlaceMentor <noreply@placementor.online>";
 
 const resend = new Resend(RESEND_API_KEY || "missing_key");
 
@@ -18,12 +14,7 @@ const resend = new Resend(RESEND_API_KEY || "missing_key");
    SEND EMAIL
 ===================================================== */
 
-export const sendEmail = async (
-  toEmail,
-  subject,
-  htmlContent,
-  metadata = {}
-) => {
+export const sendEmail = async (toEmail, subject, htmlContent, metadata = {}) => {
   // --- DEFENSIVE VALIDATION ---
   if (!toEmail || typeof toEmail !== "string" || !toEmail.includes("@")) {
     console.error("[EMAIL SKIP] Invalid or missing toEmail:", toEmail);
@@ -44,7 +35,6 @@ export const sendEmail = async (
     console.error("[EMAIL SKIP] RESEND_API_KEY is not configured");
     throw new ApiError(500, "Email service not configured");
   }
-
 
   let log = null;
 
@@ -76,12 +66,7 @@ export const sendEmail = async (
       ],
     });
 
-    const resendId =
-      response?.id ||
-      response?.data?.id ||
-      response?.data?.data?.id ||
-      null;
-
+    const resendId = response?.id || response?.data?.id || response?.data?.data?.id || null;
 
     /* -----------------------------
        UPDATE SUCCESS LOG
@@ -127,7 +112,6 @@ export const sendEmail = async (
 
     if (isRetryable) {
       try {
-
         const retryResponse = await resend.emails.send({
           from: EMAIL_FROM,
           to: [toEmail.toLowerCase().trim()],
@@ -136,10 +120,7 @@ export const sendEmail = async (
         });
 
         const retryId =
-          retryResponse?.id ||
-          retryResponse?.data?.id ||
-          retryResponse?.data?.data?.id ||
-          null;
+          retryResponse?.id || retryResponse?.data?.id || retryResponse?.data?.data?.id || null;
 
         if (log) {
           await EmailLog.findByIdAndUpdate(log._id, {
@@ -149,7 +130,6 @@ export const sendEmail = async (
             errorMessage: null,
           });
         }
-
 
         return {
           success: true,
@@ -168,10 +148,7 @@ export const sendEmail = async (
       }
     }
 
-    throw new ApiError(
-      500,
-      `Email failed: ${error.message || "Unknown error"}`
-    );
+    throw new ApiError(500, `Email failed: ${error.message || "Unknown error"}`);
   }
 };
 
@@ -203,4 +180,3 @@ export const getEmailStats = async () => {
 
   return result;
 };
-

@@ -8,7 +8,5 @@ export const submitContactForm = asyncHandler(async (req, res) => {
 
   await sendContactMail(name.trim(), email.trim(), message.trim());
 
-  return res.status(200).json(
-    new ApiResponse(200, { success: true }, "Message sent successfully")
-  );
+  return res.status(200).json(new ApiResponse(200, { success: true }, "Message sent successfully"));
 });

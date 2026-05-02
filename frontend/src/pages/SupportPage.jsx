@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
   Search,
@@ -13,46 +13,40 @@ import {
   RotateCcw,
   Bot,
   FolderOpen,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { useTickets } from "@/hooks/useTickets";
-import CreateTicketModal from "@/components/support/CreateTicketModal";
-import AISupportChat from "@/components/support/AISupportChat";
-import TicketStatusBadge from "@/components/support/TicketStatusBadge";
-import TicketPriorityBadge from "@/components/support/TicketPriorityBadge";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { useTickets } from '@/hooks/useTickets';
+import CreateTicketModal from '@/components/support/CreateTicketModal';
+import AISupportChat from '@/components/support/AISupportChat';
+import TicketStatusBadge from '@/components/support/TicketStatusBadge';
+import TicketPriorityBadge from '@/components/support/TicketPriorityBadge';
 
-const STATUS_FILTERS = ["All", "Open", "In Progress", "Solved", "Rejected"];
+const STATUS_FILTERS = ['All', 'Open', 'In Progress', 'Solved', 'Rejected'];
 const TABS = [
-  { id: "ai", label: "Ask AI First", icon: Bot },
-  
-  { id: "list", label: "My Tickets", icon: FolderOpen },
+  { id: 'ai', label: 'Ask AI First', icon: Bot },
+
+  { id: 'list', label: 'My Tickets', icon: FolderOpen },
 ];
 
 export default function SupportPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("ai");
+  const [activeTab, setActiveTab] = useState('ai');
   const [showModal, setShowModal] = useState(false);
-  const [search, setSearch] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
 
-  const {
-    tickets,
-    loading,
-    actionLoading,
-    loadMyTickets,
-    createTicket,
-  } = useTickets();
+  const { tickets, loading, actionLoading, loadMyTickets, createTicket } = useTickets();
 
   useEffect(() => {
-    if (activeTab === "list") {
+    if (activeTab === 'list') {
       loadMyTickets({
-        status: activeFilter === "All" ? undefined : activeFilter,
+        status: activeFilter === 'All' ? undefined : activeFilter,
       });
     }
   }, [activeTab, activeFilter, loadMyTickets]);
@@ -105,12 +99,12 @@ export default function SupportPage() {
               <Button
                 key={tab.id}
                 size="sm"
-                variant={activeTab === tab.id ? "default" : "outline"}
+                variant={activeTab === tab.id ? 'default' : 'outline'}
                 onClick={() => setActiveTab(tab.id)}
                 className={`rounded-full text-xs font-medium h-10 px-4 ${
                   activeTab === tab.id
-                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                    : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
                 }`}
               >
                 <tab.icon className="w-4 h-4 mr-1.5" />
@@ -121,7 +115,7 @@ export default function SupportPage() {
 
           {/* TAB CONTENT */}
           <AnimatePresence mode="wait">
-            {activeTab === "ai" && (
+            {activeTab === 'ai' && (
               <motion.div
                 key="ai"
                 initial={{ opacity: 0, y: 10 }}
@@ -152,7 +146,7 @@ export default function SupportPage() {
               </motion.div>
             )}
 
-            {activeTab === "ticket" && (
+            {activeTab === 'ticket' && (
               <motion.div
                 key="ticket"
                 initial={{ opacity: 0, y: 10 }}
@@ -169,7 +163,8 @@ export default function SupportPage() {
                       Raise a Support Ticket
                     </h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-                      Can't find a solution? Create a ticket directly and our support team will assist you within 24 hours.
+                      Can't find a solution? Create a ticket directly and our support team will
+                      assist you within 24 hours.
                     </p>
                     <Button
                       onClick={() => setShowModal(true)}
@@ -183,7 +178,7 @@ export default function SupportPage() {
               </motion.div>
             )}
 
-            {activeTab === "list" && (
+            {activeTab === 'list' && (
               <motion.div
                 key="list"
                 initial={{ opacity: 0, y: 10 }}
@@ -195,17 +190,37 @@ export default function SupportPage() {
                 {/* STATS ROW */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: "Total", value: tickets.length, icon: Inbox, color: "text-blue-500" },
-                    { label: "Open", value: tickets.filter((t) => t.status === "Open").length, icon: AlertCircle, color: "text-amber-500" },
-                    { label: "In Progress", value: tickets.filter((t) => t.status === "In Progress").length, icon: Clock, color: "text-purple-500" },
-                    { label: "Solved", value: tickets.filter((t) => t.status === "Solved").length, icon: MessageSquare, color: "text-green-500" },
+                    { label: 'Total', value: tickets.length, icon: Inbox, color: 'text-blue-500' },
+                    {
+                      label: 'Open',
+                      value: tickets.filter((t) => t.status === 'Open').length,
+                      icon: AlertCircle,
+                      color: 'text-amber-500',
+                    },
+                    {
+                      label: 'In Progress',
+                      value: tickets.filter((t) => t.status === 'In Progress').length,
+                      icon: Clock,
+                      color: 'text-purple-500',
+                    },
+                    {
+                      label: 'Solved',
+                      value: tickets.filter((t) => t.status === 'Solved').length,
+                      icon: MessageSquare,
+                      color: 'text-green-500',
+                    },
                   ].map((stat) => (
-                    <Card key={stat.label} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+                    <Card
+                      key={stat.label}
+                      className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+                    >
                       <CardContent className="p-4 flex items-center gap-3">
                         <stat.icon className={`w-5 h-5 ${stat.color}`} />
                         <div>
                           <p className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</p>
-                          <p className="text-xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                          <p className="text-xl font-bold text-gray-900 dark:text-white">
+                            {stat.value}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -219,12 +234,12 @@ export default function SupportPage() {
                       <Button
                         key={f}
                         size="sm"
-                        variant={activeFilter === f ? "default" : "outline"}
+                        variant={activeFilter === f ? 'default' : 'outline'}
                         onClick={() => setActiveFilter(f)}
                         className={`rounded-full text-xs font-medium ${
                           activeFilter === f
-                            ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                            : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
+                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                            : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
                         }`}
                       >
                         {f}
@@ -262,12 +277,12 @@ export default function SupportPage() {
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-sm">
                         {search
-                          ? "Try adjusting your search or filters"
+                          ? 'Try adjusting your search or filters'
                           : "You haven't created any tickets yet. Need help? Create your first ticket."}
                       </p>
                       {!search && (
                         <Button
-                          onClick={() => setActiveTab("ticket")}
+                          onClick={() => setActiveTab('ticket')}
                           className="mt-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                         >
                           <Plus className="w-4 h-4 mr-2" />
@@ -330,7 +345,8 @@ export default function SupportPage() {
                                         <span>•</span>
                                         <span className="flex items-center gap-1">
                                           <MessageSquare className="w-3 h-3" />
-                                          {ticket.replyCount} {ticket.replyCount === 1 ? "reply" : "replies"}
+                                          {ticket.replyCount}{' '}
+                                          {ticket.replyCount === 1 ? 'reply' : 'replies'}
                                         </span>
                                       </>
                                     )}
@@ -374,4 +390,3 @@ export default function SupportPage() {
     </>
   );
 }
-

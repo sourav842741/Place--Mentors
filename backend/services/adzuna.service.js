@@ -26,10 +26,10 @@ export const fetchAdzunaJobs = async (what = "", where = "") => {
       sort_by: "date",
     };
 
-    const response = await axios.get(
-      "https://api.adzuna.com/v1/api/jobs/in/search/1",
-      { params, timeout: 15000 },
-    );
+    const response = await axios.get("https://api.adzuna.com/v1/api/jobs/in/search/1", {
+      params,
+      timeout: 15000,
+    });
 
     return response.data.results.map((job) => ({
       title: job.title,
@@ -62,7 +62,7 @@ export const saveJobsToDb = async (jobs) => {
           upsert: true,
           new: true,
           setDefaultsOnInsert: true,
-        },
+        }
       );
 
       savedJobs.push(job);

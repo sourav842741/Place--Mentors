@@ -18,7 +18,7 @@ export const calculateManualScore = (inputs) => {
     }[inputs.dsaLevel],
 
     projects: {
-      "0": 1,
+      0: 1,
       "1-2": 5,
       "3+": 8,
     }[inputs.projectsCount],
@@ -29,10 +29,7 @@ export const calculateManualScore = (inputs) => {
       Good: 8,
     }[inputs.communicationLevel],
 
-    internship:
-      inputs.internshipExperience === "Yes"
-        ? 8
-        : 2,
+    internship: inputs.internshipExperience === "Yes" ? 8 : 2,
   };
 
   let rawScore =
@@ -49,21 +46,10 @@ export const calculateManualScore = (inputs) => {
     "Tier 3": -4,
   }[inputs.collegeTier];
 
-  const placementChance = Math.max(
-    15,
-    Math.min(
-      98,
-      Math.round(rawScore * 10 + tierBonus)
-    )
-  );
+  const placementChance = Math.max(15, Math.min(98, Math.round(rawScore * 10 + tierBonus)));
 
   const readinessScore = Math.round(
-    ((scores.skills +
-      scores.dsa +
-      scores.projects +
-      scores.communication) /
-      4) *
-      10
+    ((scores.skills + scores.dsa + scores.projects + scores.communication) / 4) * 10
   );
 
   let min = 0;
@@ -128,10 +114,7 @@ export const calculateManualScore = (inputs) => {
 /* AI PROMPT */
 /* -------------------------------- */
 
-export const generateAIPrompt = (
-  inputs,
-  manualScore
-) => [
+export const generateAIPrompt = (inputs, manualScore) => [
   {
     role: "system",
     content: `
@@ -148,13 +131,9 @@ Return ONLY valid JSON:
 
 Profile: ${JSON.stringify(inputs)}
 
-Placement Chance: ${
-      manualScore.placementChance
-    }%
+Placement Chance: ${manualScore.placementChance}%
 
-Salary Range: ${
-      manualScore.expectedSalaryRange
-    }
+Salary Range: ${manualScore.expectedSalaryRange}
 
 Give realistic fresher advice.
 `,
@@ -169,104 +148,54 @@ Give realistic fresher advice.
 /* AI DATA CLEANER */
 /* -------------------------------- */
 
-export const sanitizeAIAnalysis = (
-  aiAnalysis = {}
-) => {
-  if (
-    Array.isArray(
-      aiAnalysis.personalizedSuggestions
-    )
-  ) {
-    aiAnalysis.personalizedSuggestions =
-      aiAnalysis.personalizedSuggestions
-        .map(
-          (item, index) =>
-            `${index + 1}. ${item}`
-        )
-        .join("\n");
+export const sanitizeAIAnalysis = (aiAnalysis = {}) => {
+  if (Array.isArray(aiAnalysis.personalizedSuggestions)) {
+    aiAnalysis.personalizedSuggestions = aiAnalysis.personalizedSuggestions
+      .map((item, index) => `${index + 1}. ${item}`)
+      .join("\n");
   }
 
   if (
-    typeof aiAnalysis
-      .personalizedSuggestions ===
-      "object" &&
-    !Array.isArray(
-      aiAnalysis.personalizedSuggestions
-    ) &&
-    aiAnalysis.personalizedSuggestions !==
-      null
+    typeof aiAnalysis.personalizedSuggestions === "object" &&
+    !Array.isArray(aiAnalysis.personalizedSuggestions) &&
+    aiAnalysis.personalizedSuggestions !== null
   ) {
-    aiAnalysis.personalizedSuggestions =
-      Object.values(
-        aiAnalysis
-          .personalizedSuggestions
-      ).join("\n");
+    aiAnalysis.personalizedSuggestions = Object.values(aiAnalysis.personalizedSuggestions).join(
+      "\n"
+    );
   }
 
   if (
-    typeof aiAnalysis.thirtyDayPlan ===
-      "object" &&
-    !Array.isArray(
-      aiAnalysis.thirtyDayPlan
-    ) &&
+    typeof aiAnalysis.thirtyDayPlan === "object" &&
+    !Array.isArray(aiAnalysis.thirtyDayPlan) &&
     aiAnalysis.thirtyDayPlan !== null
   ) {
-    aiAnalysis.thirtyDayPlan =
-      Object.entries(
-        aiAnalysis.thirtyDayPlan
-      )
-        .map(
-          ([key, value]) =>
-            `${key}: ${value}`
-        )
-        .join("\n");
+    aiAnalysis.thirtyDayPlan = Object.entries(aiAnalysis.thirtyDayPlan)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join("\n");
   }
 
-  if (
-    Array.isArray(aiAnalysis.thirtyDayPlan)
-  ) {
-    aiAnalysis.thirtyDayPlan =
-      aiAnalysis.thirtyDayPlan.join(
-        "\n"
-      );
+  if (Array.isArray(aiAnalysis.thirtyDayPlan)) {
+    aiAnalysis.thirtyDayPlan = aiAnalysis.thirtyDayPlan.join("\n");
   }
 
-  if (
-    !Array.isArray(aiAnalysis.weakAreas)
-  ) {
-    aiAnalysis.weakAreas =
-      aiAnalysis.weakAreas
-        ? [String(aiAnalysis.weakAreas)]
-        : [];
+  if (!Array.isArray(aiAnalysis.weakAreas)) {
+    aiAnalysis.weakAreas = aiAnalysis.weakAreas ? [String(aiAnalysis.weakAreas)] : [];
   }
 
-  if (
-    !Array.isArray(
-      aiAnalysis.bestCompanyFit
-    )
-  ) {
-    aiAnalysis.bestCompanyFit =
-      aiAnalysis.bestCompanyFit
-        ? [
-            String(
-              aiAnalysis.bestCompanyFit
-            ),
-          ]
-        : [];
+  if (!Array.isArray(aiAnalysis.bestCompanyFit)) {
+    aiAnalysis.bestCompanyFit = aiAnalysis.bestCompanyFit
+      ? [String(aiAnalysis.bestCompanyFit)]
+      : [];
   }
 
-  if (
-    !aiAnalysis.personalizedSuggestions
-  ) {
-    aiAnalysis.personalizedSuggestions =
-      "Focus on coding, projects, resume and communication.";
+  if (!aiAnalysis.personalizedSuggestions) {
+    aiAnalysis.personalizedSuggestions = "Focus on coding, projects, resume and communication.";
   }
 
   if (!aiAnalysis.thirtyDayPlan) {
-    aiAnalysis.thirtyDayPlan =
-      "Daily DSA + aptitude + resume + mock interview practice.";
+    aiAnalysis.thirtyDayPlan = "Daily DSA + aptitude + resume + mock interview practice.";
   }
 
   return aiAnalysis;
 };
-

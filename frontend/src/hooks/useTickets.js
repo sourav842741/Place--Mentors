@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchMyTickets,
   fetchTicketDetail,
@@ -13,8 +13,8 @@ import {
   clearTicketDetail,
   updateTicketFromSocket,
   removeTicketFromSocket,
-} from "../redux/ticketSlice";
-import { socket } from "../socket";
+} from '../redux/ticketSlice';
+import { socket } from '../socket';
 
 export const useTickets = () => {
   const dispatch = useDispatch();
@@ -34,8 +34,10 @@ export const useTickets = () => {
   const loadMyTickets = useCallback((params = {}) => dispatch(fetchMyTickets(params)), [dispatch]);
   const loadTicketDetail = useCallback((id) => dispatch(fetchTicketDetail(id)), [dispatch]);
   const createTicket = useCallback((formData) => dispatch(createNewTicket(formData)), [dispatch]);
-  const addReply = useCallback((id, message, isInternal = false) =>
-    dispatch(replyTicket({ id, message, isInternal })), [dispatch]);
+  const addReply = useCallback(
+    (id, message, isInternal = false) => dispatch(replyTicket({ id, message, isInternal })),
+    [dispatch]
+  );
   const reopenTicket = useCallback((id) => dispatch(reopenUserTicket(id)), [dispatch]);
   const resetTicketDetail = useCallback(() => dispatch(clearTicketDetail()), [dispatch]);
 
@@ -49,12 +51,12 @@ export const useTickets = () => {
       dispatch(removeTicketFromSocket(data));
     };
 
-    socket.on("ticket:updated", handleTicketUpdate);
-    socket.on("ticket:deleted", handleTicketDelete);
+    socket.on('ticket:updated', handleTicketUpdate);
+    socket.on('ticket:deleted', handleTicketDelete);
 
     return () => {
-      socket.off("ticket:updated", handleTicketUpdate);
-      socket.off("ticket:deleted", handleTicketDelete);
+      socket.off('ticket:updated', handleTicketUpdate);
+      socket.off('ticket:deleted', handleTicketDelete);
     };
   }, [dispatch]);
 
@@ -93,23 +95,27 @@ export const useAdminTickets = () => {
     pagination,
   } = useSelector((state) => state.tickets);
 
-  const loadAllTickets = useCallback((params = {}) => dispatch(fetchAllTickets(params)), [dispatch]);
+  const loadAllTickets = useCallback(
+    (params = {}) => dispatch(fetchAllTickets(params)),
+    [dispatch]
+  );
 
   const loadTicketStats = useCallback(() => dispatch(fetchTicketStats()), [dispatch]);
 
   const loadTicketDetail = useCallback((id) => dispatch(fetchTicketDetail(id)), [dispatch]);
 
- const changeStatus = useCallback(
-  (id, status) =>
-    dispatch(updateAdminTicketStatus({ id, status })),
-  [dispatch]
-);
+  const changeStatus = useCallback(
+    (id, status) => dispatch(updateAdminTicketStatus({ id, status })),
+    [dispatch]
+  );
 
   const removeTicket = useCallback((id) => dispatch(deleteAdminTicket(id)), [dispatch]);
 
-  const addReply = useCallback((id, message, isInternal = false) =>
-    dispatch(replyTicket({ id, message, isInternal })), [dispatch]);
-  
+  const addReply = useCallback(
+    (id, message, isInternal = false) => dispatch(replyTicket({ id, message, isInternal })),
+    [dispatch]
+  );
+
   const resetTicketDetail = useCallback(() => dispatch(clearTicketDetail()), [dispatch]);
 
   // Socket listener for real-time ticket updates
@@ -122,12 +128,12 @@ export const useAdminTickets = () => {
       dispatch(removeTicketFromSocket(data));
     };
 
-    socket.on("ticket:updated", handleTicketUpdate);
-    socket.on("ticket:deleted", handleTicketDelete);
+    socket.on('ticket:updated', handleTicketUpdate);
+    socket.on('ticket:deleted', handleTicketDelete);
 
     return () => {
-      socket.off("ticket:updated", handleTicketUpdate);
-      socket.off("ticket:deleted", handleTicketDelete);
+      socket.off('ticket:updated', handleTicketUpdate);
+      socket.off('ticket:deleted', handleTicketDelete);
     };
   }, [dispatch]);
 
@@ -153,4 +159,3 @@ export const useAdminTickets = () => {
 };
 
 export default useTickets;
-

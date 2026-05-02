@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Brain, CheckCircle, ArrowRight, Clock } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useCountdown } from "@/hooks/useCountdown";
-import { getPotdStatus } from "@/services/api.js";
-import { trackEvent } from "@/hooks/useAnalytics";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Brain, CheckCircle, ArrowRight, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useCountdown } from '@/hooks/useCountdown';
+import { getPotdStatus } from '@/services/api.js';
+import { trackEvent } from '@/hooks/useAnalytics';
 
 export default function PotdCard() {
   const [status, setStatus] = useState({
@@ -33,7 +33,7 @@ export default function PotdCard() {
           solved: data.solved,
         });
       } catch (err) {
-        console.error("Failed to fetch POTD status:", err);
+        console.error('Failed to fetch POTD status:', err);
       } finally {
         setIsLoading(false);
       }
@@ -53,41 +53,39 @@ export default function PotdCard() {
     }
   }, [remaining, status.locked, status.solved]);
 
- const handleStart = (e) => {
-  e.stopPropagation();
+  const handleStart = (e) => {
+    e.stopPropagation();
 
-  trackEvent("quiz_started", {
-    source: "potd_card_button",
-    type: "daily_quiz",
-  });
+    trackEvent('quiz_started', {
+      source: 'potd_card_button',
+      type: 'daily_quiz',
+    });
 
-  navigate("/potd");
-};
+    navigate('/potd');
+  };
 
   const locked = status.locked;
 
   if (isLoading) {
-    return (
-      <div className="h-[400px] rounded-2xl bg-gray-100 dark:bg-gray-900 animate-pulse" />
-    );
+    return <div className="h-[400px] rounded-2xl bg-gray-100 dark:bg-gray-900 animate-pulse" />;
   }
 
   return (
     <Card
-     onClick={() => {
-  trackEvent("quiz_started", {
-    source: "potd_card",
-    type: "daily_quiz",
-  });
+      onClick={() => {
+        trackEvent('quiz_started', {
+          source: 'potd_card',
+          type: 'daily_quiz',
+        });
 
-  navigate("/potd");
-}}
+        navigate('/potd');
+      }}
       className={`relative flex flex-col justify-between h-[400px] p-6 bg-white dark:bg-gray-900 dark:border-white/10 border-2 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-300 ${
         locked
           ? status.solved
-            ? "border-green-200 bg-green-50/50"
-            : "border-orange-200 bg-orange-50/50"
-          : "border-gray-200 hover:border-purple-300"
+            ? 'border-green-200 bg-green-50/50'
+            : 'border-orange-200 bg-orange-50/50'
+          : 'border-gray-200 hover:border-purple-300'
       }`}
     >
       <CardContent className="flex flex-col justify-between flex-1 p-0 h-full">
@@ -98,19 +96,14 @@ export default function PotdCard() {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              Quiz POTD
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Daily MCQ Challenge
-            </p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Quiz POTD</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Daily MCQ Challenge</p>
           </div>
         </div>
 
         {/* DESCRIPTION */}
         <p className="text-gray-600 dark:text-gray-400 flex-1 mb-6">
-          Test your interview knowledge with today's quiz and earn XP +
-          badges!
+          Test your interview knowledge with today's quiz and earn XP + badges!
         </p>
 
         {/* STATUS ICON */}

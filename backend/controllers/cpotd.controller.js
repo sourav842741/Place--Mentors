@@ -3,10 +3,7 @@ import User from "../models/user.model.js";
 import { addXP } from "../utils/xpManager.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import axios from "axios";
-import {
-  getOrCreateTodayCpotd,
-  generateTodayCpotd,
-} from "../services/cpotd.service.js";
+import { getOrCreateTodayCpotd, generateTodayCpotd } from "../services/cpotd.service.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
@@ -45,14 +42,9 @@ export const submitCpotd = asyncHandler(async (req, res) => {
   const results = [];
 
   for (let i = 0; i < testCases.length; i++) {
-    const executionResult = await executeCodeWithInput(
-      code,
-      language,
-      testCases[i].input,
-    );
+    const executionResult = await executeCodeWithInput(code, language, testCases[i].input);
 
-    const passedTest =
-      executionResult.output.trim() === testCases[i].expectedOutput.trim();
+    const passedTest = executionResult.output.trim() === testCases[i].expectedOutput.trim();
 
     if (passedTest) passed++;
 
@@ -80,21 +72,21 @@ export const submitCpotd = asyncHandler(async (req, res) => {
 
   const isAccepted = percentage === 1;
 
-const user = await User.findById(userId);
+  const user = await User.findById(userId);
 
-if (user) {
-  const today = new Date().toISOString().split("T")[0];
+  if (user) {
+    const today = new Date().toISOString().split("T")[0];
 
-  user.codingPotdCompleted = true;
-  user.lastCodingPotdDate = today;
-  user.lastCodingPotdAt = new Date();
+    user.codingPotdCompleted = true;
+    user.lastCodingPotdDate = today;
+    user.lastCodingPotdAt = new Date();
 
-  if (isAccepted) {
-    addXP(user, xpEarned, "cpotd");
+    if (isAccepted) {
+      addXP(user, xpEarned, "cpotd");
+    }
+
+    await user.save();
   }
-
-  await user.save();
-}
 
   return res.status(200).json({
     success: true,
@@ -131,20 +123,15 @@ const executeCodeWithInput = async (code, language, input) => {
       source_code: encodedCode,
       language_id: langId,
       stdin: encodedInput,
-    },
+    }
   );
 
   const result = response.data;
 
-const decode = (data) =>
-    data ? Buffer.from(data, "base64").toString("utf-8") : "";
+  const decode = (data) => (data ? Buffer.from(data, "base64").toString("utf-8") : "");
 
   return {
-    output:
-      decode(result.stdout) ||
-      decode(result.stderr) ||
-      decode(result.compile_output) ||
-      "",
+    output: decode(result.stdout) || decode(result.stderr) || decode(result.compile_output) || "",
     error: decode(result.stderr),
   };
 };
@@ -156,22 +143,18 @@ export const getCpotdStatus = asyncHandler(async (req, res) => {
   const now = new Date();
   const limit = 24 * 60 * 60 * 1000;
 
-  const locked =
-    user.lastCodingPotdAt &&
-    now - user.lastCodingPotdAt < limit;
+  const locked = user.lastCodingPotdAt && now - user.lastCodingPotdAt < limit;
 
-  const remaining = locked
-    ? limit - (now - user.lastCodingPotdAt)
-    : 0;
+  const remaining = locked ? limit - (now - user.lastCodingPotdAt) : 0;
 
- res.json({
-  success: true,
-  data: {
-    locked,
-    remaining,
-    solved: user.codingPotdCompleted, 
-  },
-});
+  res.json({
+    success: true,
+    data: {
+      locked,
+      remaining,
+      solved: user.codingPotdCompleted,
+    },
+  });
 });
 
 // ================= COMPLETE CPOTD (cooldown timer) =================
@@ -194,8 +177,7 @@ export const completeCpotd = asyncHandler(async (req, res) => {
     message: "Coding POTD marked complete, cooldown started",
     data: {
       locked: true,
-      unlockAt: new Date(Date.now() + 24*60*60*1000).toISOString(),
+      unlockAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     },
   });
 });
-

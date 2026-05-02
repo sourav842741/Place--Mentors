@@ -38,7 +38,7 @@ const plannerSchema = new mongoose.Schema(
 
     plan: [daySchema],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model("Planner", plannerSchema);

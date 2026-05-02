@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 import {
   Menu,
@@ -24,17 +24,17 @@ import {
   Bot,
   Mic,
   Ticket,
-  Users
-} from "lucide-react";
+  Users,
+} from 'lucide-react';
 
-import { BsCoin } from "react-icons/bs";
+import { BsCoin } from 'react-icons/bs';
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../redux/userSlice";
-import api from "../services/api";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutUser } from '../redux/userSlice';
+import api from '../services/api';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -42,13 +42,13 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
-import { socket } from "../socket";
+import { socket } from '../socket';
 
 export default function Navbar() {
   const user = useSelector((state) => state.user.user);
@@ -64,7 +64,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [notifications, setNotifications] = useState([]);
-const [showNotif, setShowNotif] = useState(false);
+  const [showNotif, setShowNotif] = useState(false);
 
   const [showThemePopup, setShowThemePopup] = useState(false);
   const [popupContent, setPopupContent] = useState({ icon: null, title: '', subtitle: '' });
@@ -72,109 +72,109 @@ const [showNotif, setShowNotif] = useState(false);
   useEffect(() => {
     if (!isAuth || !user?._id) return;
 
-    socket.emit("join", user._id);
+    socket.emit('join', user._id);
 
-    socket.on("notification", (data) => {
+    socket.on('notification', (data) => {
       setNotifications((prev) => [data, ...prev]);
     });
 
-    socket.on("online_users", (count) => {
+    socket.on('online_users', (count) => {
       // Global online can be used here if needed
     });
 
     return () => {
-      socket.off("notification");
-      socket.off("online_users");
+      socket.off('notification');
+      socket.off('online_users');
     };
   }, [isAuth, user?._id]);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "auto";
+    document.body.style.overflow = mobileOpen ? 'hidden' : 'auto';
   }, [mobileOpen]);
 
   // Sync dark mode state
   useEffect(() => {
     const handleThemeChange = () => {
-      const dark = document.documentElement.classList.contains("dark");
+      const dark = document.documentElement.classList.contains('dark');
       setIsDark(dark);
     };
 
-    window.addEventListener("storage", handleThemeChange);
+    window.addEventListener('storage', handleThemeChange);
     handleThemeChange(); // Initial check
 
-    return () => window.removeEventListener("storage", handleThemeChange);
+    return () => window.removeEventListener('storage', handleThemeChange);
   }, []);
 
-const toggleDark = () => {
-  const wasDark = isDark;
-  const isNowDark = document.documentElement.classList.toggle("dark");
-  setIsDark(isNowDark);
-  localStorage.setItem("theme", isNowDark ? "dark" : "light");
-  
-  // Show premium popup
-  setPopupContent({
-    icon: isNowDark ? Moon : Sun,
-    title: isNowDark ? 'Dark Mode Enabled' : 'Light Mode Enabled',
-    subtitle: isNowDark ? 'Night vibes activated 🌙' : 'Sunshine is back ☀️'
-  });
-  setShowThemePopup(true);
-  
-  // Auto-hide after 2s
-  setTimeout(() => setShowThemePopup(false), 2000);
-};
+  const toggleDark = () => {
+    const wasDark = isDark;
+    const isNowDark = document.documentElement.classList.toggle('dark');
+    setIsDark(isNowDark);
+    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
+
+    // Show premium popup
+    setPopupContent({
+      icon: isNowDark ? Moon : Sun,
+      title: isNowDark ? 'Dark Mode Enabled' : 'Light Mode Enabled',
+      subtitle: isNowDark ? 'Night vibes activated 🌙' : 'Sunshine is back ☀️',
+    });
+    setShowThemePopup(true);
+
+    // Auto-hide after 2s
+    setTimeout(() => setShowThemePopup(false), 2000);
+  };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem('theme');
 
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
       setIsDark(false);
     }
   }, []);
 
   const handleLogout = async () => {
     try {
-      await api.get("/api/auth/signout", {
+      await api.get('/api/auth/signout', {
         withCredentials: true,
       });
 
       dispatch(logoutUser());
-      navigate("/");
+      navigate('/');
     } catch (err) {}
   };
 
   const getInitials = (name) => {
-    if (!name) return "U";
-    const words = name.trim().split(" ");
+    if (!name) return 'U';
+    const words = name.trim().split(' ');
     if (words.length === 1) return words[0][0]?.toUpperCase();
     return (words[0][0] + words[words.length - 1][0]).toUpperCase();
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-    { icon: ListTodo, label: "TaskBoard", path: "/dashboard/tasks" },
-    { icon: Building2, label: "All Companies", path: "/companies" },
-    { icon: BookOpen, label: "Interview Practice", path: "/quiz" },
-    { icon: Briefcase, label: "Jobs", path: "/jobs" },
-    { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
-    { icon: Calendar, label: "Planner History", path: "/planner-history" },
-    { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
-     { icon: Code, label: "Code Compiler", path: "/code-editor" },
-    { icon: Puzzle, label: "Fruitbox Flex", path: "/dashboard/fruitbox-flex" },
-    { icon: BookOpen, label: "AI Notes", path: "/notes" },
-    { icon: Users, label: "Interview Experience", path: "/interview-experience" },
-    { icon: MessageSquare, label: "Community", path: "/doubts" },
-    { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
-    { icon: Bot, label: "AI Coach", path: "/ai-coach" },
-    { icon: Mic, label: "AI Voice Coach", path: "/ai-voice-coach" },
-    { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
-    { icon: BookOpen, label: "DSA Resources", path: "/resources" },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: ListTodo, label: 'TaskBoard', path: '/dashboard/tasks' },
+    { icon: Building2, label: 'All Companies', path: '/companies' },
+    { icon: BookOpen, label: 'Interview Practice', path: '/quiz' },
+    { icon: Briefcase, label: 'Jobs', path: '/jobs' },
+    { icon: Sparkles, label: 'AI Planner', path: '/ai-planner' },
+    { icon: Calendar, label: 'Planner History', path: '/planner-history' },
+    { icon: FileText, label: 'AI Analyzer', path: '/resume-analyzer' },
+    { icon: Code, label: 'Code Compiler', path: '/code-editor' },
+    { icon: Puzzle, label: 'Fruitbox Flex', path: '/dashboard/fruitbox-flex' },
+    { icon: BookOpen, label: 'AI Notes', path: '/notes' },
+    { icon: Users, label: 'Interview Experience', path: '/interview-experience' },
+    { icon: MessageSquare, label: 'Community', path: '/doubts' },
+    { icon: Zap, label: 'Resume Generator', path: '/resume-generator' },
+    { icon: Bot, label: 'AI Coach', path: '/ai-coach' },
+    { icon: Mic, label: 'AI Voice Coach', path: '/ai-voice-coach' },
+    { icon: Brain, label: 'YouTube Summary', path: '/youtube-summary' },
+    { icon: BookOpen, label: 'DSA Resources', path: '/resources' },
 
-    { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
-    { icon: Ticket, label: "Support", path: "/support" },
+    { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
+    { icon: Ticket, label: 'Support', path: '/support' },
   ];
 
   const isLoading = loading;
@@ -184,16 +184,18 @@ const toggleDark = () => {
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 shadow-md dark:shadow-black/20 transition-colors duration-300 flex items-center justify-between z-50">
         {/* LEFT */}
         <div className="w-full flex items-center justify-between px-4 md:px-6">
-          {" "}
-         <button
-  className="lg:hidden p-2 rounded-xl transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 cursor-pointer"
+          {' '}
+          <button
+            className="lg:hidden p-2 rounded-xl transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 cursor-pointer"
             onClick={() => setMobileOpen(true)}
           >
             <Menu />
           </button>
           <div className="flex items-center gap-6">
-            <div  onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-2 cursor-pointer group">
+            <div
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 cursor-pointer group"
+            >
               {/* ICON */}
               <div className="relative w-9 h-9 flex items-center justify-center">
                 {/* Glow */}
@@ -242,10 +244,11 @@ const toggleDark = () => {
                 <Moon className="h-5 w-5 text-slate-400 relative z-10 drop-shadow-lg" />
               )}
             </Button>
-            
+
             {/* Premium Popup Card */}
             {showThemePopup && (
-              <div className="absolute top-full right-0 mt-2 w-64 p-5 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-300 
+              <div
+                className="absolute top-full right-0 mt-2 w-64 p-5 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-300 
                 bg-white/95 dark:bg-slate-900/95 
                 text-slate-900 dark:text-white 
                 border border-slate-200/50 dark:border-slate-700/50
@@ -253,11 +256,13 @@ const toggleDark = () => {
                 shadow-2xl dark:shadow-slate-900/30"
               >
                 <div className="relative flex items-center gap-3">
-                  <div className={`p-2.5 bg-gradient-to-br rounded-xl shadow-lg flex-shrink-0 ${
-                    isDark 
-                      ? 'from-slate-600 to-slate-800 bg-slate-600/50 animate-pulse' 
-                      : 'from-amber-400 to-orange-400 bg-amber-400/50 animate-sparkle'
-                  }`}>
+                  <div
+                    className={`p-2.5 bg-gradient-to-br rounded-xl shadow-lg flex-shrink-0 ${
+                      isDark
+                        ? 'from-slate-600 to-slate-800 bg-slate-600/50 animate-pulse'
+                        : 'from-amber-400 to-orange-400 bg-amber-400/50 animate-sparkle'
+                    }`}
+                  >
                     {popupContent.icon ? <popupContent.icon className="h-6 w-6" /> : null}
                   </div>
                   <div>
@@ -320,15 +325,11 @@ text-sm hover:bg-gray-50 dark:hover:bg-gray-800
 p-2 rounded"
                       >
                         <p>{n.message}</p>
-                        <span className="text-xs text-gray-500 block mt-1">
-                          {n.time}
-                        </span>
+                        <span className="text-xs text-gray-500 block mt-1">{n.time}</span>
                       </div>
                     ))}
                     {notifications.length === 0 && (
-                      <p className="text-gray-500 text-sm">
-                        No new notifications
-                      </p>
+                      <p className="text-gray-500 text-sm">No new notifications</p>
                     )}
                   </div>
                 )}
@@ -355,7 +356,7 @@ p-2 rounded"
                     key={credits}
                     className="text-xs sm:text-sm md:text-base font-semibold dark:text-black"
                   >
-                    {isLoading ? "..." : credits}
+                    {isLoading ? '...' : credits}
                   </span>
                 </button>
 
@@ -372,7 +373,7 @@ p-2 rounded"
                     </p>
 
                     <button
-                      onClick={() => navigate("/pricing")}
+                      onClick={() => navigate('/pricing')}
                       className="w-full 
             bg-black text-white 
             py-2 md:py-2.5 
@@ -400,20 +401,15 @@ p-2 rounded"
                 </Avatar>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="end"
-                className="w-80 min-w-72 md:w-96"
-              >
+              <DropdownMenuContent align="end" className="w-80 min-w-72 md:w-96">
                 {/* User Header */}
                 <div className="p-4 pb-2 border-b">
                   <div className="font-bold text-lg">{user?.fullName}</div>
-                  <div className="text-sm text-gray-500">
-                    Level {user?.level}
-                  </div>
+                  <div className="text-sm text-gray-500">Level {user?.level}</div>
                 </div>
 
                 <DropdownMenuItem
-                  onClick={() => navigate("/profile")}
+                  onClick={() => navigate('/profile')}
                   className="border-2 focus:bg-blue-500 cursor-pointer"
                 >
                   Profile
@@ -435,9 +431,7 @@ p-2 rounded"
                       className="py-1.5 px-2 text-xs hover:bg-gray-50 rounded-md cursor-default mb-1 last:mb-0 border-b border-b-gray-100 last:border-b-0"
                     >
                       <p className="font-medium">{n.message}</p>
-                      <span className="text-xs text-gray-500 block">
-                        {n.time}
-                      </span>
+                      <span className="text-xs text-gray-500 block">{n.time}</span>
                     </div>
                   ))}
                   {notifications.length === 0 && (
@@ -457,7 +451,7 @@ p-2 rounded"
                       <span className="font-semibold">{credits} Credits</span>
                     </DropdownMenuLabel>
                     <DropdownMenuItem
-                      onClick={() => navigate("/pricing")}
+                      onClick={() => navigate('/pricing')}
                       className="focus:bg-blue-500 px-2 py-1.5"
                     >
                       Buy More Credits
@@ -469,10 +463,8 @@ p-2 rounded"
 
                 <DropdownMenuSeparator />
 
-                {user?.role === "admin" && (
-                  <DropdownMenuItem
-                    onClick={() => navigate("/admin/dashboard")}
-                  >
+                {user?.role === 'admin' && (
+                  <DropdownMenuItem onClick={() => navigate('/admin/dashboard')}>
                     Admin Panel
                   </DropdownMenuItem>
                 )}
@@ -505,27 +497,25 @@ p-2 rounded"
           <div className="text-xs font-semibold text-muted-foreground uppercase px-3 mt-1 mb-2 tracking-wider">
             Main
           </div>
-          {[menuItems[0], menuItems[1], menuItems[2], menuItems[3]].map(
-            (item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <button
-                  key={item.label}
-                  onClick={() => navigate(item.path)}
-                  className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-100 hover:-translate-x-1 hover:shadow-md ${
-                    isActive
-                      ? "bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]"
-                      : "text-foreground hover:text-blue-700"
-                  }`}
-                >
-                  <item.icon
-                    className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground group-hover:text-blue-600 transition-colors"}`}
-                  />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </button>
-              );
-            },
-          )}
+          {[menuItems[0], menuItems[1], menuItems[2], menuItems[3]].map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-100 hover:-translate-x-1 hover:shadow-md ${
+                  isActive
+                    ? 'bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]'
+                    : 'text-foreground hover:text-blue-700'
+                }`}
+              >
+                <item.icon
+                  className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`}
+                />
+                <span className="text-sm font-medium">{item.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* TOOLS Section */}
@@ -541,12 +531,12 @@ p-2 rounded"
                 onClick={() => navigate(item.path)}
                 className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-50 hover:-translate-x-1 hover:shadow-md ${
                   isActive
-                    ? "bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]"
-                    : "text-foreground hover:text-blue-700"
+                    ? 'bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]'
+                    : 'text-foreground hover:text-blue-700'
                 }`}
               >
                 <item.icon
-                  className={`w-5 h-5 shrink-0 ${isActive ? "text-blue-600" : "text-muted-foreground group-hover:text-blue-600 transition-colors"}`}
+                  className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-600' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`}
                 />
                 <span className="text-sm font-medium">{item.label}</span>
               </button>
@@ -560,18 +550,14 @@ p-2 rounded"
           <div className="p-3 rounded-xl bg-linear-to-r from-orange-500/10 to-orange-400/10 border border-orange-200 flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200">
             <Flame className="w-5 h-5 text-orange-500 shrink-0" />
             <div>
-              <span className="font-bold text-sm">
-                {user?.streakCount || 0}
-              </span>
-              <span className="text-sm text-muted-foreground ml-1">
-                Day Streak
-              </span>
+              <span className="font-bold text-sm">{user?.streakCount || 0}</span>
+              <span className="text-sm text-muted-foreground ml-1">Day Streak</span>
             </div>
           </div>
 
           {/* User Card */}
           <div className="p-3 rounded-xl bg-muted/50 backdrop-blur-sm flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200 border border-border/50">
-            {user?.avatar && user.avatar !== "null" ? (
+            {user?.avatar && user.avatar !== 'null' ? (
               <img
                 src={user.avatar}
                 className="w-10 h-10 rounded-xl object-cover ring-2 ring-muted/50"
@@ -582,123 +568,99 @@ p-2 rounded"
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <div
-                className="font-semibold text-sm truncate"
-                title={user?.fullName}
-              >
+              <div className="font-semibold text-sm truncate" title={user?.fullName}>
                 {user?.fullName}
               </div>
-              <div className="text-xs text-muted-foreground">
-                Level {user?.level}
-              </div>
+              <div className="text-xs text-muted-foreground">Level {user?.level}</div>
             </div>
           </div>
         </div>
       </div>
 
-     {/* MOBILE SIDEBAR */}
-{mobileOpen && (
-  <>
-    {/* BACKDROP */}
-    <div
-      className="fixed inset-0 bg-black/50 z-40"
-      onClick={() => setMobileOpen(false)}
-    />
+      {/* MOBILE SIDEBAR */}
+      {mobileOpen && (
+        <>
+          {/* BACKDROP */}
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setMobileOpen(false)} />
 
-    {/* SIDEBAR */}
-    <div className="fixed top-0 left-0 w-[85%] max-w-xs h-screen bg-white dark:bg-gray-900 z-50 shadow-2xl animate-in slide-in-from-left duration-300 border-r border-gray-200 dark:border-gray-800 flex flex-col">
+          {/* SIDEBAR */}
+          <div className="fixed top-0 left-0 w-[85%] max-w-xs h-screen bg-white dark:bg-gray-900 z-50 shadow-2xl animate-in slide-in-from-left duration-300 border-r border-gray-200 dark:border-gray-800 flex flex-col">
+            {/* HEADER */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
+              <span className="font-bold text-lg dark:text-white">Menu</span>
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
-        <span className="font-bold text-lg dark:text-white">
-          Menu
-        </span>
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition cursor-pointer"
+              >
+                <X />
+              </button>
+            </div>
 
-        <button
-          onClick={() => setMobileOpen(false)}
-          className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition cursor-pointer"
-        >
-          <X />
-        </button>
-      </div>
+            {/* SCROLL AREA */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {/* PROFILE CARD */}
+              <button
+                onClick={() => {
+                  navigate('/profile');
+                  setMobileOpen(false);
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98] transition text-left"
+              >
+                <Avatar className="h-11 w-11">
+                  <AvatarImage src={user?.avatar} />
+                  <AvatarFallback>{getInitials(user?.fullName)}</AvatarFallback>
+                </Avatar>
 
-      {/* SCROLL AREA */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm dark:text-white truncate">{user?.fullName}</p>
+                  <p className="text-xs text-gray-500">View Profile</p>
+                </div>
+              </button>
 
-        {/* PROFILE CARD */}
-        <button
-          onClick={() => {
-            navigate("/profile");
-            setMobileOpen(false);
-          }}
-          className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98] transition text-left"
-        >
-          <Avatar className="h-11 w-11">
-            <AvatarImage src={user?.avatar} />
-            <AvatarFallback>
-              {getInitials(user?.fullName)}
-            </AvatarFallback>
-          </Avatar>
+              {/* MENU ITEMS */}
+              {menuItems.map((item) => {
+                const isActive = location.pathname === item.path;
 
-          <div className="min-w-0">
-            <p className="font-semibold text-sm dark:text-white truncate">
-              {user?.fullName}
-            </p>
-            <p className="text-xs text-gray-500">
-              View Profile
-            </p>
-          </div>
-        </button>
-
-        {/* MENU ITEMS */}
-        {menuItems.map((item) => {
-          const isActive = location.pathname === item.path;
-
-          return (
-            <button
-              key={item.label}
-              onClick={() => {
-                navigate(item.path);
-                setMobileOpen(false);
-              }}
-              className={`group flex items-center gap-3 p-3 w-full text-left rounded-xl transition-all duration-300 cursor-pointer
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => {
+                      navigate(item.path);
+                      setMobileOpen(false);
+                    }}
+                    className={`group flex items-center gap-3 p-3 w-full text-left rounded-xl transition-all duration-300 cursor-pointer
               ${
                 isActive
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 active:bg-blue-100 dark:active:bg-gray-700"
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 active:bg-blue-100 dark:active:bg-gray-700'
               }
               active:scale-[0.98]`}
-            >
-              <item.icon
-                className={`w-5 h-5 shrink-0 ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 dark:text-gray-400"
-                }`}
-              />
-              {item.label}
-            </button>
-          );
-        })}
+                  >
+                    <item.icon
+                      className={`w-5 h-5 shrink-0 ${
+                        isActive ? 'text-white' : 'text-gray-500 dark:text-gray-400'
+                      }`}
+                    />
+                    {item.label}
+                  </button>
+                );
+              })}
 
-        {/* STREAK */}
-        <div className="mt-4 p-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 flex items-center gap-3">
-          <Flame className="w-5 h-5 text-orange-500 shrink-0" />
-          <div>
-            <p className="font-bold text-sm dark:text-white">
-              {user?.streakCount || 0} Day Streak
-            </p>
-            <p className="text-xs text-gray-500">
-              Keep learning daily 🔥
-            </p>
+              {/* STREAK */}
+              <div className="mt-4 p-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 flex items-center gap-3">
+                <Flame className="w-5 h-5 text-orange-500 shrink-0" />
+                <div>
+                  <p className="font-bold text-sm dark:text-white">
+                    {user?.streakCount || 0} Day Streak
+                  </p>
+                  <p className="text-xs text-gray-500">Keep learning daily 🔥</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-      </div>
-    </div>
-  </>
-)}
+        </>
+      )}
     </>
   );
 }
-

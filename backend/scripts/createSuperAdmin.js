@@ -49,9 +49,7 @@ const createSuperAdmin = async () => {
     const password = process.env.SUPER_ADMIN_PASSWORD;
 
     if (!email || !password) {
-      console.log(
-        "❌ Please add SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD in .env"
-      );
+      console.log("❌ Please add SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD in .env");
       process.exit(1);
     }
 

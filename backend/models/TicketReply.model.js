@@ -36,4 +36,3 @@ const ticketReplySchema = new mongoose.Schema(
 ticketReplySchema.index({ ticket: 1, createdAt: 1 });
 
 export default mongoose.model("TicketReply", ticketReplySchema);
-

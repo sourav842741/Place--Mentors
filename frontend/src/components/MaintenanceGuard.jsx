@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import useSettings from "../hooks/useSettings";
-import MaintenancePage from "../pages/MaintenancePage";
+import { useSelector } from 'react-redux';
+import useSettings from '../hooks/useSettings';
+import MaintenancePage from '../pages/MaintenancePage';
 
 export default function MaintenanceGuard() {
   const { user, loading } = useSelector((state) => state.user);
@@ -19,11 +19,7 @@ export default function MaintenanceGuard() {
       ? maintenanceRealtime.maintenanceMode
       : data?.data?.maintenanceMode;
 
-  if (
-    active &&
-    user?.role !== "admin" &&
-    user?.role !== "superadmin"
-  ) {
+  if (active && user?.role !== 'admin' && user?.role !== 'superadmin') {
     return <MaintenancePage />;
   }
 

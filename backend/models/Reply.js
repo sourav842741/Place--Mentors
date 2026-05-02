@@ -10,10 +10,10 @@ const replySchema = new mongoose.Schema(
     upvotes: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
-      default: [], 
+      default: [],
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model("Reply", replySchema);

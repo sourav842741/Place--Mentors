@@ -13,7 +13,7 @@ import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 const router = Router();
 
 router.get("/", getTodayCpotd);
-router.post("/generate", maintenanceCheck, isAuth,isAdmin,generateCpotd);
+router.post("/generate", maintenanceCheck, isAuth, isAdmin, generateCpotd);
 router.post("/submit", maintenanceCheck, isAuth, submitCpotd);
 router.get("/status", maintenanceCheck, isAuth, getCpotdStatus);
 router.post("/complete", maintenanceCheck, isAuth, completeCpotd);

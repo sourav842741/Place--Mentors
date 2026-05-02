@@ -1,10 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
 import { addXP } from "../utils/xpManager.js";
-import {
-  getOrCreateTodayPotd,
-  generateTodayPotd,
-} from "../services/potd.service.js";
+import { getOrCreateTodayPotd, generateTodayPotd } from "../services/potd.service.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
@@ -77,9 +74,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   potd.questions.forEach((q, index) => {
     // flexible answer handling
     const userAnswer =
-      typeof answers[index] === "object"
-        ? answers[index]?.selected
-        : answers[index];
+      typeof answers[index] === "object" ? answers[index]?.selected : answers[index];
 
     const isCorrect = userAnswer === q.answer;
 
@@ -89,8 +84,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
     if (isCorrect) {
       score++;
 
-      const xp =
-        q.difficulty === "easy" ? 5 : q.difficulty === "medium" ? 10 : 20;
+      const xp = q.difficulty === "easy" ? 5 : q.difficulty === "medium" ? 10 : 20;
 
       xpEarned += xp;
       categoryStats[category].correct++;
@@ -143,7 +137,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   user.potdCompleted = true;
   user.lastPotdDate = todayDate;
   user.lastPotdAt = new Date();
-  
+
   user.weakArea = weakArea;
 
   addXP(user, xpEarned, "potd");
@@ -156,8 +150,7 @@ export const submitPotd = asyncHandler(async (req, res) => {
   if (todayStat) {
     todayStat.quizzesGiven += 1;
     todayStat.avgScore =
-      (todayStat.avgScore * (todayStat.quizzesGiven - 1) + score) /
-      todayStat.quizzesGiven;
+      (todayStat.avgScore * (todayStat.quizzesGiven - 1) + score) / todayStat.quizzesGiven;
   } else {
     user.dailyStats.push({
       date: today,

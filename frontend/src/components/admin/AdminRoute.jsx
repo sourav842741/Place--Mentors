@@ -1,6 +1,6 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { AlertTriangle } from "lucide-react";
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { AlertTriangle } from 'lucide-react';
 
 export default function AdminRoute() {
   const { user, loading } = useSelector((state) => state.user);
@@ -28,10 +28,7 @@ export default function AdminRoute() {
   }
 
   // Only admin / super admin allowed
-  const isAdminAccess =
-    user?.role === "admin" ||
-    user?.role === "superadmin" ||
-    user?.isSuperAdmin;
+  const isAdminAccess = user?.role === 'admin' || user?.role === 'superadmin' || user?.isSuperAdmin;
 
   if (!isAdminAccess) {
     return <Navigate to="/" replace />;
@@ -46,10 +43,10 @@ export default function AdminRoute() {
             <AlertTriangle className="w-4 h-4 shrink-0" />
 
             <span>
-              Enable 2FA recommended for privileged accounts.{" "}
+              Enable 2FA recommended for privileged accounts.{' '}
               <button
                 type="button"
-                onClick={() => navigate("/admin/security")}
+                onClick={() => navigate('/admin/security')}
                 className="underline font-bold hover:text-amber-100 transition"
               >
                 Set up now →
@@ -60,7 +57,7 @@ export default function AdminRoute() {
       )}
 
       {/* Route Content */}
-      <div className={user?.twoFactorWarning ? "pt-10" : ""}>
+      <div className={user?.twoFactorWarning ? 'pt-10' : ''}>
         <Outlet />
       </div>
     </>

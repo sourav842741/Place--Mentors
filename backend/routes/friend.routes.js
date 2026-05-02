@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { 
-  sendFriendRequest, 
-  acceptFriendRequest, 
-  rejectFriendRequest, 
+import {
+  sendFriendRequest,
+  acceptFriendRequest,
+  rejectFriendRequest,
   sendChallenge,
   rejectChallenge,
-  getFriends 
+  getFriends,
 } from "../controllers/friend.controller.js";
-import  isAuth  from "../middlewares/isAuth.js";
+import isAuth from "../middlewares/isAuth.js";
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 
 const router = Router();
@@ -20,4 +20,3 @@ router.post("/challenge/:id", maintenanceCheck, isAuth, sendChallenge);
 router.post("/challenge/reject/:id", maintenanceCheck, isAuth, rejectChallenge);
 
 export default router;
-

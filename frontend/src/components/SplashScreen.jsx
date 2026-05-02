@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SplashScreen() {
   const navigate = useNavigate();
@@ -9,12 +9,12 @@ export default function SplashScreen() {
   useEffect(() => {
     // Logo appears immediately
     const logoTimer = setTimeout(() => setShowText(true), 200); // Text delay after logo start
-    
+
     // Exit after 900ms
     const exitTimer = setTimeout(() => setIsVisible(false), 900);
-    
+
     // Navigate after 1200ms
-    const navTimer = setTimeout(() => navigate("/dashboard"), 1200);
+    const navTimer = setTimeout(() => navigate('/dashboard'), 1200);
 
     return () => {
       clearTimeout(logoTimer);
@@ -24,7 +24,8 @@ export default function SplashScreen() {
   }, [navigate]);
 
   return (
-    <div className={`
+    <div
+      className={`
       h-screen w-full flex flex-col items-center justify-center p-8
       overflow-hidden relative
       transition-all duration-500 ease-in-out
@@ -32,7 +33,8 @@ export default function SplashScreen() {
       dark:from-gray-950 dark:via-slate-900 dark:to-purple-950
       ${isVisible ? 'scale-100 opacity-100 blur-none' : 'scale-110 opacity-0 blur-sm'}
       animate-${isVisible ? '' : '[zoomOut_0.3s_ease-in_forwards]'}
-    `}>
+    `}
+    >
       {/* Glowing background circles */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Circle 1 */}
@@ -46,25 +48,32 @@ export default function SplashScreen() {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center gap-6">
         {/* Logo */}
-        <div className="
+        <div
+          className="
           relative w-24 h-24 flex items-center justify-center
           bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600
           text-white font-black text-3xl rounded-2xl shadow-2xl ring-4 ring-white/20
           animate-[zoomIn_0.5s_ease-out_forwards]
           bg-clip-padding backdrop-blur-sm
-        ">
+        "
+        >
           PM
         </div>
 
         {/* Text - delayed */}
-        <h1 className={`
+        <h1
+          className={`
           text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r 
           from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent
           dark:from-gray-100 dark:via-blue-400 dark:to-purple-400
           opacity-0 ${showText ? 'animate-[fadeInUp_0.4s_ease-out_forwards]' : ''}
           transition-all duration-500
-        `}>
-          Place <span className="text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text">Mentor</span>
+        `}
+        >
+          Place{' '}
+          <span className="text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text">
+            Mentor
+          </span>
         </h1>
       </div>
 

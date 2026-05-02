@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Moon, Sun, Upload, ImageIcon, User } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Moon, Sun, Upload, ImageIcon, User } from 'lucide-react';
 
-import AuthLayout from "../components/AuthLayout";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import AuthLayout from '../components/AuthLayout';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
-import useAuth from "../hooks/useAuth";
+import useAuth from '../hooks/useAuth';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -17,10 +17,10 @@ export default function Signup() {
   const [isDark, setIsDark] = useState(false);
 
   const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    skills: "",
+    fullName: '',
+    email: '',
+    password: '',
+    skills: '',
   });
 
   const [avatar, setAvatar] = useState(null);
@@ -31,22 +31,22 @@ export default function Signup() {
 
   /* THEME LOAD */
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem('theme');
 
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
       setIsDark(false);
     }
   }, []);
 
   /* THEME TOGGLE */
   const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
+    const isNowDark = document.documentElement.classList.toggle('dark');
     setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
+    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
   };
 
   const handleChange = (e) => {
@@ -56,7 +56,7 @@ export default function Signup() {
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
 
-    if (type === "avatar") {
+    if (type === 'avatar') {
       setAvatar(file);
       setAvatarPreview(URL.createObjectURL(file));
     } else {
@@ -67,15 +67,13 @@ export default function Signup() {
 
   const handleSubmit = async () => {
     if (!form.fullName || !form.email || !form.password) {
-      return toast.warning("Please fill all required fields");
+      return toast.warning('Please fill all required fields');
     }
 
     setLoading(true);
 
     try {
-      const skillsArray = form.skills
-        ? form.skills.split(",").map((s) => s.trim())
-        : [];
+      const skillsArray = form.skills ? form.skills.split(',').map((s) => s.trim()) : [];
 
       const res = await sendSignupOtp({
         ...form,
@@ -83,16 +81,16 @@ export default function Signup() {
       });
 
       if (res.success) {
-        toast.success("OTP sent 📩");
+        toast.success('OTP sent 📩');
 
-        navigate("/verify-otp", {
+        navigate('/verify-otp', {
           state: { ...form, skills: skillsArray, avatar, coverImage },
         });
       } else {
-        toast.error(res.message || "Signup failed");
+        toast.error(res.message || 'Signup failed');
       }
     } catch {
-      toast.error("Signup failed ❌");
+      toast.error('Signup failed ❌');
     } finally {
       setLoading(false);
     }
@@ -130,9 +128,7 @@ export default function Signup() {
 
         {/* TITLE */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Create Account
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Create Account</h2>
 
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Start your placement journey today 🚀
@@ -175,24 +171,15 @@ export default function Signup() {
           rounded-xl p-4 text-center hover:bg-blue-50 dark:hover:bg-blue-950/30 transition"
         >
           {avatarPreview ? (
-            <img
-              src={avatarPreview}
-              className="w-20 h-20 mx-auto rounded-full object-cover"
-            />
+            <img src={avatarPreview} className="w-20 h-20 mx-auto rounded-full object-cover" />
           ) : (
             <div className="space-y-2">
               <User className="mx-auto w-6 h-6 text-blue-500" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Upload Avatar
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Upload Avatar</p>
             </div>
           )}
 
-          <input
-            type="file"
-            hidden
-            onChange={(e) => handleFileChange(e, "avatar")}
-          />
+          <input type="file" hidden onChange={(e) => handleFileChange(e, 'avatar')} />
         </label>
 
         {/* COVER */}
@@ -201,24 +188,15 @@ export default function Signup() {
           rounded-xl p-4 text-center hover:bg-purple-50 dark:hover:bg-purple-950/30 transition"
         >
           {coverPreview ? (
-            <img
-              src={coverPreview}
-              className="w-full h-24 object-cover rounded-lg"
-            />
+            <img src={coverPreview} className="w-full h-24 object-cover rounded-lg" />
           ) : (
             <div className="space-y-2">
               <ImageIcon className="mx-auto w-6 h-6 text-purple-500" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Upload Cover Image
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Upload Cover Image</p>
             </div>
           )}
 
-          <input
-            type="file"
-            hidden
-            onChange={(e) => handleFileChange(e, "cover")}
-          />
+          <input type="file" hidden onChange={(e) => handleFileChange(e, 'cover')} />
         </label>
 
         {/* SIGNUP BUTTON */}
@@ -227,45 +205,42 @@ export default function Signup() {
           disabled={loading}
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
         >
-          {loading ? "Creating..." : "Sign Up"}
+          {loading ? 'Creating...' : 'Sign Up'}
         </Button>
 
         {/* GOOGLE */}
         <button
           onClick={async () => {
-  const res = await googleLogin();
+            const res = await googleLogin();
 
-  if (res.success) {
-    toast.success("Login successful");
+            if (res.success) {
+              toast.success('Login successful');
 
-    navigate("/splash");
-  } else if (res.requiresTwoFactor) {
-    navigate("/verify-2fa", {
-      state: {
-        tempAuthToken: res.tempAuthToken,
-        role: res.role,
-        isSuperAdmin: res.isSuperAdmin,
-      },
-    });
-  } else {
-    toast.error(res.message || "Google login failed");
-  }
-}}
+              navigate('/splash');
+            } else if (res.requiresTwoFactor) {
+              navigate('/verify-2fa', {
+                state: {
+                  tempAuthToken: res.tempAuthToken,
+                  role: res.role,
+                  isSuperAdmin: res.isSuperAdmin,
+                },
+              });
+            } else {
+              toast.error(res.message || 'Google login failed');
+            }
+          }}
           className="w-full flex items-center justify-center gap-3
           bg-white dark:bg-gray-800
           border border-gray-300 dark:border-gray-700
           py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
         >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            className="w-5 h-5"
-          />
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" />
           Sign up with Google
         </button>
 
         {/* LOGIN */}
         <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <Link
             to="/login"
             className="text-blue-600 dark:text-blue-400 font-medium hover:underline"

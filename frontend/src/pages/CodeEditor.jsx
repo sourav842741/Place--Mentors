@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import Editor from "@monaco-editor/react";
-import useCompiler from "../hooks/useCompiler";
-import { Play, Loader2 } from "lucide-react";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import React, { useState } from 'react';
+import Editor from '@monaco-editor/react';
+import useCompiler from '../hooks/useCompiler';
+import { Play, Loader2 } from 'lucide-react';
+import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar';
 
 const boilerplates = {
   javascript: `console.log("Hello World");`,
@@ -23,7 +23,7 @@ public class Main {
   }
 }`,
 
-  "c++": `#include <iostream>
+  'c++': `#include <iostream>
 using namespace std;
 
 int main() {
@@ -35,12 +35,12 @@ int main() {
 };
 
 const CodeEditor = () => {
-  const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState(boilerplates["javascript"]);
+  const [language, setLanguage] = useState('javascript');
+  const [code, setCode] = useState(boilerplates['javascript']);
 
   //  TERMINAL STATES
   const [terminalInput, setTerminalInput] = useState([]);
-  const [currentLine, setCurrentLine] = useState("");
+  const [currentLine, setCurrentLine] = useState('');
 
   const { executeCode, result, isLoading, error } = useCompiler();
 
@@ -50,27 +50,26 @@ const CodeEditor = () => {
   };
 
   //  RUN WITH JOINED INPUT
- const handleRun = () => {
-  const allInputs = [...terminalInput];
+  const handleRun = () => {
+    const allInputs = [...terminalInput];
 
-  //  agar last line type karke Enter nahi dabaya
-  if (currentLine.trim() !== "") {
-    allInputs.push(currentLine);
-  }
+    //  agar last line type karke Enter nahi dabaya
+    if (currentLine.trim() !== '') {
+      allInputs.push(currentLine);
+    }
 
-  const finalInput = allInputs.join("\n");
+    const finalInput = allInputs.join('\n');
 
-  console.log("FINAL INPUT:", finalInput); // debug
+    console.log('FINAL INPUT:', finalInput); // debug
 
-  executeCode(code, language, finalInput);
-};
+    executeCode(code, language, finalInput);
+  };
 
   return (
     <>
       <Navbar />
 
       <div className="min-h-screen bg-[#0b1220] text-gray-200 lg:mt-16 lg:ml-64 md:mt-16">
-
         {/* HEADER */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-[#0f172a]">
           <h1 className="text-sm font-semibold">Code Compiler</h1>
@@ -94,10 +93,8 @@ const CodeEditor = () => {
         </div>
 
         <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
-
           {/* SIDEBAR */}
           <div className="w-full md:w-60 bg-[#020617] border-b md:border-r border-gray-800 p-4 space-y-5">
-
             <select
               value={language}
               onChange={(e) => handleLanguageChange(e.target.value)}
@@ -120,13 +117,12 @@ const CodeEditor = () => {
 
           {/* RIGHT SIDE */}
           <div className="flex-1 flex flex-col">
-
             {/* EDITOR */}
             <div className="flex-1 border-b border-gray-800 min-h-75">
               <Editor
                 height="100%"
                 theme="vs-dark"
-                language={language === "c++" ? "cpp" : language}
+                language={language === 'c++' ? 'cpp' : language}
                 value={code}
                 onChange={(val) => setCode(val)}
                 options={{ minimap: { enabled: false } }}
@@ -135,7 +131,6 @@ const CodeEditor = () => {
 
             {/*  TERMINAL INPUT UI */}
             <div className="bg-black text-green-400 p-3 font-mono text-sm border-t border-gray-800">
-
               <p className="text-gray-400 mb-2">Terminal Input (press Enter)</p>
 
               {/* history */}
@@ -147,12 +142,12 @@ const CodeEditor = () => {
               <input
                 value={currentLine}
                 onChange={(e) => setCurrentLine(e.target.value)}
-               onKeyDown={(e) => {
-  if (e.key === "Enter") {
-    setTerminalInput(prev => [...prev, currentLine]); 
-    setCurrentLine("");
-  }
-}}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setTerminalInput((prev) => [...prev, currentLine]);
+                    setCurrentLine('');
+                  }
+                }}
                 className="w-full bg-black outline-none"
                 placeholder="Type input and press Enter..."
               />
@@ -163,12 +158,9 @@ const CodeEditor = () => {
               {isLoading && <p className="text-yellow-400">Running...</p>}
               {error && <p className="text-red-400">{error}</p>}
               {result?.output && (
-                <pre className="text-green-400 whitespace-pre-wrap">
-                  {result.output}
-                </pre>
+                <pre className="text-green-400 whitespace-pre-wrap">{result.output}</pre>
               )}
             </div>
-
           </div>
         </div>
       </div>

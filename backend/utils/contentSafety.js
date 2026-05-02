@@ -12,11 +12,13 @@ const BLOCKED_PATTERNS = [
 ];
 
 const SAFE_FALLBACKS = {
-  coach: "I'm here to help with your placement preparation! 🚀\nLet's focus on building your skills.",
+  coach:
+    "I'm here to help with your placement preparation! 🚀\nLet's focus on building your skills.",
   resume: "Professional Summary:\nExperienced developer with strong technical skills.",
   youtube: "Summary unavailable. Please try with educational content.",
   motivation: "Keep pushing forward! 💪\nEvery step counts toward your goal.",
-  default: "I'm designed to help with placement preparation and career growth. How can I assist you today?",
+  default:
+    "I'm designed to help with placement preparation and career growth. How can I assist you today?",
 };
 
 /**
@@ -65,5 +67,3 @@ Your purpose is placement preparation, coding interviews, resume building, and c
 
   return systemPrompt + safetyInstruction;
 };
-
-

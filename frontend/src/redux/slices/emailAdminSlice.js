@@ -1,26 +1,24 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../services/api";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../../services/api';
 
 /* ===============================
    THUNKS
 =============================== */
 
 export const fetchEmailStats = createAsyncThunk(
-  "emailAdmin/fetchStats",
+  'emailAdmin/fetchStats',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await api.get("/api/admin/email/stats");
+      const res = await api.get('/api/admin/email/stats');
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch stats"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch stats');
     }
   }
 );
 
 export const fetchEmailLogs = createAsyncThunk(
-  "emailAdmin/fetchLogs",
+  'emailAdmin/fetchLogs',
   async ({ page = 1, limit = 50, filters = {} } = {}, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams({
@@ -29,66 +27,47 @@ export const fetchEmailLogs = createAsyncThunk(
         ...filters,
       });
 
-      const res = await api.get(
-        `/api/admin/email/logs?${params}`
-      );
+      const res = await api.get(`/api/admin/email/logs?${params}`);
 
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch logs"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch logs');
     }
   }
 );
 
 export const sendSingleEmail = createAsyncThunk(
-  "emailAdmin/sendSingle",
+  'emailAdmin/sendSingle',
   async (data, { rejectWithValue }) => {
     try {
-      const res = await api.post(
-        "/api/admin/email/send-single",
-        data
-      );
+      const res = await api.post('/api/admin/email/send-single', data);
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to send email"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to send email');
     }
   }
 );
 
 export const sendBulkEmail = createAsyncThunk(
-  "emailAdmin/sendBulk",
+  'emailAdmin/sendBulk',
   async (data, { rejectWithValue }) => {
     try {
-      const res = await api.post(
-        "/api/admin/email/send-bulk",
-        data
-      );
+      const res = await api.post('/api/admin/email/send-bulk', data);
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed bulk send"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed bulk send');
     }
   }
 );
 
 export const testTemplate = createAsyncThunk(
-  "emailAdmin/testTemplate",
+  'emailAdmin/testTemplate',
   async (data, { rejectWithValue }) => {
     try {
-      const res = await api.post(
-        "/api/admin/email/test-template",
-        data
-      );
+      const res = await api.post('/api/admin/email/test-template', data);
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Test failed"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Test failed');
     }
   }
 );
@@ -98,7 +77,7 @@ export const testTemplate = createAsyncThunk(
 =============================== */
 
 const emailAdminSlice = createSlice({
-  name: "emailAdmin",
+  name: 'emailAdmin',
 
   initialState: {
     stats: null,
@@ -211,9 +190,6 @@ const emailAdminSlice = createSlice({
   },
 });
 
-export const {
-  clearError,
-  clearSendResult,
-} = emailAdminSlice.actions;
+export const { clearError, clearSendResult } = emailAdminSlice.actions;
 
 export default emailAdminSlice.reducer;

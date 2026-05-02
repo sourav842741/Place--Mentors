@@ -1,24 +1,24 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import { MemoryRouter } from "react-router-dom";
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { MemoryRouter } from 'react-router-dom';
 
-import userSlice from "../../redux/userSlice";
-import AdminRoute from "../../components/admin/AdminRoute";
-import ProtectedRoute from "../../components/ProtectedRoute";
+import userSlice from '../../redux/userSlice';
+import AdminRoute from '../../components/admin/AdminRoute';
+import ProtectedRoute from '../../components/ProtectedRoute';
 
-vi.mock("../../socket", () => ({
+vi.mock('../../socket', () => ({
   socket: { emit: vi.fn(), on: vi.fn(), off: vi.fn() },
 }));
 
-describe("Admin Guard Integration", () => {
-  it("AdminRoute redirects non-admin to home", () => {
+describe('Admin Guard Integration', () => {
+  it('AdminRoute redirects non-admin to home', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
         user: {
-          user: { _id: "123", email: "user@example.com", role: "user" },
+          user: { _id: '123', email: 'user@example.com', role: 'user' },
           isAuth: true,
           loading: false,
         },
@@ -27,19 +27,19 @@ describe("Admin Guard Integration", () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/admin/dashboard"]}>
+        <MemoryRouter initialEntries={['/admin/dashboard']}>
           <AdminRoute />
         </MemoryRouter>
       </Provider>
     );
   });
 
-  it("AdminRoute allows admin access", () => {
+  it('AdminRoute allows admin access', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
         user: {
-          user: { _id: "123", email: "admin@example.com", role: "admin" },
+          user: { _id: '123', email: 'admin@example.com', role: 'admin' },
           isAuth: true,
           loading: false,
         },
@@ -48,19 +48,19 @@ describe("Admin Guard Integration", () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/admin/dashboard"]}>
+        <MemoryRouter initialEntries={['/admin/dashboard']}>
           <AdminRoute />
         </MemoryRouter>
       </Provider>
     );
   });
 
-  it("AdminRoute shows 2FA warning banner for admin without 2FA", () => {
+  it('AdminRoute shows 2FA warning banner for admin without 2FA', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
         user: {
-          user: { _id: "123", email: "admin@example.com", role: "admin", twoFactorWarning: true },
+          user: { _id: '123', email: 'admin@example.com', role: 'admin', twoFactorWarning: true },
           isAuth: true,
           loading: false,
         },
@@ -69,7 +69,7 @@ describe("Admin Guard Integration", () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/admin/dashboard"]}>
+        <MemoryRouter initialEntries={['/admin/dashboard']}>
           <AdminRoute />
         </MemoryRouter>
       </Provider>
@@ -78,12 +78,12 @@ describe("Admin Guard Integration", () => {
     expect(screen.getByText(/Enable 2FA recommended/i)).toBeInTheDocument();
   });
 
-  it("AdminRoute allows superadmin access", () => {
+  it('AdminRoute allows superadmin access', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
         user: {
-          user: { _id: "123", email: "super@example.com", role: "superadmin", isSuperAdmin: true },
+          user: { _id: '123', email: 'super@example.com', role: 'superadmin', isSuperAdmin: true },
           isAuth: true,
           loading: false,
         },
@@ -92,14 +92,14 @@ describe("Admin Guard Integration", () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/admin/dashboard"]}>
+        <MemoryRouter initialEntries={['/admin/dashboard']}>
           <AdminRoute />
         </MemoryRouter>
       </Provider>
     );
   });
 
-  it("ProtectedRoute redirects unauthenticated to login", () => {
+  it('ProtectedRoute redirects unauthenticated to login', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
@@ -109,14 +109,14 @@ describe("Admin Guard Integration", () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/dashboard"]}>
+        <MemoryRouter initialEntries={['/dashboard']}>
           <ProtectedRoute />
         </MemoryRouter>
       </Provider>
     );
   });
 
-  it("ProtectedRoute shows loading state", () => {
+  it('ProtectedRoute shows loading state', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
@@ -135,31 +135,31 @@ describe("Admin Guard Integration", () => {
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
-  it("userSlice logout clears auth state", () => {
+  it('userSlice logout clears auth state', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
         user: {
-          user: { _id: "123", email: "test@example.com", role: "admin" },
+          user: { _id: '123', email: 'test@example.com', role: 'admin' },
           isAuth: true,
           loading: false,
         },
       },
     });
 
-    store.dispatch({ type: "user/logoutUser" });
+    store.dispatch({ type: 'user/logoutUser' });
 
     const state = store.getState().user;
     expect(state.user).toBeNull();
     expect(state.isAuth).toBe(false);
   });
 
-  it("userSlice preserves admin role data", () => {
+  it('userSlice preserves admin role data', () => {
     const store = configureStore({
       reducer: { user: userSlice },
       preloadedState: {
         user: {
-          user: { _id: "123", email: "admin@example.com", role: "admin", credits: 500 },
+          user: { _id: '123', email: 'admin@example.com', role: 'admin', credits: 500 },
           isAuth: true,
           loading: false,
         },
@@ -167,7 +167,7 @@ describe("Admin Guard Integration", () => {
     });
 
     const state = store.getState().user;
-    expect(state.user.role).toBe("admin");
+    expect(state.user.role).toBe('admin');
     expect(state.user.credits).toBe(500);
   });
 });

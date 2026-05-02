@@ -49,4 +49,3 @@ certificateSchema.statics.generateId = function () {
 };
 
 export default mongoose.model("Certificate", certificateSchema);
-

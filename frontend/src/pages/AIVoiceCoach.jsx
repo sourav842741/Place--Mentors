@@ -1,31 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import {
-  Mic,
-  Phone,
-  Headphones,
-  MicOff,
-  Play,
-  Clock,
-  Award,
-  PhoneCall,
-  Timer,
-} from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Mic, Phone, Headphones, MicOff, Play, Clock, Award, PhoneCall, Timer } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
-import { toast } from "sonner";
-import {
-  startVoiceCallAsync,
-  fetchVoiceHistory,
-} from "../redux/voiceSlice";
+import { toast } from 'sonner';
+import { startVoiceCallAsync, fetchVoiceHistory } from '../redux/voiceSlice';
 
-import Navbar from "../components/Navbar";
-import { trackEvent } from "../hooks/useAnalytics";
+import Navbar from '../components/Navbar';
+import { trackEvent } from '../hooks/useAnalytics';
 
 const AIVoiceCoach = () => {
   const dispatch = useDispatch();
@@ -34,8 +21,8 @@ const AIVoiceCoach = () => {
   const history = entities || {};
   const recentCalls = Object.values(history).slice(0, 3);
 
-  const [phone, setPhone] = useState("");
-  const [mode, setMode] = useState("hr-interview");
+  const [phone, setPhone] = useState('');
+  const [mode, setMode] = useState('hr-interview');
   const [isCalling, setIsCalling] = useState(false);
   const [cooldownLeft, setCooldownLeft] = useState(0);
 
@@ -46,30 +33,24 @@ const AIVoiceCoach = () => {
 
   // Cooldown timer logic
   useEffect(() => {
-    const saved = localStorage.getItem("voice_call_cooldown");
+    const saved = localStorage.getItem('voice_call_cooldown');
 
     if (saved) {
-      const left = Math.max(
-        0,
-        Math.floor((Number(saved) - Date.now()) / 1000)
-      );
+      const left = Math.max(0, Math.floor((Number(saved) - Date.now()) / 1000));
       setCooldownLeft(left);
     }
 
     const timer = setInterval(() => {
-      const stored = localStorage.getItem("voice_call_cooldown");
+      const stored = localStorage.getItem('voice_call_cooldown');
 
       if (!stored) return;
 
-      const left = Math.max(
-        0,
-        Math.floor((Number(stored) - Date.now()) / 1000)
-      );
+      const left = Math.max(0, Math.floor((Number(stored) - Date.now()) / 1000));
 
       setCooldownLeft(left);
 
       if (left <= 0) {
-        localStorage.removeItem("voice_call_cooldown");
+        localStorage.removeItem('voice_call_cooldown');
       }
     }, 1000);
 
@@ -80,19 +61,17 @@ const AIVoiceCoach = () => {
     const min = Math.floor(sec / 60);
     const secRemain = sec % 60;
 
-    return `${min}:${String(secRemain).padStart(2, "0")}`;
+    return `${min}:${String(secRemain).padStart(2, '0')}`;
   };
 
   const handleStartCall = async () => {
     if (!phone.trim()) {
-      toast.error("Please enter phone number");
+      toast.error('Please enter phone number');
       return;
     }
 
     if (cooldownLeft > 0) {
-      toast.error(
-        `Please wait ${formatTime(cooldownLeft)} before next call`
-      );
+      toast.error(`Please wait ${formatTime(cooldownLeft)} before next call`);
       return;
     }
 
@@ -106,19 +85,19 @@ const AIVoiceCoach = () => {
         })
       ).unwrap();
 
-      toast.success("Call started successfully");
+      toast.success('Call started successfully');
 
-      trackEvent("ai_interview_used", { type: "voice", mode });
+      trackEvent('ai_interview_used', { type: 'voice', mode });
 
       // Start 20 minute cooldown
       const endTime = Date.now() + 20 * 60 * 1000;
-      localStorage.setItem("voice_call_cooldown", endTime);
+      localStorage.setItem('voice_call_cooldown', endTime);
       setCooldownLeft(20 * 60);
 
-      setPhone("");
+      setPhone('');
       dispatch(fetchVoiceHistory());
     } catch (error) {
-      toast.error(error || "Failed to start call");
+      toast.error(error || 'Failed to start call');
     } finally {
       setIsCalling(false);
     }
@@ -126,32 +105,32 @@ const AIVoiceCoach = () => {
 
   const modes = [
     {
-      id: "hr-interview",
-      title: "HR Interview",
-      desc: "Realistic HR & placement interview practice",
+      id: 'hr-interview',
+      title: 'HR Interview',
+      desc: 'Realistic HR & placement interview practice',
       icon: PhoneCall,
-      color: "bg-blue-500",
+      color: 'bg-blue-500',
     },
     {
-      id: "spoken-english",
-      title: "Spoken English",
-      desc: "Fluency, grammar & confidence practice",
+      id: 'spoken-english',
+      title: 'Spoken English',
+      desc: 'Fluency, grammar & confidence practice',
       icon: Mic,
-      color: "bg-green-500",
+      color: 'bg-green-500',
     },
     {
-      id: "motivation",
-      title: "Motivation Coach",
-      desc: "Confidence boost & discipline guidance",
+      id: 'motivation',
+      title: 'Motivation Coach',
+      desc: 'Confidence boost & discipline guidance',
       icon: Award,
-      color: "bg-orange-500",
+      color: 'bg-orange-500',
     },
     {
-      id: "resume-screening",
-      title: "Resume Review",
-      desc: "Resume screening & career feedback",
+      id: 'resume-screening',
+      title: 'Resume Review',
+      desc: 'Resume screening & career feedback',
       icon: Headphones,
-      color: "bg-purple-500",
+      color: 'bg-purple-500',
     },
   ];
 
@@ -165,14 +144,14 @@ const AIVoiceCoach = () => {
           <div className="inline-flex items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl px-6 py-3 rounded-3xl shadow-xl mb-8 border border-white/50">
             <div className="w-3 h-3 bg-green-400 rounded-full animate-ping " />
 
-           <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-gray-900 to-slate-700 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mt-6 sm:mt-0">
-  PlaceMentor AI Voice Coach
-</h1>
+            <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-gray-900 to-slate-700 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mt-6 sm:mt-0">
+              PlaceMentor AI Voice Coach
+            </h1>
           </div>
 
           <p className="text-lg md:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Practice interviews, spoken English, motivation and resume guidance
-            through smart AI phone calls.
+            Practice interviews, spoken English, motivation and resume guidance through smart AI
+            phone calls.
           </p>
         </div>
 
@@ -191,22 +170,18 @@ const AIVoiceCoach = () => {
                     <Icon className="w-8 h-8 text-white" />
                   </div>
 
-                  <CardTitle className="text-center mt-4 text-xl">
-                    {title}
-                  </CardTitle>
+                  <CardTitle className="text-center mt-4 text-xl">{title}</CardTitle>
                 </CardHeader>
 
                 <CardContent>
-                  <p className="text-center text-gray-600 dark:text-gray-300 mb-5">
-                    {desc}
-                  </p>
+                  <p className="text-center text-gray-600 dark:text-gray-300 mb-5">{desc}</p>
 
                   <Button
                     className="w-full"
-                    variant={mode === id ? "default" : "outline"}
+                    variant={mode === id ? 'default' : 'outline'}
                     onClick={() => setMode(id)}
                   >
-                    {mode === id ? "Selected" : "Select"}
+                    {mode === id ? 'Selected' : 'Select'}
                   </Button>
                 </CardContent>
               </Card>
@@ -226,9 +201,7 @@ const AIVoiceCoach = () => {
 
             <CardContent className="space-y-5">
               <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Phone Number
-                </label>
+                <label className="text-sm font-medium mb-2 block">Phone Number</label>
 
                 <Input
                   placeholder="+919876543210"
@@ -263,8 +236,8 @@ const AIVoiceCoach = () => {
 
               <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                 {cooldownLeft > 0
-                  ? "Cooldown active after successful call."
-                  : "Keep your phone ready. AI will call you instantly."}
+                  ? 'Cooldown active after successful call.'
+                  : 'Keep your phone ready. AI will call you instantly.'}
               </p>
             </CardContent>
           </Card>
@@ -285,12 +258,7 @@ const AIVoiceCoach = () => {
             {recentCalls.length > 0 ? (
               recentCalls.map((call, index) => (
                 <Card
-                  key={
-                    call?._id ||
-                    call?.id ||
-                    call?.twilioCallSid ||
-                    index
-                  }
+                  key={call?._id || call?.id || call?.twilioCallSid || index}
                   className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-md hover:shadow-xl transition-all"
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -300,14 +268,11 @@ const AIVoiceCoach = () => {
 
                     <div className="flex-1">
                       <div className="font-semibold">
-                        {modes.find((m) => m.id === call?.mode)?.title ||
-                          "AI Voice Call"}
+                        {modes.find((m) => m.id === call?.mode)?.title || 'AI Voice Call'}
                       </div>
 
                       <div className="text-sm text-gray-500">
-                        {call?.createdAt
-                          ? new Date(call.createdAt).toLocaleString()
-                          : "Recently"}
+                        {call?.createdAt ? new Date(call.createdAt).toLocaleString() : 'Recently'}
                       </div>
                     </div>
 
@@ -325,9 +290,7 @@ const AIVoiceCoach = () => {
                 <CardContent className="p-10 text-center">
                   <MicOff className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                   <h3 className="font-semibold text-xl">No calls yet</h3>
-                  <p className="text-gray-500 mt-2">
-                    Start your first AI call above.
-                  </p>
+                  <p className="text-gray-500 mt-2">Start your first AI call above.</p>
                 </CardContent>
               </Card>
             )}
@@ -339,4 +302,3 @@ const AIVoiceCoach = () => {
 };
 
 export default AIVoiceCoach;
-

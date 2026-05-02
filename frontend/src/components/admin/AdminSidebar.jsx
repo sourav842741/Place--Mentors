@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -13,33 +13,29 @@ import {
   FileText,
   ChevronRight,
   ShieldCheck,
-} from "lucide-react";
+} from 'lucide-react';
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
-  { icon: Users, label: "Users", path: "/admin/users" },
-  { icon: Mail, label: "Email Center", path: "/admin/email-center" },
-  { icon: FileQuestion, label: "Create POTD", path: "/admin/create-potd" },
-  { icon: Code2, label: "Create CPOTD", path: "/admin/create-cpotd" },
-  { icon: Settings, label: "Settings", path: "/admin/settings" },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
+  { icon: Users, label: 'Users', path: '/admin/users' },
+  { icon: Mail, label: 'Email Center', path: '/admin/email-center' },
+  { icon: FileQuestion, label: 'Create POTD', path: '/admin/create-potd' },
+  { icon: Code2, label: 'Create CPOTD', path: '/admin/create-cpotd' },
+  { icon: Settings, label: 'Settings', path: '/admin/settings' },
   {
     icon: Brain,
-    label: "Maintenance",
-    path: "/admin/maintenance-manager",
+    label: 'Maintenance',
+    path: '/admin/maintenance-manager',
   },
-  { icon: Ticket, label: "Tickets", path: "/admin/tickets" },
+  { icon: Ticket, label: 'Tickets', path: '/admin/tickets' },
   {
     icon: FileText,
-    label: "Project Docs",
-    path: "/project-docs",
+    label: 'Project Docs',
+    path: '/project-docs',
   },
 ];
 
-export default function AdminSidebar({
-  isOpen,
-  setIsOpen,
-  onOpenSystemHub,
-}) {
+export default function AdminSidebar({ isOpen, setIsOpen, onOpenSystemHub }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -66,18 +62,15 @@ export default function AdminSidebar({
           border-r border-gray-200 dark:border-white/10
           shadow-2xl
           transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}
       >
         <div className="flex flex-col h-full">
-
           {/* HEADER */}
-          
 
           {/* MENU */}
           <div className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-2">
-
             {/* SECTION TITLE */}
             <p className="px-3 text-[11px] uppercase tracking-widest text-gray-400 font-semibold mb-2">
               Main Menu
@@ -101,8 +94,8 @@ export default function AdminSidebar({
 
                     ${
                       isActive
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }
                   `}
                 >
@@ -110,8 +103,8 @@ export default function AdminSidebar({
                     <item.icon
                       className={`w-5 h-5 ${
                         isActive
-                          ? "text-white"
-                          : "text-gray-500 dark:text-gray-400 group-hover:text-indigo-500"
+                          ? 'text-white'
+                          : 'text-gray-500 dark:text-gray-400 group-hover:text-indigo-500'
                       }`}
                     />
                     <span>{item.label}</span>
@@ -120,8 +113,8 @@ export default function AdminSidebar({
                   <ChevronRight
                     className={`w-4 h-4 transition ${
                       isActive
-                        ? "text-white"
-                        : "text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-1"
+                        ? 'text-white'
+                        : 'text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-1'
                     }`}
                   />
                 </button>
@@ -158,7 +151,6 @@ export default function AdminSidebar({
               <p className="text-[11px] opacity-80 mt-1">Version 2.0</p>
             </div>
           </div>
-
         </div>
       </aside>
     </>

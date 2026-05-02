@@ -1,15 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   maintenanceMode: null,
-  maintenanceTitle: "",
-  maintenanceMessage: "",
-  maintenanceImage: "",
+  maintenanceTitle: '',
+  maintenanceMessage: '',
+  maintenanceImage: '',
   maintenanceAllowAdminAccess: true,
 };
 
 const maintenanceSlice = createSlice({
-  name: "maintenance",
+  name: 'maintenance',
   initialState,
   reducers: {
     setMaintenanceState(state, action) {
@@ -23,8 +23,7 @@ const maintenanceSlice = createSlice({
 
       if (maintenanceMode !== undefined) state.maintenanceMode = maintenanceMode;
       if (maintenanceTitle !== undefined) state.maintenanceTitle = maintenanceTitle;
-      if (maintenanceMessage !== undefined)
-        state.maintenanceMessage = maintenanceMessage;
+      if (maintenanceMessage !== undefined) state.maintenanceMessage = maintenanceMessage;
       if (maintenanceImage !== undefined) state.maintenanceImage = maintenanceImage;
       if (maintenanceAllowAdminAccess !== undefined)
         state.maintenanceAllowAdminAccess = maintenanceAllowAdminAccess;
@@ -35,7 +34,6 @@ const maintenanceSlice = createSlice({
   },
 });
 
-export const { setMaintenanceState, resetMaintenanceState } =
-  maintenanceSlice.actions;
+export const { setMaintenanceState, resetMaintenanceState } = maintenanceSlice.actions;
 
 export default maintenanceSlice.reducer;

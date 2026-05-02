@@ -1,7 +1,17 @@
 import React, { useEffect } from 'react';
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Mic, Clock, Award, Target, BarChart3, Download, Share2 ,MicOff,Phone} from 'lucide-react';
+import {
+  Mic,
+  Clock,
+  Award,
+  Target,
+  BarChart3,
+  Download,
+  Share2,
+  MicOff,
+  Phone,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,8 +21,8 @@ import { fetchVoiceReport } from '../redux/voiceSlice';
 const CallReport = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { currentCall: report, reportLoading } = useSelector(state => state.voice);
-  
+  const { currentCall: report, reportLoading } = useSelector((state) => state.voice);
+
   useEffect(() => {
     if (id) {
       dispatch(fetchVoiceReport(id));
@@ -44,7 +54,10 @@ const CallReport = () => {
             <CardContent className="p-12 text-center">
               <MicOff className="w-16 h-16 text-gray-400 mx-auto mb-6" />
               <h3 className="text-2xl font-bold mb-2">Report not found</h3>
-              <Link to="/ai-voice-coach" className="inline-flex items-center gap-2 mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold">
+              <Link
+                to="/ai-voice-coach"
+                className="inline-flex items-center gap-2 mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold"
+              >
                 <Mic className="w-5 h-5" />
                 New Practice Call
               </Link>
@@ -75,7 +88,9 @@ const CallReport = () => {
                     <Mic className="w-8 h-8" />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-black">{report.mode?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</h1>
+                    <h1 className="text-3xl font-black">
+                      {report.mode?.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                    </h1>
                     <div className="flex items-center gap-4 text-blue-100 mt-2">
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
@@ -117,14 +132,18 @@ const CallReport = () => {
                     {report.score}
                   </div>
                   <div className="w-64 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div 
+                    <div
                       className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full shadow-lg transition-all"
                       style={{ width: `${Math.min(report.score, 100)}%` }}
                     />
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {report.score >= 80 ? 'Excellent!' : report.score >= 60 ? 'Good!' : 'Keep Practicing!'}
+                      {report.score >= 80
+                        ? 'Excellent!'
+                        : report.score >= 60
+                          ? 'Good!'
+                          : 'Keep Practicing!'}
                     </p>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
                       You're {report.score >= 80 ? 'interview ready' : 'improving fast'}
@@ -184,7 +203,10 @@ const CallReport = () => {
                 Practice Again
               </Button>
             </Link>
-            <Button size="lg" className="flex-1 h-14 bg-gradient-to-r from-blue-600 to-purple-600 font-semibold text-lg shadow-xl hover:shadow-2xl">
+            <Button
+              size="lg"
+              className="flex-1 h-14 bg-gradient-to-r from-blue-600 to-purple-600 font-semibold text-lg shadow-xl hover:shadow-2xl"
+            >
               <Download className="w-5 h-5 mr-2" />
               Download Report
             </Button>
@@ -196,4 +218,3 @@ const CallReport = () => {
 };
 
 export default CallReport;
-

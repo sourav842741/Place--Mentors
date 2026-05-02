@@ -10,13 +10,15 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen flex">
-
       {/* Sidebar */}
-      <AdminSidebar isOpen={isOpen} setIsOpen={setIsOpen} onOpenSystemHub={() => setSystemHubOpen(true)} />
+      <AdminSidebar
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onOpenSystemHub={() => setSystemHubOpen(true)}
+      />
 
       {/* Right Side */}
       <div className="flex-1 flex flex-col">
-
         {/* Navbar */}
         <AdminNavbar setIsOpen={setIsOpen} />
 
@@ -24,7 +26,6 @@ export default function AdminLayout() {
         <main className="flex-1 p-4 lg:p-6">
           <Outlet />
         </main>
-
       </div>
 
       {/* System Hub Viewer */}

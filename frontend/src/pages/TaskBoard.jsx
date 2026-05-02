@@ -2,7 +2,13 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import useTasks from '../hooks/useTasks';
@@ -10,20 +16,15 @@ import TaskStats from '../components/tasks/TaskStats';
 import TaskCard from '../components/tasks/TaskCard';
 import TaskForm from '../components/tasks/TaskForm';
 import TaskFilters from '../components/tasks/TaskFilters';
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { ListTodo, Filter, RefreshCw } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 const TaskBoard = () => {
-  const { user } = useSelector(state => state.user);
-  
+  const { user } = useSelector((state) => state.user);
+
   const {
     tasks,
     stats,
@@ -49,56 +50,59 @@ const TaskBoard = () => {
   });
 
   // Filter and sort tasks
-  const applyFilters = useCallback((tasksList) => {
-    let filtered = [...tasksList];
+  const applyFilters = useCallback(
+    (tasksList) => {
+      let filtered = [...tasksList];
 
-    // Search
-    if (filters.searchTerm) {
-      filtered = filtered.filter(task =>
-        task.title.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      );
-    }
-
-    // Category
-    if (filters.categoryFilter) {
-      filtered = filtered.filter(task => task.category === filters.categoryFilter);
-    }
-
-    // Status
-    if (filters.statusFilter) {
-      if (filters.statusFilter === 'Completed') {
-        filtered = filtered.filter(task => task.completed);
-      } else if (filters.statusFilter === 'Pending') {
-        filtered = filtered.filter(task => !task.completed);
+      // Search
+      if (filters.searchTerm) {
+        filtered = filtered.filter((task) =>
+          task.title.toLowerCase().includes(filters.searchTerm.toLowerCase())
+        );
       }
-    }
 
-    // Priority
-    if (filters.priorityFilter) {
-      filtered = filtered.filter(task => task.priority === filters.priorityFilter);
-    }
+      // Category
+      if (filters.categoryFilter) {
+        filtered = filtered.filter((task) => task.category === filters.categoryFilter);
+      }
 
-    // Sort
-    switch (filters.sortBy) {
-      case 'oldest':
-        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        break;
-      case 'due-soon':
-        filtered.sort((a, b) => {
-          if (!a.dueDate && !b.dueDate) return 0;
-          if (!a.dueDate) return 1;
-          if (!b.dueDate) return -1;
-          return new Date(a.dueDate) - new Date(b.dueDate);
-        });
-        break;
-      case 'newest':
-      default:
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-    }
+      // Status
+      if (filters.statusFilter) {
+        if (filters.statusFilter === 'Completed') {
+          filtered = filtered.filter((task) => task.completed);
+        } else if (filters.statusFilter === 'Pending') {
+          filtered = filtered.filter((task) => !task.completed);
+        }
+      }
 
-    return filtered;
-  }, [filters]);
+      // Priority
+      if (filters.priorityFilter) {
+        filtered = filtered.filter((task) => task.priority === filters.priorityFilter);
+      }
+
+      // Sort
+      switch (filters.sortBy) {
+        case 'oldest':
+          filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          break;
+        case 'due-soon':
+          filtered.sort((a, b) => {
+            if (!a.dueDate && !b.dueDate) return 0;
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+            return new Date(a.dueDate) - new Date(b.dueDate);
+          });
+          break;
+        case 'newest':
+        default:
+          filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          break;
+      }
+
+      return filtered;
+    },
+    [filters]
+  );
 
   useEffect(() => {
     setFilteredTasks(applyFilters(tasks));
@@ -162,11 +166,11 @@ const TaskBoard = () => {
               </div>
             </div>
             <TaskStats />
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-48 w-full rounded-2xl" />
-            ))}
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-48 w-full rounded-2xl" />
+              ))}
+            </div>
           </div>
         </div>
       </>
@@ -179,7 +183,7 @@ const TaskBoard = () => {
       <div className="pt-24 lg:pl-64 px-4 md:px-8 pb-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-900 min-h-screen">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-12 p-2 rounded-2xl bg-background/50 backdrop-blur-sm -mx-4 md:-mx-0 md:p-0">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-12 p-2 rounded-2xl bg-background/50 backdrop-blur-sm -mx-4 md:-mx-0 md:p-0">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-primary/10 rounded-xl">
@@ -195,14 +199,9 @@ const TaskBoard = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <Button
-                onClick={refetchTasks}
-                variant="outline"
-                size="sm"
-                disabled={isLoading}
-              >
+              <Button onClick={refetchTasks} variant="outline" size="sm" disabled={isLoading}>
                 {isLoading ? (
                   <RefreshCw className="w-4 h-4 animate-spin mr-2" />
                 ) : (
@@ -219,9 +218,7 @@ const TaskBoard = () => {
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl p-0">
                   <DialogHeader className="p-6 border-b">
-                    <DialogTitle className="text-2xl font-bold">
-                      Create New Task
-                    </DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">Create New Task</DialogTitle>
                   </DialogHeader>
                   <div className="p-6">
                     <TaskForm onSuccess={handleCreateTask} />
@@ -240,21 +237,25 @@ const TaskBoard = () => {
               <CardTitle className="flex items-center gap-2">
                 Filters & Search
                 {activeFiltersCount > 0 && (
-                  <Badge className="text-xs">
-                    {activeFiltersCount} active
-                  </Badge>
+                  <Badge className="text-xs">{activeFiltersCount} active</Badge>
                 )}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <TaskFilters 
+              <TaskFilters
                 {...filters}
                 activeFiltersCount={activeFiltersCount}
-                setSearchTerm={(term) => setFilters(prev => ({ ...prev, searchTerm: term }))}
-                setCategoryFilter={(cat) => setFilters(prev => ({ ...prev, categoryFilter: cat }))}
-                setStatusFilter={(status) => setFilters(prev => ({ ...prev, statusFilter: status }))}
-                setPriorityFilter={(prio) => setFilters(prev => ({ ...prev, priorityFilter: prio }))}
-                setSortBy={(sort) => setFilters(prev => ({ ...prev, sortBy: sort }))}
+                setSearchTerm={(term) => setFilters((prev) => ({ ...prev, searchTerm: term }))}
+                setCategoryFilter={(cat) =>
+                  setFilters((prev) => ({ ...prev, categoryFilter: cat }))
+                }
+                setStatusFilter={(status) =>
+                  setFilters((prev) => ({ ...prev, statusFilter: status }))
+                }
+                setPriorityFilter={(prio) =>
+                  setFilters((prev) => ({ ...prev, priorityFilter: prio }))
+                }
+                setSortBy={(sort) => setFilters((prev) => ({ ...prev, sortBy: sort }))}
                 clearFilters={clearFilters}
               />
             </CardContent>
@@ -270,12 +271,11 @@ const TaskBoard = () => {
                     {isLoading ? 'Loading tasks...' : 'No tasks found'}
                   </h3>
                   <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    {isLoading 
-                      ? 'Fetching your tasks...' 
+                    {isLoading
+                      ? 'Fetching your tasks...'
                       : filters.searchTerm || activeFiltersCount > 0
-                      ? 'Try adjusting your filters or search terms'
-                      : 'Get started by creating your first task above.'
-                    }
+                        ? 'Try adjusting your filters or search terms'
+                        : 'Get started by creating your first task above.'}
                   </p>
                   {!isLoading && (
                     <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
@@ -287,9 +287,7 @@ const TaskBoard = () => {
                       </DialogTrigger>
                       <DialogContent className="max-w-2xl p-0">
                         <DialogHeader className="p-6 border-b">
-                          <DialogTitle className="text-2xl font-bold">
-                            Create New Task
-                          </DialogTitle>
+                          <DialogTitle className="text-2xl font-bold">Create New Task</DialogTitle>
                         </DialogHeader>
                         <div className="p-6">
                           <TaskForm onSuccess={handleCreateTask} />
@@ -301,12 +299,8 @@ const TaskBoard = () => {
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredTasks.map(task => (
-                  <TaskCard 
-                    key={task._id} 
-                    task={task}
-                    onEdit={() => handleEditTask(task)}
-                  />
+                {filteredTasks.map((task) => (
+                  <TaskCard key={task._id} task={task} onEdit={() => handleEditTask(task)} />
                 ))}
               </div>
             )}
@@ -316,24 +310,18 @@ const TaskBoard = () => {
           <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
             <DialogContent className="max-w-2xl p-0">
               <DialogHeader className="p-6 border-b">
-                <DialogTitle className="text-2xl font-bold">
-                  Edit Task
-                </DialogTitle>
+                <DialogTitle className="text-2xl font-bold">Edit Task</DialogTitle>
               </DialogHeader>
               <div className="p-6">
-                <TaskForm 
-                  task={editTask} 
-                  onSuccess={handleUpdateTask} 
-                />
+                <TaskForm task={editTask} onSuccess={handleUpdateTask} />
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
 
 export default TaskBoard;
-

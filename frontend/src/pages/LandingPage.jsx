@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   ArrowRight,
   Sparkles,
@@ -20,7 +20,7 @@ import {
   Zap,
   Target,
   Award,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -34,21 +34,21 @@ export default function LandingPage() {
   const [slide, setSlide] = useState(0);
 
   const gallery = [
-    "https://drive.google.com/file/d/1nWzcfBcFzmBcR7k9Q3p8-i7RQOlyPKDr/preview",
-    "https://drive.google.com/file/d/1QbQnlztsXVLmxaViLnX7hFSugHy4usMq/preview",
-    "https://drive.google.com/file/d/1VTykObLV0ZSUZvzeUChct322zKH5X-Wy/preview",
-    "https://drive.google.com/file/d/1RUG-NIheQutDhmSagbO40ZgVqZFI2pHA/preview",
+    'https://drive.google.com/file/d/1nWzcfBcFzmBcR7k9Q3p8-i7RQOlyPKDr/preview',
+    'https://drive.google.com/file/d/1QbQnlztsXVLmxaViLnX7hFSugHy4usMq/preview',
+    'https://drive.google.com/file/d/1VTykObLV0ZSUZvzeUChct322zKH5X-Wy/preview',
+    'https://drive.google.com/file/d/1RUG-NIheQutDhmSagbO40ZgVqZFI2pHA/preview',
   ];
 
   useEffect(() => {
-    if (user) navigate("/dashboard");
+    if (user) navigate('/dashboard');
   }, [user]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
+    const saved = localStorage.getItem('theme');
 
-    if (saved === "dark") {
-      document.documentElement.classList.add("dark");
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
       setDark(true);
     }
 
@@ -69,23 +69,23 @@ export default function LandingPage() {
   }, []);
 
   const toggleTheme = () => {
-    const mode = document.documentElement.classList.toggle("dark");
+    const mode = document.documentElement.classList.toggle('dark');
     setDark(mode);
-    localStorage.setItem("theme", mode ? "dark" : "light");
+    localStorage.setItem('theme', mode ? 'dark' : 'light');
   };
 
   const faqs = [
     {
-      q: "Is PlaceMentor free to start?",
-      a: "Yes, you can begin free and use core features instantly.",
+      q: 'Is PlaceMentor free to start?',
+      a: 'Yes, you can begin free and use core features instantly.',
     },
     {
-      q: "Can I improve coding here?",
-      a: "Yes, coding battles, POTD and practice tools are included.",
+      q: 'Can I improve coding here?',
+      a: 'Yes, coding battles, POTD and practice tools are included.',
     },
     {
-      q: "Does AI Planner help placements?",
-      a: "Yes, it creates roadmap based on your goals.",
+      q: 'Does AI Planner help placements?',
+      a: 'Yes, it creates roadmap based on your goals.',
     },
   ];
 
@@ -113,14 +113,14 @@ export default function LandingPage() {
             <Button
               variant="outline"
               className="hidden sm:flex rounded-xl"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
             >
               Login
             </Button>
 
             <Button
               className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate('/signup')}
             >
               Start Free
             </Button>
@@ -137,29 +137,27 @@ export default function LandingPage() {
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-gray-900 border shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-purple-500" />
-            <span className="text-sm font-semibold">
-              AI Powered Placement Platform
-            </span>
+            <span className="text-sm font-semibold">AI Powered Placement Platform</span>
           </div>
 
           <h1 className="text-5xl md:text-6xl font-black leading-tight">
-            Build Your{" "}
+            Build Your{' '}
             <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
               Dream Career
-            </span>{" "}
+            </span>{' '}
             Faster 🚀
           </h1>
 
           <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-xl leading-relaxed">
-            Coding practice, AI roadmap, interviews, resume tools and everything
-            needed to crack placements smarter.
+            Coding practice, AI roadmap, interviews, resume tools and everything needed to crack
+            placements smarter.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
             <Button
               size="lg"
               className="rounded-2xl px-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate('/signup')}
             >
               Join Free Now
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -169,7 +167,7 @@ export default function LandingPage() {
               size="lg"
               variant="outline"
               className="rounded-2xl px-8"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
             >
               Login
             </Button>
@@ -214,26 +212,15 @@ export default function LandingPage() {
       {/* COUNTERS */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
         <div className="grid md:grid-cols-3 gap-6">
-          <CounterCard
-            number={`${count1.toLocaleString()}+`}
-            label="Students Joined"
-          />
-          <CounterCard
-            number={`${count2.toLocaleString()}+`}
-            label="Problems Solved"
-          />
-          <CounterCard
-            number={`${count3.toLocaleString()}+`}
-            label="Trusted Users"
-          />
+          <CounterCard number={`${count1.toLocaleString()}+`} label="Students Joined" />
+          <CounterCard number={`${count2.toLocaleString()}+`} label="Problems Solved" />
+          <CounterCard number={`${count3.toLocaleString()}+`} label="Trusted Users" />
         </div>
       </section>
 
       {/* CAROUSEL */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-black text-center mb-4">
-          Explore PlaceMentor ✨
-        </h2>
+        <h2 className="text-4xl font-black text-center mb-4">Explore PlaceMentor ✨</h2>
 
         <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
           Real product previews and dashboard snapshots
@@ -245,9 +232,7 @@ export default function LandingPage() {
           </div>
 
           <button
-            onClick={() =>
-              setSlide(slide === 0 ? gallery.length - 1 : slide - 1)
-            }
+            onClick={() => setSlide(slide === 0 ? gallery.length - 1 : slide - 1)}
             className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center"
           >
             <ChevronLeft />
@@ -264,9 +249,7 @@ export default function LandingPage() {
 
       {/* FEATURES */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-black text-center mb-12">
-          Why PlaceMentor Wins 🚀
-        </h2>
+        <h2 className="text-4xl font-black text-center mb-12">Why PlaceMentor Wins 🚀</h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <FeatureCard
@@ -284,16 +267,8 @@ export default function LandingPage() {
             title="Placement Predictor"
             desc="Check chances instantly."
           />
-          <FeatureCard
-            icon={<Award />}
-            title="Leaderboard"
-            desc="Compete and stay consistent."
-          />
-          <FeatureCard
-            icon={<Zap />}
-            title="Fast Progress"
-            desc="XP, streaks and growth system."
-          />
+          <FeatureCard icon={<Award />} title="Leaderboard" desc="Compete and stay consistent." />
+          <FeatureCard icon={<Zap />} title="Fast Progress" desc="XP, streaks and growth system." />
           <FeatureCard
             icon={<ShieldCheck />}
             title="Resume Tools"
@@ -304,31 +279,18 @@ export default function LandingPage() {
 
       {/* TESTIMONIALS */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
-        <h2 className="text-4xl font-black text-center mb-12">
-          Loved by Students ❤️
-        </h2>
+        <h2 className="text-4xl font-black text-center mb-12">Loved by Students ❤️</h2>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <Testimonial
-            name="Rahul"
-            text="Coding consistency became much better."
-          />
-          <Testimonial
-            name="Anjali"
-            text="AI roadmap helped me stay focused."
-          />
-          <Testimonial
-            name="Sourav"
-            text="Best modern platform for placements."
-          />
+          <Testimonial name="Rahul" text="Coding consistency became much better." />
+          <Testimonial name="Anjali" text="AI roadmap helped me stay focused." />
+          <Testimonial name="Sourav" text="Best modern platform for placements." />
         </div>
       </section>
 
       {/* FAQ */}
       <section className="max-w-4xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-black text-center mb-10">
-          Frequently Asked Questions
-        </h2>
+        <h2 className="text-4xl font-black text-center mb-10">Frequently Asked Questions</h2>
 
         <div className="space-y-4">
           {faqs.map((item, i) => (
@@ -341,17 +303,11 @@ export default function LandingPage() {
                 className="w-full px-5 py-4 flex justify-between font-semibold text-left"
               >
                 {item.q}
-                <ChevronDown
-                  className={`w-5 h-5 transition ${
-                    faq === i ? "rotate-180" : ""
-                  }`}
-                />
+                <ChevronDown className={`w-5 h-5 transition ${faq === i ? 'rotate-180' : ''}`} />
               </button>
 
               {faq === i && (
-                <div className="px-5 pb-4 text-gray-500 dark:text-gray-300">
-                  {item.a}
-                </div>
+                <div className="px-5 pb-4 text-gray-500 dark:text-gray-300">{item.a}</div>
               )}
             </div>
           ))}
@@ -361,9 +317,7 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="max-w-6xl mx-auto px-6 pb-24">
         <div className="rounded-[32px] p-10 text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white shadow-2xl">
-          <h2 className="text-4xl font-black mb-4">
-            Ready To Crack Your Dream Job?
-          </h2>
+          <h2 className="text-4xl font-black mb-4">Ready To Crack Your Dream Job?</h2>
 
           <p className="text-white/90 max-w-2xl mx-auto">
             Join thousands of students building careers smarter.
@@ -371,7 +325,7 @@ export default function LandingPage() {
 
           <Button
             className="mt-7 bg-white text-indigo-700 rounded-2xl px-10"
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate('/signup')}
           >
             Get Started Free
           </Button>

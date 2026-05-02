@@ -1,18 +1,12 @@
-import React, { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import CompanySearch from "../components/CompanySearch";
-import useCompany from "../hooks/useCompany";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import { Skeleton } from "../components/ui/skeleton";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Badge } from "../components/ui/badge";
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import CompanySearch from '../components/CompanySearch';
+import useCompany from '../hooks/useCompany';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Skeleton } from '../components/ui/skeleton';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Badge } from '../components/ui/badge';
 import {
   Building2,
   Users,
@@ -24,9 +18,9 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
-} from "lucide-react";
-import { Button } from "../components/ui/button";
-import Footer from "@/components/Footer";
+} from 'lucide-react';
+import { Button } from '../components/ui/button';
+import Footer from '@/components/Footer';
 
 const CompanyPage = () => {
   const { name: paramName } = useParams();
@@ -74,7 +68,7 @@ const CompanyPage = () => {
             <div className="flex items-center gap-4">
               <Button
                 variant="outline"
-                onClick={() => navigate("/companies")}
+                onClick={() => navigate('/companies')}
                 className="rounded-xl shadow-sm hover:shadow-md transition"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -83,10 +77,10 @@ const CompanyPage = () => {
 
               <div>
                 <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 ">
-                  {company?.overview?.name || "Company Details"}
+                  {company?.overview?.name || 'Company Details'}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {company?.overview?.tagline || "Preparation guide"}
+                  {company?.overview?.tagline || 'Preparation guide'}
                 </p>
               </div>
             </div>
@@ -106,9 +100,7 @@ const CompanyPage = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <h3 className="font-bold text-xl">
-                        {company?.overview?.name || "N/A"}
-                      </h3>
+                      <h3 className="font-bold text-xl">{company?.overview?.name || 'N/A'}</h3>
                       {company?.overview?.tagline && (
                         <p className="text-2xl font-light italic text-gray-600 mt-2 dark:text-white">
                           {company?.overview?.tagline}
@@ -116,18 +108,15 @@ const CompanyPage = () => {
                       )}
                     </div>
                     <p className="text-gray-600 leading-relaxed dark:text-white">
-                      {company?.overview?.description ||
-                        "No description available"}
+                      {company?.overview?.description || 'No description available'}
                     </p>
 
                     <p className="text-gray-600 leading-relaxed dark:text-white">
-                      {company?.overview?.industry ||
-                        "No description available"}
+                      {company?.overview?.industry || 'No description available'}
                     </p>
 
                     <p className="text-gray-600 leading-relaxed dark:text-white">
-                      {company?.overview?.headquarters ||
-                        "No description available"}
+                      {company?.overview?.headquarters || 'No description available'}
                     </p>
                   </CardContent>
                 </Card>
@@ -144,21 +133,13 @@ const CompanyPage = () => {
                     {company?.hiring?.pattern?.length ? (
                       <div className="space-y-2">
                         {company.hiring.pattern.map((round, i) => (
-                          <div
-                            key={i}
-                            className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
-                          >
-                            <Badge
-                              variant="secondary"
-                              className="mt-0.5 shrink-0"
-                            >
+                          <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                            <Badge variant="secondary" className="mt-0.5 shrink-0">
                               Round {i + 1}
                             </Badge>
                             <div>
                               <h4 className="font-semibold">{round?.round}</h4>
-                              <p className="text-sm text-gray-600">
-                                {round?.details}
-                              </p>
+                              <p className="text-sm text-gray-600">{round?.details}</p>
                             </div>
                           </div>
                         ))}
@@ -182,25 +163,23 @@ const CompanyPage = () => {
                       <>
                         <div className="text-center p-4 bg-green-50 rounded-lg">
                           <p className="text-2xl font-bold text-green-700">
-                            {company.salary.average || "N/A"}
+                            {company.salary.average || 'N/A'}
                           </p>
                           <p className="text-sm text-green-600">Average CTC</p>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <span className="font-semibold">Intern:</span>{" "}
-                            {company.salary.intern || "N/A"}
+                            <span className="font-semibold">Intern:</span>{' '}
+                            {company.salary.intern || 'N/A'}
                           </div>
                           <div>
-                            <span className="font-semibold">Bonus:</span>{" "}
-                            {company.salary.bonus || "N/A"}
+                            <span className="font-semibold">Bonus:</span>{' '}
+                            {company.salary.bonus || 'N/A'}
                           </div>
                         </div>
                       </>
                     ) : (
-                      <p className="text-gray-500 italic">
-                        Salary info not available
-                      </p>
+                      <p className="text-gray-500 italic">Salary info not available</p>
                     )}
                   </CardContent>
                 </Card>
@@ -220,38 +199,33 @@ const CompanyPage = () => {
                       <>
                         <div className="p-4 bg-blue-50 rounded-lg text-center">
                           <p className="text-lg font-bold text-blue-700">
-                            {company.examTimeline.expected || "N/A"}
+                            {company.examTimeline.expected || 'N/A'}
                           </p>
                           <p className="text-sm text-blue-600">Expected</p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-2 text-sm">
                           <div>
-                            <span className="font-semibold">Last Year:</span>{" "}
-                            {company.examTimeline.lastYear || "N/A"}
+                            <span className="font-semibold">Last Year:</span>{' '}
+                            {company.examTimeline.lastYear || 'N/A'}
                           </div>
 
                           <div>
-                            <span className="font-semibold">Note:</span>{" "}
-                            {company.examTimeline.note || "N/A"}
+                            <span className="font-semibold">Note:</span>{' '}
+                            {company.examTimeline.note || 'N/A'}
                           </div>
                         </div>
                       </>
                     ) : (
-                      <p className="text-gray-500 italic">
-                        Exam timeline not available
-                      </p>
+                      <p className="text-gray-500 italic">Exam timeline not available</p>
                     )}
 
                     {/*  Roadmap + Daily Plan (YAHIN ADD KARNA HAI) */}
-                    {(company?.preparation?.roadmap ||
-                      company?.preparation?.dailyPlanGuide) && (
+                    {(company?.preparation?.roadmap || company?.preparation?.dailyPlanGuide) && (
                       <div className="p-4 bg-purple-50 rounded-lg space-y-3">
                         {company?.preparation?.roadmap && (
                           <div>
-                            <h4 className="font-semibold text-purple-700">
-                              Roadmap
-                            </h4>
+                            <h4 className="font-semibold text-purple-700">Roadmap</h4>
                             <p className="text-sm text-gray-700 mt-1">
                               {company.preparation.roadmap}
                             </p>
@@ -260,9 +234,7 @@ const CompanyPage = () => {
 
                         {company?.preparation?.dailyPlanGuide && (
                           <div>
-                            <h4 className="font-semibold text-purple-700">
-                              Daily Plan
-                            </h4>
+                            <h4 className="font-semibold text-purple-700">Daily Plan</h4>
                             <p className="text-sm text-gray-700 mt-1">
                               {company.preparation.dailyPlanGuide}
                             </p>
@@ -289,27 +261,25 @@ const CompanyPage = () => {
                           <div className="p-3 bg-green-50 rounded-lg text-center">
                             <p className="text-sm text-gray-500">Aptitude</p>
                             <p className="font-bold text-green-700">
-                              {company.cutoff.aptitude || "N/A"}
+                              {company.cutoff.aptitude || 'N/A'}
                             </p>
                           </div>
 
                           <div className="p-3 bg-yellow-50 rounded-lg text-center">
                             <p className="text-sm text-gray-500">Coding</p>
                             <p className="font-bold text-yellow-700">
-                              {company.cutoff.coding || "N/A"}
+                              {company.cutoff.coding || 'N/A'}
                             </p>
                           </div>
                         </div>
 
                         <div className="p-3 bg-blue-50 rounded-lg text-sm dark:text-black">
                           <span className="font-semibold">Note: </span>
-                          {company.cutoff.note || "N/A"}
+                          {company.cutoff.note || 'N/A'}
                         </div>
                       </>
                     ) : (
-                      <p className="text-gray-500 italic">
-                        Cutoff info not available
-                      </p>
+                      <p className="text-gray-500 italic">Cutoff info not available</p>
                     )}
                   </CardContent>
                 </Card>
@@ -328,163 +298,117 @@ const CompanyPage = () => {
                         {company?.preparation?.topics && (
                           <>
                             {/* Must Do */}
-                            {company?.preparation?.topics?.mustDo?.length >
-                              0 && (
+                            {company?.preparation?.topics?.mustDo?.length > 0 && (
                               <div>
-                                <h4 className="font-semibold mb-2">
-                                  Must Do Topics
-                                </h4>
+                                <h4 className="font-semibold mb-2">Must Do Topics</h4>
                                 <div className="flex flex-wrap gap-1 mb-4">
-                                  {company?.preparation?.topics?.mustDo?.map(
-                                    (topic, i) => (
-                                      <Badge
-                                        key={i}
-                                        variant="outline"
-                                        className="text-xs"
-                                      >
-                                        {topic}
-                                      </Badge>
-                                    ),
-                                  )}
+                                  {company?.preparation?.topics?.mustDo?.map((topic, i) => (
+                                    <Badge key={i} variant="outline" className="text-xs">
+                                      {topic}
+                                    </Badge>
+                                  ))}
                                 </div>
                               </div>
                             )}
 
                             {/* Aptitude */}
-                            {Object.values(
-                              company?.preparation?.topics?.aptitude || {},
-                            ).some((arr) => arr?.length > 0) && (
+                            {Object.values(company?.preparation?.topics?.aptitude || {}).some(
+                              (arr) => arr?.length > 0
+                            ) && (
                               <div>
                                 <h4 className="font-semibold mb-2">Aptitude</h4>
                                 <div className="space-y-2">
                                   {[
                                     {
-                                      title: "Quantitative",
-                                      topics:
-                                        company?.preparation?.topics?.aptitude
-                                          ?.quantitative,
+                                      title: 'Quantitative',
+                                      topics: company?.preparation?.topics?.aptitude?.quantitative,
                                     },
                                     {
-                                      title: "Logical",
-                                      topics:
-                                        company?.preparation?.topics?.aptitude
-                                          ?.logical,
+                                      title: 'Logical',
+                                      topics: company?.preparation?.topics?.aptitude?.logical,
                                     },
                                     {
-                                      title: "Verbal",
-                                      topics:
-                                        company?.preparation?.topics?.aptitude
-                                          ?.verbal,
+                                      title: 'Verbal',
+                                      topics: company?.preparation?.topics?.aptitude?.verbal,
                                     },
                                   ].map(
                                     ({ title, topics }) =>
                                       topics?.length > 0 && (
-                                        <div
-                                          key={title}
-                                          className="flex flex-wrap gap-1"
-                                        >
+                                        <div key={title} className="flex flex-wrap gap-1">
                                           <span className="text-xs font-medium text-gray-500 mr-2">
                                             {title}:
                                           </span>
                                           {topics.map((topic, i) => (
-                                            <Badge
-                                              key={i}
-                                              variant="secondary"
-                                              className="text-xs"
-                                            >
+                                            <Badge key={i} variant="secondary" className="text-xs">
                                               {topic}
                                             </Badge>
                                           ))}
                                         </div>
-                                      ),
+                                      )
                                   )}
                                 </div>
                               </div>
                             )}
 
                             {/* Core Subjects */}
-                            {Object.values(
-                              company.preparation.topics.coreSubjects || {},
-                            ).some((arr) => arr?.length > 0) && (
+                            {Object.values(company.preparation.topics.coreSubjects || {}).some(
+                              (arr) => arr?.length > 0
+                            ) && (
                               <div>
-                                <h4 className="font-semibold mb-2">
-                                  Core Subjects
-                                </h4>
+                                <h4 className="font-semibold mb-2">Core Subjects</h4>
                                 <div className="space-y-2">
                                   {[
                                     {
-                                      title: "OS",
-                                      topics:
-                                        company?.preparation?.topics
-                                          ?.coreSubjects?.os,
+                                      title: 'OS',
+                                      topics: company?.preparation?.topics?.coreSubjects?.os,
                                     },
                                     {
-                                      title: "DBMS",
-                                      topics:
-                                        company?.preparation?.topics
-                                          ?.coreSubjects?.dbms,
+                                      title: 'DBMS',
+                                      topics: company?.preparation?.topics?.coreSubjects?.dbms,
                                     },
                                     {
-                                      title: "OOPS",
-                                      topics:
-                                        company?.preparation?.topics
-                                          ?.coreSubjects?.oops,
+                                      title: 'OOPS',
+                                      topics: company?.preparation?.topics?.coreSubjects?.oops,
                                     },
                                   ].map(
                                     ({ title, topics }) =>
                                       topics?.length > 0 && (
-                                        <div
-                                          key={title}
-                                          className="flex flex-wrap gap-1"
-                                        >
+                                        <div key={title} className="flex flex-wrap gap-1">
                                           <span className="text-xs font-medium text-gray-500 mr-2">
                                             {title}:
                                           </span>
                                           {topics.map((topic, i) => (
-                                            <Badge
-                                              key={i}
-                                              variant="outline"
-                                              className="text-xs"
-                                            >
+                                            <Badge key={i} variant="outline" className="text-xs">
                                               {topic}
                                             </Badge>
                                           ))}
                                         </div>
-                                      ),
+                                      )
                                   )}
                                 </div>
                               </div>
                             )}
 
                             {/* Advanced */}
-                            {Object.values(
-                              company.preparation.topics.advanced || {},
-                            ).some((arr) => arr?.length > 0) && (
+                            {Object.values(company.preparation.topics.advanced || {}).some(
+                              (arr) => arr?.length > 0
+                            ) && (
                               <div>
-                                <h4 className="font-semibold mb-2">
-                                  Advanced Topics
-                                </h4>
+                                <h4 className="font-semibold mb-2">Advanced Topics</h4>
                                 <div className="space-y-2">
                                   {[
                                     {
-                                      title: "System Design",
-                                      topics:
-                                        company?.preparation?.topics?.advanced
-                                          ?.systemDesign,
+                                      title: 'System Design',
+                                      topics: company?.preparation?.topics?.advanced?.systemDesign,
                                     },
                                     {
-                                      title: "CS Concepts",
-                                      topics:
-                                        company?.preparation?.topics?.advanced
-                                          ?.csConcepts,
+                                      title: 'CS Concepts',
+                                      topics: company?.preparation?.topics?.advanced?.csConcepts,
                                     },
                                   ].map(
                                     ({ title, topics }) =>
                                       topics?.length > 0 && (
-                                        <div
-                                          key={title}
-                                          className="flex flex-wrap gap-1"
-                                        >
+                                        <div key={title} className="flex flex-wrap gap-1">
                                           <span className="text-xs font-medium text-gray-500 mr-2">
                                             {title}:
                                           </span>
@@ -498,7 +422,7 @@ const CompanyPage = () => {
                                             </Badge>
                                           ))}
                                         </div>
-                                      ),
+                                      )
                                   )}
                                 </div>
                               </div>
@@ -507,9 +431,7 @@ const CompanyPage = () => {
                         )}
                       </>
                     ) : (
-                      <p className="text-gray-500 italic">
-                        No preparation info
-                      </p>
+                      <p className="text-gray-500 italic">No preparation info</p>
                     )}
                   </CardContent>
                 </Card>
@@ -531,24 +453,16 @@ const CompanyPage = () => {
                             <div className="space-y-1">
                               {company?.resources?.youtube
                                 ?.filter((item) => {
-                                  const url =
-                                    typeof item === "string"
-                                      ? item
-                                      : item?.link;
-                                  return url && typeof url === "string";
+                                  const url = typeof item === 'string' ? item : item?.link;
+                                  return url && typeof url === 'string';
                                 })
                                 .map((item, i) => {
-                                  const url =
-                                    typeof item === "string" ? item : item.link;
+                                  const url = typeof item === 'string' ? item : item.link;
                                   const displayText =
-                                    (typeof item === "object" && item.title
+                                    (typeof item === 'object' && item.title
                                       ? item.title
-                                      : url.replace(
-                                          "https://www.youtube.com/watch?v=",
-                                          "",
-                                        )
-                                    ).slice(0, 50) +
-                                    (url.length > 50 ? "..." : "");
+                                      : url.replace('https://www.youtube.com/watch?v=', '')
+                                    ).slice(0, 50) + (url.length > 50 ? '...' : '');
                                   return (
                                     <a
                                       key={i}
@@ -604,9 +518,7 @@ const CompanyPage = () => {
                         )}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic">
-                        No resources available
-                      </p>
+                      <p className="text-gray-500 italic">No resources available</p>
                     )}
                   </CardContent>
                 </Card>
@@ -632,15 +544,11 @@ const CompanyPage = () => {
                         </div>
                         {company.strategy.mistakesToAvoid?.length && (
                           <div>
-                            <h4 className="font-semibold mb-2">
-                              Mistakes to Avoid
-                            </h4>
+                            <h4 className="font-semibold mb-2">Mistakes to Avoid</h4>
                             <ul className="space-y-1 list-disc list-inside text-sm text-orange-700">
-                              {company?.strategy?.mistakesToAvoid?.map(
-                                (mistake, i) => (
-                                  <li key={i}>{mistake}</li>
-                                ),
-                              )}
+                              {company?.strategy?.mistakesToAvoid?.map((mistake, i) => (
+                                <li key={i}>{mistake}</li>
+                              ))}
                             </ul>
                           </div>
                         )}
@@ -665,20 +573,14 @@ const CompanyPage = () => {
                         {company?.aiFeatures?.resumeTips && (
                           <div>
                             <h4 className="font-semibold mb-1">Resume Tips</h4>
-                            <p className="text-sm">
-                              {company.aiFeatures.resumeTips}
-                            </p>
+                            <p className="text-sm">{company.aiFeatures.resumeTips}</p>
                           </div>
                         )}
 
-                        {Array.isArray(
-                          company.aiFeatures?.interviewQuestions,
-                        ) &&
+                        {Array.isArray(company.aiFeatures?.interviewQuestions) &&
                           company.aiFeatures.interviewQuestions.length > 0 && (
                             <div>
-                              <h4 className="font-semibold mb-1">
-                                Sample Interview Questions
-                              </h4>
+                              <h4 className="font-semibold mb-1">Sample Interview Questions</h4>
                               <div className="space-y-2 mt-2">
                                 {company?.aiFeatures?.interviewQuestions
                                   ?.slice(0, 3)
@@ -690,13 +592,9 @@ const CompanyPage = () => {
                                       Q{i + 1}: {q}
                                     </div>
                                   ))}
-                                {company.aiFeatures.interviewQuestions.length >
-                                  3 && (
+                                {company.aiFeatures.interviewQuestions.length > 3 && (
                                   <p className="text-xs text-gray-500">
-                                    ... and{" "}
-                                    {company.aiFeatures.interviewQuestions
-                                      .length - 3}{" "}
-                                    more
+                                    ... and {company.aiFeatures.interviewQuestions.length - 3} more
                                   </p>
                                 )}
                               </div>
@@ -704,9 +602,7 @@ const CompanyPage = () => {
                           )}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic">
-                        AI features coming soon
-                      </p>
+                      <p className="text-gray-500 italic">AI features coming soon</p>
                     )}
                   </CardContent>
                 </Card>

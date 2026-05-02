@@ -8,7 +8,7 @@ import {
   clearChat,
   getCoachHistory,
   getQuickResponse,
-  getSingleCoachChat
+  getSingleCoachChat,
 } from "../controllers/ai.controller.js";
 import { getYoutubeVideo } from "../services/youtube.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -29,28 +29,30 @@ router.delete("/coach/:chatId", isAuth, clearChat);
 router.get("/coach/quick/:type", isAuth, getQuickResponse);
 router.get("/coach/:chatId", isAuth, getSingleCoachChat);
 
-
 // New YouTube search endpoint - no auth required
-router.get("/youtube", asyncHandler(async (req, res) => {
-  const { query } = req.query;
+router.get(
+  "/youtube",
+  asyncHandler(async (req, res) => {
+    const { query } = req.query;
 
-  if (!query) {
-    throw new ApiError(400, "Query parameter 'query' is required");
-  }
+    if (!query) {
+      throw new ApiError(400, "Query parameter 'query' is required");
+    }
 
-  const videoData = await getYoutubeVideo(query);
+    const videoData = await getYoutubeVideo(query);
 
-  if (!videoData) {
-    throw new ApiError(404, "No suitable video found");
-  }
+    if (!videoData) {
+      throw new ApiError(404, "No suitable video found");
+    }
 
-  res.status(200).json(
-    new ApiResponse(200, {
-      success: true,
-      data: videoData
-    })
-  );
-}));
+    res.status(200).json(
+      new ApiResponse(200, {
+        success: true,
+        data: videoData,
+      })
+    );
+  })
+);
 
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 

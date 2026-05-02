@@ -9,19 +9,19 @@ export const generateAIResponse = async (prompt) => {
         messages: [
           {
             role: "system",
-            content: "You are a strict JSON generator."
+            content: "You are a strict JSON generator.",
           },
           {
             role: "user",
-            content: prompt
-          }
-        ]
+            content: prompt,
+          },
+        ],
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
 
@@ -38,7 +38,6 @@ export const generateAIResponse = async (prompt) => {
       .trim();
 
     return JSON.parse(cleanText);
-
   } catch (error) {
     console.error("OpenRouter Error:", error.response?.data || error.message);
     throw new Error("AI generation failed");

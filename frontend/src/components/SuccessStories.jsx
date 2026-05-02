@@ -1,46 +1,43 @@
-import React, { useState } from "react";
-import { Plus } from "lucide-react";
+import React, { useState } from 'react';
+import { Plus } from 'lucide-react';
 
 const successStoriesData = [
   {
-    name: "How do I sign up for Place Mentor?",
+    name: 'How do I sign up for Place Mentor?',
     message:
-      "Click on Sign Up, use Google or email, verify OTP, and start your preparation journey instantly.",
+      'Click on Sign Up, use Google or email, verify OTP, and start your preparation journey instantly.',
   },
   {
-    name: "How can I change my profile name?",
-    message:
-      "Go to profile settings and update your name from the edit section.",
+    name: 'How can I change my profile name?',
+    message: 'Go to profile settings and update your name from the edit section.',
   },
   {
-    name: "Is my profile information private?",
-    message:
-      "Yes, your data is secure and controlled by your privacy settings.",
+    name: 'Is my profile information private?',
+    message: 'Yes, your data is secure and controlled by your privacy settings.',
   },
   {
-    name: "Can I share my profile with recruiters?",
-    message:
-      "Yes, you can generate a shareable profile link from your dashboard.",
+    name: 'Can I share my profile with recruiters?',
+    message: 'Yes, you can generate a shareable profile link from your dashboard.',
   },
   {
-    name: "What is POTD in Place Mentor?",
+    name: 'What is POTD in Place Mentor?',
     message:
-      "POTD (Problem of the Day) helps you practice coding daily and maintain consistency with streaks.",
+      'POTD (Problem of the Day) helps you practice coding daily and maintain consistency with streaks.',
   },
   {
-    name: "Does Place Mentor provide interview preparation?",
+    name: 'Does Place Mentor provide interview preparation?',
     message:
-      "Yes, we provide company-wise interview questions, mock tests, and AI-based preparation tools.",
+      'Yes, we provide company-wise interview questions, mock tests, and AI-based preparation tools.',
   },
   {
-    name: "Can I track my progress?",
+    name: 'Can I track my progress?',
     message:
-      "Yes, your dashboard shows progress, streaks, performance analytics, and improvement areas.",
+      'Yes, your dashboard shows progress, streaks, performance analytics, and improvement areas.',
   },
   {
-    name: "Is there any premium plan available?",
+    name: 'Is there any premium plan available?',
     message:
-      "Yes, premium plans unlock advanced features like mentorship, AI mock interviews, and detailed analytics.",
+      'Yes, premium plans unlock advanced features like mentorship, AI mock interviews, and detailed analytics.',
   },
 ];
 
@@ -63,15 +60,15 @@ const SuccessStories = () => {
 
         {/* HEADING */}
         <h2 className="text-3xl md:text-5xl font-bold text-center text-slate-900 dark:text-white">
-          Frequently Asked{" "}
+          Frequently Asked{' '}
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Questions
           </span>
         </h2>
 
         <p className="text-center text-slate-600 dark:text-slate-400 mt-4 mb-12 max-w-2xl mx-auto text-sm md:text-base">
-          Find quick answers about Place Mentor, account setup, progress
-          tracking, premium plans, and preparation tools.
+          Find quick answers about Place Mentor, account setup, progress tracking, premium plans,
+          and preparation tools.
         </p>
 
         {/* FAQ BOX */}
@@ -95,7 +92,7 @@ const SuccessStories = () => {
 
                   <div
                     className={`min-w-[38px] h-[38px] rounded-xl flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-transform duration-300 ${
-                      isOpen ? "rotate-45 scale-105" : ""
+                      isOpen ? 'rotate-45 scale-105' : ''
                     }`}
                   >
                     <Plus className="w-5 h-5" />
@@ -105,9 +102,7 @@ const SuccessStories = () => {
                 {/* ANSWER */}
                 <div
                   className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen
-                      ? "grid-rows-[1fr] opacity-100"
-                      : "grid-rows-[0fr] opacity-0"
+                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
                   }`}
                 >
                   <div className="overflow-hidden">

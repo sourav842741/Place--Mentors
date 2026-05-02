@@ -90,9 +90,7 @@ export const createTicket = asyncHandler(async (req, res) => {
     });
   }
 
-  res.status(201).json(
-    new ApiResponse(201, populatedTicket, "Ticket created successfully")
-  );
+  res.status(201).json(new ApiResponse(201, populatedTicket, "Ticket created successfully"));
 });
 
 /* =====================================================
@@ -121,15 +119,19 @@ export const getMyTickets = asyncHandler(async (req, res) => {
   ]);
 
   res.status(200).json(
-    new ApiResponse(200, {
-      tickets,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        pages: Math.ceil(total / Number(limit)),
+    new ApiResponse(
+      200,
+      {
+        tickets,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit)),
+        },
       },
-    }, "Tickets fetched successfully")
+      "Tickets fetched successfully"
+    )
   );
 });
 
@@ -145,9 +147,7 @@ export const getTicketDetail = asyncHandler(async (req, res) => {
     req.user.role === "superadmin" ||
     req.user.email === process.env.SUPER_ADMIN_EMAIL;
 
-  const ticket = await Ticket.findById(id)
-    .populate("user", "fullName email avatar")
-    .lean();
+  const ticket = await Ticket.findById(id).populate("user", "fullName email avatar").lean();
 
   if (!ticket) throw new ApiError(404, "Ticket not found");
 
@@ -168,9 +168,9 @@ export const getTicketDetail = asyncHandler(async (req, res) => {
       .lean();
   }
 
-  res.status(200).json(
-    new ApiResponse(200, { ticket, replies, internalNotes }, "Ticket detail fetched")
-  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, { ticket, replies, internalNotes }, "Ticket detail fetched"));
 });
 
 /* =====================================================
@@ -225,15 +225,23 @@ export const replyToTicket = asyncHandler(async (req, res) => {
 
   try {
     if (isAdmin && !isInternal) {
-      await sendTicketRepliedEmail(ticket.email, {
-        ...ticket.toObject(),
-        userName: ticket.user?.fullName,
-      }, message.trim(), true);
+      await sendTicketRepliedEmail(
+        ticket.email,
+        {
+          ...ticket.toObject(),
+          userName: ticket.user?.fullName,
+        },
+        message.trim(),
+        true
+      );
     } else if (!isAdmin && !isInternal) {
-      await sendAdminNotificationEmail({
-        ...ticket.toObject(),
-        userName: ticket.user?.fullName,
-      }, message.trim());
+      await sendAdminNotificationEmail(
+        {
+          ...ticket.toObject(),
+          userName: ticket.user?.fullName,
+        },
+        message.trim()
+      );
     }
   } catch {
     // Silently fail email
@@ -252,9 +260,7 @@ export const replyToTicket = asyncHandler(async (req, res) => {
     req.io.to("admins").emit("ticket:updated", eventPayload);
   }
 
-  res.status(201).json(
-    new ApiResponse(201, populatedReply, "Reply added successfully")
-  );
+  res.status(201).json(new ApiResponse(201, populatedReply, "Reply added successfully"));
 });
 
 /* =====================================================
@@ -282,9 +288,7 @@ export const reopenTicket = asyncHandler(async (req, res) => {
   ticket.solvedAt = null;
   await ticket.save();
 
-  const updatedTicket = await Ticket.findById(id)
-    .populate("user", "fullName email avatar")
-    .lean();
+  const updatedTicket = await Ticket.findById(id).populate("user", "fullName email avatar").lean();
 
   try {
     await sendTicketReopenedEmail(updatedTicket.email, {
@@ -308,9 +312,7 @@ export const reopenTicket = asyncHandler(async (req, res) => {
     });
   }
 
-  res.status(200).json(
-    new ApiResponse(200, updatedTicket, "Ticket reopened successfully")
-  );
+  res.status(200).json(new ApiResponse(200, updatedTicket, "Ticket reopened successfully"));
 });
 
 /* =====================================================
@@ -377,15 +379,19 @@ export const getAllTickets = asyncHandler(async (req, res) => {
   ]);
 
   res.status(200).json(
-    new ApiResponse(200, {
-      tickets,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        pages: Math.ceil(total / Number(limit)),
+    new ApiResponse(
+      200,
+      {
+        tickets,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit)),
+        },
       },
-    }, "All tickets fetched successfully")
+      "All tickets fetched successfully"
+    )
   );
 });
 
@@ -423,9 +429,7 @@ export const updateTicketStatus = asyncHandler(async (req, res) => {
 
   await ticket.save();
 
-  const updatedTicket = await Ticket.findById(id)
-    .populate("user", "fullName email avatar")
-    .lean();
+  const updatedTicket = await Ticket.findById(id).populate("user", "fullName email avatar").lean();
 
   const shouldSendSolvedEmail = status === "Solved" && oldStatus !== "Solved";
 
@@ -458,9 +462,7 @@ export const updateTicketStatus = asyncHandler(async (req, res) => {
     req.io.to("admins").emit("ticket:updated", payload);
   }
 
-  res.status(200).json(
-    new ApiResponse(200, updatedTicket, `Ticket status updated to ${status}`)
-  );
+  res.status(200).json(new ApiResponse(200, updatedTicket, `Ticket status updated to ${status}`));
 });
 
 /* =====================================================
@@ -487,9 +489,7 @@ export const deleteTicket = asyncHandler(async (req, res) => {
     });
   }
 
-  res.status(200).json(
-    new ApiResponse(200, null, "Ticket deleted successfully")
-  );
+  res.status(200).json(new ApiResponse(200, null, "Ticket deleted successfully"));
 });
 
 /* =====================================================
@@ -515,15 +515,19 @@ export const getTicketStats = asyncHandler(async (req, res) => {
   const recentTickets = await Ticket.countDocuments({ createdAt: { $gte: sevenDaysAgo } });
 
   res.status(200).json(
-    new ApiResponse(200, {
-      total,
-      open,
-      inProgress,
-      solved,
-      rejected,
-      highPriority,
-      recentTickets,
-      categoryStats,
-    }, "Ticket stats fetched successfully")
+    new ApiResponse(
+      200,
+      {
+        total,
+        open,
+        inProgress,
+        solved,
+        rejected,
+        highPriority,
+        recentTickets,
+        categoryStats,
+      },
+      "Ticket stats fetched successfully"
+    )
   );
 });

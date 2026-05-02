@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
@@ -16,7 +16,7 @@ const initialState = {
 };
 
 const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
     setUserData: (state, action) => {
@@ -32,7 +32,7 @@ const userSlice = createSlice({
     },
 
     setLoading: (state, action) => {
-      if (typeof action.payload === "boolean") {
+      if (typeof action.payload === 'boolean') {
         state.loading = action.payload;
       }
     },

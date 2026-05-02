@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchCpotd,
   submitCpotdCode,
@@ -8,36 +8,19 @@ import {
   setTimer,
   timeUp,
   resetCodingPotd,
-} from "../redux/codingPotdSlice.js";
-import Editor from "@monaco-editor/react";
-import useCompiler from "../hooks/useCompiler";
-import { Button } from "@/components/ui/button.jsx";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card.jsx";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs.jsx";
-import { Badge } from "@/components/ui/badge.jsx";
-import {
-  Play,
-  Send,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-} from "lucide-react";
-import Navbar from "@/components/Navbar.jsx";
+} from '../redux/codingPotdSlice.js';
+import Editor from '@monaco-editor/react';
+import useCompiler from '../hooks/useCompiler';
+import { Button } from '@/components/ui/button.jsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Play, Send, Clock, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import Navbar from '@/components/Navbar.jsx';
 
-import { useNavigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import Footer from "@/components/Footer.jsx";
+import { useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import Footer from '@/components/Footer.jsx';
 
 const CodingPotdPage = () => {
   const dispatch = useDispatch();
@@ -51,16 +34,12 @@ const CodingPotdPage = () => {
     timer,
     timeUp: isTimeUp,
   } = useSelector((state) => state.codingPotd);
-  const {
-    executeCode,
-    result: execResult,
-    isLoading: execLoading,
-  } = useCompiler();
-  const [code, setCode] = useState("// Write your code here");
+  const { executeCode, result: execResult, isLoading: execLoading } = useCompiler();
+  const [code, setCode] = useState('// Write your code here');
   const [codeMap, setCodeMap] = useState({});
-  const [language, setLanguage] = useState("javascript");
-  const [customInput, setCustomInput] = useState("");
-  const [activeTab, setActiveTab] = useState("description");
+  const [language, setLanguage] = useState('javascript');
+  const [customInput, setCustomInput] = useState('');
+  const [activeTab, setActiveTab] = useState('description');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
@@ -89,21 +68,17 @@ const CodingPotdPage = () => {
     if (codeMap[currentQuestionIndex]) {
       setCode(codeMap[currentQuestionIndex]);
     } else {
-      setCode("// Write your code here");
+      setCode('// Write your code here');
     }
 
-    setCustomInput("");
+    setCustomInput('');
   }, [currentQuestionIndex, codeMap]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const handleRun = () => {
     if (currentQuestion) {
-      executeCode(
-        code,
-        language,
-        customInput || currentQuestion.sampleTestCases[0]?.input || "",
-      );
+      executeCode(code, language, customInput || currentQuestion.sampleTestCases[0]?.input || '');
     }
   };
   const handleSubmit = async () => {
@@ -116,7 +91,7 @@ const CodingPotdPage = () => {
         questionIndex: currentQuestionIndex,
         language,
         code,
-      }),
+      })
     );
 
     if (res?.payload) {
@@ -127,7 +102,7 @@ const CodingPotdPage = () => {
   };
 
   useEffect(() => {
-    console.log("EXEC RESULT:", execResult);
+    console.log('EXEC RESULT:', execResult);
   }, [execResult]);
 
   if (loading && !questions.length) return <div>Loading CPOTD...</div>;
@@ -147,8 +122,7 @@ const CodingPotdPage = () => {
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
                 <span className="text-2xl font-mono">
-                  {Math.floor(timer / 60)}:
-                  {(timer % 60).toString().padStart(2, "0")}
+                  {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
                 </span>
               </div>
               <Badge variant="secondary" className="text-lg px-4 py-2">
@@ -164,10 +138,10 @@ const CodingPotdPage = () => {
                 <Badge
                   className={`text-lg px-4 py-2 ${
                     submissionResult.isAccepted
-                      ? "bg-green-500"
+                      ? 'bg-green-500'
                       : submissionResult.results.some((r) => r.error)
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
                   }`}
                 >
                   {submissionResult.isAccepted ? (
@@ -196,14 +170,12 @@ const CodingPotdPage = () => {
               <Card
                 className={`${
                   submissionResult.isAccepted
-                    ? "bg-linear-to-r from-green-900/50 to-emerald-900/50 border-green-500"
-                    : "bg-linear-to-r from-red-900/50 to-rose-900/50 border-red-500"
+                    ? 'bg-linear-to-r from-green-900/50 to-emerald-900/50 border-green-500'
+                    : 'bg-linear-to-r from-red-900/50 to-rose-900/50 border-red-500'
                 }`}
               >
                 <CardHeader>
-                  <CardTitle className="text-3xl">
-                    {submissionResult.score}% Score
-                  </CardTitle>
+                  <CardTitle className="text-3xl">{submissionResult.score}% Score</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -211,7 +183,7 @@ const CodingPotdPage = () => {
                     {submissionResult.results.map((r, i) => (
                       <div
                         key={i}
-                        className={`p-4 rounded-xl mb-3 border ${r.passed ? "bg-green-500/10 border-green-400" : r.error ? "bg-yellow-500/10 border-yellow-400" : "bg-red-500/10 border-red-400"}`}
+                        className={`p-4 rounded-xl mb-3 border ${r.passed ? 'bg-green-500/10 border-green-400' : r.error ? 'bg-yellow-500/10 border-yellow-400' : 'bg-red-500/10 border-red-400'}`}
                       >
                         <div className="flex items-center gap-3 mb-2">
                           {r.passed ? (
@@ -221,14 +193,12 @@ const CodingPotdPage = () => {
                           ) : (
                             <XCircle className="w-5 h-5 text-red-500" />
                           )}
-                          <span className="font-semibold">
-                            Test {r.testCase}
-                          </span>
+                          <span className="font-semibold">Test {r.testCase}</span>
                           <Badge
                             variant="outline"
-                            className={`ml-auto ${r.passed ? "border-green-500 text-green-700" : r.error ? "border-yellow-500 text-yellow-700" : "border-red-500 text-red-700"}`}
+                            className={`ml-auto ${r.passed ? 'border-green-500 text-green-700' : r.error ? 'border-yellow-500 text-yellow-700' : 'border-red-500 text-red-700'}`}
                           >
-                            {r.passed ? "Passed" : r.error ? "Error" : "Failed"}
+                            {r.passed ? 'Passed' : r.error ? 'Error' : 'Failed'}
                           </Badge>
                         </div>
                         {r.error && (
@@ -239,8 +209,7 @@ const CodingPotdPage = () => {
                         {!r.passed && !r.error && (
                           <div className="text-xs space-y-1 mt-2">
                             <div>
-                              <strong>Expected:</strong>{" "}
-                              <code>{r.expected}</code>
+                              <strong>Expected:</strong> <code>{r.expected}</code>
                             </div>
                             <div>
                               <strong>Got:</strong> <code>{r.got}</code>
@@ -300,42 +269,31 @@ const CodingPotdPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Left Panel - Problem (40%) */}
               <div className="lg:col-span-5 space-y-6">
-               <Card className="border-0 bg-white dark:bg-gray-800 backdrop-blur-sm">
+                <Card className="border-0 bg-white dark:bg-gray-800 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <Badge
                         variant={
-                          currentQuestion?.difficulty === "easy"
-                            ? "default"
-                            : currentQuestion?.difficulty === "medium"
-                              ? "secondary"
-                              : "destructive"
+                          currentQuestion?.difficulty === 'easy'
+                            ? 'default'
+                            : currentQuestion?.difficulty === 'medium'
+                              ? 'secondary'
+                              : 'destructive'
                         }
                       >
                         {currentQuestion?.difficulty?.toUpperCase()}
                       </Badge>
-                      <h2 className="text-2xl font-bold">
-                        {currentQuestion?.title}
-                      </h2>
+                      <h2 className="text-2xl font-bold">{currentQuestion?.title}</h2>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <Tabs
-                      value={activeTab}
-                      onValueChange={setActiveTab}
-                      className="w-full"
-                    >
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                       <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="description">
-                          Description
-                        </TabsTrigger>
+                        <TabsTrigger value="description">Description</TabsTrigger>
                         <TabsTrigger value="testcases">Test Cases</TabsTrigger>
                         <TabsTrigger value="submit">Submit</TabsTrigger>
                       </TabsList>
-                      <TabsContent
-                        value="description"
-                        className="space-y-4 mt-4"
-                      >
+                      <TabsContent value="description" className="space-y-4 mt-4">
                         <div
                           dangerouslySetInnerHTML={{
                             __html: currentQuestion?.description,
@@ -350,9 +308,7 @@ const CodingPotdPage = () => {
                           </div>
 
                           <div>
-                            <h4 className="font-semibold mb-2">
-                              Output Format
-                            </h4>
+                            <h4 className="font-semibold mb-2">Output Format</h4>
                             <pre className="bg-gray-100 text-black dark:bg-gray-800 dark:text-gray-200 font-mono p-4 rounded-lg text-sm leading-relaxed whitespace-pre-wrap wrap-break-word border">
                               {currentQuestion?.outputFormat}
                             </pre>
@@ -370,15 +326,11 @@ const CodingPotdPage = () => {
                         <div className="space-y-3">
                           {currentQuestion?.sampleTestCases?.map((tc, i) => (
                             <div key={i} className="border rounded-lg p-4">
-                              <h5 className="font-medium mb-2">
-                                Sample Input {i + 1}
-                              </h5>
+                              <h5 className="font-medium mb-2">Sample Input {i + 1}</h5>
                               <pre className="bg-gray-100 dark:bg-black/40 p-3 rounded mb-2 text-xs">
                                 {tc.input}
                               </pre>
-                              <h5 className="font-medium mb-2">
-                                Sample Output
-                              </h5>
+                              <h5 className="font-medium mb-2">Sample Output</h5>
                               <pre className="bg-green-500/20 p-3 rounded text-xs border-green-500/50 border">
                                 {tc.expectedOutput}
                               </pre>
@@ -388,9 +340,7 @@ const CodingPotdPage = () => {
                       </TabsContent>
                       <TabsContent value="submit" className="mt-4">
                         <div className="space-y-4">
-                          <p className="text-sm text-gray-700">
-                            Ready to submit your solution?
-                          </p>
+                          <p className="text-sm text-gray-700">Ready to submit your solution?</p>
                           <Button
                             onClick={handleSubmit}
                             className="w-full"
@@ -454,7 +404,7 @@ const CodingPotdPage = () => {
                       language={language}
                       value={code}
                       onChange={(val) => {
-                        const safeCode = val || "";
+                        const safeCode = val || '';
 
                         setCode(safeCode);
 
@@ -488,19 +438,13 @@ const CodingPotdPage = () => {
                     </Button>
                   )}
 
-                  <Button
-                    onClick={handleRun}
-                    disabled={execLoading || isTimeUp}
-                    className="flex-1"
-                  >
+                  <Button onClick={handleRun} disabled={execLoading || isTimeUp} className="flex-1">
                     Run
                   </Button>
 
                   {currentQuestionIndex + 1 < questions.length && (
                     <Button
-                      onClick={() =>
-                        dispatch(setCurrentQuestion(currentQuestionIndex + 1))
-                      }
+                      onClick={() => dispatch(setCurrentQuestion(currentQuestionIndex + 1))}
                       className="flex-1"
                     >
                       Next →
@@ -511,18 +455,14 @@ const CodingPotdPage = () => {
                 {!execLoading && (
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Test Output
-                      </CardTitle>
+                      <CardTitle className="text-sm font-medium">Test Output</CardTitle>
                     </CardHeader>
 
                     <CardContent>
                       <pre className="bg-black/50 p-4 rounded text-xs overflow-auto max-h-32 font-mono">
                         {execResult
-                          ? execResult.output?.trim() ||
-                            execResult.error ||
-                            "No output"
-                          : "Click Run to see output"}
+                          ? execResult.output?.trim() || execResult.error || 'No output'
+                          : 'Click Run to see output'}
                       </pre>
                     </CardContent>
                   </Card>
@@ -535,21 +475,15 @@ const CodingPotdPage = () => {
             <div className="text-center mt-8 p-8 bg-yellow-500/20 border border-yellow-500 rounded-xl">
               <Clock className="w-16 h-16 mx-auto mb-4 text-yellow-400" />
               <h3 className="text-2xl font-bold mb-2">Time's Up!</h3>
-              <p className="text-lg mb-6">
-                Submit your current solution to see results.
-              </p>
-              <Button
-                onClick={handleSubmit}
-                size="lg"
-                className="w-full max-w-md"
-              >
+              <p className="text-lg mb-6">Submit your current solution to see results.</p>
+              <Button onClick={handleSubmit} size="lg" className="w-full max-w-md">
                 Final Submit
               </Button>
             </div>
           )}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

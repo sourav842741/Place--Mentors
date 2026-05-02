@@ -34,7 +34,9 @@ const isLowQualityRecord = (company) => {
   const isLow = missingCount >= 4;
 
   if (isLow) {
-    console.log(`[Company] QUALITY CHECK FAILED for "${company.name || "?"}" — missing ${missingCount}/7 critical fields`);
+    console.log(
+      `[Company] QUALITY CHECK FAILED for "${company.name || "?"}" — missing ${missingCount}/7 critical fields`
+    );
   }
 
   return isLow;
@@ -69,11 +71,10 @@ export const getCompanyByName = async (name, userId) => {
         name: normalizedName, // ensure root-level name is always set
       };
 
-      company = await Company.findOneAndUpdate(
-        { name: normalizedName },
-        staticPayload,
-        { upsert: true, new: true }
-      );
+      company = await Company.findOneAndUpdate({ name: normalizedName }, staticPayload, {
+        upsert: true,
+        new: true,
+      });
 
       return { company, usedCredits: false, remainingCredits: null };
     }
@@ -106,24 +107,24 @@ export const getCompanyByName = async (name, userId) => {
       name: normalizedName, // ensure root-level name is always set
     };
 
-    company = await Company.findOneAndUpdate(
-      { name: normalizedName },
-      dataToSave,
-      { upsert: true, new: true }
-    );
+    company = await Company.findOneAndUpdate({ name: normalizedName }, dataToSave, {
+      upsert: true,
+      new: true,
+    });
 
     // Deduct credits ONLY after successful save
     user.credits -= AI_COST;
     await user.save();
 
-    console.log(`[Company] AI SAVED: ${normalizedName} | Credits deducted: ${AI_COST} | Remaining: ${user.credits}`);
+    console.log(
+      `[Company] AI SAVED: ${normalizedName} | Credits deducted: ${AI_COST} | Remaining: ${user.credits}`
+    );
 
     return {
       company,
       usedCredits: true,
       remainingCredits: user.credits,
     };
-
   } catch (error) {
     console.error(`[Company] ERROR for "${name}":`, error.message);
 
@@ -136,5 +137,3 @@ export const getCompanyByName = async (name, userId) => {
     };
   }
 };
-
-

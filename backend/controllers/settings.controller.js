@@ -6,7 +6,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // @desc    Get site settings (Admin only)
 export const getSettings = asyncHandler(async (req, res) => {
   let settings = await Settings.findOne();
-  
+
   if (!settings) {
     // Create default settings if none exists
     settings = new Settings({
@@ -16,14 +16,12 @@ export const getSettings = asyncHandler(async (req, res) => {
       maintenanceAllowAdminAccess: true,
       announcementEnabled: false,
       announcementType: "info",
-      announcementClosable: true
+      announcementClosable: true,
     });
     await settings.save();
   }
 
-  res.status(200).json(
-    new ApiResponse(200, settings, "Settings fetched successfully")
-  );
+  res.status(200).json(new ApiResponse(200, settings, "Settings fetched successfully"));
 });
 
 // @desc    Update site settings (Admin only)
@@ -31,18 +29,21 @@ export const updateSettings = asyncHandler(async (req, res) => {
   const updates = req.body;
 
   // Validate required fields for maintenance/announcement
-  if (updates.maintenanceMode !== undefined && 
-      typeof updates.maintenanceMode !== "boolean") {
+  if (updates.maintenanceMode !== undefined && typeof updates.maintenanceMode !== "boolean") {
     throw new ApiError(400, "maintenanceMode must be boolean");
   }
 
-  if (updates.announcementEnabled !== undefined && 
-      typeof updates.announcementEnabled !== "boolean") {
+  if (
+    updates.announcementEnabled !== undefined &&
+    typeof updates.announcementEnabled !== "boolean"
+  ) {
     throw new ApiError(400, "announcementEnabled must be boolean");
   }
 
-  if (updates.announcementType && 
-      !["info", "warning", "success", "danger"].includes(updates.announcementType)) {
+  if (
+    updates.announcementType &&
+    !["info", "warning", "success", "danger"].includes(updates.announcementType)
+  ) {
     throw new ApiError(400, "Invalid announcementType");
   }
 
@@ -52,7 +53,7 @@ export const updateSettings = asyncHandler(async (req, res) => {
     settings = new Settings(updates);
   } else {
     // Update existing
-    Object.keys(updates).forEach(key => {
+    Object.keys(updates).forEach((key) => {
       settings[key] = updates[key];
     });
   }
@@ -73,66 +74,47 @@ export const updateSettings = asyncHandler(async (req, res) => {
     });
   }
 
-  res.status(200).json(
-    new ApiResponse(200, settings, "Settings updated successfully")
-  );
+  res.status(200).json(new ApiResponse(200, settings, "Settings updated successfully"));
 });
 
-export const getPublicSettings =
-  asyncHandler(async (req, res) => {
-    let settings =
-      await Settings.findOne();
+export const getPublicSettings = asyncHandler(async (req, res) => {
+  let settings = await Settings.findOne();
 
-    if (!settings) {
-      settings =
-        await Settings.create({
-          maintenanceMode: false,
-          maintenanceTitle:
-            "Under Maintenance",
-          maintenanceMessage:
-            "We're working on improvements. Back soon! 🚀",
-          maintenanceAllowAdminAccess: true,
+  if (!settings) {
+    settings = await Settings.create({
+      maintenanceMode: false,
+      maintenanceTitle: "Under Maintenance",
+      maintenanceMessage: "We're working on improvements. Back soon! 🚀",
+      maintenanceAllowAdminAccess: true,
 
-          announcementEnabled: false,
-          announcementText: "",
-          announcementImage: "",
-          announcementType: "info",
-          announcementClosable: true,
-          announcementButtonText: "",
-          announcementButtonLink: "",
-        });
-    }
+      announcementEnabled: false,
+      announcementText: "",
+      announcementImage: "",
+      announcementType: "info",
+      announcementClosable: true,
+      announcementButtonText: "",
+      announcementButtonLink: "",
+    });
+  }
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        {
-          maintenanceMode:
-            settings.maintenanceMode,
-          maintenanceTitle:
-            settings.maintenanceTitle,
-          maintenanceMessage:
-            settings.maintenanceMessage,
-          maintenanceImage:
-            settings.maintenanceImage,
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        maintenanceMode: settings.maintenanceMode,
+        maintenanceTitle: settings.maintenanceTitle,
+        maintenanceMessage: settings.maintenanceMessage,
+        maintenanceImage: settings.maintenanceImage,
 
-          announcementEnabled:
-            settings.announcementEnabled,
-          announcementText:
-            settings.announcementText,
-          announcementImage:
-            settings.announcementImage,
-          announcementType:
-            settings.announcementType,
-          announcementClosable:
-            settings.announcementClosable,
-          announcementButtonText:
-            settings.announcementButtonText,
-          announcementButtonLink:
-            settings.announcementButtonLink,
-        },
-        "Public settings fetched successfully"
-      )
-    );
-  });
-
+        announcementEnabled: settings.announcementEnabled,
+        announcementText: settings.announcementText,
+        announcementImage: settings.announcementImage,
+        announcementType: settings.announcementType,
+        announcementClosable: settings.announcementClosable,
+        announcementButtonText: settings.announcementButtonText,
+        announcementButtonLink: settings.announcementButtonLink,
+      },
+      "Public settings fetched successfully"
+    )
+  );
+});

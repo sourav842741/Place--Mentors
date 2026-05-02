@@ -4,14 +4,14 @@ import Navbar from '../components/Navbar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  CheckCircle2, 
-  Calendar, 
-  BookOpen, 
-  Briefcase, 
-  User, 
+import {
+  CheckCircle2,
+  Calendar,
+  BookOpen,
+  Briefcase,
+  User,
   ExternalLink,
-  Share2
+  Share2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import * as taskApi from '../services/taskApi';
@@ -98,7 +98,8 @@ const ShareTask = () => {
 
   const priorityColors = {
     High: 'ring-red-500/30 bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
-    Medium: 'ring-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
+    Medium:
+      'ring-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
     Low: 'ring-sky-500/30 bg-sky-50/50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800',
   };
 
@@ -112,7 +113,9 @@ const ShareTask = () => {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-2xl ${categoryColors[task.category] || 'bg-gray-500'} shadow-lg`}>
+              <div
+                className={`p-3 rounded-2xl ${categoryColors[task.category] || 'bg-gray-500'} shadow-lg`}
+              >
                 {Icon && <Icon className="w-6 h-6 text-white" />}
               </div>
               <div>
@@ -120,7 +123,7 @@ const ShareTask = () => {
                   {task.title}
                 </h1>
                 <div className="flex items-center gap-2">
-                  <Badge 
+                  <Badge
                     className={cn(
                       'font-medium text-sm px-3 py-1 shadow-md',
                       priorityColors[task.priority] || 'bg-gray-100 dark:bg-gray-800'
@@ -133,21 +136,14 @@ const ShareTask = () => {
                       ✅ Completed
                     </Badge>
                   ) : isOverdue ? (
-                    <Badge variant="destructive">
-                      ⏰ Overdue
-                    </Badge>
+                    <Badge variant="destructive">⏰ Overdue</Badge>
                   ) : (
-                    <Badge variant="secondary">
-                      ⏳ Pending
-                    </Badge>
+                    <Badge variant="secondary">⏳ Pending</Badge>
                   )}
                 </div>
               </div>
             </div>
-            <Button
-              onClick={copyShareLink}
-              className="gap-2"
-            >
+            <Button onClick={copyShareLink} className="gap-2">
               <Share2 className="w-4 h-4" />
               {copied ? 'Copied!' : 'Share'}
             </Button>
@@ -155,9 +151,9 @@ const ShareTask = () => {
 
           {/* Main Card */}
           <Card className="border-0 shadow-2xl overflow-hidden">
-            <div 
+            <div
               className={cn(
-                "p-8 border-b",
+                'p-8 border-b',
                 categoryColors[task.category] || 'bg-gradient-to-r from-gray-900 to-gray-800',
                 'text-white'
               )}
@@ -189,18 +185,19 @@ const ShareTask = () => {
               {/* Details Grid */}
               <div className="grid md:grid-cols-2 gap-6">
                 {task.dueDate && (
-                  <div className={cn(
-                    "space-y-2 p-4 rounded-xl border",
-                    isOverdue ? 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20' : 
-                    'border-border bg-muted/50'
-                  )}>
+                  <div
+                    className={cn(
+                      'space-y-2 p-4 rounded-xl border',
+                      isOverdue
+                        ? 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20'
+                        : 'border-border bg-muted/50'
+                    )}
+                  >
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                       <Calendar className="w-4 h-4" />
                       Due Date
                     </div>
-                    <p className="text-xl font-semibold">
-                      {formatDate(task.dueDate)}
-                    </p>
+                    <p className="text-xl font-semibold">{formatDate(task.dueDate)}</p>
                     {isOverdue && (
                       <Badge variant="destructive" className="mt-2">
                         Overdue
@@ -215,12 +212,14 @@ const ShareTask = () => {
                     Status
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      'flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm',
-                      task.completed 
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700' 
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200 border-gray-200 dark:border-gray-700'
-                    )}>
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm',
+                        task.completed
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200 border-gray-200 dark:border-gray-700'
+                      )}
+                    >
                       {task.completed ? (
                         <>
                           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -247,8 +246,8 @@ const ShareTask = () => {
                     <Share2 className="w-4 h-4 mr-2" />
                     Copy Link
                   </Button>
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     onClick={() => navigate('/dashboard/tasks')}
                     size="sm"
                   >
@@ -265,4 +264,3 @@ const ShareTask = () => {
 };
 
 export default ShareTask;
-

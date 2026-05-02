@@ -4,15 +4,22 @@ import { Link } from 'react-router-dom';
 import { Mic, Clock, Phone, Award, BadgeCheck, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { fetchVoiceHistory } from '../redux/voiceSlice';
 import Navbar from '../components/Navbar';
 
 const CallHistory = () => {
   const dispatch = useDispatch();
-  const { loading, entities: history } = useSelector(state => state.voice);
-  
+  const { loading, entities: history } = useSelector((state) => state.voice);
+
   const calls = history ? Object.values(history) : [];
 
   useEffect(() => {
@@ -23,8 +30,8 @@ const CallHistory = () => {
     const icons = {
       'hr-interview': Phone,
       'spoken-english': Mic,
-      'motivation': Award,
-      'resume-screening': BadgeCheck
+      motivation: Award,
+      'resume-screening': BadgeCheck,
     };
     const Icon = icons[mode];
     return Icon ? <Icon className="w-4 h-4" /> : <Mic className="w-4 h-4" />;
@@ -40,7 +47,11 @@ const CallHistory = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 py-20" g:mt-16 lg:ml-64>
+        <div
+          className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 py-20"
+          g:mt-16
+          lg:ml-64
+        >
           <div className="max-w-4xl mx-auto p-8">
             <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl">
               <CardContent className="p-12 text-center">
@@ -71,7 +82,10 @@ const CallHistory = () => {
                     <CardDescription>Total calls: {calls.length}</CardDescription>
                   </div>
                   <Link to="/ai-voice-coach">
-                    <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-bold shadow-xl">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-bold shadow-xl"
+                    >
                       <Mic className="w-5 h-5 mr-2" />
                       New Call
                     </Button>
@@ -98,10 +112,15 @@ const CallHistory = () => {
                 </TableHeader>
                 <TableBody>
                   {calls.map((call) => (
-                    <TableRow key={call._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors border-b border-gray-100 dark:border-gray-800 group">
+                    <TableRow
+                      key={call._id}
+                      className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors border-b border-gray-100 dark:border-gray-800 group"
+                    >
                       <TableCell className="font-medium flex items-center gap-2">
                         {getModeIcon(call.mode)}
-                        <span>{call.mode.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+                        <span>
+                          {call.mode.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                        </span>
                       </TableCell>
                       <TableCell className="text-sm">
                         {new Date(call.createdAt).toLocaleString()}
@@ -113,15 +132,20 @@ const CallHistory = () => {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={
-                            call.status === 'completed' ? 'default' : 
-                            call.status === 'active' ? 'secondary' : 'outline'
+                            call.status === 'completed'
+                              ? 'default'
+                              : call.status === 'active'
+                                ? 'secondary'
+                                : 'outline'
                           }
                           className={`${
-                            call.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/50' :
-                            call.status === 'active' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50' : 
-                            'bg-gray-100 text-gray-800 dark:bg-gray-900/50'
+                            call.status === 'completed'
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/50'
+                              : call.status === 'active'
+                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50'
                           }`}
                         >
                           {call.status.toUpperCase()}
@@ -131,7 +155,7 @@ const CallHistory = () => {
                         {call.score > 0 ? (
                           <div className="flex items-center gap-1">
                             <div className="w-16 bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                              <div 
+                              <div
                                 className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
                                 style={{ width: `${Math.min(call.score, 100)}%` }}
                               />
@@ -143,7 +167,7 @@ const CallHistory = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-right space-x-2">
-                        <Link 
+                        <Link
                           to={`/voice-report/${call._id}`}
                           className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium text-sm flex items-center gap-1 group hover:underline"
                         >
@@ -159,11 +183,13 @@ const CallHistory = () => {
                   ))}
                 </TableBody>
               </Table>
-              
+
               {calls.length === 0 && (
                 <div className="p-20 text-center">
                   <MicOff className="w-16 h-16 text-gray-400 mx-auto mb-6" />
-                  <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">No call history</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+                    No call history
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
                     Start your first AI practice call to see history here.
                   </p>
@@ -184,4 +210,3 @@ const CallHistory = () => {
 };
 
 export default CallHistory;
-

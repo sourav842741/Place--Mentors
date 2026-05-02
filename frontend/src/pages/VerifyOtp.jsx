@@ -1,23 +1,22 @@
-import { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Moon, Sun, ShieldCheck } from "lucide-react";
+import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Moon, Sun, ShieldCheck } from 'lucide-react';
 
-import AuthLayout from "../components/AuthLayout";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import api from "../services/api";
-import { useDispatch } from "react-redux";
-import { setUserData } from "../redux/userSlice";
+import AuthLayout from '../components/AuthLayout';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import api from '../services/api';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 export default function VerifyOtp() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { email, fullName, password, skills, avatar, coverImage } =
-    state || {};
+  const { email, fullName, password, skills, avatar, coverImage } = state || {};
 
-  const [otp, setOtp] = useState(Array(4).fill(""));
+  const [otp, setOtp] = useState(Array(4).fill(''));
   const [loading, setLoading] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
@@ -25,28 +24,28 @@ export default function VerifyOtp() {
 
   /* THEME LOAD */
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem('theme');
 
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
       setIsDark(false);
     }
   }, []);
 
   /* THEME TOGGLE */
   const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
+    const isNowDark = document.documentElement.classList.toggle('dark');
     setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
+    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
   };
 
   useEffect(() => {
     if (!email) {
-      toast.error("Session expired ❌");
-      navigate("/signup");
+      toast.error('Session expired ❌');
+      navigate('/signup');
     }
   }, [email, navigate]);
 
@@ -63,16 +62,16 @@ export default function VerifyOtp() {
   };
 
   const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
   const handlePaste = (e) => {
-    const paste = e.clipboardData.getData("text").slice(0, 4);
+    const paste = e.clipboardData.getData('text').slice(0, 4);
     if (!/^\d+$/.test(paste)) return;
 
-    const newOtp = paste.split("");
+    const newOtp = paste.split('');
     setOtp(newOtp);
 
     newOtp.forEach((val, i) => {
@@ -83,10 +82,10 @@ export default function VerifyOtp() {
   };
 
   const handleVerifyOtp = async () => {
-    const finalOtp = otp.join("");
+    const finalOtp = otp.join('');
 
     if (finalOtp.length !== 4) {
-      return toast.warning("Enter valid OTP ❗");
+      return toast.warning('Enter valid OTP ❗');
     }
 
     setLoading(true);
@@ -94,26 +93,26 @@ export default function VerifyOtp() {
     try {
       const formData = new FormData();
 
-      formData.append("email", email);
-      formData.append("otp", finalOtp);
-      formData.append("fullName", fullName);
-      formData.append("password", password);
-      formData.append("skills", JSON.stringify(skills));
+      formData.append('email', email);
+      formData.append('otp', finalOtp);
+      formData.append('fullName', fullName);
+      formData.append('password', password);
+      formData.append('skills', JSON.stringify(skills));
 
-      if (avatar) formData.append("avatar", avatar);
-      if (coverImage) formData.append("coverImage", coverImage);
+      if (avatar) formData.append('avatar', avatar);
+      if (coverImage) formData.append('coverImage', coverImage);
 
-      const res = await api.post("/api/auth/signup/verify-otp", formData);
+      const res = await api.post('/api/auth/signup/verify-otp', formData);
 
       if (res.data.success) {
         dispatch(setUserData(res.data.data));
-        toast.success("Signup Successful 🎉");
-        navigate("/splash");
+        toast.success('Signup Successful 🎉');
+        navigate('/splash');
       } else {
-        toast.error(res.data.message || "Invalid OTP");
+        toast.error(res.data.message || 'Invalid OTP');
       }
     } catch {
-      toast.error("Something went wrong ❌");
+      toast.error('Something went wrong ❌');
     } finally {
       setLoading(false);
     }
@@ -154,9 +153,7 @@ export default function VerifyOtp() {
 
           {/* TITLE */}
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Verify Email
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Verify Email</h2>
 
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               Enter the 4-digit OTP sent to your email
@@ -169,10 +166,7 @@ export default function VerifyOtp() {
           </div>
 
           {/* OTP BOXES */}
-          <div
-            className="flex justify-between gap-3"
-            onPaste={handlePaste}
-          >
+          <div className="flex justify-between gap-3" onPaste={handlePaste}>
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -212,7 +206,7 @@ export default function VerifyOtp() {
 
           {/* RESEND TEXT */}
           <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            Didn’t receive code?{" "}
+            Didn’t receive code?{' '}
             <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline">
               Resend
             </span>
@@ -237,9 +231,7 @@ function FullScreenLoader() {
       <div className="bg-white dark:bg-gray-900 px-8 py-6 rounded-2xl shadow-2xl text-center">
         <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
 
-        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">
-          Verifying OTP...
-        </p>
+        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">Verifying OTP...</p>
       </div>
     </div>
   );

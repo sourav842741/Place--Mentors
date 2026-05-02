@@ -49,4 +49,3 @@ describe('ProtectedRoute', () => {
     expect(screen.getByTestId('login')).toBeInTheDocument();
   });
 });
-

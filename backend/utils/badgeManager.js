@@ -17,7 +17,12 @@ export const checkAndAssignBadges = (user) => {
     // ⏱️ TIME BADGES (Clock to Hard Work)
     { name: "Getting Started ⏱️", icon: "⏳", type: "time", condition: user.totalTimeSpent >= 30 },
     { name: "Focused User ⏱️", icon: "🎯", type: "time", condition: user.totalTimeSpent >= 100 },
-    { name: "Dedicated User ⏱️", icon: "🔋✨", type: "time", condition: user.totalTimeSpent >= 300 },
+    {
+      name: "Dedicated User ⏱️",
+      icon: "🔋✨",
+      type: "time",
+      condition: user.totalTimeSpent >= 300,
+    },
     { name: "Hard Worker 🧠", icon: "🛠️🧠", type: "time", condition: user.totalTimeSpent >= 1000 },
     { name: "Grinder 🔥", icon: "⚙️🔥", type: "time", condition: user.totalTimeSpent >= 3000 },
 
@@ -28,18 +33,31 @@ export const checkAndAssignBadges = (user) => {
     { name: "Level 20 👑", icon: "🌌👑", type: "level", condition: user.level >= 20 },
 
     // 💎 COMBO BADGES (Special/Rarest)
-    { name: "Consistent Learner 💎", icon: "💠✨", type: "combo", condition: user.streakCount >= 7 && user.xp >= 500 },
-    { name: "Ultimate Grinder 🔥", icon: "🌋⚔️", type: "combo", condition: user.totalTimeSpent >= 500 && user.xp >= 1000 },
-    { name: "Legendary Player 👑", icon: "🎇💠🎇", type: "combo", condition: user.level >= 10 && user.xp >= 3000 },
+    {
+      name: "Consistent Learner 💎",
+      icon: "💠✨",
+      type: "combo",
+      condition: user.streakCount >= 7 && user.xp >= 500,
+    },
+    {
+      name: "Ultimate Grinder 🔥",
+      icon: "🌋⚔️",
+      type: "combo",
+      condition: user.totalTimeSpent >= 500 && user.xp >= 1000,
+    },
+    {
+      name: "Legendary Player 👑",
+      icon: "🎇💠🎇",
+      type: "combo",
+      condition: user.level >= 10 && user.xp >= 3000,
+    },
   ];
 
   // Logic to ensure user.badges is an array
   if (!user.badges) user.badges = [];
 
   badgeConditions.forEach((badge) => {
-    const alreadyHas = user.badges.some(
-      (b) => b.name === badge.name
-    );
+    const alreadyHas = user.badges.some((b) => b.name === badge.name);
 
     if (badge.condition && !alreadyHas) {
       const newBadge = {

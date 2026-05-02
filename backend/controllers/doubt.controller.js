@@ -107,9 +107,7 @@ export const addReply = async (req, res) => {
     // Increment replyCount on the doubt
     await Doubt.findByIdAndUpdate(req.params.id, { $inc: { replyCount: 1 } });
 
-    const doubt = await Doubt.findById(req.params.id)
-      .populate("user", "fullName avatar")
-      .lean();
+    const doubt = await Doubt.findById(req.params.id).populate("user", "fullName avatar").lean();
 
     if (!doubt) {
       return sendResponse(res, 404, false, "Doubt not found");
@@ -186,14 +184,10 @@ export const toggleUpvote = async (req, res) => {
       reply.upvotes = [];
     }
 
-    const already = reply.upvotes.some(
-      (id) => id.toString() === userId.toString(),
-    );
+    const already = reply.upvotes.some((id) => id.toString() === userId.toString());
 
     if (already) {
-      reply.upvotes = reply.upvotes.filter(
-        (id) => id.toString() !== userId.toString(),
-      );
+      reply.upvotes = reply.upvotes.filter((id) => id.toString() !== userId.toString());
     } else {
       reply.upvotes.push(userId);
     }

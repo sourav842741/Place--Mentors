@@ -1,15 +1,10 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import api from "../services/api";
-import { toast } from "sonner";
+import api from '../services/api';
+import { toast } from 'sonner';
 
 export default function useAdminSettings() {
-  const queryClient =
-    useQueryClient();
+  const queryClient = useQueryClient();
 
   /* ===========================
      GET ADMIN SETTINGS
@@ -21,15 +16,10 @@ export default function useAdminSettings() {
     error,
     refetch,
   } = useQuery({
-    queryKey: [
-      "adminSettings",
-    ],
+    queryKey: ['adminSettings'],
 
     queryFn: async () => {
-      const { data } =
-        await api.get(
-          "/api/admin/settings"
-        );
+      const { data } = await api.get('/api/admin/settings');
 
       return data;
     },
@@ -43,62 +33,35 @@ export default function useAdminSettings() {
   /* ===========================
      UPDATE SETTINGS
   =========================== */
-  const updateMutation =
-    useMutation({
-      mutationFn: async (
-        updates
-      ) => {
-        const { data } =
-          await api.put(
-            "/api/admin/settings",
-            updates
-          );
+  const updateMutation = useMutation({
+    mutationFn: async (updates) => {
+      const { data } = await api.put('/api/admin/settings', updates);
 
-        return data;
-      },
+      return data;
+    },
 
-      onSuccess: (
-        response
-      ) => {
-        queryClient.invalidateQueries(
-          {
-            queryKey: [
-              "adminSettings",
-            ],
-          }
-        );
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: ['adminSettings'],
+      });
 
-        queryClient.invalidateQueries(
-          {
-            queryKey: [
-              "settings",
-            ],
-          }
-        );
+      queryClient.invalidateQueries({
+        queryKey: ['settings'],
+      });
 
-        toast.success(
-          response?.message ||
-            "Settings updated successfully!"
-        );
-      },
+      toast.success(response?.message || 'Settings updated successfully!');
+    },
 
-      onError: (
-        error
-      ) => {
-        toast.error(
-          error?.response
-            ?.data?.message ||
-            "Update failed"
-        );
-      },
-    });
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || 'Update failed');
+    },
+  });
 
   /* ===========================
      RETURN
   =========================== */
   return {
-    settings:
-      response?.data ?? null,
+    settings: response?.data ?? null,
 
     isLoading,
 
@@ -108,14 +71,10 @@ export default function useAdminSettings() {
 
     refetch,
 
-    updateSettings:
-      updateMutation.mutate,
+    updateSettings: updateMutation.mutate,
 
-    updateSettingsAsync:
-      updateMutation.mutateAsync,
+    updateSettingsAsync: updateMutation.mutateAsync,
 
-    isUpdating:
-      updateMutation.isPending,
+    isUpdating: updateMutation.isPending,
   };
 }
-

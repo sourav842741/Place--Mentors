@@ -1,25 +1,25 @@
-import { configureStore } from "@reduxjs/toolkit";
-import userSlice from "./userSlice";
-import resumeSlice from "./resumeSlice";
-import jobSlice from "./jobSlice";
-import companySlice from "./companySlice";
-import potdSlice from "./potdSlice";
-import { notesApi } from "./notesSlice";
-import { compilerApi } from "./compilerSlice";
-import codingPotdSlice from "./codingPotdSlice";
-import youtubeSlice from "./youtubeSlice";
-import newsSlice from "./newsSlice";
-import streakSlice from "./streakSlice";
-import adminSlice from "./adminSlice";
-import adminUserSlice from "./adminUserSlice";
-import adminCreateSlice from "./adminCreateSlice";
-import emailAdminSlice from "./slices/emailAdminSlice";
-import battleSlice from "./battleSlice";
-import tasksSlice from "./tasksSlice";
-import aiCoachSlice from "./aiCoachSlice";
-import voiceSlice from "./voiceSlice";
-import ticketSlice from "./ticketSlice";
-import maintenanceSlice from "./maintenanceSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import userSlice from './userSlice';
+import resumeSlice from './resumeSlice';
+import jobSlice from './jobSlice';
+import companySlice from './companySlice';
+import potdSlice from './potdSlice';
+import { notesApi } from './notesSlice';
+import { compilerApi } from './compilerSlice';
+import codingPotdSlice from './codingPotdSlice';
+import youtubeSlice from './youtubeSlice';
+import newsSlice from './newsSlice';
+import streakSlice from './streakSlice';
+import adminSlice from './adminSlice';
+import adminUserSlice from './adminUserSlice';
+import adminCreateSlice from './adminCreateSlice';
+import emailAdminSlice from './slices/emailAdminSlice';
+import battleSlice from './battleSlice';
+import tasksSlice from './tasksSlice';
+import aiCoachSlice from './aiCoachSlice';
+import voiceSlice from './voiceSlice';
+import ticketSlice from './ticketSlice';
+import maintenanceSlice from './maintenanceSlice';
 
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -48,7 +48,6 @@ const store = configureStore({
     tickets: ticketSlice,
     maintenance: maintenanceSlice,
   },
-
 });
 
 export default store;

@@ -17,8 +17,14 @@ export const message = Joi.string().trim().min(1).max(5000);
 export const subject = Joi.string().trim().min(1).max(200);
 export const description = Joi.string().trim().min(1).max(5000);
 export const category = Joi.string().valid(
-  "Login Issue", "Payment", "Premium", "Bug Report",
-  "Resume", "Interview", "Account", "Other"
+  "Login Issue",
+  "Payment",
+  "Premium",
+  "Bug Report",
+  "Resume",
+  "Interview",
+  "Account",
+  "Other"
 );
 export const priority = Joi.string().valid("Low", "Medium", "High");
 export const status = Joi.string().valid("Open", "In Progress", "Solved", "Rejected");

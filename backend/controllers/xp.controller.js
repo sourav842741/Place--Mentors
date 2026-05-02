@@ -29,7 +29,7 @@ export const updateTimeSpent = asyncHandler(async (req, res) => {
 
   user.totalTimeSpent += minutes;
 
-const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
   let todayData = user.dailyStats.find((d) => d.date === today);
 
@@ -87,9 +87,7 @@ export const completeQuiz = asyncHandler(async (req, res) => {
   }
 
   // remove bad data
-  user.dailyStats = user.dailyStats.filter(
-    (d) => d && typeof d === "object" && d.date,
-  );
+  user.dailyStats = user.dailyStats.filter((d) => d && typeof d === "object" && d.date);
 
   // ================= XP =================
   let xpEarned = score * 10;
@@ -131,8 +129,8 @@ export const completeQuiz = asyncHandler(async (req, res) => {
   todayData.quizzesGiven = prevCount + 1;
 
   if (!todayData.timeSpent) {
-  todayData.timeSpent = 10; 
-}
+    todayData.timeSpent = 10;
+  }
 
   await user.save();
 

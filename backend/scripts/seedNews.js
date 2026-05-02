@@ -42,8 +42,7 @@ const newsData = [
   },
   {
     title: "Microsoft hiring engineers for cloud division",
-    summary:
-      "Microsoft opened multiple engineering roles across Azure and enterprise cloud teams.",
+    summary: "Microsoft opened multiple engineering roles across Azure and enterprise cloud teams.",
     tag: "Hiring",
     company: "Microsoft",
     source: "Reuters",
@@ -52,8 +51,7 @@ const newsData = [
   },
   {
     title: "Amazon expands internship opportunities in India",
-    summary:
-      "Amazon announced new internship openings for software and operations roles.",
+    summary: "Amazon announced new internship openings for software and operations roles.",
     tag: "Hiring",
     company: "Amazon",
     source: "Business Insider",
@@ -62,8 +60,7 @@ const newsData = [
   },
   {
     title: "Meta restructures teams amid cost optimization",
-    summary:
-      "Meta reorganized several internal teams as part of efficiency initiatives.",
+    summary: "Meta reorganized several internal teams as part of efficiency initiatives.",
     tag: "Layoff",
     company: "Meta",
     source: "Bloomberg",
@@ -72,8 +69,7 @@ const newsData = [
   },
   {
     title: "Apple unveils new developer tools at event",
-    summary:
-      "Apple launched fresh APIs and developer tools for iOS and Mac ecosystems.",
+    summary: "Apple launched fresh APIs and developer tools for iOS and Mac ecosystems.",
     tag: "Tech",
     company: "Apple",
     source: "CNBC",
@@ -82,8 +78,7 @@ const newsData = [
   },
   {
     title: "NVIDIA demand rises with AI chip growth",
-    summary:
-      "NVIDIA continues strong momentum as demand for AI accelerators increases globally.",
+    summary: "NVIDIA continues strong momentum as demand for AI accelerators increases globally.",
     tag: "Tech",
     company: "NVIDIA",
     source: "Forbes",
@@ -92,8 +87,7 @@ const newsData = [
   },
   {
     title: "TCS opens fresher recruitment drive",
-    summary:
-      "TCS started fresh campus and off-campus hiring for multiple technology roles.",
+    summary: "TCS started fresh campus and off-campus hiring for multiple technology roles.",
     tag: "Hiring",
     company: "TCS",
     source: "Economic Times",

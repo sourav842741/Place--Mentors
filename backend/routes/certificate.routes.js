@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { 
-  getCertificates, 
-  generateCertificate, 
-  getCertificateById, 
+import {
+  getCertificates,
+  generateCertificate,
+  getCertificateById,
   deleteCertificate,
-   verifyCertificate
+  verifyCertificate,
 } from "../controllers/certificate.controller.js";
 import isAuth from "../middlewares/isAuth.js";
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
@@ -32,4 +32,3 @@ router.delete("/:id", deleteCertificate);
 router.get("/verify/:id", verifyCertificate);
 
 export default router;
-

@@ -6,7 +6,16 @@ export const createTicket = Joi.object({
     "string.empty": "Subject is required",
   }),
   category: Joi.string()
-    .valid("Login Issue", "Payment", "Premium", "Bug Report", "Resume", "Interview", "Account", "Other")
+    .valid(
+      "Login Issue",
+      "Payment",
+      "Premium",
+      "Bug Report",
+      "Resume",
+      "Interview",
+      "Account",
+      "Other"
+    )
     .required()
     .messages({
       "any.required": "Category is required",
@@ -27,12 +36,8 @@ export const replyToTicket = Joi.object({
 });
 
 export const updateTicketStatus = Joi.object({
-  status: Joi.string()
-    .valid("Open", "In Progress", "Solved", "Rejected")
-    .required()
-    .messages({
-      "any.only": "Invalid status",
-    }),
+  status: Joi.string().valid("Open", "In Progress", "Solved", "Rejected").required().messages({
+    "any.only": "Invalid status",
+  }),
   internalNote: Joi.string().trim().max(2000).optional(),
 });
-

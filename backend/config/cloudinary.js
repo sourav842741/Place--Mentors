@@ -35,39 +35,25 @@ const uploadOnCloudinary = async (file) => {
     return result;
   } catch (error) {
     removeLocalFile(file);
-    console.log(
-      "Cloudinary upload error:",
-      error.message
-    );
+    console.log("Cloudinary upload error:", error.message);
 
     return null;
   }
 };
 
-export const deleteFromCloudinary = async (
-  imageUrl
-) => {
+export const deleteFromCloudinary = async (imageUrl) => {
   try {
     if (!imageUrl) return;
 
     const parts = imageUrl.split("/");
-    const fileName =
-      parts[parts.length - 1];
+    const fileName = parts[parts.length - 1];
 
-    const publicId =
-      "placementor/" +
-      fileName.split(".")[0];
+    const publicId = "placementor/" + fileName.split(".")[0];
 
-    await cloudinary.uploader.destroy(
-      publicId
-    );
+    await cloudinary.uploader.destroy(publicId);
   } catch (error) {
-    console.log(
-      "Cloudinary delete error:",
-      error.message
-    );
+    console.log("Cloudinary delete error:", error.message);
   }
 };
-
 
 export default uploadOnCloudinary;

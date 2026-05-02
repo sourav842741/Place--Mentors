@@ -1,43 +1,54 @@
 import puppeteer from "puppeteer";
 import { askAi, extractJSON } from "../services/openRouter.service.js";
-import CoachChat from '../models/CoachChat.js';
-import { generateAI } from '../services/ai.service.js';
+import CoachChat from "../models/CoachChat.js";
+import { generateAI } from "../services/ai.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 import User from "../models/user.model.js";
-import { isValidYoutubeUrl, extractVideoId, fetchTranscript, fetchTranscriptOrMetadata } from "../utils/youtubeHelper.js";
-
+import {
+  isValidYoutubeUrl,
+  extractVideoId,
+  fetchTranscript,
+  fetchTranscriptOrMetadata,
+} from "../utils/youtubeHelper.js";
 
 // ================= HELPERS =================
 const cleanContent = (text) => {
-  if (!text) return '';
+  if (!text) return "";
   return text
-    .replace(/[\\[\\]\\(\\)\\{\\}]|[\\*\\-\\u2014\\u2013]/g, '')
-    .replace(/\\s+/g, ' ')
+    .replace(/[\\[\\]\\(\\)\\{\\}]|[\\*\\-\\u2014\\u2013]/g, "")
+    .replace(/\\s+/g, " ")
     .trim()
-    .split('\\n')
-    .map(line => line.trim().replace(/^•|[-*]/, ''))
-    .filter(line => line.length > 0)
-    .join('\\n');
+    .split("\\n")
+    .map((line) => line.trim().replace(/^•|[-*]/, ""))
+    .filter((line) => line.length > 0)
+    .join("\\n");
 };
 
 const renderLines = (content) => {
-  if (!content) return '';
-  return content.split('\\n').map(line => `<div style="margin-bottom: 4px; line-height: 1.4;">${line}</div>`).join('');
+  if (!content) return "";
+  return content
+    .split("\\n")
+    .map((line) => `<div style="margin-bottom: 4px; line-height: 1.4;">${line}</div>`)
+    .join("");
 };
 
 const renderSkills = (skills) => {
-  if (!skills) return '';
-  return skills.split(',').map(s => s.trim()).filter(s => s).join(' • ');
+  if (!skills) return "";
+  return skills
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s)
+    .join(" • ");
 };
 
 // ================= ICON HELPER =================
 const getIcon = (type) => {
   const icons = {
     email: "📧",
-    phone: "📞", 
+    phone: "📞",
     linkedin: "🔗",
     github: "💻",
     skills: "🛠",
@@ -45,7 +56,7 @@ const getIcon = (type) => {
     projects: "📁",
     education: "🎓",
     achievements: "🏆",
-    summary: "✨"
+    summary: "✨",
   };
   return icons[type] || "📌";
 };
@@ -75,18 +86,21 @@ Rules:
 * Realistic developer content
 * Modern stack only
 
-For ${name}, ${education}`
+For ${name}, ${education}`,
       },
-      { role: "user", content: "Generate." }
+      { role: "user", content: "Generate." },
     ];
 
     const aiResponse = await askAi(messages);
     const aiData = extractJSON(aiResponse) || {
-      summary: "Full-stack developer with React/Node.js expertise, delivering scalable applications and leading technical projects.",
+      summary:
+        "Full-stack developer with React/Node.js expertise, delivering scalable applications and leading technical projects.",
       skills: "React, Next.js, Node.js, Express, MongoDB, PostgreSQL, Tailwind, AWS, Docker",
-      experience: "Full Stack Developer | TechCorp | 2022-Present\\\\nBuilt enterprise SaaS platform\\\\nOptimized performance 3x",
-      projects: "Real-time Dashboard | React + Socket.io\\\\nE-commerce API | Node.js + Stripe\\\\nDeployed on AWS",
-      achievements: "Google Hash Code Top 100\\\\nOpen source 5k+ stars\\\\nMentored 25 developers"
+      experience:
+        "Full Stack Developer | TechCorp | 2022-Present\\\\nBuilt enterprise SaaS platform\\\\nOptimized performance 3x",
+      projects:
+        "Real-time Dashboard | React + Socket.io\\\\nE-commerce API | Node.js + Stripe\\\\nDeployed on AWS",
+      achievements: "Google Hash Code Top 100\\\\nOpen source 5k+ stars\\\\nMentored 25 developers",
     };
 
     res.json(aiData);
@@ -126,10 +140,10 @@ export const generateYoutubeSummary = asyncHandler(async (req, res) => {
   const videoInfo = contentResult.videoInfo;
 
   //  UPDATED PROMPT (HINGLISH + STRICT STRING)
-const messages = [
-  {
-    role: "system",
-    content: `
+  const messages = [
+    {
+      role: "system",
+      content: `
 You are a HIGH-INTELLIGENCE YouTube video summarizer.
 
 Your goal is NOT just summarizing — but extracting deep understanding, insights, and structured knowledge.
@@ -235,18 +249,18 @@ Make the summary feel like:
 👉 A smart student took detailed notes
 👉 Easy to revise quickly
 👉 Valuable even without watching video
-`
-  },
-  {
-    role: "user",
-    content: `
+`,
+    },
+    {
+      role: "user",
+      content: `
 Video Title: ${videoInfo.title}
 
 Transcript:
 ${contentResult.text.substring(0, 30000)}
-`
-  }
-];
+`,
+    },
+  ];
 
   let aiResponse = await askAi(messages);
 
@@ -269,7 +283,7 @@ ${contentResult.text.substring(0, 30000)}
       english: englishSummary?.trim() || "Summary generated.",
       hinglish: hinglishSummary?.trim() || "Summary generate ho gaya.",
       timestamps: [],
-      highlights: []
+      highlights: [],
     };
   }
 
@@ -285,17 +299,17 @@ ${contentResult.text.substring(0, 30000)}
     videoId,
     summary: {
       english: String(structuredSummary.english || ""),
-      hinglish: String(structuredSummary.hinglish || "")
+      hinglish: String(structuredSummary.hinglish || ""),
     },
     timestamps: structuredSummary.timestamps || [],
-    highlights: structuredSummary.highlights || []
+    highlights: structuredSummary.highlights || [],
   };
 
   res.status(200).json(
     new ApiResponse(200, {
       success: true,
       data: responseData,
-      creditsLeft: user.credits
+      creditsLeft: user.credits,
     })
   );
 });
@@ -320,10 +334,7 @@ export const getMotivation = async (req, res) => {
     const currentXP = xp - prevXP;
     const maxXP = level * 100;
 
-    const percent = Math.min(
-      Math.max((currentXP / maxXP) * 100, 0),
-      100
-    ).toFixed(0);
+    const percent = Math.min(Math.max((currentXP / maxXP) * 100, 0), 100).toFixed(0);
 
     const streak = user.streakCount || 0;
 
@@ -351,9 +362,9 @@ export const getMotivation = async (req, res) => {
         content: `You are strict AI COACH. Generate EXACTLY 2 lines:
 Line 1: MUST mention Level ${level}, Streak ${streak} OR ${percent}% + 1 emoji (8-10 words)
 Line 2: Target "${weakArea}" issue specifically + 1 emoji (8-10 words)
-Hinglish OK. Energetic. Use \\n separator. No extra text.`
+Hinglish OK. Energetic. Use \\n separator. No extra text.`,
       },
-      { role: "user", content: "Give me motivation." }
+      { role: "user", content: "Give me motivation." },
     ];
 
     let aiResponse = "";
@@ -394,42 +405,42 @@ Hinglish OK. Energetic. Use \\n separator. No extra text.`
 
     // Response
     return res.json({
-      message: cleanMessage
+      message: cleanMessage,
     });
-
   } catch (error) {
     console.error("Motivation Error:", error);
     return res.status(500).json({
-      message: "Something went wrong"
+      message: "Something went wrong",
     });
   }
 };
-
-
 
 export const coachChat = asyncHandler(async (req, res) => {
   const { message, chatId } = req.body;
   const userId = req.user._id;
 
   if (!message || message.trim().length === 0) {
-    throw new ApiError(400, 'Message is required');
+    throw new ApiError(400, "Message is required");
   }
 
   let chat;
   if (chatId) {
     chat = await CoachChat.findOne({ _id: chatId, userId, isDeleted: false });
-    if (!chat) throw new ApiError(404, 'Chat not found');
+    if (!chat) throw new ApiError(404, "Chat not found");
   } else {
     // New chat
-    chat = new CoachChat({ userId, title: message.substring(0, 50) + '...' });
+    chat = new CoachChat({ userId, title: message.substring(0, 50) + "..." });
   }
 
   // Add user message
-  chat.messages.push({ role: 'user', text: message.trim() });
-  
+  chat.messages.push({ role: "user", text: message.trim() });
+
   // Generate AI response
-  const context = chat.messages.slice(-10).map(m => `${m.role}: ${m.text}`).join('\n');
-const aiPrompt = `
+  const context = chat.messages
+    .slice(-10)
+    .map((m) => `${m.role}: ${m.text}`)
+    .join("\n");
+  const aiPrompt = `
 You are Place Mentor AI Coach, an expert mentor for placements, coding interviews, DSA, aptitude, resume, HR rounds, communication, and career growth.
 
 Your job is to first understand how much content the user wants, then respond accordingly.
@@ -578,11 +589,11 @@ ${message}
   try {
     aiResponse = await generateAI(aiPrompt);
   } catch (error) {
-    throw new ApiError(500, 'AI service unavailable');
+    throw new ApiError(500, "AI service unavailable");
   }
 
   // Add AI message
-  chat.messages.push({ role: 'ai', text: aiResponse });
+  chat.messages.push({ role: "ai", text: aiResponse });
   await chat.save();
 
   res.status(200).json(
@@ -591,33 +602,33 @@ ${message}
       data: {
         chatId: chat._id,
         messages: chat.messages.slice(-20), // Last 20 for UI
-        title: chat.title
-      }
+        title: chat.title,
+      },
     })
   );
 });
 
 export const getCoachHistory = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  
-  const history = await CoachChat.find({ 
-    userId, 
+
+  const history = await CoachChat.find({
+    userId,
     isDeleted: false,
-    messages: { $ne: [] }
+    messages: { $ne: [] },
   })
-  .sort({ updatedAt: -1 })
-  .limit(20)
-  .select('title messages createdAt updatedAt _id')
-  .lean();
+    .sort({ updatedAt: -1 })
+    .limit(20)
+    .select("title messages createdAt updatedAt _id")
+    .lean();
 
   res.status(200).json(
     new ApiResponse(200, {
       success: true,
-      data: history.map(chat => ({
+      data: history.map((chat) => ({
         ...chat,
-        preview: chat.messages[chat.messages.length - 1]?.text?.substring(0, 100) + '...',
-        messageCount: chat.messages.length
-      }))
+        preview: chat.messages[chat.messages.length - 1]?.text?.substring(0, 100) + "...",
+        messageCount: chat.messages.length,
+      })),
     })
   );
 });
@@ -627,14 +638,12 @@ export const clearChat = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const chat = await CoachChat.findOne({ _id: chatId, userId });
-  if (!chat) throw new ApiError(404, 'Chat not found');
+  if (!chat) throw new ApiError(404, "Chat not found");
 
   chat.isDeleted = true;
   await chat.save();
 
-  res.status(200).json(
-    new ApiResponse(200, { success: true, message: 'Chat cleared' })
-  );
+  res.status(200).json(new ApiResponse(200, { success: true, message: "Chat cleared" }));
 });
 
 export const getQuickResponse = asyncHandler(async (req, res) => {
@@ -642,32 +651,32 @@ export const getQuickResponse = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const quickPrompts = {
-    'dsa': 'Give me a DSA doubt solving example with code for LeetCode medium problem.',
-    'resume': 'Review my resume structure. What should I improve for MAANG companies?',
-    'hr': 'Mock HR interview questions for SDE-2 role. Give sample answers.',
-    'aptitude': '5 aptitude questions with solutions for placement test.',
-    'roadmap': '30 day DSA + System Design roadmap for off-campus placements.',
-    'motivation': 'Motivate me for coding consistency and placement preparation.',
-    'debug': 'How to debug code efficiently? Common mistakes and tools.'
+    dsa: "Give me a DSA doubt solving example with code for LeetCode medium problem.",
+    resume: "Review my resume structure. What should I improve for MAANG companies?",
+    hr: "Mock HR interview questions for SDE-2 role. Give sample answers.",
+    aptitude: "5 aptitude questions with solutions for placement test.",
+    roadmap: "30 day DSA + System Design roadmap for off-campus placements.",
+    motivation: "Motivate me for coding consistency and placement preparation.",
+    debug: "How to debug code efficiently? Common mistakes and tools.",
   };
 
-  const prompt = quickPrompts[type] || quickPrompts['motivation'];
+  const prompt = quickPrompts[type] || quickPrompts["motivation"];
 
   let response;
   try {
     response = await generateAI(prompt);
   } catch (error) {
-    throw new ApiError(500, 'AI service unavailable');
+    throw new ApiError(500, "AI service unavailable");
   }
 
   // Create new chat for quick response
-  const chat = new CoachChat({ 
+  const chat = new CoachChat({
     userId,
     title: `Quick: ${type.toUpperCase()}`,
     messages: [
-      { role: 'user', text: prompt },
-      { role: 'ai', text: response }
-    ]
+      { role: "user", text: prompt },
+      { role: "ai", text: response },
+    ],
   });
   await chat.save();
 
@@ -677,33 +686,43 @@ export const getQuickResponse = asyncHandler(async (req, res) => {
       data: {
         chatId: chat._id,
         messages: chat.messages,
-        title: chat.title
-      }
+        title: chat.title,
+      },
     })
   );
 });
 
-export const getSingleCoachChat = asyncHandler(async (req,res)=>{
- const { chatId } = req.params;
- const userId = req.user._id;
+export const getSingleCoachChat = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+  const userId = req.user._id;
 
- const chat = await CoachChat.findOne({
-   _id: chatId,
-   userId,
-   isDeleted:false
- });
+  const chat = await CoachChat.findOne({
+    _id: chatId,
+    userId,
+    isDeleted: false,
+  });
 
- if(!chat) throw new ApiError(404,"Chat not found");
+  if (!chat) throw new ApiError(404, "Chat not found");
 
- res.status(200).json(
-   new ApiResponse(200, chat)
- );
+  res.status(200).json(new ApiResponse(200, chat));
 });
 
 export const generateResumePDF = async (req, res) => {
   try {
-    const { name, email, phone, linkedin, github, summary, skills, experience, projects, education, achievements, template = "classic" } = req.body;
-
+    const {
+      name,
+      email,
+      phone,
+      linkedin,
+      github,
+      summary,
+      skills,
+      experience,
+      projects,
+      education,
+      achievements,
+      template = "classic",
+    } = req.body;
 
     // Precompute
     const summaryHTML = renderLines(cleanContent(summary));
@@ -713,7 +732,7 @@ export const generateResumePDF = async (req, res) => {
     const educationHTML = renderLines(cleanContent(education));
     const achievementsHTML = renderLines(cleanContent(achievements));
 
-    console.log('PDF Debug:', template, 'Skills sample:', skillsHTML.substring(0, 50));
+    console.log("PDF Debug:", template, "Skills sample:", skillsHTML.substring(0, 50));
 
     let html;
     if (template === "modern") {
@@ -732,21 +751,21 @@ export const generateResumePDF = async (req, res) => {
 </head>
 <body>
   <div class="header">
-    <h1>${name || 'Your Name'}</h1>
+    <h1>${name || "Your Name"}</h1>
     <div class="contact">
-      ${email ? `<div class="contact-item"><span class="contact-icon">${getIcon('email')}</span>${email}</div>` : ''}
-      ${phone ? `<div class="contact-item"><span class="contact-icon">${getIcon('phone')}</span>${phone}</div>` : ''}
-      ${linkedin ? `<div class="contact-item"><span class="contact-icon">${getIcon('linkedin')}</span>${linkedin}</div>` : ''}
-      ${github ? `<div class="contact-item"><span class="contact-icon">${getIcon('github')}</span>${github}</div>` : ''}
+      ${email ? `<div class="contact-item"><span class="contact-icon">${getIcon("email")}</span>${email}</div>` : ""}
+      ${phone ? `<div class="contact-item"><span class="contact-icon">${getIcon("phone")}</span>${phone}</div>` : ""}
+      ${linkedin ? `<div class="contact-item"><span class="contact-icon">${getIcon("linkedin")}</span>${linkedin}</div>` : ""}
+      ${github ? `<div class="contact-item"><span class="contact-icon">${getIcon("github")}</span>${github}</div>` : ""}
     </div>
   </div>
   <div style="max-width: 600px; margin: 0 auto;">
-    ${summaryHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('summary')}</span>Summary</span><div class="section-content">${summaryHTML}</div></div>` : ''}
-    ${skillsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('skills')}</span>Skills</span><div class="section-content skills-tags">${skillsHTML.replace(/ • /g, '</span><span class="skills-tag">')}</div></div>` : ''}
-    ${experienceHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('experience')}</span>Experience</span><div class="section-content">${experienceHTML}</div></div>` : ''}
-    ${projectsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('projects')}</span>Projects</span><div class="section-content">${projectsHTML}</div></div>` : ''}
-    ${educationHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('education')}</span>Education</span><div class="section-content">${educationHTML}</div></div>` : ''}
-    ${achievementsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon('achievements')}</span>Achievements</span><div class="section-content">${achievementsHTML}</div></div>` : ''}
+    ${summaryHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("summary")}</span>Summary</span><div class="section-content">${summaryHTML}</div></div>` : ""}
+    ${skillsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("skills")}</span>Skills</span><div class="section-content skills-tags">${skillsHTML.replace(/ • /g, '</span><span class="skills-tag">')}</div></div>` : ""}
+    ${experienceHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("experience")}</span>Experience</span><div class="section-content">${experienceHTML}</div></div>` : ""}
+    ${projectsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("projects")}</span>Projects</span><div class="section-content">${projectsHTML}</div></div>` : ""}
+    ${educationHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("education")}</span>Education</span><div class="section-content">${educationHTML}</div></div>` : ""}
+    ${achievementsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("achievements")}</span>Achievements</span><div class="section-content">${achievementsHTML}</div></div>` : ""}
   </div>
 </body>
 </html>`;
@@ -755,21 +774,20 @@ export const generateResumePDF = async (req, res) => {
     const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
-    const pdf = await page.pdf({ 
+    const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" } 
+      margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
     });
     await browser.close();
 
     res.set({
       "Content-Type": "application/pdf",
-      "Content-Disposition": 'attachment; filename="resume-' + template + '.pdf"'
+      "Content-Disposition": 'attachment; filename="resume-' + template + '.pdf"',
     });
     res.send(pdf);
   } catch (error) {
     console.error("PDF ERROR:", error);
     res.status(500).json({ error: "PDF failed" });
   }
- 
-}
+};

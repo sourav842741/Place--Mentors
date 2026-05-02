@@ -1,48 +1,47 @@
 import { generateAI } from "./ai.service.js";
 
-
 const COMPANY_RESOURCES = {
   amazon: {
     youtube: [
       {
         title: "Amazon Interview Preparation (Striver)",
-        link: "https://www.youtube.com/results?search_query=amazon+interview+preparation+striver"
-      }
+        link: "https://www.youtube.com/results?search_query=amazon+interview+preparation+striver",
+      },
     ],
     coding: [
       {
         platform: "LeetCode",
-        link: "https://leetcode.com/problem-list/top-amazon-questions/"
-      }
+        link: "https://leetcode.com/problem-list/top-amazon-questions/",
+      },
     ],
     aptitude: [
       {
         platform: "IndiaBIX",
-        link: "https://www.indiabix.com/aptitude/questions-and-answers/"
-      }
-    ]
+        link: "https://www.indiabix.com/aptitude/questions-and-answers/",
+      },
+    ],
   },
 
   tcs: {
     youtube: [
       {
         title: "TCS NQT Preparation",
-        link: "https://www.youtube.com/results?search_query=tcs+nqt+preparation"
-      }
+        link: "https://www.youtube.com/results?search_query=tcs+nqt+preparation",
+      },
     ],
     coding: [
       {
         platform: "LeetCode",
-        link: "https://leetcode.com/problemset/all/?difficulty=Easy"
-      }
+        link: "https://leetcode.com/problemset/all/?difficulty=Easy",
+      },
     ],
     aptitude: [
       {
         platform: "IndiaBIX",
-        link: "https://www.indiabix.com/aptitude/questions-and-answers/"
-      }
-    ]
-  }
+        link: "https://www.indiabix.com/aptitude/questions-and-answers/",
+      },
+    ],
+  },
 };
 // Safe JSON parse
 const safeParseJSON = (text) => {
@@ -63,31 +62,31 @@ const validateCompanyData = (data, companyName) => {
 
   const companyKey = companyName.toLowerCase().trim();
 
-if (COMPANY_RESOURCES[companyKey]) {
-  data.resources = COMPANY_RESOURCES[companyKey];
-}
-if (!data.resources || Object.keys(data.resources).length === 0) {
-  data.resources = {
-    youtube: [
-      {
-        title: "DSA Preparation",
-        link: "https://www.youtube.com/results?search_query=dsa+preparation+placement"
-      }
-    ],
-    coding: [
-      {
-        platform: "LeetCode",
-        link: "https://leetcode.com/problemset/"
-      }
-    ],
-    aptitude: [
-      {
-        platform: "IndiaBIX",
-        link: "https://www.indiabix.com/"
-      }
-    ]
-  };
-}
+  if (COMPANY_RESOURCES[companyKey]) {
+    data.resources = COMPANY_RESOURCES[companyKey];
+  }
+  if (!data.resources || Object.keys(data.resources).length === 0) {
+    data.resources = {
+      youtube: [
+        {
+          title: "DSA Preparation",
+          link: "https://www.youtube.com/results?search_query=dsa+preparation+placement",
+        },
+      ],
+      coding: [
+        {
+          platform: "LeetCode",
+          link: "https://leetcode.com/problemset/",
+        },
+      ],
+      aptitude: [
+        {
+          platform: "IndiaBIX",
+          link: "https://www.indiabix.com/",
+        },
+      ],
+    };
+  }
 
   // overview
   data.overview = data.overview || {};
@@ -110,27 +109,20 @@ if (!data.resources || Object.keys(data.resources).length === 0) {
   data.examTimeline.lastYear = fixDate(data.examTimeline.lastYear);
 
   // links fix
-  const validDomains = [
-    "youtube.com",
-    "leetcode.com",
-    "geeksforgeeks.org",
-    "indiabix.com"
-  ];
+  const validDomains = ["youtube.com", "leetcode.com", "geeksforgeeks.org", "indiabix.com"];
 
   const cleanLinks = (arr = []) =>
-    arr.map(item => ({
+    arr.map((item) => ({
       ...item,
-      link: validDomains.some(d => item.link?.includes(d))
-        ? item.link
-        : ""
+      link: validDomains.some((d) => item.link?.includes(d)) ? item.link : "",
     }));
 
   if (!COMPANY_RESOURCES[companyKey]) {
-  data.resources = data.resources || {};
-  data.resources.youtube = cleanLinks(data.resources.youtube);
-  data.resources.coding = cleanLinks(data.resources.coding);
-  data.resources.aptitude = cleanLinks(data.resources.aptitude);
-}
+    data.resources = data.resources || {};
+    data.resources.youtube = cleanLinks(data.resources.youtube);
+    data.resources.coding = cleanLinks(data.resources.coding);
+    data.resources.aptitude = cleanLinks(data.resources.aptitude);
+  }
 
   return data;
 };
@@ -233,46 +225,42 @@ MUST match this EXACT structure:
 }
 
 Company-specific data:
-- ${companyName === 'amazon' ? 'Amazon OA → 4 rounds, Leadership Principles' : ''}
-- ${companyName === 'tcs' ? 'TCS NQT, easy aptitude heavy' : ''}
+- ${companyName === "amazon" ? "Amazon OA → 4 rounds, Leadership Principles" : ""}
+- ${companyName === "tcs" ? "TCS NQT, easy aptitude heavy" : ""}
 - Make each company UNIQUE. Realistic packages/timelines/patterns.
 - Use real hiring processes if known.`;
 
   try {
-  const aiResponse = await generateAI(prompt);
+    const aiResponse = await generateAI(prompt);
 
-  // Safe parse
-  let companyData = safeParseJSON(aiResponse);
+    // Safe parse
+    let companyData = safeParseJSON(aiResponse);
 
-  if (!companyData) {
-    throw new Error("Invalid AI JSON");
+    if (!companyData) {
+      throw new Error("Invalid AI JSON");
+    }
+
+    // Validate + clean response
+    companyData = validateCompanyData(companyData, companyName);
+
+    return {
+      ...companyData,
+      name: companyName.toLowerCase().trim(),
+    };
+  } catch (error) {
+    console.error("AI Company generation failed:", error.response?.data || error.message);
+
+    // Billing / quota issue
+    if (error.response?.status === 402) {
+      throw new Error("AI quota exceeded. Please recharge API credits.");
+    }
+
+    // Invalid JSON response
+    if (error.message === "Invalid AI JSON") {
+      throw new Error("AI returned invalid company data. Please try again.");
+    }
+
+    // Generic fallback
+    throw new Error("Unable to generate company data right now.");
   }
-
-  // Validate + clean response
-  companyData = validateCompanyData(companyData, companyName);
-
-  return {
-    ...companyData,
-    name: companyName.toLowerCase().trim(),
-  };
-
-} catch (error) {
-  console.error(
-    "AI Company generation failed:",
-    error.response?.data || error.message
-  );
-
-  // Billing / quota issue
-  if (error.response?.status === 402) {
-    throw new Error("AI quota exceeded. Please recharge API credits.");
-  }
-
-  // Invalid JSON response
-  if (error.message === "Invalid AI JSON") {
-    throw new Error("AI returned invalid company data. Please try again.");
-  }
-
-  // Generic fallback
-  throw new Error("Unable to generate company data right now.");
-}
 };

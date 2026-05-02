@@ -1,6 +1,6 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const NotFoundPage = () => {
   const user = useSelector((state) => state.user.user);
@@ -8,14 +8,14 @@ const NotFoundPage = () => {
 
   const handleRedirect = () => {
     if (!user) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
-    if (user.role === "admin") {
-      navigate("/admin/dashboard");
+    if (user.role === 'admin') {
+      navigate('/admin/dashboard');
     } else {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   };
 
@@ -36,7 +36,7 @@ const NotFoundPage = () => {
           className="bg-cover bg-center w-full h-56 sm:h-72 md:h-96 flex items-center justify-center mt-4 rounded-xl shadow-lg"
           style={{
             backgroundImage:
-              "url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)",
+              'url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)',
           }}
         ></div>
 
@@ -56,10 +56,10 @@ const NotFoundPage = () => {
             className="mt-6 px-6 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition shadow-lg"
           >
             {!user
-              ? "Go to Login"
-              : user.role === "admin"
-                ? "Go to Admin Dashboard"
-                : "Go to Dashboard"}
+              ? 'Go to Login'
+              : user.role === 'admin'
+                ? 'Go to Admin Dashboard'
+                : 'Go to Dashboard'}
           </button>
         </div>
       </div>

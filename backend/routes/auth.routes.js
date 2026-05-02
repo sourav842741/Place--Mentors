@@ -53,7 +53,12 @@ authRouter.post(
 
 // ================= RESET PASSWORD =================
 authRouter.post("/password/send-otp", strictLimiter, validate(sendResetOtpSchema), sendResetOtp);
-authRouter.post("/password/verify-otp", strictLimiter, validate(verifyResetOtpSchema), verifyResetOtp);
+authRouter.post(
+  "/password/verify-otp",
+  strictLimiter,
+  validate(verifyResetOtpSchema),
+  verifyResetOtp
+);
 authRouter.post("/password/reset", strictLimiter, validate(resetPasswordSchema), resetPassword);
 
 // ================= USER PROFILE =================

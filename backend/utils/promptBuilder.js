@@ -4,7 +4,7 @@ export const buildPrompt = ({
   examType,
   revisionMode,
   includeDiagram,
-  includeChart
+  includeChart,
 }) => {
   return `
 You are a WORLD-CLASS ACADEMIC EXPERT, EXAMINER, AND AI TUTOR.

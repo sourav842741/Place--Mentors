@@ -7,7 +7,7 @@ export const fetchNews = createAsyncThunk(
     try {
       const params = new URLSearchParams({ page, limit });
       if (tag !== 'all') params.append('tag', tag);
-      
+
       const response = await api.get(`/api/news?${params}`);
       return response.data;
     } catch (error) {
@@ -36,12 +36,12 @@ const newsSlice = createSlice({
     loading: false,
     error: null,
     pagination: {},
-    statsLoading: false
+    statsLoading: false,
   },
   reducers: {
     clearNewsError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -52,7 +52,7 @@ const newsSlice = createSlice({
       })
       .addCase(fetchNews.fulfilled, (state, action) => {
         state.loading = false;
-state.news = action.payload?.data?.news || action.payload?.news || [];
+        state.news = action.payload?.data?.news || action.payload?.news || [];
         state.pagination = action.payload.data.pagination || {};
       })
       .addCase(fetchNews.rejected, (state, action) => {
@@ -70,9 +70,8 @@ state.news = action.payload?.data?.news || action.payload?.news || [];
       .addCase(fetchNewsStats.rejected, (state) => {
         state.statsLoading = false;
       });
-  }
+  },
 });
 
 export const { clearNewsError } = newsSlice.actions;
 export default newsSlice.reducer;
-

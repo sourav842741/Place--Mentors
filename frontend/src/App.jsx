@@ -1,10 +1,10 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { socket } from "./socket";
-import useAuth from "./hooks/useAuth";
-import useSettings from "./hooks/useSettings";
+import { socket } from './socket';
+import useAuth from './hooks/useAuth';
+import useSettings from './hooks/useSettings';
 
 import {
   battleStart,
@@ -13,80 +13,80 @@ import {
   battleFailed,
   battleResult,
   updateOpponentCode,
-} from "./redux/battleSlice";
+} from './redux/battleSlice';
 
 /* Pages */
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import VerifyOtp from "./pages/VerifyOtp";
-import Dashboard from "./pages/Dashboard";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import Jobs from "./pages/Jobs";
-import Profile from "./pages/Profile";
-import QuizPage from "./pages/QuizPage";
-import Pricing from "./pages/Pricing";
-import InterviewHistory from "./pages/InterviewHistory";
-import InterviewReport from "./pages/InterviewReport";
-import Leaderboard from "./pages/Leaderboard";
-import AIPlanner from "./pages/AIPlanner";
-import PlannerHistory from "./pages/PlannerHistory";
-import ResumeAnalyzer from "./pages/ResumeAnalyzer";
-import ResumeGenerator from "./pages/ResumeGenerator";
-import JobDetailsPage from "./pages/JobDetailsPage";
-import CompanyPage from "./pages/CompanyPage";
-import AllCompanies from "./pages/AllCompanies";
-import AISearchPage from "./pages/AISearchPage";
-import Notes from "./pages/Notes";
-import NoteDetail from "./pages/NoteDetail";
-import About from "./pages/About";
-import CodeEditor from "./pages/CodeEditor";
-import LandingPage from "./pages/LandingPage";
-import DoubtChatPage from "./pages/DoubtChatPage";
-import PotdPage from "./pages/PotdPage.jsx";
-import CodingPotdPage from "./pages/CodingPotdPage.jsx";
-import YoutubeSummaryPage from "./pages/YoutubeSummaryPage";
-import Resources from "./pages/Resources";
-import UsersPage from "./pages/UsersPage";
-import BattlePage from "./pages/BattlePage.jsx";
-import TaskBoard from "./pages/TaskBoard";
-import ShareTask from "./pages/ShareTask";
-import FruitboxFlex from "./pages/FruitboxFlex";
-import AICoach from "./pages/AICoach";
-import MaintenancePage from "./pages/MaintenancePage";
-import AIVoiceCoach from "./pages/AIVoiceCoach";
-import CallHistory from "./pages/CallHistory";
-import CallReport from "./pages/CallReport";
-import CertificateVerifyPage from "./pages/CertificateVerifyPage.jsx";
-import PlacementPredictor from "./pages/PlacementPredictor";
-import SupportPage from "./pages/SupportPage";
-import TicketDetailPage from "./pages/TicketDetailPage";
-import AdminTickets from "./pages/admin/AdminTickets";
-import InterviewExperienceComingSoon from "./pages/InterviewExperienceComingSoon";
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import VerifyOtp from './pages/VerifyOtp';
+import Dashboard from './pages/Dashboard';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import Jobs from './pages/Jobs';
+import Profile from './pages/Profile';
+import QuizPage from './pages/QuizPage';
+import Pricing from './pages/Pricing';
+import InterviewHistory from './pages/InterviewHistory';
+import InterviewReport from './pages/InterviewReport';
+import Leaderboard from './pages/Leaderboard';
+import AIPlanner from './pages/AIPlanner';
+import PlannerHistory from './pages/PlannerHistory';
+import ResumeAnalyzer from './pages/ResumeAnalyzer';
+import ResumeGenerator from './pages/ResumeGenerator';
+import JobDetailsPage from './pages/JobDetailsPage';
+import CompanyPage from './pages/CompanyPage';
+import AllCompanies from './pages/AllCompanies';
+import AISearchPage from './pages/AISearchPage';
+import Notes from './pages/Notes';
+import NoteDetail from './pages/NoteDetail';
+import About from './pages/About';
+import CodeEditor from './pages/CodeEditor';
+import LandingPage from './pages/LandingPage';
+import DoubtChatPage from './pages/DoubtChatPage';
+import PotdPage from './pages/PotdPage.jsx';
+import CodingPotdPage from './pages/CodingPotdPage.jsx';
+import YoutubeSummaryPage from './pages/YoutubeSummaryPage';
+import Resources from './pages/Resources';
+import UsersPage from './pages/UsersPage';
+import BattlePage from './pages/BattlePage.jsx';
+import TaskBoard from './pages/TaskBoard';
+import ShareTask from './pages/ShareTask';
+import FruitboxFlex from './pages/FruitboxFlex';
+import AICoach from './pages/AICoach';
+import MaintenancePage from './pages/MaintenancePage';
+import AIVoiceCoach from './pages/AIVoiceCoach';
+import CallHistory from './pages/CallHistory';
+import CallReport from './pages/CallReport';
+import CertificateVerifyPage from './pages/CertificateVerifyPage.jsx';
+import PlacementPredictor from './pages/PlacementPredictor';
+import SupportPage from './pages/SupportPage';
+import TicketDetailPage from './pages/TicketDetailPage';
+import AdminTickets from './pages/admin/AdminTickets';
+import InterviewExperienceComingSoon from './pages/InterviewExperienceComingSoon';
 
 /* Components */
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/admin/AdminRoute";
-import AdminLayout from "./components/admin/AdminLayout";
-import InstallPopup from "./components/InstallPopup";
-import NotFoundPage from "./components/NotFoundPage";
-import NotificationPopup from "./components/NotificationPopup.jsx";
-import SplashScreen from "./components/SplashScreen";
-import { Toaster } from "sonner";
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/admin/AdminRoute';
+import AdminLayout from './components/admin/AdminLayout';
+import InstallPopup from './components/InstallPopup';
+import NotFoundPage from './components/NotFoundPage';
+import NotificationPopup from './components/NotificationPopup.jsx';
+import SplashScreen from './components/SplashScreen';
+import { Toaster } from 'sonner';
 
 /* Admin Pages */
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import Users from "./pages/admin/Users";
-import AdminCreatePotd from "./pages/admin/AdminCreatePotd";
-import AdminCreateCpotd from "./pages/admin/AdminCreateCpotd";
-import AdminEmailCenter from "./pages/admin/AdminEmailCenter";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminMaintenanceManager from "./pages/admin/AdminMaintenanceManager.jsx";
-import AdminSecurity from "./pages/admin/AdminSecurity";
-import Certificates from "./pages/Certificates.jsx";
-import CookieConsent from "./components/CookieConsent";
-import MaintenanceProductivityHub from "./pages/MaintenanceProductivityHub";
-import ProjectDocs from "./pages/ProjectDocs";
+import AdminDashboard from './pages/admin/AdminDashboard';
+import Users from './pages/admin/Users';
+import AdminCreatePotd from './pages/admin/AdminCreatePotd';
+import AdminCreateCpotd from './pages/admin/AdminCreateCpotd';
+import AdminEmailCenter from './pages/admin/AdminEmailCenter';
+import AdminSettings from './pages/admin/AdminSettings';
+import AdminMaintenanceManager from './pages/admin/AdminMaintenanceManager.jsx';
+import AdminSecurity from './pages/admin/AdminSecurity';
+import Certificates from './pages/Certificates.jsx';
+import CookieConsent from './components/CookieConsent';
+import MaintenanceProductivityHub from './pages/MaintenanceProductivityHub';
+import ProjectDocs from './pages/ProjectDocs';
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -108,17 +108,17 @@ function App() {
       ? maintenanceRealtime.maintenanceMode
       : settingsData?.data?.maintenanceMode;
 
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
-    const publicVerifyPage = location.pathname.startsWith("/verify/");
+    const publicVerifyPage = location.pathname.startsWith('/verify/');
 
     if (!loading && user && !publicVerifyPage) {
-      const seen = sessionStorage.getItem("seenSplash");
+      const seen = sessionStorage.getItem('seenSplash');
 
-      if (!seen && location.pathname !== "/splash") {
-        sessionStorage.setItem("seenSplash", "true");
-        navigate("/splash");
+      if (!seen && location.pathname !== '/splash') {
+        sessionStorage.setItem('seenSplash', 'true');
+        navigate('/splash');
       }
     }
   }, [user, loading, location.pathname]);
@@ -131,7 +131,7 @@ function App() {
   /* SOCKET JOIN */
   useEffect(() => {
     if (user?._id) {
-      socket.emit("join", user._id);
+      socket.emit('join', user._id);
     }
   }, [user]);
 
@@ -140,36 +140,36 @@ function App() {
 
   const [popupData, setPopupData] = useState(null);
 
-  const [popupType, setPopupType] = useState("");
+  const [popupType, setPopupType] = useState('');
 
   useEffect(() => {
     const handleFriendRequest = (data) => {
       setPopupData(data.requester);
-      setPopupType("friend");
+      setPopupType('friend');
       setShowPopup(true);
     };
 
     const handleChallenge = (data) => {
       setPopupData(data.challenger || data);
-      setPopupType("challenge");
+      setPopupType('challenge');
       setShowPopup(true);
     };
 
-    socket.on("friend_request_received", handleFriendRequest);
+    socket.on('friend_request_received', handleFriendRequest);
 
-    socket.on("challenge_received", handleChallenge);
+    socket.on('challenge_received', handleChallenge);
 
     return () => {
-      socket.off("friend_request_received", handleFriendRequest);
+      socket.off('friend_request_received', handleFriendRequest);
 
-      socket.off("challenge_received", handleChallenge);
+      socket.off('challenge_received', handleChallenge);
     };
   }, []);
 
   const closePopup = () => {
     setShowPopup(false);
     setPopupData(null);
-    setPopupType("");
+    setPopupType('');
   };
 
   /* BATTLE SOCKETS */
@@ -186,27 +186,25 @@ function App() {
       });
     };
 
-    socket.on("battle:start", handleBattleStart);
+    socket.on('battle:start', handleBattleStart);
 
-    socket.on("battle:winner", (data) => dispatch(battleWinner(data)));
+    socket.on('battle:winner', (data) => dispatch(battleWinner(data)));
 
-    socket.on("battle:draw", () => dispatch(battleDraw()));
+    socket.on('battle:draw', () => dispatch(battleDraw()));
 
-    socket.on("battle:failed", () => dispatch(battleFailed()));
+    socket.on('battle:failed', () => dispatch(battleFailed()));
 
-    socket.on("battle:result", (data) => dispatch(battleResult(data)));
+    socket.on('battle:result', (data) => dispatch(battleResult(data)));
 
-    socket.on("opponent_code_change", (data) =>
-      dispatch(updateOpponentCode(data)),
-    );
+    socket.on('opponent_code_change', (data) => dispatch(updateOpponentCode(data)));
 
     return () => {
-      socket.off("battle:start", handleBattleStart);
-      socket.off("battle:winner");
-      socket.off("battle:draw");
-      socket.off("battle:failed");
-      socket.off("battle:result");
-      socket.off("opponent_code_change");
+      socket.off('battle:start', handleBattleStart);
+      socket.off('battle:winner');
+      socket.off('battle:draw');
+      socket.off('battle:failed');
+      socket.off('battle:result');
+      socket.off('opponent_code_change');
     };
   }, [dispatch, navigate]);
 
@@ -217,19 +215,19 @@ function App() {
 
   /* MAINTENANCE BLOCK
      ADMIN ROUTES ALWAYS ALLOWED */
- const isMaintenanceHub = location.pathname === "/maintenance-hub";
-  const isSupportRoute = location.pathname.startsWith("/support");
+  const isMaintenanceHub = location.pathname === '/maintenance-hub';
+  const isSupportRoute = location.pathname.startsWith('/support');
 
-if (
-  maintenanceActive &&
-  !isAdminRoute &&
-  !isMaintenanceHub &&
-  !isSupportRoute &&
-  user?.role !== "admin" &&
-  user?.role !== "superadmin"
-) {
-  return <MaintenancePage />;
-}
+  if (
+    maintenanceActive &&
+    !isAdminRoute &&
+    !isMaintenanceHub &&
+    !isSupportRoute &&
+    user?.role !== 'admin' &&
+    user?.role !== 'superadmin'
+  ) {
+    return <MaintenancePage />;
+  }
 
   return (
     <>
@@ -237,13 +235,7 @@ if (
       <CookieConsent />
       <Toaster position="top-right" richColors />
 
-      {showPopup && (
-        <NotificationPopup
-          type={popupType}
-          data={popupData}
-          onClose={closePopup}
-        />
-      )}
+      {showPopup && <NotificationPopup type={popupType} data={popupData} onClose={closePopup} />}
 
       <Routes>
         {/* PUBLIC */}
@@ -255,7 +247,7 @@ if (
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify/:id" element={<CertificateVerifyPage />} />
-         <Route path="/project-docs" element={<ProjectDocs />} />
+        <Route path="/project-docs" element={<ProjectDocs />} />
 
         {/* ADMIN */}
         <Route element={<AdminRoute />}>
@@ -267,10 +259,7 @@ if (
             <Route path="/admin/email-center" element={<AdminEmailCenter />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/security" element={<AdminSecurity />} />
-            <Route
-              path="/admin/maintenance-manager"
-              element={<AdminMaintenanceManager />}
-            />
+            <Route path="/admin/maintenance-manager" element={<AdminMaintenanceManager />} />
             <Route path="/admin/tickets" element={<AdminTickets />} />
           </Route>
         </Route>

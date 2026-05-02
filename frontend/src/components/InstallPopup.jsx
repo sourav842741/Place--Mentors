@@ -1,28 +1,25 @@
-import { useEffect, useState } from "react";
-import { installApp, canInstall } from "../lib/pwa";
+import { useEffect, useState } from 'react';
+import { installApp, canInstall } from '../lib/pwa';
 
 export default function InstallPopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const LAST_CLOSED_KEY = "install_popup_last_closed";
+    const LAST_CLOSED_KEY = 'install_popup_last_closed';
     const EIGHT_HOURS = 8 * 60 * 60 * 1000;
 
     const timer = setTimeout(() => {
       if (!canInstall()) return;
 
       // Cookie popup active hai toh install popup mat dikhao
-      const cookieConsent = localStorage.getItem("cookie_consent");
+      const cookieConsent = localStorage.getItem('cookie_consent');
       if (!cookieConsent) return;
 
       const lastClosed = localStorage.getItem(LAST_CLOSED_KEY);
       const now = Date.now();
 
       // Agar user ne 8 ghante ke andar close kiya tha
-      if (
-        lastClosed &&
-        now - Number(lastClosed) < EIGHT_HOURS
-      ) {
+      if (lastClosed && now - Number(lastClosed) < EIGHT_HOURS) {
         return;
       }
 
@@ -33,20 +30,14 @@ export default function InstallPopup() {
   }, []);
 
   const handleClose = () => {
-    localStorage.setItem(
-      "install_popup_last_closed",
-      Date.now()
-    );
+    localStorage.setItem('install_popup_last_closed', Date.now());
     setShow(false);
   };
 
   const handleInstall = async () => {
     await installApp();
 
-    localStorage.setItem(
-      "install_popup_last_closed",
-      Date.now()
-    );
+    localStorage.setItem('install_popup_last_closed', Date.now());
 
     setShow(false);
   };
@@ -56,7 +47,6 @@ export default function InstallPopup() {
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-5">
       <div className="w-80 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
-        
         {/* Title */}
         <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
           Install Place Mentor 🚀

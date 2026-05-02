@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { generateNotes } from "../redux/notesSlice";
-import { generatePDFAPI } from "../services/notes.api";
-import { updateCredits } from "../redux/userSlice";
-import { toast } from "sonner";
-import useAuth from "../hooks/useAuth";
-
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { generateNotes } from '../redux/notesSlice';
+import { generatePDFAPI } from '../services/notes.api';
+import { updateCredits } from '../redux/userSlice';
+import { toast } from 'sonner';
+import useAuth from '../hooks/useAuth';
 
 function NotesForm() {
   const dispatch = useDispatch();
@@ -15,47 +14,47 @@ function NotesForm() {
   const { singleNote, loading } = useSelector((state) => state.notes);
 
   const [form, setForm] = useState({
-    topic: "",
-    classLevel: "",
-    examType: "",
+    topic: '',
+    classLevel: '',
+    examType: '',
     revisionMode: false,
     includeDiagram: false,
     includeChart: false,
   });
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const res = await dispatch(generateNotes(form));
+    const res = await dispatch(generateNotes(form));
 
-  // ❌ ERROR HANDLE
-  if (res?.error) {
-    let message = "Something went wrong";
+    // ❌ ERROR HANDLE
+    if (res?.error) {
+      let message = 'Something went wrong';
 
-    if (typeof res.payload === "string") {
-      message = res.payload;
-    } else if (res.payload?.message) {
-      message = res.payload.message;
-    } else if (res.payload?.error) {
-      message = res.payload.error;
+      if (typeof res.payload === 'string') {
+        message = res.payload;
+      } else if (res.payload?.message) {
+        message = res.payload.message;
+      } else if (res.payload?.error) {
+        message = res.payload.error;
+      }
+
+      toast.error(message);
+      return;
     }
 
-    toast.error(message);
-    return;
-  }
+    //  FINAL FIX (IMPORTANT LINE)
+    const credits =
+      res?.payload?.creditsLeft || //  THIS IS YOUR REAL FIELD
+      res?.payload?.credits ||
+      res?.payload?.data?.credits;
 
-  //  FINAL FIX (IMPORTANT LINE)
-  const credits =
-    res?.payload?.creditsLeft ||   //  THIS IS YOUR REAL FIELD
-    res?.payload?.credits ||
-    res?.payload?.data?.credits;
-
-  if (credits !== undefined) {
-    dispatch(updateCredits(credits)); // 💥 INSTANT NAVBAR UPDATE
-  } else {
-    await getCurrentUser(); // fallback
-  }
-};
+    if (credits !== undefined) {
+      dispatch(updateCredits(credits)); // 💥 INSTANT NAVBAR UPDATE
+    } else {
+      await getCurrentUser(); // fallback
+    }
+  };
 
   // ✅ PDF Download Function
   const handleDownload = async () => {
@@ -63,14 +62,14 @@ const handleSubmit = async (e) => {
       const res = await generatePDFAPI({ result: singleNote });
 
       const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
+      const link = document.createElement('a');
 
       link.href = url;
-      link.setAttribute("download", "ExamNotesAI.pdf");
+      link.setAttribute('download', 'ExamNotesAI.pdf');
       document.body.appendChild(link);
       link.click();
     } catch (err) {
-      console.error("PDF download error:", err);
+      console.error('PDF download error:', err);
     }
   };
 
@@ -84,11 +83,8 @@ const handleSubmit = async (e) => {
           onChange={(e) => setForm({ ...form, topic: e.target.value })}
         />
 
-        <button
-          disabled={loading}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          {loading ? "Generating..." : "Generate Notes"}
+        <button disabled={loading} className="bg-blue-500 text-white px-4 py-2 rounded">
+          {loading ? 'Generating...' : 'Generate Notes'}
         </button>
       </form>
 
@@ -97,9 +93,7 @@ const handleSubmit = async (e) => {
         <div className="p-4 border rounded bg-gray-50">
           <h2 className="font-bold mb-2">Generated Notes</h2>
 
-          <pre className="whitespace-pre-wrap text-sm">
-            {singleNote.notes}
-          </pre>
+          <pre className="whitespace-pre-wrap text-sm">{singleNote.notes}</pre>
 
           {/* ✅ PDF BUTTON */}
           <button

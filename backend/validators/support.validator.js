@@ -1,10 +1,5 @@
 import Joi from "joi";
-import {
-  subject,
-  category,
-  priority,
-  description,
-} from "./common.validator.js";
+import { subject, category, priority, description } from "./common.validator.js";
 
 export const chatWithSupportAI = Joi.object({
   message: Joi.string().trim().min(1).max(5000).required().messages({
@@ -41,4 +36,3 @@ export const escalateToTicket = Joi.object({
   mobile: Joi.string().trim().max(20).optional().allow(""),
   aiChatSummary: Joi.string().trim().max(10000).optional().allow(""),
 });
-

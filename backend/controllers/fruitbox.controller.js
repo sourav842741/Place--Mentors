@@ -17,9 +17,7 @@ export const getProgress = asyncHandler(async (req, res) => {
     await progress.save();
   }
 
-  res.status(200).json(
-    new ApiResponse(200, progress, "Progress fetched successfully")
-  );
+  res.status(200).json(new ApiResponse(200, progress, "Progress fetched successfully"));
 });
 
 export const updateProgress = asyncHandler(async (req, res) => {
@@ -44,8 +42,7 @@ export const updateProgress = asyncHandler(async (req, res) => {
     });
   }
 
-  const alreadyCompleted =
-    progress.completedLevels.includes(level);
+  const alreadyCompleted = progress.completedLevels.includes(level);
 
   // Reward only first time
   if (!alreadyCompleted) {
@@ -57,10 +54,7 @@ export const updateProgress = asyncHandler(async (req, res) => {
     progress.totalXP += Number(earnedXP) || 0;
 
     // prevent level 16 bug
-    progress.currentLevel = Math.min(
-      Math.max(progress.currentLevel, level + 1),
-      15
-    );
+    progress.currentLevel = Math.min(Math.max(progress.currentLevel, level + 1), 15);
 
     progress.lastPlayedAt = new Date();
 
@@ -73,11 +67,9 @@ export const updateProgress = asyncHandler(async (req, res) => {
       user.xp += Number(earnedXP) || 0;
 
       // Auto level system (100 XP = 1 level)
-      user.level =
-        Math.floor(user.xp / 100) + 1;
+      user.level = Math.floor(user.xp / 100) + 1;
 
-      user.currentLevelXP =
-        user.xp % 100;
+      user.currentLevelXP = user.xp % 100;
 
       user.nextLevelXP = 100;
 
@@ -85,13 +77,7 @@ export const updateProgress = asyncHandler(async (req, res) => {
     }
   }
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      progress,
-      "Progress updated successfully"
-    )
-  );
+  res.status(200).json(new ApiResponse(200, progress, "Progress updated successfully"));
 });
 
 export const resetProgress = asyncHandler(async (req, res) => {
@@ -99,11 +85,5 @@ export const resetProgress = asyncHandler(async (req, res) => {
     userId: req.userId,
   });
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      {},
-      "Progress reset successfully"
-    )
-  );
+  res.status(200).json(new ApiResponse(200, {}, "Progress reset successfully"));
 });

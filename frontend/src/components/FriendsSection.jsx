@@ -1,17 +1,14 @@
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  useAcceptFriendRequest,
-  useRejectFriendRequest,
-} from "../hooks/useFriends";
-import { useMutation } from "@tanstack/react-query";
-import api from "../services/api";
-import { loadFriends } from "../redux/userSlice";
-import { Users, User } from "lucide-react";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useAcceptFriendRequest, useRejectFriendRequest } from '../hooks/useFriends';
+import { useMutation } from '@tanstack/react-query';
+import api from '../services/api';
+import { loadFriends } from '../redux/userSlice';
+import { Users, User } from 'lucide-react';
+import { toast } from 'sonner';
 
 const FriendCard = ({
   friend,
@@ -20,7 +17,7 @@ const FriendCard = ({
   onReject,
   onChallenge,
   loading = false,
-  challengeText = "⚔️ Challenge",
+  challengeText = '⚔️ Challenge',
   disabledChallenge = false,
 }) => {
   return (
@@ -33,9 +30,7 @@ const FriendCard = ({
 
         <div className="flex-1">
           <h3 className="font-semibold text-sm">{friend.fullName}</h3>
-          <p className="text-xs text-gray-500">
-            XP: {friend.xp?.toLocaleString()}
-          </p>
+          <p className="text-xs text-gray-500">XP: {friend.xp?.toLocaleString()}</p>
         </div>
       </div>
 
@@ -48,7 +43,7 @@ const FriendCard = ({
               className="flex-1 bg-green-500 hover:bg-green-600"
               onClick={onAccept}
             >
-              {loading ? "Accepting..." : "Accept"}
+              {loading ? 'Accepting...' : 'Accept'}
             </Button>
 
             <Button
@@ -70,7 +65,7 @@ const FriendCard = ({
             className="w-full bg-red-500 hover:bg-red-600 text-white"
             onClick={onChallenge}
           >
-            {loading ? "Sending..." : challengeText}
+            {loading ? 'Sending...' : challengeText}
           </Button>
         )}
       </div>
@@ -102,21 +97,15 @@ export default function FriendsSection({ friendsData }) {
       const active = {};
 
       friends.forEach((friend) => {
-        const saved = localStorage.getItem(
-          `challenge_${friend._id}`
-        );
+        const saved = localStorage.getItem(`challenge_${friend._id}`);
 
         if (saved) {
-          const remaining = Math.floor(
-            (Number(saved) - Date.now()) / 1000
-          );
+          const remaining = Math.floor((Number(saved) - Date.now()) / 1000);
 
           if (remaining > 0) {
             active[friend._id] = remaining;
           } else {
-            localStorage.removeItem(
-              `challenge_${friend._id}`
-            );
+            localStorage.removeItem(`challenge_${friend._id}`);
           }
         }
       });
@@ -135,9 +124,7 @@ export default function FriendsSection({ friendsData }) {
             updated[id] -= 1;
           } else {
             delete updated[id];
-            localStorage.removeItem(
-              `challenge_${id}`
-            );
+            localStorage.removeItem(`challenge_${id}`);
           }
         });
 
@@ -152,21 +139,16 @@ export default function FriendsSection({ friendsData }) {
   const sendChallenge = useMutation({
     mutationFn: async (friendId) => {
       setChallengeLoadingId(friendId);
-      return await api.post(
-        `/api/friends/challenge/${friendId}`
-      );
+      return await api.post(`/api/friends/challenge/${friendId}`);
     },
 
     onSuccess: (_, friendId) => {
-      toast.success("⚔️ Challenge sent!");
+      toast.success('⚔️ Challenge sent!');
       setChallengeLoadingId(null);
 
       const expiresAt = Date.now() + 120000;
 
-      localStorage.setItem(
-        `challenge_${friendId}`,
-        expiresAt.toString()
-      );
+      localStorage.setItem(`challenge_${friendId}`, expiresAt.toString());
 
       setCooldowns((prev) => ({
         ...prev,
@@ -175,17 +157,13 @@ export default function FriendsSection({ friendsData }) {
     },
 
     onError: () => {
-      toast.error("Failed to send challenge");
+      toast.error('Failed to send challenge');
       setChallengeLoadingId(null);
     },
   });
 
   if (!friendsData) {
-    return (
-      <div className="text-center mt-10">
-        Loading...
-      </div>
-    );
+    return <div className="text-center mt-10">Loading...</div>;
   }
 
   return (
@@ -195,13 +173,10 @@ export default function FriendsSection({ friendsData }) {
         <Users className="w-6 h-6 text-blue-500" />
 
         <div>
-          <h2 className="text-lg font-semibold">
-            Friends
-          </h2>
+          <h2 className="text-lg font-semibold">Friends</h2>
 
           <p className="text-sm text-gray-500">
-            {friends.length} friends •{" "}
-            {friendRequests.received.length} requests
+            {friends.length} friends • {friendRequests.received.length} requests
           </p>
         </div>
       </div>
@@ -210,37 +185,28 @@ export default function FriendsSection({ friendsData }) {
       {friends.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {friends.map((friend) => {
-            const cooldown =
-              cooldowns[friend._id] || 0;
+            const cooldown = cooldowns[friend._id] || 0;
 
             return (
               <FriendCard
                 key={friend._id}
                 friend={friend}
-                loading={
-                  challengeLoadingId === friend._id
-                }
-                onChallenge={() =>
-                  sendChallenge.mutate(friend._id)
-                }
+                loading={challengeLoadingId === friend._id}
+                onChallenge={() => sendChallenge.mutate(friend._id)}
                 disabledChallenge={cooldown > 0}
                 challengeText={
                   cooldown > 0
-                    ? `Wait ${Math.floor(
-                        cooldown / 60
-                      )}:${(cooldown % 60)
+                    ? `Wait ${Math.floor(cooldown / 60)}:${(cooldown % 60)
                         .toString()
-                        .padStart(2, "0")}`
-                    : "⚔️ Challenge"
+                        .padStart(2, '0')}`
+                    : '⚔️ Challenge'
                 }
               />
             );
           })}
         </div>
       ) : (
-        <div className="text-center text-gray-400">
-          No friends yet 😅
-        </div>
+        <div className="text-center text-gray-400">No friends yet 😅</div>
       )}
 
       {/* REQUESTS */}
@@ -262,23 +228,14 @@ export default function FriendsSection({ friendsData }) {
 
                   acceptFriend.mutate(req._id, {
                     onSuccess: () => {
-                      toast.success(
-                        "Friend accepted ✅"
-                      );
+                      toast.success('Friend accepted ✅');
 
                       dispatch(
                         loadFriends({
-                          friends: [
-                            ...friends,
-                            req,
-                          ],
+                          friends: [...friends, req],
                           friendRequests: {
                             ...friendRequests,
-                            received:
-                              friendRequests.received.filter(
-                                (r) =>
-                                  r._id !== req._id
-                              ),
+                            received: friendRequests.received.filter((r) => r._id !== req._id),
                           },
                         })
                       );
@@ -287,9 +244,7 @@ export default function FriendsSection({ friendsData }) {
                     },
 
                     onError: () => {
-                      toast.error(
-                        "Failed to accept"
-                      );
+                      toast.error('Failed to accept');
                       setLoadingId(null);
                     },
                   });
@@ -299,20 +254,14 @@ export default function FriendsSection({ friendsData }) {
 
                   rejectFriend.mutate(req._id, {
                     onSuccess: () => {
-                      toast(
-                        "Friend rejected"
-                      );
+                      toast('Friend rejected');
 
                       dispatch(
                         loadFriends({
                           friends,
                           friendRequests: {
                             ...friendRequests,
-                            received:
-                              friendRequests.received.filter(
-                                (r) =>
-                                  r._id !== req._id
-                              ),
+                            received: friendRequests.received.filter((r) => r._id !== req._id),
                           },
                         })
                       );

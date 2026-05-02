@@ -39,11 +39,7 @@ export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   // Last 24 Hours
-  const twentyFourHoursAgo = new Date(
-    now.getTime() - 24 * 60 * 60 * 1000
-  );
-
-
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
   // ================= MAIN PARALLEL QUERIES =================
   const [
@@ -90,16 +86,10 @@ export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
       },
     ]),
 
-    User.aggregate([
-      { $match: { role: "user" } },
-      { $sort: { xp: -1 } },
-      { $limit: 10 },
-    ]),
+    User.aggregate([{ $match: { role: "user" } }, { $sort: { xp: -1 } }, { $limit: 10 }]),
 
     User.aggregate([{ $group: { _id: null, maxXp: { $max: "$xp" } } }]),
-    User.aggregate([
-      { $group: { _id: null, maxStreak: { $max: "$streakCount" } } },
-    ]),
+    User.aggregate([{ $group: { _id: null, maxStreak: { $max: "$streakCount" } } }]),
 
     User.aggregate([
       {
@@ -158,33 +148,29 @@ export const getAdminDashboardAnalytics = asyncHandler(async (req, res) => {
   const yesterdayUsers = yesterdayNewUsersAgg[0]?.count || 0;
   const active7dUsers = active7dUsersAgg[0]?.count || 0;
   const avgScore = todayDailyStats[0]?.avgScore || 0;
-  const completionRate = totalUsers
-    ? (potdUsersToday / totalUsers) * 100
-    : 0;
+  const completionRate = totalUsers ? (potdUsersToday / totalUsers) * 100 : 0;
 
-  const retentionRate7d = totalUsers
-    ? (active7dUsers / totalUsers) * 100
-    : 0;
+  const retentionRate7d = totalUsers ? (active7dUsers / totalUsers) * 100 : 0;
   const inactiveUsers7Days = totalUsers - active7dUsers;
 
- const currentTotalUsers = totalUsers;
-const previousTotalUsers = totalUsers - newUsersToday;
+  const currentTotalUsers = totalUsers;
+  const previousTotalUsers = totalUsers - newUsersToday;
 
-const growthRate = previousTotalUsers
-  ? ((currentTotalUsers - previousTotalUsers) / previousTotalUsers) * 100
-  : 0;
+  const growthRate = previousTotalUsers
+    ? ((currentTotalUsers - previousTotalUsers) / previousTotalUsers) * 100
+    : 0;
 
   const avgStreakAgg = await User.aggregate([
     { $group: { _id: null, avg: { $avg: "$streakCount" } } },
   ]);
   const avgStreak = avgStreakAgg[0]?.avg || 0;
 
- const topWeakSkillsAgg = await User.aggregate([
-  { $match: { weakArea: { $exists: true, $ne: null } } },
-  { $group: { _id: "$weakArea", count: { $sum: 1 } } },
-  { $sort: { count: -1 } },
-  { $limit: 5 },
-]);
+  const topWeakSkillsAgg = await User.aggregate([
+    { $match: { weakArea: { $exists: true, $ne: null } } },
+    { $group: { _id: "$weakArea", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 5 },
+  ]);
 
   // ================= FEATURE USAGE =================
   const [
@@ -242,25 +228,22 @@ const growthRate = previousTotalUsers
   ]);
 
   // ================= RETURNING USERS =================
-  const [returningUsersTodayAgg, returningUsersWeekAgg, totalUniqueLogins7d] =
-    await Promise.all([
-      User.countDocuments({
-        lastLoginDate: { $gte: todayStart },
-        createdAt: { $lt: todayStart },
-      }),
-      User.countDocuments({
-        lastLoginDate: { $gte: sevenDaysAgo },
-        createdAt: { $lt: sevenDaysAgo },
-      }),
-      User.countDocuments({ lastLoginDate: { $gte: sevenDaysAgo } }),
-    ]);
+  const [returningUsersTodayAgg, returningUsersWeekAgg, totalUniqueLogins7d] = await Promise.all([
+    User.countDocuments({
+      lastLoginDate: { $gte: todayStart },
+      createdAt: { $lt: todayStart },
+    }),
+    User.countDocuments({
+      lastLoginDate: { $gte: sevenDaysAgo },
+      createdAt: { $lt: sevenDaysAgo },
+    }),
+    User.countDocuments({ lastLoginDate: { $gte: sevenDaysAgo } }),
+  ]);
 
   const returningUsersToday = returningUsersTodayAgg || 0;
   const returningUsersThisWeek = returningUsersWeekAgg || 0;
   const returningPercentage =
-    totalUniqueLogins7d > 0
-      ? (returningUsersThisWeek / totalUniqueLogins7d) * 100
-      : 0;
+    totalUniqueLogins7d > 0 ? (returningUsersThisWeek / totalUniqueLogins7d) * 100 : 0;
 
   // ================= DEVICE SPLIT =================
   const deviceAgg = await AnalyticsEvent.aggregate([
@@ -328,30 +311,26 @@ const growthRate = previousTotalUsers
 
   // ================= HOURLY TRAFFIC =================
   const hourlyTrafficAgg = await AnalyticsEvent.aggregate([
-  { $match: { createdAt: { $gte: twentyFourHoursAgo } } },
-  {
-    $group: {
-      _id: {
-        $hour: {
-          date: "$createdAt",
-          timezone: "Asia/Kolkata",
+    { $match: { createdAt: { $gte: twentyFourHoursAgo } } },
+    {
+      $group: {
+        _id: {
+          $hour: {
+            date: "$createdAt",
+            timezone: "Asia/Kolkata",
+          },
         },
+        count: { $sum: 1 },
       },
-      count: { $sum: 1 },
     },
-  },
-  { $sort: { _id: 1 } },
-]);
-const last24HourActiveUsers = await User.countDocuments({
-  lastLoginDate: { $gte: twentyFourHoursAgo },
-});
+    { $sort: { _id: 1 } },
+  ]);
+  const last24HourActiveUsers = await User.countDocuments({
+    lastLoginDate: { $gte: twentyFourHoursAgo },
+  });
 
   // ================= COOKIE ANALYTICS =================
-  const [
-    totalCookieAccepted,
-    totalCookieRejected,
-    todayCookieAccepted,
-  ] = await Promise.all([
+  const [totalCookieAccepted, totalCookieRejected, todayCookieAccepted] = await Promise.all([
     AnalyticsEvent.countDocuments({ eventType: "cookie_accept" }),
     AnalyticsEvent.countDocuments({ eventType: "cookie_reject" }),
     AnalyticsEvent.countDocuments({
@@ -390,13 +369,11 @@ const last24HourActiveUsers = await User.countDocuments({
     .sort()
     .forEach((date) => {
       const accepted =
-        last7DaysCookieTrendAgg.find(
-          (i) => i._id.date === date && i._id.type === "cookie_accept"
-        )?.count || 0;
+        last7DaysCookieTrendAgg.find((i) => i._id.date === date && i._id.type === "cookie_accept")
+          ?.count || 0;
       const rejected =
-        last7DaysCookieTrendAgg.find(
-          (i) => i._id.date === date && i._id.type === "cookie_reject"
-        )?.count || 0;
+        last7DaysCookieTrendAgg.find((i) => i._id.date === date && i._id.type === "cookie_reject")
+          ?.count || 0;
       last7DaysCookieTrend.push({ date, accepted, rejected });
     });
 
@@ -530,7 +507,5 @@ const last24HourActiveUsers = await User.countDocuments({
     insights,
   };
 
-  res.status(200).json(
-    new ApiResponse(200, analytics, "Admin analytics fetched successfully")
-  );
+  res.status(200).json(new ApiResponse(200, analytics, "Admin analytics fetched successfully"));
 });

@@ -64,4 +64,3 @@ taskSchema.index({ priority: 1 });
 taskSchema.index({ dueDate: 1 });
 
 export default mongoose.model("Task", taskSchema);
-

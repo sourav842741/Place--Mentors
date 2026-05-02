@@ -12,14 +12,7 @@ const startCall = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Valid phone number required");
   }
 
-  if (
-    ![
-      "hr-interview",
-      "spoken-english",
-      "motivation",
-      "resume-screening",
-    ].includes(mode)
-  ) {
+  if (!["hr-interview", "spoken-english", "motivation", "resume-screening"].includes(mode)) {
     throw new ApiError(400, "Invalid call mode");
   }
 
@@ -58,9 +51,7 @@ const getHistory = asyncHandler(async (req, res) => {
     .select("-__v")
     .lean();
 
-  res.status(200).json(
-    new ApiResponse(200, history, "Call history fetched")
-  );
+  res.status(200).json(new ApiResponse(200, history, "Call history fetched"));
 });
 
 const getReport = asyncHandler(async (req, res) => {
@@ -78,9 +69,7 @@ const getReport = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Call report not found");
   }
 
-  res.status(200).json(
-    new ApiResponse(200, report, "Call report fetched")
-  );
+  res.status(200).json(new ApiResponse(200, report, "Call report fetched"));
 });
 
 const webhook = asyncHandler(async (req, res) => {
@@ -98,14 +87,11 @@ const webhook = asyncHandler(async (req, res) => {
       const io = req.io;
 
       if (io && callRecord.userId) {
-        io.to(callRecord.userId.toString()).emit(
-          "voice_call_update",
-          {
-            callId: callRecord._id,
-            status: callRecord.status,
-            duration: callRecord.duration,
-          }
-        );
+        io.to(callRecord.userId.toString()).emit("voice_call_update", {
+          callId: callRecord._id,
+          status: callRecord.status,
+          duration: callRecord.duration,
+        });
       }
     }
   }
@@ -114,13 +100,7 @@ const webhook = asyncHandler(async (req, res) => {
 });
 
 const updateStatus = asyncHandler(async (req, res) => {
-  const {
-    callId,
-    status,
-    score,
-    transcript,
-    feedback,
-  } = req.body;
+  const { callId, status, score, transcript, feedback } = req.body;
 
   const userId = req.user._id;
 
@@ -140,15 +120,7 @@ const updateStatus = asyncHandler(async (req, res) => {
 
   await callRecord.save();
 
-  res.status(200).json(
-    new ApiResponse(200, callRecord, "Status updated")
-  );
+  res.status(200).json(new ApiResponse(200, callRecord, "Status updated"));
 });
 
-export {
-  startCall,
-  getHistory,
-  getReport,
-  webhook,
-  updateStatus,
-};
+export { startCall, getHistory, getReport, webhook, updateStatus };

@@ -1,19 +1,17 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api, { banUser as banUserApi, unbanUser as unbanUserApi } from "../services/api";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api, { banUser as banUserApi, unbanUser as unbanUserApi } from '../services/api';
 
 /* ===============================
    FETCH USERS
 ================================= */
 export const fetchAdminUsers = createAsyncThunk(
-  "adminUsers/fetchUsers",
+  'adminUsers/fetchUsers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/api/admin/users");
+      const response = await api.get('/api/admin/users');
       return response.data.data || response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch users"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch users');
     }
   }
 );
@@ -22,15 +20,13 @@ export const fetchAdminUsers = createAsyncThunk(
    PROMOTE USER
 ================================= */
 export const promoteUser = createAsyncThunk(
-  "adminUsers/promoteUser",
+  'adminUsers/promoteUser',
   async (userId, { rejectWithValue }) => {
     try {
       const response = await api.patch(`/api/admin/promote/${userId}`);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to promote user"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to promote user');
     }
   }
 );
@@ -39,15 +35,13 @@ export const promoteUser = createAsyncThunk(
    DEMOTE USER
 ================================= */
 export const demoteUser = createAsyncThunk(
-  "adminUsers/demoteUser",
+  'adminUsers/demoteUser',
   async (userId, { rejectWithValue }) => {
     try {
       const response = await api.patch(`/api/admin/demote/${userId}`);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to demote user"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to demote user');
     }
   }
 );
@@ -56,7 +50,7 @@ export const demoteUser = createAsyncThunk(
    ADJUST USER CREDITS
 ================================= */
 export const adjustUserCredits = createAsyncThunk(
-  "adminUsers/adjustUserCredits",
+  'adminUsers/adjustUserCredits',
   async ({ userId, amount, type }, { rejectWithValue }) => {
     try {
       const response = await api.patch(`/api/admin/users/${userId}/credits`, {
@@ -65,9 +59,7 @@ export const adjustUserCredits = createAsyncThunk(
       });
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to adjust credits"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to adjust credits');
     }
   }
 );
@@ -76,15 +68,13 @@ export const adjustUserCredits = createAsyncThunk(
    BAN USER
 ================================= */
 export const banUser = createAsyncThunk(
-  "adminUsers/banUser",
+  'adminUsers/banUser',
   async ({ userId, banReason }, { rejectWithValue }) => {
     try {
       const response = await banUserApi(userId, banReason);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to ban user"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to ban user');
     }
   }
 );
@@ -93,15 +83,13 @@ export const banUser = createAsyncThunk(
    UNBAN USER
 ================================= */
 export const unbanUser = createAsyncThunk(
-  "adminUsers/unbanUser",
+  'adminUsers/unbanUser',
   async (userId, { rejectWithValue }) => {
     try {
       const response = await unbanUserApi(userId);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to unban user"
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to unban user');
     }
   }
 );
@@ -113,7 +101,7 @@ const initialState = {
 };
 
 const adminUserSlice = createSlice({
-  name: "adminUsers",
+  name: 'adminUsers',
   initialState,
 
   reducers: {
@@ -123,14 +111,14 @@ const adminUserSlice = createSlice({
     // SOCKET REAL-TIME UPDATES
     setUserOnline: (state, action) => {
       const userId = action.payload._id;
-      const userIndex = state.data.findIndex(u => u._id === userId);
+      const userIndex = state.data.findIndex((u) => u._id === userId);
       if (userIndex !== -1) {
         state.data[userIndex].isOnline = true;
       }
     },
     setUserOffline: (state, action) => {
       const userId = action.payload._id || action.payload;
-      const userIndex = state.data.findIndex(u => u._id === userId);
+      const userIndex = state.data.findIndex((u) => u._id === userId);
       if (userIndex !== -1) {
         state.data[userIndex].isOnline = false;
         state.data[userIndex].lastSeen = action.payload.lastSeen || new Date();
@@ -138,7 +126,7 @@ const adminUserSlice = createSlice({
     },
     updateUserFromSocket: (state, action) => {
       const updatedUser = action.payload;
-      const userIndex = state.data.findIndex(u => u._id === updatedUser._id);
+      const userIndex = state.data.findIndex((u) => u._id === updatedUser._id);
       if (userIndex !== -1) {
         state.data[userIndex] = { ...state.data[userIndex], ...updatedUser };
       }
@@ -168,27 +156,21 @@ const adminUserSlice = createSlice({
       .addCase(promoteUser.fulfilled, (state, action) => {
         const updatedUser = action.payload;
 
-        state.data = state.data.map((user) =>
-          user._id === updatedUser._id ? updatedUser : user
-        );
+        state.data = state.data.map((user) => (user._id === updatedUser._id ? updatedUser : user));
       })
 
       /* DEMOTE */
       .addCase(demoteUser.fulfilled, (state, action) => {
         const updatedUser = action.payload;
 
-        state.data = state.data.map((user) =>
-          user._id === updatedUser._id ? updatedUser : user
-        );
+        state.data = state.data.map((user) => (user._id === updatedUser._id ? updatedUser : user));
       })
 
       /* ADJUST CREDITS */
       .addCase(adjustUserCredits.fulfilled, (state, action) => {
         const updatedUser = action.payload;
 
-        state.data = state.data.map((user) =>
-          user._id === updatedUser._id ? updatedUser : user
-        );
+        state.data = state.data.map((user) => (user._id === updatedUser._id ? updatedUser : user));
       })
 
       /* BAN */
@@ -196,9 +178,7 @@ const adminUserSlice = createSlice({
         const updatedUser = action.payload;
 
         state.data = state.data.map((user) =>
-          user._id === updatedUser._id
-            ? { ...updatedUser, isBanned: true }
-            : user
+          user._id === updatedUser._id ? { ...updatedUser, isBanned: true } : user
         );
       })
 
@@ -207,22 +187,13 @@ const adminUserSlice = createSlice({
         const updatedUser = action.payload;
 
         state.data = state.data.map((user) =>
-          user._id === updatedUser._id
-            ? { ...updatedUser, isBanned: false }
-            : user
+          user._id === updatedUser._id ? { ...updatedUser, isBanned: false } : user
         );
       });
   },
 });
 
-
-
-export const {
-  clearError,
-  setUserOnline,
-  setUserOffline,
-  updateUserFromSocket,
-} = adminUserSlice.actions;
+export const { clearError, setUserOnline, setUserOffline, updateUserFromSocket } =
+  adminUserSlice.actions;
 
 export default adminUserSlice.reducer;
-

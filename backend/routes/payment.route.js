@@ -30,4 +30,3 @@ paymentRouter.post(
 );
 
 export default paymentRouter;
-

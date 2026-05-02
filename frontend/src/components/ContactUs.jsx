@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Mail,
   User,
@@ -8,29 +8,23 @@ import {
   Send,
   Loader2,
   CheckCircle2,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { toast } from "sonner";
-import api from "@/services/api";
+import { toast } from 'sonner';
+import api from '@/services/api';
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
 export default function ContactUs() {
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
+    name: '',
+    email: '',
+    message: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,15 +34,15 @@ export default function ContactUs() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!form.name.trim()) newErrors.name = "Name is required";
+    if (!form.name.trim()) newErrors.name = 'Name is required';
 
     if (!form.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Invalid email";
+      newErrors.email = 'Invalid email';
     }
 
-    if (!form.message.trim()) newErrors.message = "Message is required";
+    if (!form.message.trim()) newErrors.message = 'Message is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -62,20 +56,20 @@ export default function ContactUs() {
     setLoading(true);
 
     try {
-      await api.post("/api/contact", form);
+      await api.post('/api/contact', form);
 
-      toast.success("Message sent successfully 🎉");
+      toast.success('Message sent successfully 🎉');
 
       setForm({
-        name: "",
-        email: "",
-        message: "",
+        name: '',
+        email: '',
+        message: '',
       });
 
       setSuccess(true);
       setErrors({});
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error('Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -84,18 +78,18 @@ export default function ContactUs() {
   const infoCards = [
     {
       icon: Mail,
-      title: "Email Us",
-      value: "souravkumar85055@gmail.com",
+      title: 'Email Us',
+      value: 'souravkumar85055@gmail.com',
     },
     {
       icon: Phone,
-      title: "Call Us",
-      value: "+91 98765 43210",
+      title: 'Call Us',
+      value: '+91 98765 43210',
     },
     {
       icon: MapPin,
-      title: "Our Office",
-      value: "Kolkata, West Bengal, India",
+      title: 'Our Office',
+      value: 'Kolkata, West Bengal, India',
     },
   ];
 
@@ -110,7 +104,7 @@ export default function ContactUs() {
             </span>
 
             <h1 className="mt-5 text-4xl md:text-6xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Contact{" "}
+              Contact{' '}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Us
               </span>
@@ -119,8 +113,8 @@ export default function ContactUs() {
             <div className="w-24 h-1 rounded-full mt-5 bg-gradient-to-r from-blue-600 to-purple-600" />
 
             <p className="mt-6 text-base md:text-lg leading-8 text-slate-600 dark:text-slate-300 max-w-xl">
-              Have questions or need help? We'd love to hear from you. Send us a
-              message and our team will respond as soon as possible.
+              Have questions or need help? We'd love to hear from you. Send us a message and our
+              team will respond as soon as possible.
             </p>
           </div>
 
@@ -140,12 +134,8 @@ export default function ContactUs() {
                     </div>
 
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">
-                        {item.title}
-                      </p>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {item.value}
-                      </p>
+                      <p className="font-semibold text-slate-900 dark:text-white">{item.title}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{item.value}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -183,9 +173,7 @@ export default function ContactUs() {
                     className="h-11"
                   />
 
-                  {errors.name && (
-                    <p className="text-sm text-red-500">{errors.name}</p>
-                  )}
+                  {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                 </div>
 
                 {/* EMAIL */}
@@ -199,15 +187,11 @@ export default function ContactUs() {
                     type="email"
                     placeholder="Enter your email"
                     value={form.email}
-                    onChange={(e) =>
-                      setForm({ ...form, email: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="h-11"
                   />
 
-                  {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email}</p>
-                  )}
+                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
 
                 {/* MESSAGE */}
@@ -221,14 +205,10 @@ export default function ContactUs() {
                     rows={5}
                     placeholder="Write your message..."
                     value={form.message}
-                    onChange={(e) =>
-                      setForm({ ...form, message: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
                   />
 
-                  {errors.message && (
-                    <p className="text-sm text-red-500">{errors.message}</p>
-                  )}
+                  {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
                 </div>
 
                 {/* BUTTON */}
@@ -258,9 +238,7 @@ export default function ContactUs() {
                   Message Sent!
                 </h3>
 
-                <p className="text-slate-500 dark:text-slate-400">
-                  We'll get back to you soon.
-                </p>
+                <p className="text-slate-500 dark:text-slate-400">We'll get back to you soon.</p>
 
                 <Button
                   onClick={() => setSuccess(false)}

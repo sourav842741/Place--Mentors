@@ -1,6 +1,6 @@
-import React from 'react'
-import { cn } from '../../lib/utils'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card'
+import React from 'react';
+import { cn } from '../../lib/utils';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card';
 
 const GlassCard = React.forwardRef(({ className, children, ...props }, ref) => (
   <Card
@@ -13,12 +13,11 @@ const GlassCard = React.forwardRef(({ className, children, ...props }, ref) => (
   >
     {children}
   </Card>
-))
-GlassCard.displayName = 'GlassCard'
+));
+GlassCard.displayName = 'GlassCard';
 
-export { GlassCard }
-export const GlassCardHeader = CardHeader
-export const GlassCardTitle = CardTitle
-export const GlassCardDescription = CardDescription
-export const GlassCardContent = CardContent
-
+export { GlassCard };
+export const GlassCardHeader = CardHeader;
+export const GlassCardTitle = CardTitle;
+export const GlassCardDescription = CardDescription;
+export const GlassCardContent = CardContent;

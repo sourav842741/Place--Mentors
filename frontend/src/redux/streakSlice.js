@@ -7,10 +7,10 @@ const initialState = {
     bestStreak: 0,
     completedDays: [],
     todaySolved: false,
-    remainingTime: '00:00:00'
+    remainingTime: '00:00:00',
   },
   loading: false,
-  error: null
+  error: null,
 };
 
 export const fetchStreak = createAsyncThunk(
@@ -31,7 +31,7 @@ const streakSlice = createSlice({
   reducers: {
     updateRemainingTime: (state, action) => {
       state.data.remainingTime = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -52,4 +52,3 @@ const streakSlice = createSlice({
 
 export const { updateRemainingTime } = streakSlice.actions;
 export default streakSlice.reducer;
-

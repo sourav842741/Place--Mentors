@@ -1,5 +1,5 @@
 import express from "express";
-import { getWeeklyStats, getStreak , getTaskStats } from "../controllers/dashboard.controller.js";
+import { getWeeklyStats, getStreak, getTaskStats } from "../controllers/dashboard.controller.js";
 import isAuth from "../middlewares/isAuth.js";
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 

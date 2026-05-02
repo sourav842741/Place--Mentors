@@ -3,13 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, AlertCircle, Play, Code } from 'lucide-react';
 import { useAdminCreate } from '../../hooks/useAdminCreate';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import api from "../../services/api";
+import api from '../../services/api';
 
 const AdminCreateCpotd = () => {
   const [formData, setFormData] = useState({
@@ -18,46 +24,53 @@ const AdminCreateCpotd = () => {
     difficulty: 'easy',
     sampleTestCases: [{ id: 1, input: '', expected: '' }],
     hiddenTestCases: [{ id: 1, input: '', expected: '' }],
-    solutionExplanation: ''
+    solutionExplanation: '',
   });
   const { loading, error, success, createCpotd } = useAdminCreate();
   const navigate = useNavigate();
 
   const addTestCase = (type) => {
     const newId = formData[type].length + 1;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [type]: [...prev[type], { id: newId, input: '', expected: '' }]
+      [type]: [...prev[type], { id: newId, input: '', expected: '' }],
     }));
   };
 
   const removeTestCase = (type, id) => {
     if (formData[type].length > 1) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [type]: prev[type].filter(tc => tc.id !== id)
+        [type]: prev[type].filter((tc) => tc.id !== id),
       }));
     }
   };
 
   const updateTestCase = (type, id, field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [type]: prev[type].map(tc => tc.id === id ? { ...tc, [field]: value } : tc)
+      [type]: prev[type].map((tc) => (tc.id === id ? { ...tc, [field]: value } : tc)),
     }));
   };
 
   const updateFormField = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const submitForm = async () => {
-    if (!formData.title.trim() || !formData.description.trim() || !formData.solutionExplanation.trim()) {
+    if (
+      !formData.title.trim() ||
+      !formData.description.trim() ||
+      !formData.solutionExplanation.trim()
+    ) {
       toast.error('Please fill all required fields');
       return;
     }
 
-    if (formData.sampleTestCases.some(tc => !tc.input.trim() || !tc.expected.trim()) || formData.hiddenTestCases.some(tc => !tc.input.trim() || !tc.expected.trim())) {
+    if (
+      formData.sampleTestCases.some((tc) => !tc.input.trim() || !tc.expected.trim()) ||
+      formData.hiddenTestCases.some((tc) => !tc.input.trim() || !tc.expected.trim())
+    ) {
       toast.error('Please fill all test cases');
       return;
     }
@@ -66,9 +79,15 @@ const AdminCreateCpotd = () => {
       title: formData.title,
       description: formData.description,
       difficulty: formData.difficulty,
-      sampleTestCases: formData.sampleTestCases.map(tc => ({ input: tc.input, expected: tc.expected })),
-      hiddenTestCases: formData.hiddenTestCases.map(tc => ({ input: tc.input, expected: tc.expected })),
-      solutionExplanation: formData.solutionExplanation
+      sampleTestCases: formData.sampleTestCases.map((tc) => ({
+        input: tc.input,
+        expected: tc.expected,
+      })),
+      hiddenTestCases: formData.hiddenTestCases.map((tc) => ({
+        input: tc.input,
+        expected: tc.expected,
+      })),
+      solutionExplanation: formData.solutionExplanation,
     };
 
     try {
@@ -87,22 +106,24 @@ const AdminCreateCpotd = () => {
           <h1 className="text-4xl font-black bg-gradient-to-r from-gray-900 to-black bg-clip-text text-transparent dark:text-white">
             Create Manual CPOTD
           </h1>
-          <p className="text-xl text-gray-600 mt-2 dark:text-white">Create custom Coding Problem of the Day</p>
+          <p className="text-xl text-gray-600 mt-2 dark:text-white">
+            Create custom Coding Problem of the Day
+          </p>
         </div>
         {/*  GENERATE BUTTON */}
-  <Button
-    onClick={async () => {
-      try {
-        await api.post("/api/cpotd/generate");
-        toast.success(" CPOTD Generated!");
-      } catch {
-        toast.error("Failed to generate");
-      }
-    }}
-    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl"
-  >
-    ⚡ Quick Trigger Cpotd Question
-  </Button>
+        <Button
+          onClick={async () => {
+            try {
+              await api.post('/api/cpotd/generate');
+              toast.success(' CPOTD Generated!');
+            } catch {
+              toast.error('Failed to generate');
+            }
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl"
+        >
+          ⚡ Quick Trigger Cpotd Question
+        </Button>
       </div>
 
       <Card className="border-0 shadow-2xl">
@@ -111,7 +132,9 @@ const AdminCreateCpotd = () => {
         </CardHeader>
         <CardContent className="p-8 space-y-6">
           <div>
-            <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">Title</label>
+            <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">
+              Title
+            </label>
             <Input
               value={formData.title}
               onChange={(e) => updateFormField('title', e.target.value)}
@@ -120,7 +143,9 @@ const AdminCreateCpotd = () => {
             />
           </div>
           <div>
-            <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">Description</label>
+            <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">
+              Description
+            </label>
             <Textarea
               value={formData.description}
               onChange={(e) => updateFormField('description', e.target.value)}
@@ -131,8 +156,13 @@ const AdminCreateCpotd = () => {
           </div>
           <div className="flex items-center gap-6">
             <div className="flex-1">
-              <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">Difficulty</label>
-              <Select value={formData.difficulty} onValueChange={(v) => updateFormField('difficulty', v)}>
+              <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">
+                Difficulty
+              </label>
+              <Select
+                value={formData.difficulty}
+                onValueChange={(v) => updateFormField('difficulty', v)}
+              >
                 <SelectTrigger className="h-14">
                   <SelectValue />
                 </SelectTrigger>
@@ -159,21 +189,32 @@ const AdminCreateCpotd = () => {
         </CardHeader>
         <CardContent className="p-8 space-y-4">
           {formData.sampleTestCases.map((tc) => (
-            <div key={tc.id} className="flex gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20">
+            <div
+              key={tc.id}
+              className="flex gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20"
+            >
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Input</label>
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                  Input
+                </label>
                 <Input
                   value={tc.input}
-                  onChange={(e) => updateTestCase('sampleTestCases', tc.id, 'input', e.target.value)}
+                  onChange={(e) =>
+                    updateTestCase('sampleTestCases', tc.id, 'input', e.target.value)
+                  }
                   placeholder="Enter input..."
                   className="font-mono"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Expected Output</label>
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                  Expected Output
+                </label>
                 <Input
                   value={tc.expected}
-                  onChange={(e) => updateTestCase('sampleTestCases', tc.id, 'expected', e.target.value)}
+                  onChange={(e) =>
+                    updateTestCase('sampleTestCases', tc.id, 'expected', e.target.value)
+                  }
                   placeholder="Enter expected output..."
                   className="font-mono"
                 />
@@ -214,21 +255,32 @@ const AdminCreateCpotd = () => {
         </CardHeader>
         <CardContent className="p-8 space-y-4">
           {formData.hiddenTestCases.map((tc) => (
-            <div key={tc.id} className="flex gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/20">
+            <div
+              key={tc.id}
+              className="flex gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/20"
+            >
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Input</label>
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                  Input
+                </label>
                 <Input
                   value={tc.input}
-                  onChange={(e) => updateTestCase('hiddenTestCases', tc.id, 'input', e.target.value)}
+                  onChange={(e) =>
+                    updateTestCase('hiddenTestCases', tc.id, 'input', e.target.value)
+                  }
                   placeholder="Enter input..."
                   className="font-mono"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Expected Output</label>
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                  Expected Output
+                </label>
                 <Input
                   value={tc.expected}
-                  onChange={(e) => updateTestCase('hiddenTestCases', tc.id, 'expected', e.target.value)}
+                  onChange={(e) =>
+                    updateTestCase('hiddenTestCases', tc.id, 'expected', e.target.value)
+                  }
                   placeholder="Enter expected output..."
                   className="font-mono"
                 />
@@ -277,15 +329,15 @@ const AdminCreateCpotd = () => {
       <Card className="border-0 shadow-2xl">
         <CardContent className="p-12 pt-8">
           <div className="flex gap-4 justify-end">
-            <Button 
-              variant="outline" 
-              size="lg" 
+            <Button
+              variant="outline"
+              size="lg"
               onClick={() => navigate('/admin/cpotd')}
               className="px-12 py-8 rounded-3xl font-bold text-lg"
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={submitForm}
               disabled={loading}
               size="lg"
@@ -308,4 +360,3 @@ const AdminCreateCpotd = () => {
 };
 
 export default AdminCreateCpotd;
-

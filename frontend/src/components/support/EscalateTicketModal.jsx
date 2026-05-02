@@ -1,39 +1,34 @@
-import React, { useState, useRef } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import React, { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { X, Upload, ImageIcon, Loader2, Ticket, Bot } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { escalateToTicket } from "@/redux/ticketSlice";
+} from '@/components/ui/select';
+import { X, Upload, ImageIcon, Loader2, Ticket, Bot } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { escalateToTicket } from '@/redux/ticketSlice';
 
 const CATEGORIES = [
-  "Login Issue",
-  "Payment",
-  "Premium",
-  "Bug Report",
-  "Resume",
-  "Interview",
-  "Account",
-  "Other",
+  'Login Issue',
+  'Payment',
+  'Premium',
+  'Bug Report',
+  'Resume',
+  'Interview',
+  'Account',
+  'Other',
 ];
 
-const PRIORITIES = ["Low", "Medium", "High"];
+const PRIORITIES = ['Low', 'Medium', 'High'];
 
 export default function EscalateTicketModal({ open, onClose, initialData = {} }) {
   const dispatch = useDispatch();
@@ -43,13 +38,13 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
-    subject: initialData.subject || "",
-    category: initialData.category || "",
-    priority: "Low",
-    description: initialData.description || "",
-    email: initialData.email || user?.email || "",
-    mobile: "",
-    aiChatSummary: initialData.aiChatSummary || "",
+    subject: initialData.subject || '',
+    category: initialData.category || '',
+    priority: 'Low',
+    description: initialData.description || '',
+    email: initialData.email || user?.email || '',
+    mobile: '',
+    aiChatSummary: initialData.aiChatSummary || '',
   });
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -57,13 +52,13 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
 
   const resetForm = () => {
     setForm({
-      subject: initialData.subject || "",
-      category: initialData.category || "",
-      priority: "Low",
-      description: initialData.description || "",
-      email: initialData.email || user?.email || "",
-      mobile: "",
-      aiChatSummary: initialData.aiChatSummary || "",
+      subject: initialData.subject || '',
+      category: initialData.category || '',
+      priority: 'Low',
+      description: initialData.description || '',
+      email: initialData.email || user?.email || '',
+      mobile: '',
+      aiChatSummary: initialData.aiChatSummary || '',
     });
     setImage(null);
     setImagePreview(null);
@@ -80,29 +75,28 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, image: "Image must be under 5MB" }));
+      setErrors((prev) => ({ ...prev, image: 'Image must be under 5MB' }));
       return;
     }
 
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
-    setErrors((prev) => ({ ...prev, image: "" }));
+    setErrors((prev) => ({ ...prev, image: '' }));
   };
 
   const removeImage = () => {
     setImage(null);
     setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!form.subject.trim()) newErrors.subject = "Subject is required";
-    if (!form.category) newErrors.category = "Category is required";
-    if (!form.description.trim()) newErrors.description = "Description is required";
-    if (!form.email.trim()) newErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      newErrors.email = "Invalid email";
+    if (!form.subject.trim()) newErrors.subject = 'Subject is required';
+    if (!form.category) newErrors.category = 'Category is required';
+    if (!form.description.trim()) newErrors.description = 'Description is required';
+    if (!form.email.trim()) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -112,17 +106,17 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
     if (!validate()) return;
 
     const formData = new FormData();
-    formData.append("subject", form.subject.trim());
-    formData.append("category", form.category);
-    formData.append("priority", form.priority);
-    formData.append("description", form.description.trim());
-    formData.append("email", form.email.trim());
-    if (form.mobile.trim()) formData.append("mobile", form.mobile.trim());
-    formData.append("aiChatSummary", form.aiChatSummary);
-    if (image) formData.append("image", image);
+    formData.append('subject', form.subject.trim());
+    formData.append('category', form.category);
+    formData.append('priority', form.priority);
+    formData.append('description', form.description.trim());
+    formData.append('email', form.email.trim());
+    if (form.mobile.trim()) formData.append('mobile', form.mobile.trim());
+    formData.append('aiChatSummary', form.aiChatSummary);
+    if (image) formData.append('image', image);
 
     dispatch(escalateToTicket(formData)).then((result) => {
-      if (result.meta.requestStatus === "fulfilled") {
+      if (result.meta.requestStatus === 'fulfilled') {
         const ticket = result.payload;
         handleClose();
         navigate(`/support/ticket/${ticket._id}`);
@@ -222,9 +216,7 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               className="rounded-xl resize-none"
             />
-            {errors.description && (
-              <p className="text-xs text-red-500">{errors.description}</p>
-            )}
+            {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
           </div>
 
           {/* Email & Mobile */}
@@ -266,11 +258,7 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
               </div>
             ) : (
               <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-40 object-cover"
-                />
+                <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover" />
                 <button
                   type="button"
                   onClick={removeImage}
@@ -323,4 +311,3 @@ export default function EscalateTicketModal({ open, onClose, initialData = {} })
     </Dialog>
   );
 }
-

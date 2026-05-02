@@ -1,61 +1,61 @@
-import { createSlice, createAsyncThunk, createEntityAdapter } from "@reduxjs/toolkit";
-import { startVoiceCall, getVoiceHistory, getVoiceReport } from "../services/voiceApi.js";
-import { toast } from "sonner";
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
+import { startVoiceCall, getVoiceHistory, getVoiceReport } from '../services/voiceApi.js';
+import { toast } from 'sonner';
 
 // Entity adapter for normalized history
 export const voiceHistoryAdapter = createEntityAdapter({
   selectId: (call) => call._id,
-  sortComparer: (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  sortComparer: (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
 });
 
 const initialState = voiceHistoryAdapter.getInitialState({
   loading: false,
   currentCall: null,
   reportLoading: false,
-  error: null
+  error: null,
 });
 
 // Async Thunks
 export const startVoiceCallAsync = createAsyncThunk(
-  "voice/startCall",
+  'voice/startCall',
   async ({ phone, mode }, { rejectWithValue }) => {
     try {
       const response = await startVoiceCall({ phone, mode });
-      toast.success("✅ Call initiated! Check your phone.");
+      toast.success('✅ Call initiated! Check your phone.');
       return response.data.data;
     } catch (error) {
-      toast.error("Failed to start call");
-      return rejectWithValue(error.response?.data?.message || "Failed to start call");
+      toast.error('Failed to start call');
+      return rejectWithValue(error.response?.data?.message || 'Failed to start call');
     }
   }
 );
 
 export const fetchVoiceHistory = createAsyncThunk(
-  "voice/fetchHistory",
+  'voice/fetchHistory',
   async (_, { rejectWithValue }) => {
     try {
       const response = await getVoiceHistory();
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch history");
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch history');
     }
   }
 );
 
 export const fetchVoiceReport = createAsyncThunk(
-  "voice/fetchReport",
+  'voice/fetchReport',
   async (callId, { rejectWithValue }) => {
     try {
       const response = await getVoiceReport(callId);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch report");
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch report');
     }
   }
 );
 
 const voiceSlice = createSlice({
-  name: "voice",
+  name: 'voice',
   initialState,
   reducers: {
     setCurrentCall: (state, action) => {
@@ -71,7 +71,7 @@ const voiceSlice = createSlice({
         call.status = status;
         if (duration) call.duration = duration;
       }
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -105,9 +105,8 @@ const voiceSlice = createSlice({
         // Add to history
         voiceHistoryAdapter.upsertOne(state, action.payload);
       });
-  }
+  },
 });
 
 export const { setCurrentCall, clearCurrentCall, updateCallStatus } = voiceSlice.actions;
 export default voiceSlice.reducer;
-

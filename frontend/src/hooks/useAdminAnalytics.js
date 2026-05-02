@@ -12,4 +12,3 @@ export const useAdminAnalytics = () => {
 
   return { data, loading, error, refetch: () => dispatch(fetchAdminAnalytics()) };
 };
-
