@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Brain,
   Mic,
@@ -75,7 +75,7 @@ import {
   Cog,
   PenTool,
   Heart,
-} from 'lucide-react';
+} from "lucide-react";
 
 /* ─── Animated counter hook ─── */
 function useCountUp(end, duration = 2000) {
@@ -107,12 +107,12 @@ function useCountUp(end, duration = 2000) {
 }
 
 /* ─── Reusable components ─── */
-const SectionTitle = ({ children, subtitle, align = 'center' }) => (
-  <div className={`mb-14 ${align === 'center' ? 'text-center' : ''}`}>
+const SectionTitle = ({ children, subtitle, align = "center" }) => (
+  <div className={`mb-14 ${align === "center" ? "text-center" : ""}`}>
     <motion.h2
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6 }}
       className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-blue-400"
     >
@@ -122,7 +122,7 @@ const SectionTitle = ({ children, subtitle, align = 'center' }) => (
       <motion.p
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
+        viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, delay: 0.1 }}
         className="mt-4 text-base sm:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
       >
@@ -139,11 +139,11 @@ const SectionHeading = ({ children }) => (
   </div>
 );
 
-const GlassCard = ({ children, className = '' }) => (
+const GlassCard = ({ children, className = "" }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: '-60px' }}
+    viewport={{ once: true, margin: "-60px" }}
     transition={{ duration: 0.5 }}
     whileHover={{ y: -6, scale: 1.015 }}
     className={`relative overflow-hidden rounded-3xl border border-white/20 bg-white/70 backdrop-blur-xl shadow-xl dark:border-white/10 dark:bg-gray-900/60 transition-all duration-500 ${className}`}
@@ -220,7 +220,7 @@ const TimelineItem = ({ phase, title, desc, status }) => (
   <motion.div
     initial={{ opacity: 0, x: -20 }}
     whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, margin: '-60px' }}
+    viewport={{ once: true, margin: "-60px" }}
     transition={{ duration: 0.5 }}
     className="relative pl-10 pb-10 last:pb-0"
   >
@@ -229,14 +229,14 @@ const TimelineItem = ({ phase, title, desc, status }) => (
     <div>
       <span
         className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2 ${
-          status === 'done'
-            ? 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400'
-            : status === 'active'
-              ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400'
-              : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+          status === "done"
+            ? "bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400"
+            : status === "active"
+              ? "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
+              : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
         }`}
       >
-        {status === 'done' ? 'Completed' : status === 'active' ? 'In Progress' : 'Planned'}
+        {status === "done" ? "Completed" : status === "active" ? "In Progress" : "Planned"}
       </span>
       <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-1">{phase}</h4>
       <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{title}</p>
@@ -247,17 +247,17 @@ const TimelineItem = ({ phase, title, desc, status }) => (
 
 /* ─── Navigation items for TOC ─── */
 const navItems = [
-  { id: 'about', label: 'About' },
-  { id: 'features', label: 'Features' },
-  { id: 'tech', label: 'Tech Stack' },
-  { id: 'security', label: 'Security' },
-  { id: 'unique', label: 'Why Unique' },
-  { id: 'business', label: 'Business Model' },
-  { id: 'startup', label: 'Startup Potential' },
-  { id: 'admin', label: 'Admin System' },
-  { id: 'testing', label: 'Testing' },
-  { id: 'roadmap', label: 'Roadmap' },
-  { id: 'conclusion', label: 'Conclusion' },
+  { id: "about", label: "About" },
+  { id: "features", label: "Features" },
+  { id: "tech", label: "Tech Stack" },
+  { id: "security", label: "Security" },
+  { id: "unique", label: "Why Unique" },
+  { id: "business", label: "Business Model" },
+  { id: "startup", label: "Startup Potential" },
+  { id: "admin", label: "Admin System" },
+  { id: "testing", label: "Testing" },
+  { id: "roadmap", label: "Roadmap" },
+  { id: "conclusion", label: "Conclusion" },
 ];
 
 /* ─── Main Page Component ─── */
@@ -265,20 +265,20 @@ export default function ProjectDocs() {
   const navigate = useNavigate();
   const [dark, setDark] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState("");
   const [heroVisible, setHeroVisible] = useState(true);
 
   useEffect(() => {
     // Initialize theme based on localStorage or system preference
-    const storedTheme = localStorage.getItem('theme');
+    const storedTheme = localStorage.getItem("theme");
     const prefersDark =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = storedTheme === 'dark' || (storedTheme === null && prefersDark);
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = storedTheme === "dark" || (storedTheme === null && prefersDark);
 
     if (isDark) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
     setDark(isDark);
   }, []);
@@ -290,14 +290,14 @@ export default function ProjectDocs() {
           if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { rootMargin: '-40% 0px -55% 0px' } // Adjust these values for optimal active section detection
+      { rootMargin: "-40% 0px -55% 0px" } // Adjust these values for optimal active section detection
     );
     navItems.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
 
-    const hero = document.getElementById('hero');
+    const hero = document.getElementById("hero");
     if (hero) {
       const heroObserver = new IntersectionObserver(
         ([entry]) => setHeroVisible(entry.isIntersecting),
@@ -312,16 +312,16 @@ export default function ProjectDocs() {
     const isNowDark = !dark; // Toggle the current state
     setDark(isNowDark);
     if (isNowDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setTocOpen(false); // Close mobile TOC after navigating
   };
 
@@ -331,14 +331,14 @@ export default function ProjectDocs() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           heroVisible
-            ? 'bg-transparent'
-            : 'bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-sm'
+            ? "bg-transparent"
+            : "bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-sm"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-2 flex items-start gap-6">
           {/* LOGO TOP LEFT */}
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="flex items-center gap-3 group cursor-pointer shrink-0 mt-1"
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg group-hover:shadow-indigo-500/30 transition">
@@ -358,8 +358,8 @@ export default function ProjectDocs() {
                 onClick={() => scrollTo(n.id)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
                   activeSection === n.id
-                    ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 {n.label}
@@ -402,10 +402,10 @@ export default function ProjectDocs() {
               onClick={() => setTocOpen(false)}
             />
             <motion.div
-              initial={{ x: '-100%' }}
+              initial={{ x: "-100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-gray-900 z-50 shadow-2xl border-r border-gray-200 dark:border-white/10 overflow-y-auto"
             >
               <div className="p-6 flex items-center justify-between border-b border-gray-200 dark:border-white/10">
@@ -424,8 +424,8 @@ export default function ProjectDocs() {
                     onClick={() => scrollTo(n.id)}
                     className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition ${
                       activeSection === n.id
-                        ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                     }`}
                   >
                     {n.label}
@@ -449,8 +449,8 @@ export default function ProjectDocs() {
               onClick={() => scrollTo(n.id)}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition relative ${
                 activeSection === n.id
-                  ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
-                  : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-200'
+                  ? "text-indigo-600 dark:text-indigo-400 font-semibold"
+                  : "text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-200"
               }`}
             >
               {activeSection === n.id && (
@@ -496,17 +496,17 @@ export default function ProjectDocs() {
               className="flex justify-center gap-4 flex-wrap"
             >
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate("/dashboard")}
                 className="inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full text-lg shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95 group"
               >
-                Get Started{' '}
+                Get Started{" "}
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
-                onClick={() => scrollTo('features')}
+                onClick={() => scrollTo("features")}
                 className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 font-bold rounded-full text-lg border border-gray-300 dark:border-gray-700 shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition transform hover:scale-105 active:scale-95 group"
               >
-                Learn More{' '}
+                Learn More{" "}
                 <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.div>
@@ -523,7 +523,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
                 className="relative"
               >
@@ -559,7 +559,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
                 className="space-y-6"
               >
@@ -615,55 +615,55 @@ export default function ProjectDocs() {
                 icon={Brain}
                 title="AI-Driven Adaptive Learning Paths"
                 description="Personalized study plans that adjust to your progress and performance, focusing on areas needing improvement."
-                tags={['AI', 'Personalized', 'Smart Learning']}
+                tags={["AI", "Personalized", "Smart Learning"]}
               />
               <FeatureCard
                 icon={Mic}
                 title="Interactive AI Mock Interviews"
                 description="Practice technical and HR interviews with an AI interviewer, getting instant feedback on responses, tone, and body language."
-                tags={['AI Interviewer', 'Feedback', 'HR & Tech']}
+                tags={["AI Interviewer", "Feedback", "HR & Tech"]}
               />
               <FeatureCard
                 icon={FileText}
                 title="Comprehensive Problem Repository"
                 description="Access to thousands of coding problems, aptitude questions, and technical quizzes categorized by difficulty, topic, and company."
-                tags={['Coding', 'Aptitude', 'Quizzes']}
+                tags={["Coding", "Aptitude", "Quizzes"]}
               />
               <FeatureCard
                 icon={Search}
                 title="Company-Specific Preparation"
                 description="Curated content, previous year questions, and interview experiences tailored for top recruiting companies."
-                tags={['Company Specific', 'Interview Prep', 'Analytics']}
+                tags={["Company Specific", "Interview Prep", "Analytics"]}
               />
               <FeatureCard
                 icon={Code2}
                 title="Integrated Coding Environment"
                 description="Practice coding problems directly within the platform with multiple language support and immediate output evaluation."
-                tags={['IDE', 'Multi-language', 'Code Editor']}
+                tags={["IDE", "Multi-language", "Code Editor"]}
               />
               <FeatureCard
                 icon={Trophy}
                 title="Gamified Learning & Leaderboards"
                 description="Engage in friendly competition, earn badges, and track your ranking against peers to stay motivated."
-                tags={['Gamification', 'Motivation', 'Rankings']}
+                tags={["Gamification", "Motivation", "Rankings"]}
               />
               <FeatureCard
                 icon={TrendingUp}
                 title="Performance Analytics & Insights"
                 description="Detailed reports on your strengths, weaknesses, progress over time, and areas for focused improvement."
-                tags={['Data Analytics', 'Progress Tracking', 'Insights']}
+                tags={["Data Analytics", "Progress Tracking", "Insights"]}
               />
               <FeatureCard
                 icon={HelpCircle}
                 title="Doubt Solving & Community Support"
                 description="Get your queries resolved by our expert team or connect with a vibrant community of peers for collaborative learning."
-                tags={['Live Support', 'Community', 'Experts']}
+                tags={["Live Support", "Community", "Experts"]}
               />
               <FeatureCard
                 icon={BookOpen}
                 title="Resume and Cover Letter Builder"
                 description="Tools and templates to craft professional resumes and cover letters optimized for applicant tracking systems."
-                tags={['Resume Builder', 'Templates', 'ATS Friendly']}
+                tags={["Resume Builder", "Templates", "ATS Friendly"]}
               />
             </div>
           </section>
@@ -679,10 +679,10 @@ export default function ProjectDocs() {
                 title="Backend & APIs"
                 description="Robust and scalable backend services for data processing, AI models, and user management."
                 points={[
-                  'Node.js with Express.js for RESTful APIs',
-                  'Python for AI/ML model deployment (TensorFlow, PyTorch)',
-                  'Microservices architecture for scalability',
-                  'Docker for containerization',
+                  "Node.js with Express.js for RESTful APIs",
+                  "Python for AI/ML model deployment (TensorFlow, PyTorch)",
+                  "Microservices architecture for scalability",
+                  "Docker for containerization",
                 ]}
               />
               <TechCard
@@ -690,10 +690,10 @@ export default function ProjectDocs() {
                 title="Frontend & UI/UX"
                 description="Modern, responsive, and intuitive user interface designed for an engaging user experience."
                 points={[
-                  'React.js with Next.js for SSR and performance',
-                  'Tailwind CSS for rapid and consistent styling',
-                  'Framer Motion for smooth animations',
-                  'Responsive design for all devices',
+                  "React.js with Next.js for SSR and performance",
+                  "Tailwind CSS for rapid and consistent styling",
+                  "Framer Motion for smooth animations",
+                  "Responsive design for all devices",
                 ]}
               />
               <TechCard
@@ -701,10 +701,10 @@ export default function ProjectDocs() {
                 title="Database & Storage"
                 description="High-performance and secure data solutions to manage user data, problems, and analytics."
                 points={[
-                  'MongoDB for flexible NoSQL data storage',
-                  'PostgreSQL for structured data and complex queries',
-                  'Cloud storage (e.g., S3, Google Cloud Storage) for assets',
-                  'Redis for caching and session management',
+                  "MongoDB for flexible NoSQL data storage",
+                  "PostgreSQL for structured data and complex queries",
+                  "Cloud storage (e.g., S3, Google Cloud Storage) for assets",
+                  "Redis for caching and session management",
                 ]}
               />
               <TechCard
@@ -712,10 +712,10 @@ export default function ProjectDocs() {
                 title="Cloud & DevOps"
                 description="Scalable cloud infrastructure and streamlined deployment processes for reliability and uptime."
                 points={[
-                  'AWS / Google Cloud Platform for infrastructure',
-                  'Kubernetes for orchestration and management',
-                  'CI/CD with GitHub Actions / GitLab CI',
-                  'Monitoring with Prometheus & Grafana',
+                  "AWS / Google Cloud Platform for infrastructure",
+                  "Kubernetes for orchestration and management",
+                  "CI/CD with GitHub Actions / GitLab CI",
+                  "Monitoring with Prometheus & Grafana",
                 ]}
               />
               <TechCard
@@ -723,10 +723,10 @@ export default function ProjectDocs() {
                 title="AI & Machine Learning"
                 description="Cutting-edge AI models for personalized learning, interview simulation, and content generation."
                 points={[
-                  'Natural Language Processing (NLP) for interview analysis',
-                  'Reinforcement Learning for adaptive problem sequencing',
-                  'Generative AI for content creation & feedback',
-                  'Computer Vision for non-verbal cues in mock interviews',
+                  "Natural Language Processing (NLP) for interview analysis",
+                  "Reinforcement Learning for adaptive problem sequencing",
+                  "Generative AI for content creation & feedback",
+                  "Computer Vision for non-verbal cues in mock interviews",
                 ]}
               />
               <TechCard
@@ -734,10 +734,10 @@ export default function ProjectDocs() {
                 title="Design & Analytics"
                 description="Tools for creating captivating UI/UX and extracting actionable insights from data."
                 points={[
-                  'Figma for UI/UX design and prototyping',
-                  'Google Analytics / Mixpanel for user behavior tracking',
-                  'Amplitude for product analytics',
-                  'Tableau / Power BI for business intelligence',
+                  "Figma for UI/UX design and prototyping",
+                  "Google Analytics / Mixpanel for user behavior tracking",
+                  "Amplitude for product analytics",
+                  "Tableau / Power BI for business intelligence",
                 ]}
               />
             </div>
@@ -969,7 +969,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
               >
                 <GlassCard className="p-8 h-full">
@@ -995,7 +995,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
               >
                 <GlassCard className="p-8 h-full">
@@ -1021,7 +1021,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
               >
                 <GlassCard className="p-8 h-full">
@@ -1047,7 +1047,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
               >
                 <GlassCard className="p-8 h-full">
@@ -1182,7 +1182,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
               >
                 <GlassCard className="p-8 h-full">
@@ -1214,7 +1214,7 @@ export default function ProjectDocs() {
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7 }}
               >
                 <GlassCard className="p-8 h-full">
@@ -1297,7 +1297,7 @@ export default function ProjectDocs() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: '-60px' }}
+                  viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.6 }}
                   className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-3xl font-extrabold mx-auto mb-6 shadow-xl"
                 >
@@ -1306,7 +1306,7 @@ export default function ProjectDocs() {
                 <motion.h3
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
+                  viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.7, delay: 0.2 }}
                   className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 leading-relaxed"
                 >
@@ -1315,7 +1315,7 @@ export default function ProjectDocs() {
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
+                  viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.7, delay: 0.4 }}
                   className="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto"
                 >
@@ -1327,19 +1327,19 @@ export default function ProjectDocs() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
+                  viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.7, delay: 0.6 }}
                   className="flex justify-center flex-wrap gap-4"
                 >
                   <button
-                    onClick={() => navigate('/signup')}
+                    onClick={() => navigate("/signup")}
                     className="inline-flex items-center px-7 py-3 bg-indigo-600 text-white font-bold rounded-full text-md shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95 group"
                   >
-                    Start Your Journey{' '}
+                    Start Your Journey{" "}
                     <Rocket className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                   <button
-                    onClick={() => navigate('/contact')}
+                    onClick={() => navigate("/contact")}
                     className="inline-flex items-center px-7 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 font-bold rounded-full text-md border border-gray-300 dark:border-gray-700 shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition transform hover:scale-105 active:scale-95 group"
                   >
                     Contact Sales <Mail className="ml-2 w-5 h-5" />

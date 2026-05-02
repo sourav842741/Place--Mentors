@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, AlertCircle, Play, Code } from 'lucide-react';
-import { useAdminCreate } from '../../hooks/useAdminCreate';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, AlertCircle, Play, Code } from "lucide-react";
+import { useAdminCreate } from "../../hooks/useAdminCreate";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
 const AdminCreateCpotd = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    difficulty: 'easy',
-    sampleTestCases: [{ id: 1, input: '', expected: '' }],
-    hiddenTestCases: [{ id: 1, input: '', expected: '' }],
-    solutionExplanation: '',
+    title: "",
+    description: "",
+    difficulty: "easy",
+    sampleTestCases: [{ id: 1, input: "", expected: "" }],
+    hiddenTestCases: [{ id: 1, input: "", expected: "" }],
+    solutionExplanation: "",
   });
   const { loading, error, success, createCpotd } = useAdminCreate();
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const AdminCreateCpotd = () => {
     const newId = formData[type].length + 1;
     setFormData((prev) => ({
       ...prev,
-      [type]: [...prev[type], { id: newId, input: '', expected: '' }],
+      [type]: [...prev[type], { id: newId, input: "", expected: "" }],
     }));
   };
 
@@ -63,7 +63,7 @@ const AdminCreateCpotd = () => {
       !formData.description.trim() ||
       !formData.solutionExplanation.trim()
     ) {
-      toast.error('Please fill all required fields');
+      toast.error("Please fill all required fields");
       return;
     }
 
@@ -71,7 +71,7 @@ const AdminCreateCpotd = () => {
       formData.sampleTestCases.some((tc) => !tc.input.trim() || !tc.expected.trim()) ||
       formData.hiddenTestCases.some((tc) => !tc.input.trim() || !tc.expected.trim())
     ) {
-      toast.error('Please fill all test cases');
+      toast.error("Please fill all test cases");
       return;
     }
 
@@ -92,10 +92,10 @@ const AdminCreateCpotd = () => {
 
     try {
       await createCpotd(cpotdData);
-      toast.success('CPOTD created successfully!');
-      navigate('/admin/cpotd');
+      toast.success("CPOTD created successfully!");
+      navigate("/admin/cpotd");
     } catch (err) {
-      toast.error(error || 'Failed to create CPOTD');
+      toast.error(error || "Failed to create CPOTD");
     }
   };
 
@@ -114,10 +114,10 @@ const AdminCreateCpotd = () => {
         <Button
           onClick={async () => {
             try {
-              await api.post('/api/cpotd/generate');
-              toast.success(' CPOTD Generated!');
+              await api.post("/api/cpotd/generate");
+              toast.success(" CPOTD Generated!");
             } catch {
-              toast.error('Failed to generate');
+              toast.error("Failed to generate");
             }
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl"
@@ -137,7 +137,7 @@ const AdminCreateCpotd = () => {
             </label>
             <Input
               value={formData.title}
-              onChange={(e) => updateFormField('title', e.target.value)}
+              onChange={(e) => updateFormField("title", e.target.value)}
               placeholder="Enter problem title..."
               className="h-16 text-xl"
             />
@@ -148,7 +148,7 @@ const AdminCreateCpotd = () => {
             </label>
             <Textarea
               value={formData.description}
-              onChange={(e) => updateFormField('description', e.target.value)}
+              onChange={(e) => updateFormField("description", e.target.value)}
               placeholder="Enter problem description..."
               className="h-32 text-lg resize-none"
               rows={6}
@@ -161,7 +161,7 @@ const AdminCreateCpotd = () => {
               </label>
               <Select
                 value={formData.difficulty}
-                onValueChange={(v) => updateFormField('difficulty', v)}
+                onValueChange={(v) => updateFormField("difficulty", v)}
               >
                 <SelectTrigger className="h-14">
                   <SelectValue />
@@ -200,7 +200,7 @@ const AdminCreateCpotd = () => {
                 <Input
                   value={tc.input}
                   onChange={(e) =>
-                    updateTestCase('sampleTestCases', tc.id, 'input', e.target.value)
+                    updateTestCase("sampleTestCases", tc.id, "input", e.target.value)
                   }
                   placeholder="Enter input..."
                   className="font-mono"
@@ -213,7 +213,7 @@ const AdminCreateCpotd = () => {
                 <Input
                   value={tc.expected}
                   onChange={(e) =>
-                    updateTestCase('sampleTestCases', tc.id, 'expected', e.target.value)
+                    updateTestCase("sampleTestCases", tc.id, "expected", e.target.value)
                   }
                   placeholder="Enter expected output..."
                   className="font-mono"
@@ -224,7 +224,7 @@ const AdminCreateCpotd = () => {
                   type="button"
                   variant="destructive"
                   className="self-end mt-10 p-3 rounded-2xl h-fit"
-                  onClick={() => removeTestCase('sampleTestCases', tc.id)}
+                  onClick={() => removeTestCase("sampleTestCases", tc.id)}
                 >
                   <Trash2 className="w-5 h-5" />
                 </Button>
@@ -235,7 +235,7 @@ const AdminCreateCpotd = () => {
             type="button"
             variant="outline"
             className="border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-400 w-full h-16 text-lg font-semibold rounded-3xl"
-            onClick={() => addTestCase('sampleTestCases')}
+            onClick={() => addTestCase("sampleTestCases")}
           >
             <Plus className="w-6 h-6 mr-3" />
             Add Sample Test Case
@@ -266,7 +266,7 @@ const AdminCreateCpotd = () => {
                 <Input
                   value={tc.input}
                   onChange={(e) =>
-                    updateTestCase('hiddenTestCases', tc.id, 'input', e.target.value)
+                    updateTestCase("hiddenTestCases", tc.id, "input", e.target.value)
                   }
                   placeholder="Enter input..."
                   className="font-mono"
@@ -279,7 +279,7 @@ const AdminCreateCpotd = () => {
                 <Input
                   value={tc.expected}
                   onChange={(e) =>
-                    updateTestCase('hiddenTestCases', tc.id, 'expected', e.target.value)
+                    updateTestCase("hiddenTestCases", tc.id, "expected", e.target.value)
                   }
                   placeholder="Enter expected output..."
                   className="font-mono"
@@ -290,7 +290,7 @@ const AdminCreateCpotd = () => {
                   type="button"
                   variant="destructive"
                   className="self-end mt-10 p-3 rounded-2xl h-fit"
-                  onClick={() => removeTestCase('hiddenTestCases', tc.id)}
+                  onClick={() => removeTestCase("hiddenTestCases", tc.id)}
                 >
                   <Trash2 className="w-5 h-5" />
                 </Button>
@@ -301,7 +301,7 @@ const AdminCreateCpotd = () => {
             type="button"
             variant="outline"
             className="border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-emerald-400 w-full h-16 text-lg font-semibold rounded-3xl"
-            onClick={() => addTestCase('hiddenTestCases')}
+            onClick={() => addTestCase("hiddenTestCases")}
           >
             <Plus className="w-6 h-6 mr-3" />
             Add Hidden Test Case
@@ -317,7 +317,7 @@ const AdminCreateCpotd = () => {
         <CardContent className="p-8">
           <Textarea
             value={formData.solutionExplanation}
-            onChange={(e) => updateFormField('solutionExplanation', e.target.value)}
+            onChange={(e) => updateFormField("solutionExplanation", e.target.value)}
             placeholder="Detailed solution explanation..."
             className="h-48 text-lg resize-none font-mono"
             rows={8}
@@ -332,7 +332,7 @@ const AdminCreateCpotd = () => {
             <Button
               variant="outline"
               size="lg"
-              onClick={() => navigate('/admin/cpotd')}
+              onClick={() => navigate("/admin/cpotd")}
               className="px-12 py-8 rounded-3xl font-bold text-lg"
             >
               Cancel
@@ -349,7 +349,7 @@ const AdminCreateCpotd = () => {
                   Creating CPOTD...
                 </>
               ) : (
-                'Create CPOTD'
+                "Create CPOTD"
               )}
             </Button>
           </div>

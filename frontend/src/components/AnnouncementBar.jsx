@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import { X, AlertCircle, Info, CheckCircle, AlertTriangle, Sparkles } from 'lucide-react';
+import { X, AlertCircle, Info, CheckCircle, AlertTriangle, Sparkles } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 /* =========================
    ICON SELECTOR
 ========================= */
 const getIconByType = (type) => {
   switch (type) {
-    case 'success':
+    case "success":
       return CheckCircle;
 
-    case 'danger':
+    case "danger":
       return AlertCircle;
 
-    case 'warning':
+    case "warning":
       return AlertTriangle;
 
     default:
@@ -31,7 +31,7 @@ export default function AnnouncementBar({ settings }) {
   /* =========================
      SAME LOCAL STORAGE LOGIC
   ========================= */
-  const storageKey = `announcement_closed_${settings?.announcementText || 'default'}`;
+  const storageKey = `announcement_closed_${settings?.announcementText || "default"}`;
 
   useEffect(() => {
     if (!settings) return;
@@ -44,7 +44,7 @@ export default function AnnouncementBar({ settings }) {
   }, [settings, storageKey]);
 
   const handleClose = () => {
-    localStorage.setItem(storageKey, 'true');
+    localStorage.setItem(storageKey, "true");
 
     setIsVisible(false);
   };
@@ -61,15 +61,15 @@ export default function AnnouncementBar({ settings }) {
   /* =========================
      STYLE MAP
   ========================= */
-  const type = settings?.announcementType || 'info';
+  const type = settings?.announcementType || "info";
 
   const Icon = getIconByType(type);
 
   const bgClass = {
-    info: 'from-blue-600 via-indigo-600 to-purple-600',
-    success: 'from-emerald-500 via-green-600 to-teal-600',
-    warning: 'from-yellow-500 via-orange-500 to-red-500',
-    danger: 'from-rose-500 via-red-600 to-pink-600',
+    info: "from-blue-600 via-indigo-600 to-purple-600",
+    success: "from-emerald-500 via-green-600 to-teal-600",
+    warning: "from-yellow-500 via-orange-500 to-red-500",
+    danger: "from-rose-500 via-red-600 to-pink-600",
   }[type];
 
   /* =========================

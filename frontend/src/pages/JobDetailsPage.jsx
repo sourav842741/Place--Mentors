@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchSingleJob, bookmarkJob, unbookmarkJob } from '../redux/jobSlice';
-import Navbar from '../components/Navbar';
-import useJobs from '../hooks/useJobs';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Skeleton } from '../components/ui/skeleton';
-import { Separator } from '../components/ui/separator';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSingleJob, bookmarkJob, unbookmarkJob } from "../redux/jobSlice";
+import Navbar from "../components/Navbar";
+import useJobs from "../hooks/useJobs";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Skeleton } from "../components/ui/skeleton";
+import { Separator } from "../components/ui/separator";
 import {
   ArrowLeft,
   Briefcase,
@@ -24,9 +24,9 @@ import {
   Zap,
   Building,
   FileText,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import Footer from '@/components/Footer';
+} from "lucide-react";
+import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 const JobDetailsPage = () => {
   const { id } = useParams();
@@ -51,11 +51,11 @@ const JobDetailsPage = () => {
     if (!job) return;
     await toggleBookmark(job._id, isBookmarked);
     setIsBookmarked(!isBookmarked);
-    toast.success(isBookmarked ? 'Removed from bookmarks' : 'Bookmarked!');
+    toast.success(isBookmarked ? "Removed from bookmarks" : "Bookmarked!");
   };
 
   const formatDate = (dateStr) =>
-    dateStr ? new Date(dateStr).toLocaleDateString() : 'Recently Posted';
+    dateStr ? new Date(dateStr).toLocaleDateString() : "Recently Posted";
   const formatSalary = (salary) => (salary ? `$${parseInt(salary).toLocaleString()}+ / yr` : null);
 
   // Loading Skeleton
@@ -109,9 +109,9 @@ const JobDetailsPage = () => {
     const jobUrl = `${window.location.origin}/jobs/${job._id}`;
     try {
       await navigator.clipboard.writeText(jobUrl);
-      toast.success('Job link copied!');
+      toast.success("Job link copied!");
     } catch {
-      toast.error('Share failed');
+      toast.error("Share failed");
     }
   };
 
@@ -146,7 +146,7 @@ const JobDetailsPage = () => {
                   className="bg-white text-indigo-600 hover:bg-white/90 font-semibold shadow-lg"
                   onClick={() => {
                     if (job.applyLink || job.url) {
-                      window.open(job.applyLink || job.url, '_blank');
+                      window.open(job.applyLink || job.url, "_blank");
                     }
                   }}
                 >
@@ -169,9 +169,9 @@ const JobDetailsPage = () => {
                   onClick={handleBookmark}
                 >
                   <Star
-                    className={`mr-2 h-5 w-5 ${isBookmarked ? 'fill-yellow-300 text-yellow-300' : 'text-white/70'}`}
+                    className={`mr-2 h-5 w-5 ${isBookmarked ? "fill-yellow-300 text-yellow-300" : "text-white/70"}`}
                   />
-                  {isBookmarked ? 'Saved' : 'Save'}
+                  {isBookmarked ? "Saved" : "Save"}
                 </Button>
               </div>
             </div>
@@ -218,7 +218,7 @@ const JobDetailsPage = () => {
                 </CardHeader>
 
                 <CardContent className="prose prose-lg max-w-none text-gray-800 dark:text-gray-300 prose-headings:text-gray-900 dark:prose-headings:text-white">
-                  <div dangerouslySetInnerHTML={{ __html: job.description || '' }} />
+                  <div dangerouslySetInnerHTML={{ __html: job.description || "" }} />
                 </CardContent>
               </Card>
 
@@ -292,9 +292,9 @@ const JobDetailsPage = () => {
                     onClick={handleBookmark}
                   >
                     <Star
-                      className={`mr-2 h-4 w-4 ${isBookmarked ? 'fill-yellow-400 text-yellow-400' : ''}`}
+                      className={`mr-2 h-4 w-4 ${isBookmarked ? "fill-yellow-400 text-yellow-400" : ""}`}
                     />
-                    {isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
+                    {isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
                   </Button>
                 </CardContent>
               </Card>

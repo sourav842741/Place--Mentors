@@ -1,17 +1,17 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Download, Loader2, BookOpen, Star } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useGetSingleNoteQuery, useGeneratePDFMutation } from '../redux/notesSlice';
-import NoteDiagram from '../components/NoteDiagram';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft, Download, Loader2, BookOpen, Star } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useGetSingleNoteQuery, useGeneratePDFMutation } from "../redux/notesSlice";
+import NoteDiagram from "../components/NoteDiagram";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 function NoteDetail() {
   const { id } = useParams();
@@ -29,7 +29,7 @@ function NoteDetail() {
           <Card key={stars}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                {stars.split('').map((_, i) => (
+                {stars.split("").map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-500" />
                 ))}
                 <CardTitle className="text-base leading-tight">{stars} Topics</CardTitle>
@@ -74,9 +74,9 @@ function NoteDetail() {
     try {
       const blob = await generatePDF(note).unwrap();
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `ExamNotesAI-${topic || 'notes'}.pdf`;
+      link.download = `ExamNotesAI-${topic || "notes"}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -183,7 +183,7 @@ prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800
 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 "
               >
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                  {note.notes || 'No notes content available.'}
+                  {note.notes || "No notes content available."}
                 </ReactMarkdown>
               </div>
             </CardContent>
@@ -192,12 +192,12 @@ prose-code:bg-gray-100 dark:prose-code:bg-gray-800 "
           {/* GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
-              {renderList('🎯 Revision Points', note.revisionPoints)}
-              {renderList('❓ Short Questions', note.questions?.short)}
+              {renderList("🎯 Revision Points", note.revisionPoints)}
+              {renderList("❓ Short Questions", note.questions?.short)}
             </div>
 
             <div className="space-y-6">
-              {renderList('📝 Long Questions', note.questions?.long)}
+              {renderList("📝 Long Questions", note.questions?.long)}
 
               {note.questions?.diagram && (
                 <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">

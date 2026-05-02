@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getStreak } from '../services/api.js';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getStreak } from "../services/api.js";
 
 const initialState = {
   data: {
@@ -7,26 +7,26 @@ const initialState = {
     bestStreak: 0,
     completedDays: [],
     todaySolved: false,
-    remainingTime: '00:00:00',
+    remainingTime: "00:00:00",
   },
   loading: false,
   error: null,
 };
 
 export const fetchStreak = createAsyncThunk(
-  'streak/fetchStreak',
+  "streak/fetchStreak",
   async (_, { rejectWithValue }) => {
     try {
       const response = await getStreak();
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch streak');
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch streak");
     }
   }
 );
 
 const streakSlice = createSlice({
-  name: 'streak',
+  name: "streak",
   initialState,
   reducers: {
     updateRemainingTime: (state, action) => {

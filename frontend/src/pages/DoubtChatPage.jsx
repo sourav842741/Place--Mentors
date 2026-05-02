@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { askDoubtApi, getDoubtsApi, addReplyApi, getRepliesApi } from '../services/doubtApi';
-import { socket } from '../socket';
-import { toast } from 'sonner';
+import { useEffect, useState, useRef, useCallback } from "react";
+import { askDoubtApi, getDoubtsApi, addReplyApi, getRepliesApi } from "../services/doubtApi";
+import { socket } from "../socket";
+import { toast } from "sonner";
 import {
   ThumbsUp,
   Send,
@@ -12,21 +12,21 @@ import {
   ChevronLeft,
   ChevronRight,
   RefreshCw,
-} from 'lucide-react';
-import { useSelector } from 'react-redux';
-import api from '../services/api';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
-import ReactMarkdown from 'react-markdown';
+} from "lucide-react";
+import { useSelector } from "react-redux";
+import api from "../services/api";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import ReactMarkdown from "react-markdown";
 
 export default function DoubtChatPage() {
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState("");
   const [doubts, setDoubts] = useState([]);
-  const [replyText, setReplyText] = useState('');
+  const [replyText, setReplyText] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -77,8 +77,8 @@ export default function DoubtChatPage() {
       setPages(payload.pages || 1);
       setTotal(payload.total || 0);
     } catch (err) {
-      setError('Failed to load doubts');
-      toast.error('Failed to load doubts');
+      setError("Failed to load doubts");
+      toast.error("Failed to load doubts");
     } finally {
       if (showLoader) setFetching(false);
     }
@@ -109,11 +109,11 @@ export default function DoubtChatPage() {
     }
 
     const joinRoom = () => {
-      socket.emit('join', user._id);
+      socket.emit("join", user._id);
     };
 
     joinRoom();
-    socket.on('connect', joinRoom);
+    socket.on("connect", joinRoom);
 
     // Stable handlers using refs
     const handleNewReply = ({ doubtId, reply }) => {
@@ -164,19 +164,19 @@ export default function DoubtChatPage() {
       });
     };
 
-    socket.on('new_reply', handleNewReply);
-    socket.on('notification', handleNotification);
-    socket.on('online_users', handleOnlineUsers);
-    socket.on('new_doubt', handleNewDoubt);
-    socket.on('reply_upvote', handleReplyUpvote);
+    socket.on("new_reply", handleNewReply);
+    socket.on("notification", handleNotification);
+    socket.on("online_users", handleOnlineUsers);
+    socket.on("new_doubt", handleNewDoubt);
+    socket.on("reply_upvote", handleReplyUpvote);
 
     return () => {
-      socket.off('connect', joinRoom);
-      socket.off('new_reply', handleNewReply);
-      socket.off('notification', handleNotification);
-      socket.off('online_users', handleOnlineUsers);
-      socket.off('new_doubt', handleNewDoubt);
-      socket.off('reply_upvote', handleReplyUpvote);
+      socket.off("connect", joinRoom);
+      socket.off("new_reply", handleNewReply);
+      socket.off("notification", handleNotification);
+      socket.off("online_users", handleOnlineUsers);
+      socket.off("new_doubt", handleNewDoubt);
+      socket.off("reply_upvote", handleReplyUpvote);
     };
   }, [user?._id]);
 
@@ -184,7 +184,7 @@ export default function DoubtChatPage() {
   useEffect(() => {
     if (!openId) return;
 
-    socket.emit('join_doubt', openId);
+    socket.emit("join_doubt", openId);
     fetchReplies(openId);
   }, [openId]);
 
@@ -199,7 +199,7 @@ export default function DoubtChatPage() {
           : [];
       setRepliesMap((prev) => ({ ...prev, [id]: fetchedReplies }));
     } catch (err) {
-      toast.error('Failed to load replies');
+      toast.error("Failed to load replies");
     }
   };
 
@@ -208,7 +208,7 @@ export default function DoubtChatPage() {
     const trimmed = question.trim();
     if (!trimmed) return;
     if (trimmed.length < 5) {
-      toast.error('Question too short (min 5 chars)');
+      toast.error("Question too short (min 5 chars)");
       return;
     }
 
@@ -228,10 +228,10 @@ export default function DoubtChatPage() {
         setHasNewDoubts(false);
       }
 
-      setQuestion('');
-      toast.success('Doubt posted');
+      setQuestion("");
+      toast.success("Doubt posted");
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to post doubt');
+      toast.error(err.response?.data?.message || "Failed to post doubt");
     } finally {
       setLoading(false);
     }
@@ -241,7 +241,7 @@ export default function DoubtChatPage() {
     const trimmed = replyText.trim();
     if (!trimmed) return;
     if (trimmed.length < 2) {
-      toast.error('Reply too short');
+      toast.error("Reply too short");
       return;
     }
 
@@ -263,11 +263,11 @@ export default function DoubtChatPage() {
         prev.map((d) => (d._id === id ? { ...d, replyCount: (d.replyCount || 0) + 1 } : d))
       );
 
-      setReplyText('');
-      socket.emit('send_reply', { doubtId: id });
-      toast.success('Reply posted');
+      setReplyText("");
+      socket.emit("send_reply", { doubtId: id });
+      toast.success("Reply posted");
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to post reply');
+      toast.error(err.response?.data?.message || "Failed to post reply");
     }
   };
 
@@ -276,7 +276,7 @@ export default function DoubtChatPage() {
       await api.post(`/api/doubts/reply/${replyId}/upvote`);
       fetchReplies(doubtId);
     } catch (err) {
-      toast.error('Failed to upvote');
+      toast.error("Failed to upvote");
     }
   };
 
@@ -312,7 +312,7 @@ export default function DoubtChatPage() {
     new Set(
       safeDoubts.flatMap(
         (d) =>
-          (d.question || '')
+          (d.question || "")
             .toLowerCase()
             .match(
               /(react|javascript|node|java|python|dsa|leetcode|system design|interview|aws|docker|sql)/gi
@@ -403,7 +403,7 @@ export default function DoubtChatPage() {
                 placeholder="Ask your programming doubt or interview question..."
                 className="w-full resize-none mb-4 min-h-[100px] border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500"
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.metaKey) {
+                  if (e.key === "Enter" && e.metaKey) {
                     handleAsk();
                   }
                 }}
@@ -420,7 +420,7 @@ export default function DoubtChatPage() {
                     Asking AI...
                   </span>
                 ) : (
-                  'Ask Community + AI'
+                  "Ask Community + AI"
                 )}
               </Button>
             </div>
@@ -471,13 +471,13 @@ export default function DoubtChatPage() {
                 >
                   <div className="flex items-start gap-3 mb-2">
                     <img
-                      src={d.user?.avatar || '/default-avatar.png'}
+                      src={d.user?.avatar || "/default-avatar.png"}
                       alt="avatar"
                       className="w-8 h-8 rounded-full object-cover shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
-                        {d.user?.fullName || 'Anonymous'}
+                        {d.user?.fullName || "Anonymous"}
                       </p>
                       <h3 className="font-semibold text-gray-900 dark:text-white">{d.question}</h3>
                     </div>
@@ -493,7 +493,7 @@ export default function DoubtChatPage() {
                       {d.upvotes?.length || 0} upvotes
                     </span>
                     <span className="text-xs">
-                      {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : ''}
+                      {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : ""}
                     </span>
                   </div>
                 </div>
@@ -526,7 +526,7 @@ export default function DoubtChatPage() {
                         >
                           <div className="flex items-start gap-3">
                             <img
-                              src={r.user?.avatar || '/default-avatar.png'}
+                              src={r.user?.avatar || "/default-avatar.png"}
                               alt="avatar"
                               className="w-8 h-8 rounded-full object-cover shrink-0"
                             />
@@ -534,10 +534,10 @@ export default function DoubtChatPage() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
                                 <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-                                  {r.user?.fullName || 'User'}
+                                  {r.user?.fullName || "User"}
                                 </p>
                                 <span className="text-[10px] text-gray-400">
-                                  {r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}
+                                  {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
@@ -568,7 +568,7 @@ export default function DoubtChatPage() {
                         placeholder="Write your reply..."
                         className="flex-1 bg-white dark:bg-gray-800 border dark:border-white/10 text-gray-900 dark:text-white"
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
+                          if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
                             handleReply(d._id);
                           }
@@ -637,7 +637,7 @@ export default function DoubtChatPage() {
                         // Scroll to the doubt if needed
                         setTimeout(() => {
                           const el = document.getElementById(`doubt-${d._id}`);
-                          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          el?.scrollIntoView({ behavior: "smooth", block: "center" });
                         }, 100);
                       }}
                     >

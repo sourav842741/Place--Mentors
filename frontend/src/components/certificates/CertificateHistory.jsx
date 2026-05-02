@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 
 import {
   Calendar,
@@ -12,12 +12,12 @@ import {
   ShieldCheck,
   RefreshCw,
   Award,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { useState } from 'react';
-import { toast } from 'sonner';
-import api from '../../services/api';
-import CertificatePreview from './CertificatePreview';
+import { useState } from "react";
+import { toast } from "sonner";
+import api from "../../services/api";
+import CertificatePreview from "./CertificatePreview";
 
 export default function CertificateHistory({ certificates, onRefresh, user }) {
   const [deletingId, setDeletingId] = useState(null);
@@ -25,7 +25,7 @@ export default function CertificateHistory({ certificates, onRefresh, user }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleDelete = async (certId) => {
-    const ok = confirm('Delete this certificate?');
+    const ok = confirm("Delete this certificate?");
 
     if (!ok) return;
 
@@ -34,11 +34,11 @@ export default function CertificateHistory({ certificates, onRefresh, user }) {
 
       await api.delete(`/api/certificates/${certId}`);
 
-      toast.success('Certificate deleted');
+      toast.success("Certificate deleted");
 
       onRefresh();
     } catch {
-      toast.error('Delete failed');
+      toast.error("Delete failed");
     } finally {
       setDeletingId(null);
     }
@@ -48,7 +48,7 @@ export default function CertificateHistory({ certificates, onRefresh, user }) {
     try {
       setRefreshing(true);
       await onRefresh();
-      toast.success('Updated');
+      toast.success("Updated");
     } finally {
       setRefreshing(false);
     }
@@ -123,7 +123,7 @@ export default function CertificateHistory({ certificates, onRefresh, user }) {
                 {/* Preview */}
                 <div className="mt-6 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-950 border border-slate-700 p-6 text-center">
                   <div className="w-16 h-16 rounded-2xl mx-auto bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center text-3xl shadow-xl">
-                    {cert.metadata?.badgeIcon || '🏆'}
+                    {cert.metadata?.badgeIcon || "🏆"}
                   </div>
 
                   <h3 className="text-xl font-black text-white mt-5 leading-tight">
@@ -132,10 +132,10 @@ export default function CertificateHistory({ certificates, onRefresh, user }) {
 
                   <div className="mt-3 flex justify-center items-center gap-2 text-sm text-slate-400">
                     <Calendar className="w-4 h-4" />
-                    {new Date(cert.issuedAt).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
+                    {new Date(cert.issuedAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
                     })}
                   </div>
                 </div>
@@ -162,9 +162,9 @@ export default function CertificateHistory({ certificates, onRefresh, user }) {
                     className="rounded-2xl border-slate-700 bg-slate-800 hover:bg-slate-700 text-white"
                     onClick={() =>
                       navigator.share?.({
-                        title: 'PlaceMentor Certificate',
+                        title: "PlaceMentor Certificate",
                         text: `${cert.badgeName} | ${cert.certificateId}`,
-                      }) || toast.info('Sharing not supported')
+                      }) || toast.info("Sharing not supported")
                     }
                   >
                     <Share2 className="w-4 h-4 mr-1" />

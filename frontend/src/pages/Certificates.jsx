@@ -1,19 +1,19 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
-import { toast } from 'sonner';
+import { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { toast } from "sonner";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
-import { Trophy, Calendar, Award, Loader2, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Trophy, Calendar, Award, Loader2, ArrowLeft, RefreshCw } from "lucide-react";
 
-import CertificateHistory from '../components/certificates/CertificateHistory';
-import CertificateCard from '../components/certificates/CertificateCard';
-import Footer from '@/components/Footer';
+import CertificateHistory from "../components/certificates/CertificateHistory";
+import CertificateCard from "../components/certificates/CertificateCard";
+import Footer from "@/components/Footer";
 
 export default function Certificates() {
   const { user } = useSelector((state) => state.user);
@@ -28,7 +28,7 @@ export default function Certificates() {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('available');
+  const [activeTab, setActiveTab] = useState("available");
 
   useEffect(() => {
     fetchData();
@@ -40,15 +40,15 @@ export default function Certificates() {
       setLoadingCerts(true);
 
       const [badgesRes, certsRes] = await Promise.all([
-        api.get('/api/xp/badges'),
-        api.get('/api/certificates'),
+        api.get("/api/xp/badges"),
+        api.get("/api/certificates"),
       ]);
 
       setBadges(Array.isArray(badgesRes?.data?.badges) ? badgesRes.data.badges : []);
 
       setCertificates(Array.isArray(certsRes?.data?.data) ? certsRes.data.data : []);
     } catch (error) {
-      toast.error('Failed to load data');
+      toast.error("Failed to load data");
     } finally {
       setLoadingBadges(false);
       setLoadingCerts(false);
@@ -59,7 +59,7 @@ export default function Certificates() {
     try {
       setRefreshing(true);
       await fetchData();
-      toast.success('Updated');
+      toast.success("Updated");
     } finally {
       setRefreshing(false);
     }
@@ -86,7 +86,7 @@ export default function Certificates() {
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate("/profile")}
               className="rounded-2xl border-slate-700 bg-slate-900 hover:bg-slate-800 text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -162,17 +162,17 @@ export default function Certificates() {
                       badge={badge}
                       onGenerate={async () => {
                         try {
-                          await api.post('/api/certificates/generate', {
+                          await api.post("/api/certificates/generate", {
                             badgeName: badge.name,
                           });
 
-                          toast.success('Certificate created');
+                          toast.success("Certificate created");
 
                           await fetchData();
 
-                          setActiveTab('history');
+                          setActiveTab("history");
                         } catch {
-                          toast.error('Failed');
+                          toast.error("Failed");
                         }
                       }}
                     />

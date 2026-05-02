@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-import { Calendar, Award, Sparkles, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Calendar, Award, Sparkles, ArrowLeft, ShieldCheck } from "lucide-react";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function CertificateCard({ badge, onGenerate }) {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function CertificateCard({ badge, onGenerate }) {
         {/* Top Row */}
         <div className="flex items-center justify-between mb-5">
           <button
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate("/profile")}
             className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 transition"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -35,7 +35,7 @@ export default function CertificateCard({ badge, onGenerate }) {
           <div className="h-36 rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 p-[1px] shadow-xl">
             <div className="h-full rounded-3xl bg-gradient-to-br from-white to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col items-center justify-center">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center text-3xl shadow-lg mb-3 group-hover:scale-110 transition-transform duration-500">
-                {badge.icon || '🏆'}
+                {badge.icon || "🏆"}
               </div>
 
               <p className="text-xs tracking-[0.25em] font-bold text-slate-500 uppercase">
@@ -56,10 +56,10 @@ export default function CertificateCard({ badge, onGenerate }) {
 
           <div className="mt-3 flex justify-center items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <Calendar className="w-4 h-4" />
-            {new Date(badge.earnedAt).toLocaleDateString('en-GB', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
+            {new Date(badge.earnedAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
             })}
           </div>
 

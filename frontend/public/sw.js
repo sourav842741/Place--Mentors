@@ -1,26 +1,26 @@
-const CACHE_VERSION = 'mentor-v4'; //
+const CACHE_VERSION = "mentor-v4"; //
 const CACHE_NAME = `${CACHE_VERSION}-static`;
 const API_CACHE_NAME = `${CACHE_VERSION}-api`;
 
 // STATIC FILES
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg',
-  '/offline.html',
-  '/icons/android-chrome-192x192.png',
-  '/icons/android-chrome-512x512.png',
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/favicon.svg",
+  "/offline.html",
+  "/icons/android-chrome-192x192.png",
+  "/icons/android-chrome-512x512.png",
 ];
 
 // 🔹 INSTALL
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)));
 });
 
 // 🔹 ACTIVATE
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -36,24 +36,24 @@ self.addEventListener('activate', (event) => {
 });
 
 // 🔹 FETCH
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
   // ❌ Only GET
-  if (request.method !== 'GET') return;
+  if (request.method !== "GET") return;
 
   // ❌ Never cache analytics endpoints
-  if (url.pathname === '/api/admin/analytics' || url.pathname === '/api/admin/track-event') {
+  if (url.pathname === "/api/admin/analytics" || url.pathname === "/api/admin/track-event") {
     return;
   }
 
   // ✅ NAVIGATION (SPA fallback)
-  if (request.mode === 'navigate') {
+  if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((res) => res)
-        .catch(() => caches.match('/index.html'))
+        .catch(() => caches.match("/index.html"))
     );
     return;
   }
@@ -62,7 +62,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   // 🔥 API → NETWORK FIRST
-  if (url.pathname.startsWith('/api/')) {
+  if (url.pathname.startsWith("/api/")) {
     event.respondWith(
       fetch(request)
         .then((res) => {
@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() =>
           caches.match(request).then((cached) => {
-            return cached || caches.match('/offline.html');
+            return cached || caches.match("/offline.html");
           })
         )
     );
@@ -118,28 +118,28 @@ self.addEventListener('fetch', (event) => {
 
           return res;
         })
-        .catch(() => caches.match('/offline.html'));
+        .catch(() => caches.match("/offline.html"));
     })
   );
 });
 
 // 🔔 PUSH
-self.addEventListener('push', (event) => {
+self.addEventListener("push", (event) => {
   const data = event.data?.json() || {
-    title: 'Place Mentor 🚀',
-    body: 'New update available!',
+    title: "Place Mentor 🚀",
+    body: "New update available!",
   };
 
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: '/icons/android-chrome-192x192.png',
+      icon: "/icons/android-chrome-192x192.png",
     })
   );
 });
 
 // 👆 CLICK
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  event.waitUntil(clients.openWindow('/'));
+  event.waitUntil(clients.openWindow("/"));
 });

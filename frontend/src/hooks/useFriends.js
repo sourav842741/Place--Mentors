@@ -1,15 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../services/api';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../services/api";
 
 // ============================
 //  GET FRIENDS
 // ============================
 export const useFriends = () => {
   return useQuery({
-    queryKey: ['friends'],
+    queryKey: ["friends"],
     queryFn: async () => {
       try {
-        const res = await api.get('/api/friends');
+        const res = await api.get("/api/friends");
 
         //  never undefined
         return (
@@ -27,7 +27,7 @@ export const useFriends = () => {
           }
         );
       } catch (err) {
-        console.log('Friends Fetch Error:', err);
+        console.log("Friends Fetch Error:", err);
 
         //  fallback (IMPORTANT)
         return {
@@ -61,14 +61,14 @@ export const useSendFriendRequest = () => {
         const res = await api.post(`/api/friends/send/${friendId}`);
         return res.data;
       } catch (err) {
-        console.log('Send Request Error:', err);
+        console.log("Send Request Error:", err);
         throw err;
       }
     },
     onSuccess: () => {
       //  refresh both
-      queryClient.invalidateQueries({ queryKey: ['friends'] });
-      queryClient.invalidateQueries({ queryKey: ['discoverUsers'] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      queryClient.invalidateQueries({ queryKey: ["discoverUsers"] });
     },
   });
 };
@@ -85,12 +85,12 @@ export const useAcceptFriendRequest = () => {
         const res = await api.post(`/api/friends/accept/${requesterId}`);
         return res.data;
       } catch (err) {
-        console.log('Accept Error:', err);
+        console.log("Accept Error:", err);
         throw err;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['friends'] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
     },
   });
 };
@@ -107,12 +107,12 @@ export const useRejectFriendRequest = () => {
         const res = await api.post(`/api/friends/reject/${requesterId}`);
         return res.data;
       } catch (err) {
-        console.log('Reject Error:', err);
+        console.log("Reject Error:", err);
         throw err;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['friends'] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
     },
   });
 };

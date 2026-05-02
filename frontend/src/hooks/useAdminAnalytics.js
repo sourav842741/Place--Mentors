@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdminAnalytics } from '../redux/adminSlice';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAdminAnalytics } from "../redux/adminSlice";
 
 export const useAdminAnalytics = () => {
   const dispatch = useDispatch();

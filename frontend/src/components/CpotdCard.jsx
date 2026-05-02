@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Code, CheckCircle, ArrowRight, Clock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useCountdown } from '@/hooks/useCountdown';
-import { getCpotdStatus } from '@/services/api.js';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Code, CheckCircle, ArrowRight, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCountdown } from "@/hooks/useCountdown";
+import { getCpotdStatus } from "@/services/api.js";
 
 export default function CpotdCard() {
   const [status, setStatus] = useState({
@@ -32,7 +32,7 @@ export default function CpotdCard() {
           solved: data.solved,
         });
       } catch (err) {
-        console.error('Failed to fetch CPOTD status:', err);
+        console.error("Failed to fetch CPOTD status:", err);
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +54,7 @@ export default function CpotdCard() {
 
   const handleStart = (e) => {
     e.stopPropagation();
-    navigate('/coding-potd');
+    navigate("/coding-potd");
   };
 
   const locked = status.locked;
@@ -65,13 +65,13 @@ export default function CpotdCard() {
 
   return (
     <Card
-      onClick={() => navigate('/coding-potd')}
+      onClick={() => navigate("/coding-potd")}
       className={`relative flex flex-col justify-between h-[400px] p-6 bg-white dark:bg-gray-900 dark:border-white/10 border-2 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-300 ${
         locked
           ? status.solved
-            ? 'border-green-200 bg-green-50/50'
-            : 'border-orange-200 bg-orange-50/50'
-          : 'border-gray-200 hover:border-blue-300'
+            ? "border-green-200 bg-green-50/50"
+            : "border-orange-200 bg-orange-50/50"
+          : "border-gray-200 hover:border-blue-300"
       }`}
     >
       <CardContent className="flex flex-col justify-between flex-1 p-0 h-full">

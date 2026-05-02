@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../../services/api';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../../services/api";
+import { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-import { Search, Plus, Edit, Trash2, Brain } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Brain } from "lucide-react";
 
-const TYPES = ['hr', 'aptitude', 'coding', 'vocab', 'myth', 'shortcut', 'quote'];
+const TYPES = ["hr", "aptitude", "coding", "vocab", "myth", "shortcut", "quote"];
 
 export default function AdminMaintenanceManager() {
   const queryClient = useQueryClient();
 
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [activeTab, setActiveTab] = useState('list');
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [activeTab, setActiveTab] = useState("list");
 
   // ================= FETCH QUESTIONS =================
   const { data: questionsData, isLoading } = useQuery({
-    queryKey: ['maintenance-questions', search, typeFilter],
+    queryKey: ["maintenance-questions", search, typeFilter],
     queryFn: async () => {
       const params = new URLSearchParams();
 
-      if (search) params.append('search', search);
-      if (typeFilter) params.append('type', typeFilter);
+      if (search) params.append("search", search);
+      if (typeFilter) params.append("type", typeFilter);
 
       const res = await api.get(`/api/maintenance/list?${params}`);
       return res.data.data || { questions: [], pagination: {} };
@@ -37,9 +37,9 @@ export default function AdminMaintenanceManager() {
 
   // ================= FETCH STATS =================
   const { data: typesStats = [] } = useQuery({
-    queryKey: ['maintenance-types'],
+    queryKey: ["maintenance-types"],
     queryFn: async () => {
-      const res = await api.get('/api/maintenance/all-types');
+      const res = await api.get("/api/maintenance/all-types");
       return res.data.data || [];
     },
     staleTime: 1000 * 60 * 10,
@@ -49,19 +49,19 @@ export default function AdminMaintenanceManager() {
   const deleteMutation = useMutation({
     mutationFn: (id) => api.delete(`/api/maintenance/${id}`),
     onSuccess: () => {
-      toast.success('Question deleted');
+      toast.success("Question deleted");
       queryClient.invalidateQueries({
-        queryKey: ['maintenance-questions'],
+        queryKey: ["maintenance-questions"],
       });
       queryClient.invalidateQueries({
-        queryKey: ['maintenance-types'],
+        queryKey: ["maintenance-types"],
       });
     },
-    onError: () => toast.error('Delete failed'),
+    onError: () => toast.error("Delete failed"),
   });
 
   const handleDelete = (id) => {
-    const ok = window.confirm('Delete this question?');
+    const ok = window.confirm("Delete this question?");
     if (ok) deleteMutation.mutate(id);
   };
 
@@ -141,7 +141,7 @@ export default function AdminMaintenanceManager() {
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary">{q.type?.toUpperCase()}</Badge>
 
-                        <Badge>{q.active ? 'ACTIVE' : 'INACTIVE'}</Badge>
+                        <Badge>{q.active ? "ACTIVE" : "INACTIVE"}</Badge>
                       </div>
 
                       <p className="font-semibold">{q.question}</p>

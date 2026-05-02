@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { generateYoutubeSummary, clearSummary } from '../redux/youtubeSlice';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { toast } from 'sonner';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { generateYoutubeSummary, clearSummary } from "../redux/youtubeSlice";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { toast } from "sonner";
 import {
   Copy,
   Loader2,
@@ -20,19 +20,19 @@ import {
   Languages,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react';
-import { FaPlayCircle, FaVideo, FaStar } from 'react-icons/fa';
+} from "lucide-react";
+import { FaPlayCircle, FaVideo, FaStar } from "react-icons/fa";
 
 const YoutubeSummaryPage = () => {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [expanded, setExpanded] = useState(false);
-  const [thumbnail, setThumbnail] = useState('');
-  const [videoTitle, setVideoTitle] = useState('');
-  const [duration, setDuration] = useState('--:--');
+  const [thumbnail, setThumbnail] = useState("");
+  const [videoTitle, setVideoTitle] = useState("");
+  const [duration, setDuration] = useState("--:--");
   const [isFetchingMeta, setIsFetchingMeta] = useState(false);
   const [isValidUrl, setIsValidUrl] = useState(false);
-  const [metaError, setMetaError] = useState('');
-  const [currentLang, setCurrentLang] = useState('english'); // english | hindi
+  const [metaError, setMetaError] = useState("");
+  const [currentLang, setCurrentLang] = useState("english"); // english | hindi
 
   const inputRef = useRef(null);
   const debounceTimeoutRef = useRef(null);
@@ -56,22 +56,22 @@ const YoutubeSummaryPage = () => {
   const fetchMeta = useCallback(
     async (videoId) => {
       setIsFetchingMeta(true);
-      setMetaError('');
+      setMetaError("");
       try {
         const response = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
-        if (!response.ok) throw new Error('API error');
+        if (!response.ok) throw new Error("API error");
         const data = await response.json();
-        setVideoTitle(data.title || 'Untitled Video');
+        setVideoTitle(data.title || "Untitled Video");
         const thumb = data.thumbnail_url || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
         setThumbnail(thumb);
         setDuration(
-          data.duration ? new Date(data.duration * 1000).toISOString().substr(14, 5) : '--:--'
+          data.duration ? new Date(data.duration * 1000).toISOString().substr(14, 5) : "--:--"
         );
         setIsValidUrl(true);
       } catch (err) {
         setThumbnail(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`);
-        setVideoTitle('Video Preview');
-        setDuration('--:--');
+        setVideoTitle("Video Preview");
+        setDuration("--:--");
         setIsValidUrl(true);
       } finally {
         setIsFetchingMeta(false);
@@ -95,17 +95,17 @@ const YoutubeSummaryPage = () => {
       } else {
         setIsValidUrl(false);
         setIsFetchingMeta(false);
-        setThumbnail('');
-        setVideoTitle('');
-        setMetaError('Invalid YouTube URL');
+        setThumbnail("");
+        setVideoTitle("");
+        setMetaError("Invalid YouTube URL");
       }
     } else {
-      setThumbnail('');
-      setVideoTitle('');
-      setDuration('--:--');
+      setThumbnail("");
+      setVideoTitle("");
+      setDuration("--:--");
       setIsFetchingMeta(false);
       setIsValidUrl(false);
-      setMetaError('');
+      setMetaError("");
     }
 
     return () => {
@@ -121,23 +121,23 @@ const YoutubeSummaryPage = () => {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+    const pastedText = (e.clipboardData || window.clipboardData).getData("text");
     const videoId = extractVideoId(pastedText.trim());
     if (videoId) {
       setUrl(pastedText.trim());
     } else {
-      toast.error('Pasted content is not a valid YouTube URL');
+      toast.error("Pasted content is not a valid YouTube URL");
     }
   };
 
   const generateSummary = async () => {
     if (!url.trim()) {
-      toast.error('Please enter a YouTube URL');
+      toast.error("Please enter a YouTube URL");
       return;
     }
 
     if (userCredits < 1) {
-      toast.error('No credits left! Buy more credits.');
+      toast.error("No credits left! Buy more credits.");
       return;
     }
 
@@ -145,12 +145,12 @@ const YoutubeSummaryPage = () => {
   };
 
   const copySummary = () => {
-    const currentSummary = data?.summary?.[currentLang] || '';
+    const currentSummary = data?.summary?.[currentLang] || "";
     if (currentSummary.trim()) {
       navigator.clipboard.writeText(currentSummary);
-      toast.success('Summary copied!');
+      toast.success("Summary copied!");
     } else {
-      toast.warning('No summary content to copy');
+      toast.warning("No summary content to copy");
     }
   };
 
@@ -161,7 +161,7 @@ const YoutubeSummaryPage = () => {
 
   if (data) {
     const { title, thumbnail, duration, videoId, summary, timestamps, highlights } = data;
-    const currentSummary = summary?.[currentLang] || '';
+    const currentSummary = summary?.[currentLang] || "";
 
     return (
       <div
@@ -217,9 +217,9 @@ transition-colors duration-300"
       backdrop-blur-sm rounded-2xl p-1 shadow-lg border dark:border-white/10"
             >
               <Button
-                variant={currentLang === 'english' ? 'default' : 'ghost'}
+                variant={currentLang === "english" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setCurrentLang('english')}
+                onClick={() => setCurrentLang("english")}
                 className="gap-2 font-medium"
               >
                 <Languages className="w-4 h-4" />
@@ -227,9 +227,9 @@ transition-colors duration-300"
               </Button>
 
               <Button
-                variant={currentLang === 'hinglish' ? 'default' : 'ghost'}
+                variant={currentLang === "hinglish" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setCurrentLang('hinglish')}
+                onClick={() => setCurrentLang("hinglish")}
                 className="gap-2 font-medium"
               >
                 Hinglish 🇮🇳
@@ -252,11 +252,11 @@ transition-colors duration-300"
 
             <CardContent>
               <div
-                className={`prose dark:prose-invert max-w-none ${expanded ? '' : 'max-h-96 overflow-hidden'}`}
+                className={`prose dark:prose-invert max-w-none ${expanded ? "" : "max-h-96 overflow-hidden"}`}
               >
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: currentSummary.replace(/\n/g, '<br>'),
+                    __html: currentSummary.replace(/\n/g, "<br>"),
                   }}
                 />
               </div>
@@ -272,7 +272,7 @@ transition-colors duration-300"
                 </Button>
 
                 <Button onClick={() => setExpanded(!expanded)} size="sm" variant="ghost">
-                  {expanded ? 'Show Less' : 'Show More'}
+                  {expanded ? "Show Less" : "Show More"}
                 </Button>
 
                 <div className="ml-auto text-sm text-gray-600 dark:text-gray-400">
@@ -340,7 +340,7 @@ transition-colors duration-300"
               <Button
                 onClick={() => {
                   dispatch(clearSummary());
-                  setUrl('');
+                  setUrl("");
                 }}
                 className="mt-4 bg-gradient-to-r from-emerald-500 to-green-600"
               >
@@ -455,8 +455,8 @@ transition-colors duration-300"
                   className="text-sm text-orange-600 dark:text-orange-400 text-center p-3 
           bg-orange-50 dark:bg-orange-900/20 rounded-lg"
                 >
-                  💰 No credits left.{' '}
-                  <button onClick={() => navigate('/pricing')} className="font-semibold underline">
+                  💰 No credits left.{" "}
+                  <button onClick={() => navigate("/pricing")} className="font-semibold underline">
                     Buy Credits
                   </button>
                 </p>

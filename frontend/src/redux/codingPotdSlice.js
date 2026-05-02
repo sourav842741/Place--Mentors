@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchCpotdApi, submitCpotdApi } from '../services/cpotdApi';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchCpotdApi, submitCpotdApi } from "../services/cpotdApi";
 
 //  Fetch CPOTD
-export const fetchCpotd = createAsyncThunk('cpotd/fetch', async (_, { rejectWithValue }) => {
+export const fetchCpotd = createAsyncThunk("cpotd/fetch", async (_, { rejectWithValue }) => {
   try {
     return await fetchCpotdApi();
   } catch (err) {
@@ -12,7 +12,7 @@ export const fetchCpotd = createAsyncThunk('cpotd/fetch', async (_, { rejectWith
 
 //  Submit Code
 export const submitCpotdCode = createAsyncThunk(
-  'cpotd/submit',
+  "cpotd/submit",
   async (data, { rejectWithValue }) => {
     try {
       return await submitCpotdApi(data);
@@ -36,7 +36,7 @@ const initialState = {
 
 // 🔥 Slice
 const codingPotdSlice = createSlice({
-  name: 'codingPotd',
+  name: "codingPotd",
   initialState,
   reducers: {
     setCurrentQuestion: (state, action) => {

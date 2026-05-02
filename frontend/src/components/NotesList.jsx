@@ -1,9 +1,9 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { BookOpen, Calendar, Star, SwitchCamera, BarChart3 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { BookOpen, Calendar, Star, SwitchCamera, BarChart3 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const NotesList = ({ notes, isLoading }) => {
   const navigate = useNavigate();

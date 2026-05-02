@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import maleVideo from '../assets/videos/male-ai.mp4';
-import femaleVideo from '../assets/videos/female-ai.mp4';
-import Timer from './Timer';
-import { motion } from 'framer-motion';
-import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
-import { BsArrowRight } from 'react-icons/bs';
-import api from '../services/api';
-import Footer from './Footer';
+import React, { useState, useRef, useEffect } from "react";
+import maleVideo from "../assets/videos/male-ai.mp4";
+import femaleVideo from "../assets/videos/female-ai.mp4";
+import Timer from "./Timer";
+import { motion } from "framer-motion";
+import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import { BsArrowRight } from "react-icons/bs";
+import api from "../services/api";
+import Footer from "./Footer";
 
 function Step2Interview({ interviewData, onFinish }) {
   const { interviewId, questions, userName } = interviewData;
@@ -16,20 +16,20 @@ function Step2Interview({ interviewData, onFinish }) {
   const [isAIPlaying, setIsAIPlaying] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answer, setAnswer] = useState('');
-  const [feedback, setFeedback] = useState('');
+  const [answer, setAnswer] = useState("");
+  const [feedback, setFeedback] = useState("");
   const [timeLeft, setTimeLeft] = useState(questions[0]?.timeLimit || 60);
 
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [voiceGender, setVoiceGender] = useState('female');
-  const [subtitle, setSubtitle] = useState('');
+  const [voiceGender, setVoiceGender] = useState("female");
+  const [subtitle, setSubtitle] = useState("");
 
   const recognitionRef = useRef(null);
   const videoRef = useRef(null);
 
   const currentQuestion = questions[currentIndex];
-  const videoSource = voiceGender === 'male' ? maleVideo : femaleVideo;
+  const videoSource = voiceGender === "male" ? maleVideo : femaleVideo;
 
   /* VOICE LOAD */
   useEffect(() => {
@@ -40,24 +40,24 @@ function Step2Interview({ interviewData, onFinish }) {
       const femaleVoice =
         voices.find(
           (v) =>
-            v.name.toLowerCase().includes('zira') ||
-            v.name.toLowerCase().includes('samantha') ||
-            v.name.toLowerCase().includes('female')
+            v.name.toLowerCase().includes("zira") ||
+            v.name.toLowerCase().includes("samantha") ||
+            v.name.toLowerCase().includes("female")
         ) || voices[0];
 
       const maleVoice = voices.find(
         (v) =>
-          v.name.toLowerCase().includes('david') ||
-          v.name.toLowerCase().includes('mark') ||
-          v.name.toLowerCase().includes('male')
+          v.name.toLowerCase().includes("david") ||
+          v.name.toLowerCase().includes("mark") ||
+          v.name.toLowerCase().includes("male")
       );
 
       if (femaleVoice) {
         setSelectedVoice(femaleVoice);
-        setVoiceGender('female');
+        setVoiceGender("female");
       } else if (maleVoice) {
         setSelectedVoice(maleVoice);
-        setVoiceGender('male');
+        setVoiceGender("male");
       }
     };
 
@@ -96,7 +96,7 @@ function Step2Interview({ interviewData, onFinish }) {
         if (isMicOn) startMic();
 
         setTimeout(() => {
-          setSubtitle('');
+          setSubtitle("");
           resolve();
         }, 300);
       };
@@ -121,7 +121,7 @@ function Step2Interview({ interviewData, onFinish }) {
         await new Promise((r) => setTimeout(r, 800));
 
         if (currentIndex === questions.length - 1) {
-          await speakText('Alright, this one might be challenging.');
+          await speakText("Alright, this one might be challenging.");
         }
 
         await speakText(currentQuestion.question);
@@ -159,18 +159,18 @@ function Step2Interview({ interviewData, onFinish }) {
 
   /* SPEECH RECOGNITION */
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window)) return;
+    if (!("webkitSpeechRecognition" in window)) return;
 
     const recognition = new window.webkitSpeechRecognition();
 
-    recognition.lang = 'en-US';
+    recognition.lang = "en-US";
     recognition.continuous = true;
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
 
-      setAnswer((prev) => prev + ' ' + transcript);
+      setAnswer((prev) => prev + " " + transcript);
     };
 
     recognitionRef.current = recognition;
@@ -204,7 +204,7 @@ function Step2Interview({ interviewData, onFinish }) {
 
     try {
       const result = await api.post(
-        '/api/interview/submit-answer',
+        "/api/interview/submit-answer",
         {
           interviewId,
           questionIndex: currentIndex,
@@ -227,15 +227,15 @@ function Step2Interview({ interviewData, onFinish }) {
 
   /* NEXT */
   const handleNext = async () => {
-    setAnswer('');
-    setFeedback('');
+    setAnswer("");
+    setFeedback("");
 
     if (currentIndex + 1 >= questions.length) {
       finishInterview();
       return;
     }
 
-    await speakText('Alright, next question.');
+    await speakText("Alright, next question.");
 
     setCurrentIndex(currentIndex + 1);
   };
@@ -247,7 +247,7 @@ function Step2Interview({ interviewData, onFinish }) {
 
     try {
       const result = await api.post(
-        '/api/interview/finish',
+        "/api/interview/finish",
         { interviewId },
         {
           withCredentials: true,
@@ -483,7 +483,7 @@ function Step2Interview({ interviewData, onFinish }) {
                 font-semibold
                 disabled:opacity-60"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Answer'}
+                  {isSubmitting ? "Submitting..." : "Submit Answer"}
                 </motion.button>
               </div>
             ) : (

@@ -1,5 +1,5 @@
-import Navbar from '@/components/Navbar';
-import { useNavigate } from 'react-router-dom';
+import Navbar from "@/components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const About = () => {
   const navigate = useNavigate();
@@ -102,13 +102,13 @@ const About = () => {
 
             <div className="flex flex-wrap gap-3">
               {[
-                'React',
-                'Redux',
-                'Node.js',
-                'Express',
-                'MongoDB',
-                'Tailwind CSS',
-                'AI (Gemini/OpenAI)',
+                "React",
+                "Redux",
+                "Node.js",
+                "Express",
+                "MongoDB",
+                "Tailwind CSS",
+                "AI (Gemini/OpenAI)",
               ].map((tech, i) => (
                 <span
                   key={i}
@@ -130,7 +130,7 @@ const About = () => {
             </p>
 
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate("/dashboard")}
               className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
             >
               Get Started 🚀

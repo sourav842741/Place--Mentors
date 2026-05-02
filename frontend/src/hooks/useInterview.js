@@ -1,10 +1,10 @@
-import api from '../services/api';
+import api from "../services/api";
 
 const useInterview = () => {
   //  Generate Questions (START INTERVIEW)
   const generateQuestions = async (data) => {
     try {
-      const res = await api.post('/api/interview/generate-questions', data);
+      const res = await api.post("/api/interview/generate-questions", data);
       return { success: true, data: res.data };
     } catch (err) {
       return { success: false, message: err.response?.data?.message };
@@ -14,7 +14,7 @@ const useInterview = () => {
   //  Submit Answer
   const submitAnswer = async (data) => {
     try {
-      const res = await api.post('/api/interview/submit-answer', data);
+      const res = await api.post("/api/interview/submit-answer", data);
       return { success: true, data: res.data };
     } catch (err) {
       return { success: false, message: err.response?.data?.message };
@@ -24,7 +24,7 @@ const useInterview = () => {
   //  Finish Interview
   const finishInterview = async (interviewId) => {
     try {
-      const res = await api.post('/api/interview/finish', { interviewId });
+      const res = await api.post("/api/interview/finish", { interviewId });
       return { success: true, data: res.data };
     } catch (err) {
       return { success: false, message: err.response?.data?.message };

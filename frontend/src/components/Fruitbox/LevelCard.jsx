@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Lightbulb } from "lucide-react";
 
 const LevelCard = ({
   level,
@@ -32,11 +32,11 @@ const LevelCard = ({
               <div
                 className={`px-3 py-1 rounded-full text-xs font-bold ${
                   isCompleted
-                    ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 border border-emerald-300/50'
-                    : 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border border-blue-300/50'
+                    ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 border border-emerald-300/50"
+                    : "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border border-blue-300/50"
                 }`}
               >
-                {isCompleted ? '✅ Complete' : '🎯 Active'}
+                {isCompleted ? "✅ Complete" : "🎯 Active"}
               </div>
 
               <div className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full text-xs font-bold shadow-md whitespace-nowrap">
@@ -91,8 +91,8 @@ const LevelCard = ({
           disabled={!isCompleted}
           className={`flex-1 h-14 font-bold ${
             isCompleted
-              ? 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white'
-              : 'bg-slate-400 text-white opacity-50 cursor-not-allowed'
+              ? "bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white"
+              : "bg-slate-400 text-white opacity-50 cursor-not-allowed"
           }`}
         >
           <ChevronRight className="w-5 h-5 mr-2" />

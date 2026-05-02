@@ -1,20 +1,20 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { toast } from 'sonner';
-import api from '../services/api.js';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "sonner";
+import api from "../services/api.js";
 
 export const uploadResumeAndAnalyze = createAsyncThunk(
-  'resume/uploadResumeAndAnalyze',
+  "resume/uploadResumeAndAnalyze",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await api.post('/api/planner/analyze-resume', formData, {
+      const response = await api.post("/api/planner/analyze-resume", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       });
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Analysis failed. Please try again.';
+      const message = error.response?.data?.message || "Analysis failed. Please try again.";
       toast.error(message);
       return rejectWithValue(message);
     }
@@ -22,20 +22,20 @@ export const uploadResumeAndAnalyze = createAsyncThunk(
 );
 
 const resumeSlice = createSlice({
-  name: 'resume',
+  name: "resume",
   initialState: {
     loading: false,
     error: null,
     analysis: null,
-    fileName: '',
-    previewText: '',
+    fileName: "",
+    previewText: "",
   },
   reducers: {
     clearAnalysis: (state) => {
       state.analysis = null;
       state.error = null;
-      state.fileName = '';
-      state.previewText = '';
+      state.fileName = "";
+      state.previewText = "";
     },
     setFileName: (state, action) => {
       state.fileName = action.payload;
@@ -50,8 +50,8 @@ const resumeSlice = createSlice({
       .addCase(uploadResumeAndAnalyze.fulfilled, (state, action) => {
         state.loading = false;
         state.analysis = action.payload.analysis;
-        state.previewText = action.payload.extractedText || '';
-        toast.success('Resume analysis complete!');
+        state.previewText = action.payload.extractedText || "";
+        toast.success("Resume analysis complete!");
       })
       .addCase(uploadResumeAndAnalyze.rejected, (state, action) => {
         state.loading = false;

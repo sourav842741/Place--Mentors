@@ -1,9 +1,9 @@
-import React from 'react';
-import { BookOpen, Sparkles, Star, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import NotesForm from '../components/NotesForm';
-import NotesList from '../components/NotesList';
-import { useGetMyNotesQuery } from '../redux/notesSlice';
+import React from "react";
+import { BookOpen, Sparkles, Star, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import NotesForm from "../components/NotesForm";
+import NotesList from "../components/NotesList";
+import { useGetMyNotesQuery } from "../redux/notesSlice";
 
 function Notes() {
   const { data: notes, isLoading, error } = useGetMyNotesQuery();

@@ -1,17 +1,17 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api, { banUser as banUserApi, unbanUser as unbanUserApi } from '../services/api';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api, { banUser as banUserApi, unbanUser as unbanUserApi } from "../services/api";
 
 /* ===============================
    FETCH USERS
 ================================= */
 export const fetchAdminUsers = createAsyncThunk(
-  'adminUsers/fetchUsers',
+  "adminUsers/fetchUsers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/admin/users');
+      const response = await api.get("/api/admin/users");
       return response.data.data || response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch users');
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch users");
     }
   }
 );
@@ -20,13 +20,13 @@ export const fetchAdminUsers = createAsyncThunk(
    PROMOTE USER
 ================================= */
 export const promoteUser = createAsyncThunk(
-  'adminUsers/promoteUser',
+  "adminUsers/promoteUser",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await api.patch(`/api/admin/promote/${userId}`);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to promote user');
+      return rejectWithValue(error.response?.data?.message || "Failed to promote user");
     }
   }
 );
@@ -35,13 +35,13 @@ export const promoteUser = createAsyncThunk(
    DEMOTE USER
 ================================= */
 export const demoteUser = createAsyncThunk(
-  'adminUsers/demoteUser',
+  "adminUsers/demoteUser",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await api.patch(`/api/admin/demote/${userId}`);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to demote user');
+      return rejectWithValue(error.response?.data?.message || "Failed to demote user");
     }
   }
 );
@@ -50,7 +50,7 @@ export const demoteUser = createAsyncThunk(
    ADJUST USER CREDITS
 ================================= */
 export const adjustUserCredits = createAsyncThunk(
-  'adminUsers/adjustUserCredits',
+  "adminUsers/adjustUserCredits",
   async ({ userId, amount, type }, { rejectWithValue }) => {
     try {
       const response = await api.patch(`/api/admin/users/${userId}/credits`, {
@@ -59,7 +59,7 @@ export const adjustUserCredits = createAsyncThunk(
       });
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to adjust credits');
+      return rejectWithValue(error.response?.data?.message || "Failed to adjust credits");
     }
   }
 );
@@ -68,13 +68,13 @@ export const adjustUserCredits = createAsyncThunk(
    BAN USER
 ================================= */
 export const banUser = createAsyncThunk(
-  'adminUsers/banUser',
+  "adminUsers/banUser",
   async ({ userId, banReason }, { rejectWithValue }) => {
     try {
       const response = await banUserApi(userId, banReason);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to ban user');
+      return rejectWithValue(error.response?.data?.message || "Failed to ban user");
     }
   }
 );
@@ -83,13 +83,13 @@ export const banUser = createAsyncThunk(
    UNBAN USER
 ================================= */
 export const unbanUser = createAsyncThunk(
-  'adminUsers/unbanUser',
+  "adminUsers/unbanUser",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await unbanUserApi(userId);
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to unban user');
+      return rejectWithValue(error.response?.data?.message || "Failed to unban user");
     }
   }
 );
@@ -101,7 +101,7 @@ const initialState = {
 };
 
 const adminUserSlice = createSlice({
-  name: 'adminUsers',
+  name: "adminUsers",
   initialState,
 
   reducers: {

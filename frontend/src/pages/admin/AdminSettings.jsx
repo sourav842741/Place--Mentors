@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Select,
@@ -15,9 +15,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
-import useAdminSettings from '../../hooks/useAdminSettings';
+import useAdminSettings from "../../hooks/useAdminSettings";
 
 import {
   Settings,
@@ -28,10 +28,10 @@ import {
   X,
   Shield,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function AdminSettings() {
   const navigate = useNavigate();
@@ -43,18 +43,18 @@ export default function AdminSettings() {
   ========================= */
   const [formData, setFormData] = useState({
     maintenanceMode: false,
-    maintenanceTitle: 'Under Maintenance',
+    maintenanceTitle: "Under Maintenance",
     maintenanceMessage: "We're working on improvements. Back soon! 🚀",
-    maintenanceImage: '',
+    maintenanceImage: "",
     maintenanceAllowAdminAccess: true,
 
     announcementEnabled: false,
-    announcementText: '',
-    announcementImage: '',
-    announcementType: 'info',
+    announcementText: "",
+    announcementImage: "",
+    announcementType: "info",
     announcementClosable: true,
-    announcementButtonText: '',
-    announcementButtonLink: '',
+    announcementButtonText: "",
+    announcementButtonLink: "",
   });
 
   /* =========================
@@ -69,7 +69,7 @@ export default function AdminSettings() {
       setFormData((prev) => ({
         ...prev,
         ...settings,
-        announcementType: settings?.announcementType || 'info',
+        announcementType: settings?.announcementType || "info",
       }));
     }
   }, [settings]);
@@ -87,14 +87,14 @@ export default function AdminSettings() {
   /* =========================
      TYPE PREVIEW (SAFE)
   ========================= */
-  const getTypePreview = (type = 'info') => {
-    const safeType = String(type || 'info');
+  const getTypePreview = (type = "info") => {
+    const safeType = String(type || "info");
 
     const colors = {
-      info: 'bg-blue-100 text-blue-800',
-      warning: 'bg-yellow-100 text-yellow-800',
-      success: 'bg-green-100 text-green-800',
-      danger: 'bg-red-100 text-red-800',
+      info: "bg-blue-100 text-blue-800",
+      warning: "bg-yellow-100 text-yellow-800",
+      success: "bg-green-100 text-green-800",
+      danger: "bg-red-100 text-red-800",
     };
 
     const icons = {
@@ -149,7 +149,7 @@ export default function AdminSettings() {
         ========================= */}
         <Card
           className="cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate('/admin/security')}
+          onClick={() => navigate("/admin/security")}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -168,11 +168,11 @@ export default function AdminSettings() {
               <Badge
                 className={`px-3 py-1 ${
                   user?.twoFactorEnabled
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+                    : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
                 }`}
               >
-                {user?.twoFactorEnabled ? '2FA Enabled' : '2FA Not Enabled'}
+                {user?.twoFactorEnabled ? "2FA Enabled" : "2FA Not Enabled"}
               </Badge>
               {user?.twoFactorWarning && (
                 <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
@@ -305,7 +305,7 @@ export default function AdminSettings() {
                 <Label>Type</Label>
 
                 <Select
-                  value={formData.announcementType || 'info'}
+                  value={formData.announcementType || "info"}
                   onValueChange={(value) =>
                     setFormData({
                       ...formData,
@@ -399,7 +399,7 @@ export default function AdminSettings() {
           disabled={isUpdating}
           className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-lg font-semibold h-14"
         >
-          {isUpdating ? 'Saving...' : 'Save All Settings'}
+          {isUpdating ? "Saving..." : "Save All Settings"}
         </Button>
       </form>
     </div>

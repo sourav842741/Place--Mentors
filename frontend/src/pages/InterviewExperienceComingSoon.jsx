@@ -1,16 +1,16 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { Briefcase, Sparkles, Clock3, ArrowRight, MessageSquare, ChevronLeft } from 'lucide-react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Briefcase, Sparkles, Clock3, ArrowRight, MessageSquare, ChevronLeft } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function InterviewExperienceComingSoon() {
   const navigate = useNavigate();
 
   const handleNotify = () => {
-    toast.success('Notification enabled successfully 🔔', {
-      description: 'We’ll inform you when Interview Experience launches.',
+    toast.success("Notification enabled successfully 🔔", {
+      description: "We’ll inform you when Interview Experience launches.",
     });
   };
 
@@ -21,7 +21,7 @@ export default function InterviewExperienceComingSoon() {
         <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
           {/* Back Button */}
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
             className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md hover:scale-105 transition-all duration-300 text-slate-700 dark:text-white"
           >
             <ChevronLeft className="h-4 w-4" />

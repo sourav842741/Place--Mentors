@@ -1,28 +1,28 @@
-import React, { useState, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { FileText, Upload, Sparkles, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
+import React, { useState, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { FileText, Upload, Sparkles, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogClose,
-} from '@/components/ui/dialog';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 import {
   uploadResumeAndAnalyze,
   clearAnalysis,
   setFileName,
   selectResume,
-} from '@/redux/resumeSlice';
-import Navbar from '@/components/Navbar';
-import UploadArea from '@/components/ui/UploadArea';
-import Footer from '@/components/Footer';
+} from "@/redux/resumeSlice";
+import Navbar from "@/components/Navbar";
+import UploadArea from "@/components/ui/UploadArea";
+import Footer from "@/components/Footer";
 
 export default function ResumeAnalyzer() {
   const dispatch = useDispatch();
@@ -36,24 +36,24 @@ export default function ResumeAnalyzer() {
     (file) => {
       setSelectedFile(file);
       dispatch(setFileName(file.name));
-      toast.success('Resume uploaded successfully!');
+      toast.success("Resume uploaded successfully!");
     },
     [dispatch]
   );
 
   const handleAnalyze = useCallback(() => {
     if (!selectedFile) {
-      toast.error('Please select a PDF resume first');
+      toast.error("Please select a PDF resume first");
       return;
     }
 
     if (user?.credits < 20) {
-      toast.error('Need 20 credits. Check dashboard.');
+      toast.error("Need 20 credits. Check dashboard.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('resume', selectedFile);
+    formData.append("resume", selectedFile);
     dispatch(uploadResumeAndAnalyze(formData));
     setShowResult(true);
   }, [selectedFile, user, dispatch]);
@@ -80,7 +80,7 @@ export default function ResumeAnalyzer() {
                 </p>
               </div>
               <Button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate("/dashboard")}
                 variant="outline"
                 className="bg-yellow-200 dark:bg-gray-950 cursor-pointer"
               >
@@ -139,9 +139,9 @@ export default function ResumeAnalyzer() {
                         {analysis.score}/100
                       </div>
                       <Badge
-                        className={`text-lg px-4 py-2 ${analysis.interviewReady ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+                        className={`text-lg px-4 py-2 ${analysis.interviewReady ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}`}
                       >
-                        {analysis.interviewReady ? 'Interview Ready' : 'Needs Work'}
+                        {analysis.interviewReady ? "Interview Ready" : "Needs Work"}
                       </Badge>
                       <p className="text-sm text-gray-500 mt-2">{analysis.recommendedRole}</p>
                     </div>
@@ -194,7 +194,7 @@ export default function ResumeAnalyzer() {
                         <ul className="space-y-2">
                           {analysis.suggestions.map((suggestion, i) => (
                             <li key={i} className="text-sm">
-                              {'• ' + suggestion}
+                              {"• " + suggestion}
                             </li>
                           ))}
                         </ul>
@@ -208,7 +208,7 @@ export default function ResumeAnalyzer() {
                       <Button
                         variant="outline"
                         className="flex-1"
-                        onClick={() => navigate('/planner-history')}
+                        onClick={() => navigate("/planner-history")}
                       >
                         View Planners
                       </Button>

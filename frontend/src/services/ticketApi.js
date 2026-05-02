@@ -1,9 +1,9 @@
-import api from './api.js';
+import api from "./api.js";
 
 // User APIs
 export const createTicket = (formData) =>
-  api.post('/api/tickets', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+  api.post("/api/tickets", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 
 export const getMyTickets = (params = {}) => {
@@ -21,7 +21,7 @@ export const getAllTickets = (params = {}) => {
   return api.get(`/api/tickets/admin/all?${query}`);
 };
 
-export const getTicketStats = () => api.get('/api/tickets/admin/stats');
+export const getTicketStats = () => api.get("/api/tickets/admin/stats");
 export const updateTicketStatus = (id, status) =>
   api.patch(`/api/tickets/admin/${id}/status`, {
     status,

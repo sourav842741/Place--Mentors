@@ -1,6 +1,6 @@
-import api from './api';
+import api from "./api";
 
-export const askDoubtApi = (question) => api.post('/api/doubts/ask', { question });
+export const askDoubtApi = (question) => api.post("/api/doubts/ask", { question });
 
 export const getDoubtsApi = (page = 1) => api.get(`/api/doubts?page=${page}&limit=10`);
 

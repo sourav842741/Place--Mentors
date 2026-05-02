@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
-import api from '../services/api.js';
-import { toast } from 'sonner';
+import { createSlice, createAsyncThunk, createEntityAdapter } from "@reduxjs/toolkit";
+import api from "../services/api.js";
+import { toast } from "sonner";
 
 /* =========================
    ENTITY ADAPTER
@@ -44,60 +44,60 @@ const initialState = {
 
 // fetch all chat history
 export const fetchHistory = createAsyncThunk(
-  'aiCoach/fetchHistory',
+  "aiCoach/fetchHistory",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/ai/coach/history');
+      const response = await api.get("/api/ai/coach/history");
       return unwrapResponse(response);
     } catch (error) {
-      toast.error('Failed to load history');
-      return rejectWithValue(error?.response?.data?.message || 'Failed to load history');
+      toast.error("Failed to load history");
+      return rejectWithValue(error?.response?.data?.message || "Failed to load history");
     }
   }
 );
 
 // send message
 export const sendMessage = createAsyncThunk(
-  'aiCoach/sendMessage',
+  "aiCoach/sendMessage",
   async ({ message, chatId }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/api/ai/coach/chat', {
+      const response = await api.post("/api/ai/coach/chat", {
         message,
         chatId,
       });
 
       return unwrapResponse(response);
     } catch (error) {
-      toast.error('Failed to send message');
-      return rejectWithValue(error?.response?.data?.message || 'Failed to send message');
+      toast.error("Failed to send message");
+      return rejectWithValue(error?.response?.data?.message || "Failed to send message");
     }
   }
 );
 
 // quick prompt
 export const newQuickChat = createAsyncThunk(
-  'aiCoach/newQuickChat',
+  "aiCoach/newQuickChat",
   async (type, { rejectWithValue }) => {
     try {
       const response = await api.get(`/api/ai/coach/quick/${type}`);
       return unwrapResponse(response);
     } catch (error) {
-      toast.error('Quick prompt failed');
-      return rejectWithValue(error?.response?.data?.message || 'Quick prompt failed');
+      toast.error("Quick prompt failed");
+      return rejectWithValue(error?.response?.data?.message || "Quick prompt failed");
     }
   }
 );
 
 // delete chat
 export const clearChat = createAsyncThunk(
-  'aiCoach/clearChat',
+  "aiCoach/clearChat",
   async (chatId, { rejectWithValue }) => {
     try {
       await api.delete(`/api/ai/coach/${chatId}`);
       return chatId;
     } catch (error) {
-      toast.error('Failed to clear chat');
-      return rejectWithValue(error?.response?.data?.message || 'Failed to clear chat');
+      toast.error("Failed to clear chat");
+      return rejectWithValue(error?.response?.data?.message || "Failed to clear chat");
     }
   }
 );
@@ -107,7 +107,7 @@ export const clearChat = createAsyncThunk(
 ========================= */
 
 const aiCoachSlice = createSlice({
-  name: 'aiCoach',
+  name: "aiCoach",
   initialState,
 
   reducers: {
@@ -173,11 +173,11 @@ const aiCoachSlice = createSlice({
 
         historyAdapter.upsertOne(state.history, {
           _id: action.payload.chatId,
-          title: action.payload.title || 'New Chat',
+          title: action.payload.title || "New Chat",
           updatedAt: new Date().toISOString(),
           createdAt: new Date().toISOString(),
           messageCount: state.messages.length,
-          preview: state.messages[state.messages.length - 1]?.text?.slice(0, 100) || '',
+          preview: state.messages[state.messages.length - 1]?.text?.slice(0, 100) || "",
         });
       })
 
@@ -202,11 +202,11 @@ const aiCoachSlice = createSlice({
 
         historyAdapter.upsertOne(state.history, {
           _id: action.payload.chatId,
-          title: action.payload.title || 'Quick Chat',
+          title: action.payload.title || "Quick Chat",
           updatedAt: new Date().toISOString(),
           createdAt: new Date().toISOString(),
           messageCount: state.messages.length,
-          preview: state.messages[state.messages.length - 1]?.text?.slice(0, 100) || '',
+          preview: state.messages[state.messages.length - 1]?.text?.slice(0, 100) || "",
         });
       })
 

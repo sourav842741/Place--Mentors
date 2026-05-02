@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import {
   Shield,
   ShieldCheck,
@@ -19,8 +19,8 @@ import {
   ArrowLeft,
   CheckCircle2,
   Smartphone,
-} from 'lucide-react';
-import useAuth from '../../hooks/useAuth';
+} from "lucide-react";
+import useAuth from "../../hooks/useAuth";
 
 export default function AdminSecurity() {
   const { user } = useSelector((state) => state.user);
@@ -30,23 +30,23 @@ export default function AdminSecurity() {
   const [status, setStatus] = useState({ enabled: false, hasTempSecret: false });
   const [loading, setLoading] = useState(false);
   const [setupMode, setSetupMode] = useState(false);
-  const [qrCode, setQrCode] = useState('');
-  const [manualKey, setManualKey] = useState('');
-  const [verifyToken, setVerifyToken] = useState('');
+  const [qrCode, setQrCode] = useState("");
+  const [manualKey, setManualKey] = useState("");
+  const [verifyToken, setVerifyToken] = useState("");
   const [recoveryCodes, setRecoveryCodes] = useState([]);
   const [showCodes, setShowCodes] = useState(false);
 
   const [disableMode, setDisableMode] = useState(false);
-  const [disablePassword, setDisablePassword] = useState('');
-  const [disableToken, setDisableToken] = useState('');
+  const [disablePassword, setDisablePassword] = useState("");
+  const [disableToken, setDisableToken] = useState("");
   const [showDisablePassword, setShowDisablePassword] = useState(false);
 
   const isSuperAdmin = user?.isSuperAdmin;
-  const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
+  const isAdmin = user?.role === "admin" || user?.role === "superadmin";
 
   useEffect(() => {
     if (!isAdmin) {
-      navigate('/');
+      navigate("/");
       return;
     }
     fetchStatus();
@@ -66,9 +66,9 @@ export default function AdminSecurity() {
       setQrCode(res.data.qrCode);
       setManualKey(res.data.manualKey);
       setSetupMode(true);
-      setVerifyToken('');
+      setVerifyToken("");
       setRecoveryCodes([]);
-      toast.success('Scan the QR code with your authenticator app');
+      toast.success("Scan the QR code with your authenticator app");
     } else {
       toast.error(res.message);
     }
@@ -77,7 +77,7 @@ export default function AdminSecurity() {
 
   const handleEnable = async () => {
     if (!verifyToken) {
-      return toast.warning('Enter the 6-digit code from your authenticator app');
+      return toast.warning("Enter the 6-digit code from your authenticator app");
     }
     setLoading(true);
     const res = await enable2FA(verifyToken);
@@ -85,7 +85,7 @@ export default function AdminSecurity() {
       setRecoveryCodes(res.data.recoveryCodes);
       setStatus({ enabled: true, hasTempSecret: false });
       setSetupMode(false);
-      toast.success('2FA enabled successfully! Save your recovery codes.');
+      toast.success("2FA enabled successfully! Save your recovery codes.");
     } else {
       toast.error(res.message);
     }
@@ -94,16 +94,16 @@ export default function AdminSecurity() {
 
   const handleDisable = async () => {
     if (!disablePassword || !disableToken) {
-      return toast.warning('Password and OTP are required');
+      return toast.warning("Password and OTP are required");
     }
     setLoading(true);
     const res = await disable2FA(disablePassword, disableToken);
     if (res.success) {
       setStatus({ enabled: false, hasTempSecret: false });
       setDisableMode(false);
-      setDisablePassword('');
-      setDisableToken('');
-      toast.success('2FA disabled successfully');
+      setDisablePassword("");
+      setDisableToken("");
+      toast.success("2FA disabled successfully");
     } else {
       toast.error(res.message);
     }
@@ -112,10 +112,10 @@ export default function AdminSecurity() {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
+    toast.success("Copied to clipboard");
   };
 
-  const title = isSuperAdmin ? 'Super Admin Security' : 'Admin Security';
+  const title = isSuperAdmin ? "Super Admin Security" : "Admin Security";
 
   return (
     <div className="space-y-6 lg:ml-72 p-4">
@@ -138,11 +138,11 @@ export default function AdminSecurity() {
         <Badge
           className={`px-4 py-2 rounded-full text-sm ${
             status.enabled
-              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-              : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+              : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
           }`}
         >
-          {status.enabled ? '2FA Enabled' : '2FA Disabled'}
+          {status.enabled ? "2FA Enabled" : "2FA Disabled"}
         </Badge>
       </div>
 
@@ -161,7 +161,7 @@ export default function AdminSecurity() {
           <CardContent className="p-4">
             <p className="text-sm text-gray-500">Role</p>
             <h3 className="text-2xl font-bold dark:text-white">
-              {isSuperAdmin ? 'Superadmin' : 'Admin'}
+              {isSuperAdmin ? "Superadmin" : "Admin"}
             </h3>
           </CardContent>
         </Card>
@@ -172,7 +172,7 @@ export default function AdminSecurity() {
             <h3 className="text-sm font-semibold dark:text-white">
               {user?.lastPrivilegedLoginAt
                 ? new Date(user.lastPrivilegedLoginAt).toLocaleString()
-                : 'Never'}
+                : "Never"}
             </h3>
           </CardContent>
         </Card>
@@ -191,8 +191,8 @@ export default function AdminSecurity() {
           </CardTitle>
           <CardDescription>
             {status.enabled
-              ? 'Your account is protected with 2FA'
-              : 'Enable 2FA to add an extra layer of security'}
+              ? "Your account is protected with 2FA"
+              : "Enable 2FA to add an extra layer of security"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -201,11 +201,11 @@ export default function AdminSecurity() {
               <Badge
                 className={`px-3 py-1 ${
                   status.enabled
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+                    : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
                 }`}
               >
-                {status.enabled ? 'Enabled' : 'Disabled'}
+                {status.enabled ? "Enabled" : "Disabled"}
               </Badge>
               {isSuperAdmin && !status.enabled && (
                 <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
@@ -331,7 +331,7 @@ export default function AdminSecurity() {
                   key={idx}
                   className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2"
                 >
-                  <code className="text-sm font-mono">{showCodes ? code : '••••••••'}</code>
+                  <code className="text-sm font-mono">{showCodes ? code : "••••••••"}</code>
                 </div>
               ))}
             </div>
@@ -342,11 +342,11 @@ export default function AdminSecurity() {
                 className="rounded-2xl"
               >
                 {showCodes ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-                {showCodes ? 'Hide' : 'Show'}
+                {showCodes ? "Hide" : "Show"}
               </Button>
               <Button
                 variant="outline"
-                onClick={() => copyToClipboard(recoveryCodes.join('\n'))}
+                onClick={() => copyToClipboard(recoveryCodes.join("\n"))}
                 className="rounded-2xl"
               >
                 <Copy className="w-4 h-4 mr-2" />
@@ -376,7 +376,7 @@ export default function AdminSecurity() {
               </label>
               <div className="relative">
                 <Input
-                  type={showDisablePassword ? 'text' : 'password'}
+                  type={showDisablePassword ? "text" : "password"}
                   placeholder="Enter password"
                   value={disablePassword}
                   onChange={(e) => setDisablePassword(e.target.value)}
@@ -427,7 +427,7 @@ export default function AdminSecurity() {
 
       {/* Back to Settings */}
       <button
-        onClick={() => navigate('/admin/settings')}
+        onClick={() => navigate("/admin/settings")}
         className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition"
       >
         <ArrowLeft className="w-4 h-4" />

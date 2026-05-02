@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { generateNotes } from '../redux/notesSlice';
-import { generatePDFAPI } from '../services/notes.api';
-import { updateCredits } from '../redux/userSlice';
-import { toast } from 'sonner';
-import useAuth from '../hooks/useAuth';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { generateNotes } from "../redux/notesSlice";
+import { generatePDFAPI } from "../services/notes.api";
+import { updateCredits } from "../redux/userSlice";
+import { toast } from "sonner";
+import useAuth from "../hooks/useAuth";
 
 function NotesForm() {
   const dispatch = useDispatch();
@@ -14,9 +14,9 @@ function NotesForm() {
   const { singleNote, loading } = useSelector((state) => state.notes);
 
   const [form, setForm] = useState({
-    topic: '',
-    classLevel: '',
-    examType: '',
+    topic: "",
+    classLevel: "",
+    examType: "",
     revisionMode: false,
     includeDiagram: false,
     includeChart: false,
@@ -29,9 +29,9 @@ function NotesForm() {
 
     // ❌ ERROR HANDLE
     if (res?.error) {
-      let message = 'Something went wrong';
+      let message = "Something went wrong";
 
-      if (typeof res.payload === 'string') {
+      if (typeof res.payload === "string") {
         message = res.payload;
       } else if (res.payload?.message) {
         message = res.payload.message;
@@ -62,14 +62,14 @@ function NotesForm() {
       const res = await generatePDFAPI({ result: singleNote });
 
       const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
 
       link.href = url;
-      link.setAttribute('download', 'ExamNotesAI.pdf');
+      link.setAttribute("download", "ExamNotesAI.pdf");
       document.body.appendChild(link);
       link.click();
     } catch (err) {
-      console.error('PDF download error:', err);
+      console.error("PDF download error:", err);
     }
   };
 
@@ -84,7 +84,7 @@ function NotesForm() {
         />
 
         <button disabled={loading} className="bg-blue-500 text-white px-4 py-2 rounded">
-          {loading ? 'Generating...' : 'Generate Notes'}
+          {loading ? "Generating..." : "Generate Notes"}
         </button>
       </form>
 

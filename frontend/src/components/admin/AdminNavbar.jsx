@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser } from '../../redux/userSlice';
-import api from '../../services/api';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutUser } from "../../redux/userSlice";
+import api from "../../services/api";
 
-import { Button } from '@/components/ui/button';
-import { Sun, Moon, LogOut, LayoutDashboard, Menu } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Sun, Moon, LogOut, LayoutDashboard, Menu } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export default function AdminNavbar({ setIsOpen }) {
   const user = useSelector((state) => state.user.user);
@@ -26,35 +26,35 @@ export default function AdminNavbar({ setIsOpen }) {
 
   const [popupContent, setPopupContent] = useState({
     icon: null,
-    title: '',
-    subtitle: '',
+    title: "",
+    subtitle: "",
   });
 
   /* LOAD THEME */
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
       setIsDark(false);
     }
   }, []);
 
   /* THEME TOGGLE + POPUP */
   const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle('dark');
+    const isNowDark = document.documentElement.classList.toggle("dark");
 
     setIsDark(isNowDark);
 
-    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
 
     setPopupContent({
       icon: isNowDark ? Moon : Sun,
-      title: isNowDark ? 'Dark Mode Enabled' : 'Light Mode Enabled',
-      subtitle: isNowDark ? 'Night vibes activated 🌙' : 'Sunshine is back ☀️',
+      title: isNowDark ? "Dark Mode Enabled" : "Light Mode Enabled",
+      subtitle: isNowDark ? "Night vibes activated 🌙" : "Sunshine is back ☀️",
     });
 
     setShowThemePopup(true);
@@ -66,22 +66,22 @@ export default function AdminNavbar({ setIsOpen }) {
 
   const handleLogout = async () => {
     try {
-      await api.get('/api/auth/signout', {
+      await api.get("/api/auth/signout", {
         withCredentials: true,
       });
 
       dispatch(logoutUser());
-      navigate('/');
+      navigate("/");
     } catch {
       dispatch(logoutUser());
-      navigate('/');
+      navigate("/");
     }
   };
 
   const getInitials = (name) => {
-    if (!name) return 'AU';
+    if (!name) return "AU";
 
-    const words = name.trim().split(' ');
+    const words = name.trim().split(" ");
 
     return words.length === 1
       ? words[0][0].toUpperCase()
@@ -114,7 +114,7 @@ export default function AdminNavbar({ setIsOpen }) {
               </h1>
 
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {user?.fullName || 'Admin'}
+                {user?.fullName || "Admin"}
               </p>
             </div>
           </div>
@@ -145,8 +145,8 @@ export default function AdminNavbar({ setIsOpen }) {
                     <div
                       className={`p-3 rounded-xl shadow-lg ${
                         isDark
-                          ? 'bg-gradient-to-br from-slate-700 to-slate-900'
-                          : 'bg-gradient-to-br from-yellow-400 to-orange-400'
+                          ? "bg-gradient-to-br from-slate-700 to-slate-900"
+                          : "bg-gradient-to-br from-yellow-400 to-orange-400"
                       }`}
                     >
                       {popupContent.icon ? (
@@ -190,7 +190,7 @@ export default function AdminNavbar({ setIsOpen }) {
                 </div>
 
                 <DropdownMenuItem
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate("/dashboard")}
                   className="cursor-pointer mt-2 focus:bg-blue-200 dark:text-gray-400"
                 >
                   <LayoutDashboard className="mr-2 h-4 w-4" />

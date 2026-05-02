@@ -1,12 +1,12 @@
-import { Upload, FileText } from 'lucide-react';
-import { useCallback } from 'react';
+import { Upload, FileText } from "lucide-react";
+import { useCallback } from "react";
 
-export default function UploadArea({ onFileSelect, fileName, className = '' }) {
+export default function UploadArea({ onFileSelect, fileName, className = "" }) {
   const handleDrop = useCallback(
     (e) => {
       e.preventDefault();
       const file = e.dataTransfer.files[0];
-      if (file && file.type === 'application/pdf' && file.size <= 5 * 1024 * 1024) {
+      if (file && file.type === "application/pdf" && file.size <= 5 * 1024 * 1024) {
         onFileSelect(file);
       }
     },
@@ -16,7 +16,7 @@ export default function UploadArea({ onFileSelect, fileName, className = '' }) {
   const handleChange = useCallback(
     (e) => {
       const file = e.target.files[0];
-      if (file && file.type === 'application/pdf' && file.size <= 5 * 1024 * 1024) {
+      if (file && file.type === "application/pdf" && file.size <= 5 * 1024 * 1024) {
         onFileSelect(file);
       }
     },
@@ -28,7 +28,7 @@ export default function UploadArea({ onFileSelect, fileName, className = '' }) {
       className={`border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition-all ${className}`}
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
-      onClick={() => document.getElementById('pdf-upload').click()}
+      onClick={() => document.getElementById("pdf-upload").click()}
     >
       <input
         id="pdf-upload"

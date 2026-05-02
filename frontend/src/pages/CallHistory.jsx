@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Mic, Clock, Phone, Award, BadgeCheck, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { Mic, Clock, Phone, Award, BadgeCheck, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -11,10 +11,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { fetchVoiceHistory } from '../redux/voiceSlice';
-import Navbar from '../components/Navbar';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { fetchVoiceHistory } from "../redux/voiceSlice";
+import Navbar from "../components/Navbar";
 
 const CallHistory = () => {
   const dispatch = useDispatch();
@@ -28,10 +28,10 @@ const CallHistory = () => {
 
   const getModeIcon = (mode) => {
     const icons = {
-      'hr-interview': Phone,
-      'spoken-english': Mic,
+      "hr-interview": Phone,
+      "spoken-english": Mic,
       motivation: Award,
-      'resume-screening': BadgeCheck,
+      "resume-screening": BadgeCheck,
     };
     const Icon = icons[mode];
     return Icon ? <Icon className="w-4 h-4" /> : <Mic className="w-4 h-4" />;
@@ -40,7 +40,7 @@ const CallHistory = () => {
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   if (loading) {
@@ -119,7 +119,7 @@ const CallHistory = () => {
                       <TableCell className="font-medium flex items-center gap-2">
                         {getModeIcon(call.mode)}
                         <span>
-                          {call.mode.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                          {call.mode.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                         </span>
                       </TableCell>
                       <TableCell className="text-sm">
@@ -134,18 +134,18 @@ const CallHistory = () => {
                       <TableCell>
                         <Badge
                           variant={
-                            call.status === 'completed'
-                              ? 'default'
-                              : call.status === 'active'
-                                ? 'secondary'
-                                : 'outline'
+                            call.status === "completed"
+                              ? "default"
+                              : call.status === "active"
+                                ? "secondary"
+                                : "outline"
                           }
                           className={`${
-                            call.status === 'completed'
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/50'
-                              : call.status === 'active'
-                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50'
+                            call.status === "completed"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/50"
+                              : call.status === "active"
+                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-900/50"
                           }`}
                         >
                           {call.status.toUpperCase()}

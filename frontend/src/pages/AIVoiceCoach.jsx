@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Mic, Phone, Headphones, MicOff, Play, Clock, Award, PhoneCall, Timer } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { Mic, Phone, Headphones, MicOff, Play, Clock, Award, PhoneCall, Timer } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
-import { toast } from 'sonner';
-import { startVoiceCallAsync, fetchVoiceHistory } from '../redux/voiceSlice';
+import { toast } from "sonner";
+import { startVoiceCallAsync, fetchVoiceHistory } from "../redux/voiceSlice";
 
-import Navbar from '../components/Navbar';
-import { trackEvent } from '../hooks/useAnalytics';
+import Navbar from "../components/Navbar";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const AIVoiceCoach = () => {
   const dispatch = useDispatch();
@@ -21,8 +21,8 @@ const AIVoiceCoach = () => {
   const history = entities || {};
   const recentCalls = Object.values(history).slice(0, 3);
 
-  const [phone, setPhone] = useState('');
-  const [mode, setMode] = useState('hr-interview');
+  const [phone, setPhone] = useState("");
+  const [mode, setMode] = useState("hr-interview");
   const [isCalling, setIsCalling] = useState(false);
   const [cooldownLeft, setCooldownLeft] = useState(0);
 
@@ -33,7 +33,7 @@ const AIVoiceCoach = () => {
 
   // Cooldown timer logic
   useEffect(() => {
-    const saved = localStorage.getItem('voice_call_cooldown');
+    const saved = localStorage.getItem("voice_call_cooldown");
 
     if (saved) {
       const left = Math.max(0, Math.floor((Number(saved) - Date.now()) / 1000));
@@ -41,7 +41,7 @@ const AIVoiceCoach = () => {
     }
 
     const timer = setInterval(() => {
-      const stored = localStorage.getItem('voice_call_cooldown');
+      const stored = localStorage.getItem("voice_call_cooldown");
 
       if (!stored) return;
 
@@ -50,7 +50,7 @@ const AIVoiceCoach = () => {
       setCooldownLeft(left);
 
       if (left <= 0) {
-        localStorage.removeItem('voice_call_cooldown');
+        localStorage.removeItem("voice_call_cooldown");
       }
     }, 1000);
 
@@ -61,12 +61,12 @@ const AIVoiceCoach = () => {
     const min = Math.floor(sec / 60);
     const secRemain = sec % 60;
 
-    return `${min}:${String(secRemain).padStart(2, '0')}`;
+    return `${min}:${String(secRemain).padStart(2, "0")}`;
   };
 
   const handleStartCall = async () => {
     if (!phone.trim()) {
-      toast.error('Please enter phone number');
+      toast.error("Please enter phone number");
       return;
     }
 
@@ -85,19 +85,19 @@ const AIVoiceCoach = () => {
         })
       ).unwrap();
 
-      toast.success('Call started successfully');
+      toast.success("Call started successfully");
 
-      trackEvent('ai_interview_used', { type: 'voice', mode });
+      trackEvent("ai_interview_used", { type: "voice", mode });
 
       // Start 20 minute cooldown
       const endTime = Date.now() + 20 * 60 * 1000;
-      localStorage.setItem('voice_call_cooldown', endTime);
+      localStorage.setItem("voice_call_cooldown", endTime);
       setCooldownLeft(20 * 60);
 
-      setPhone('');
+      setPhone("");
       dispatch(fetchVoiceHistory());
     } catch (error) {
-      toast.error(error || 'Failed to start call');
+      toast.error(error || "Failed to start call");
     } finally {
       setIsCalling(false);
     }
@@ -105,32 +105,32 @@ const AIVoiceCoach = () => {
 
   const modes = [
     {
-      id: 'hr-interview',
-      title: 'HR Interview',
-      desc: 'Realistic HR & placement interview practice',
+      id: "hr-interview",
+      title: "HR Interview",
+      desc: "Realistic HR & placement interview practice",
       icon: PhoneCall,
-      color: 'bg-blue-500',
+      color: "bg-blue-500",
     },
     {
-      id: 'spoken-english',
-      title: 'Spoken English',
-      desc: 'Fluency, grammar & confidence practice',
+      id: "spoken-english",
+      title: "Spoken English",
+      desc: "Fluency, grammar & confidence practice",
       icon: Mic,
-      color: 'bg-green-500',
+      color: "bg-green-500",
     },
     {
-      id: 'motivation',
-      title: 'Motivation Coach',
-      desc: 'Confidence boost & discipline guidance',
+      id: "motivation",
+      title: "Motivation Coach",
+      desc: "Confidence boost & discipline guidance",
       icon: Award,
-      color: 'bg-orange-500',
+      color: "bg-orange-500",
     },
     {
-      id: 'resume-screening',
-      title: 'Resume Review',
-      desc: 'Resume screening & career feedback',
+      id: "resume-screening",
+      title: "Resume Review",
+      desc: "Resume screening & career feedback",
       icon: Headphones,
-      color: 'bg-purple-500',
+      color: "bg-purple-500",
     },
   ];
 
@@ -178,10 +178,10 @@ const AIVoiceCoach = () => {
 
                   <Button
                     className="w-full"
-                    variant={mode === id ? 'default' : 'outline'}
+                    variant={mode === id ? "default" : "outline"}
                     onClick={() => setMode(id)}
                   >
-                    {mode === id ? 'Selected' : 'Select'}
+                    {mode === id ? "Selected" : "Select"}
                   </Button>
                 </CardContent>
               </Card>
@@ -236,8 +236,8 @@ const AIVoiceCoach = () => {
 
               <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                 {cooldownLeft > 0
-                  ? 'Cooldown active after successful call.'
-                  : 'Keep your phone ready. AI will call you instantly.'}
+                  ? "Cooldown active after successful call."
+                  : "Keep your phone ready. AI will call you instantly."}
               </p>
             </CardContent>
           </Card>
@@ -268,11 +268,11 @@ const AIVoiceCoach = () => {
 
                     <div className="flex-1">
                       <div className="font-semibold">
-                        {modes.find((m) => m.id === call?.mode)?.title || 'AI Voice Call'}
+                        {modes.find((m) => m.id === call?.mode)?.title || "AI Voice Call"}
                       </div>
 
                       <div className="text-sm text-gray-500">
-                        {call?.createdAt ? new Date(call.createdAt).toLocaleString() : 'Recently'}
+                        {call?.createdAt ? new Date(call.createdAt).toLocaleString() : "Recently"}
                       </div>
                     </div>
 

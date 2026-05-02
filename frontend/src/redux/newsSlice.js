@@ -1,35 +1,35 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../services/api.js';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../services/api.js";
 
 export const fetchNews = createAsyncThunk(
-  'news/fetchNews',
-  async ({ tag = 'all', page = 1, limit = 50 } = {}, { rejectWithValue }) => {
+  "news/fetchNews",
+  async ({ tag = "all", page = 1, limit = 50 } = {}, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams({ page, limit });
-      if (tag !== 'all') params.append('tag', tag);
+      if (tag !== "all") params.append("tag", tag);
 
       const response = await api.get(`/api/news?${params}`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch news');
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch news");
     }
   }
 );
 
 export const fetchNewsStats = createAsyncThunk(
-  'news/fetchStats',
+  "news/fetchStats",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/news/stats');
+      const response = await api.get("/api/news/stats");
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch stats');
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch stats");
     }
   }
 );
 
 const newsSlice = createSlice({
-  name: 'news',
+  name: "news",
   initialState: {
     news: [],
     stats: {},

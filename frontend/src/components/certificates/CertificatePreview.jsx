@@ -1,46 +1,46 @@
-import { useState } from 'react';
-import jsPDF from 'jspdf';
-import QRCode from 'qrcode';
+import { useState } from "react";
+import jsPDF from "jspdf";
+import QRCode from "qrcode";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
-import { Download, Share2, Award, Loader2, ShieldCheck, Crown, BadgeCheck } from 'lucide-react';
+import { Download, Share2, Award, Loader2, ShieldCheck, Crown, BadgeCheck } from "lucide-react";
 
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export default function CertificatePreview({ certificate, badge, triggerButton, user }) {
   const [loading, setLoading] = useState(false);
 
   const logoUrl =
-    'https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png';
+    "https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png";
 
   const verifyUrl = `https://placementor.online/verify/${certificate?.certificateId}`;
   // const verifyUrl = `http://localhost:5173/verify/${certificate?.certificateId}`;
 
   const cleanBadgeName =
     badge?.name
-      ?.replace(/[^\p{L}\p{N}\s]/gu, '')
-      .replace(/\s+/g, ' ')
-      .trim() || 'Achievement';
+      ?.replace(/[^\p{L}\p{N}\s]/gu, "")
+      .replace(/\s+/g, " ")
+      .trim() || "Achievement";
 
   const generatePDF = async () => {
     try {
       setLoading(true);
 
-      const pdf = new jsPDF('landscape', 'mm', 'a4');
+      const pdf = new jsPDF("landscape", "mm", "a4");
 
       const width = 297;
       const height = 210;
 
       pdf.setFillColor(255, 255, 255);
-      pdf.rect(0, 0, width, height, 'F');
+      pdf.rect(0, 0, width, height, "F");
 
       pdf.setDrawColor(20, 50, 120);
       pdf.setLineWidth(2);
@@ -65,69 +65,69 @@ export default function CertificatePreview({ certificate, badge, triggerButton, 
             })
         );
 
-      pdf.addImage(logoData, 'PNG', 20, 15, 22, 22);
+      pdf.addImage(logoData, "PNG", 20, 15, 22, 22);
 
-      pdf.setFont('helvetica', 'bold');
+      pdf.setFont("helvetica", "bold");
       pdf.setFontSize(24);
       pdf.setTextColor(20, 40, 90);
-      pdf.text('PlaceMentor Certifications', width / 2, 24, {
-        align: 'center',
+      pdf.text("PlaceMentor Certifications", width / 2, 24, {
+        align: "center",
       });
 
       pdf.setFontSize(10);
       pdf.setTextColor(110);
-      pdf.text('Official Verified Achievement Credential', width / 2, 31, {
-        align: 'center',
+      pdf.text("Official Verified Achievement Credential", width / 2, 31, {
+        align: "center",
       });
 
-      pdf.setFont('times', 'bold');
+      pdf.setFont("times", "bold");
       pdf.setFontSize(28);
       pdf.setTextColor(20);
-      pdf.text('CERTIFICATE OF ACHIEVEMENT', width / 2, 54, {
-        align: 'center',
+      pdf.text("CERTIFICATE OF ACHIEVEMENT", width / 2, 54, {
+        align: "center",
       });
 
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(12);
       pdf.setTextColor(110);
-      pdf.text('This certificate is proudly presented to', width / 2, 69, {
-        align: 'center',
+      pdf.text("This certificate is proudly presented to", width / 2, 69, {
+        align: "center",
       });
 
-      pdf.setFont('times', 'bolditalic');
+      pdf.setFont("times", "bolditalic");
       pdf.setFontSize(30);
       pdf.setTextColor(0);
-      pdf.text(user?.fullName || 'User', width / 2, 90, {
-        align: 'center',
+      pdf.text(user?.fullName || "User", width / 2, 90, {
+        align: "center",
       });
 
       pdf.setDrawColor(180);
       pdf.line(85, 95, 212, 95);
 
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(12);
       pdf.setTextColor(90);
-      pdf.text('for successfully earning the certified achievement', width / 2, 106, {
-        align: 'center',
+      pdf.text("for successfully earning the certified achievement", width / 2, 106, {
+        align: "center",
       });
 
-      pdf.setFont('times', 'bold');
+      pdf.setFont("times", "bold");
       pdf.setFontSize(24);
       pdf.setTextColor(212, 175, 55);
       pdf.text(cleanBadgeName, width / 2, 121, {
-        align: 'center',
+        align: "center",
       });
 
       pdf.setDrawColor(212, 175, 55);
       pdf.setLineWidth(0.4);
       pdf.line(105, 124, 192, 124);
 
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(11);
       pdf.setTextColor(70);
 
       pdf.text(
-        `Issued On: ${new Date(certificate?.issuedAt).toLocaleDateString('en-GB')}`,
+        `Issued On: ${new Date(certificate?.issuedAt).toLocaleDateString("en-GB")}`,
         24,
         157
       );
@@ -139,60 +139,60 @@ export default function CertificatePreview({ certificate, badge, triggerButton, 
       pdf.circle(148, 154, 14);
 
       pdf.setFillColor(255, 248, 220);
-      pdf.circle(148, 154, 11, 'F');
+      pdf.circle(148, 154, 11, "F");
 
       pdf.setDrawColor(34, 197, 94);
       pdf.setLineWidth(1.4);
       pdf.line(144, 154, 147, 157);
       pdf.line(147, 157, 152, 149);
 
-      pdf.setFont('helvetica', 'bold');
+      pdf.setFont("helvetica", "bold");
       pdf.setFontSize(7);
       pdf.setTextColor(160, 120, 20);
-      pdf.text('VERIFIED', 148, 163, { align: 'center' });
+      pdf.text("VERIFIED", 148, 163, { align: "center" });
 
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(6);
       pdf.setTextColor(120);
-      pdf.text('Official Credential', 148, 167, {
-        align: 'center',
+      pdf.text("Official Credential", 148, 167, {
+        align: "center",
       });
 
       const qrData = await QRCode.toDataURL(verifyUrl);
 
-      pdf.addImage(qrData, 'PNG', 228, 138, 28, 28);
+      pdf.addImage(qrData, "PNG", 228, 138, 28, 28);
 
-      pdf.setFont('helvetica', 'bold');
+      pdf.setFont("helvetica", "bold");
       pdf.setFontSize(8);
       pdf.setTextColor(90);
-      pdf.text('SCAN TO VERIFY', 242, 171, {
-        align: 'center',
+      pdf.text("SCAN TO VERIFY", 242, 171, {
+        align: "center",
       });
 
-      pdf.setFont('times', 'italic');
+      pdf.setFont("times", "italic");
       pdf.setFontSize(19);
       pdf.setTextColor(40);
-      pdf.text('PlaceMentor Team', 222, 184);
+      pdf.text("PlaceMentor Team", 222, 184);
 
       pdf.setLineWidth(0.3);
       pdf.line(216, 186, 276, 186);
 
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
-      pdf.text('Authorized Signature', 236, 191);
+      pdf.text("Authorized Signature", 236, 191);
 
       pdf.setFontSize(8);
       pdf.setTextColor(130);
       pdf.text(verifyUrl, width / 2, 198, {
-        align: 'center',
+        align: "center",
       });
 
       pdf.save(`PlaceMentor-${certificate?.certificateId}.pdf`);
 
-      toast.success('Premium certificate downloaded');
+      toast.success("Premium certificate downloaded");
     } catch (error) {
       console.error(error);
-      toast.error('Download failed');
+      toast.error("Download failed");
     } finally {
       setLoading(false);
     }
@@ -202,11 +202,11 @@ export default function CertificatePreview({ certificate, badge, triggerButton, 
     try {
       if (navigator.share) {
         await navigator.share({
-          title: 'PlaceMentor Certificate',
+          title: "PlaceMentor Certificate",
           text: `${cleanBadgeName} | ${verifyUrl}`,
         });
       } else {
-        toast.info('Sharing not supported');
+        toast.info("Sharing not supported");
       }
     } catch (error) {}
   };
@@ -254,7 +254,7 @@ export default function CertificatePreview({ certificate, badge, triggerButton, 
               <div className="rounded-2xl border bg-white p-4">
                 <p className="text-gray-500">Issued On</p>
                 <p className="font-bold mt-1">
-                  {new Date(certificate?.issuedAt).toLocaleDateString('en-GB')}
+                  {new Date(certificate?.issuedAt).toLocaleDateString("en-GB")}
                 </p>
               </div>
             </div>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Send,
@@ -14,18 +14,18 @@ import {
   Loader2,
   X,
   Bot,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { useTickets } from '@/hooks/useTickets';
-import { socket } from '@/socket';
-import TicketStatusBadge from '@/components/support/TicketStatusBadge';
-import TicketPriorityBadge from '@/components/support/TicketPriorityBadge';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useTickets } from "@/hooks/useTickets";
+import { socket } from "@/socket";
+import TicketStatusBadge from "@/components/support/TicketStatusBadge";
+import TicketPriorityBadge from "@/components/support/TicketPriorityBadge";
 
 export default function TicketDetailPage() {
   const { id } = useParams();
@@ -45,25 +45,25 @@ export default function TicketDetailPage() {
     resetTicketDetail,
   } = useTickets();
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [showImage, setShowImage] = useState(null);
 
   useEffect(() => {
     loadTicketDetail(id);
 
     // Join ticket room for real-time updates
-    socket.emit('join_ticket', id);
+    socket.emit("join_ticket", id);
 
     return () => {
       resetTicketDetail();
-      socket.emit('leave_ticket', id);
+      socket.emit("leave_ticket", id);
     };
   }, [id, loadTicketDetail, resetTicketDetail]);
 
   // Auto-scroll to latest message
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [replies]);
 
@@ -71,14 +71,14 @@ export default function TicketDetailPage() {
     e.preventDefault();
     if (!message.trim() || actionLoading) return;
     addReply(id, message.trim());
-    setMessage('');
+    setMessage("");
   };
 
   const handleReopen = () => {
     reopenTicket(id);
   };
 
-  const isClosed = ['Solved', 'Rejected'].includes(ticketDetail?.status);
+  const isClosed = ["Solved", "Rejected"].includes(ticketDetail?.status);
 
   if (detailLoading) {
     return (
@@ -98,7 +98,7 @@ export default function TicketDetailPage() {
         <Navbar />
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 lg:pl-64 pt-16 flex flex-col items-center justify-center p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">Ticket not found</h2>
-          <Button onClick={() => navigate('/support')} className="mt-4 rounded-xl">
+          <Button onClick={() => navigate("/support")} className="mt-4 rounded-xl">
             Back to Support
           </Button>
         </div>
@@ -121,7 +121,7 @@ export default function TicketDetailPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/support')}
+              onClick={() => navigate("/support")}
               className="w-fit rounded-xl"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -141,7 +141,7 @@ export default function TicketDetailPage() {
               </h1>
             </div>
 
-            {ticketDetail.status === 'Solved' && (
+            {ticketDetail.status === "Solved" && (
               <Button
                 onClick={handleReopen}
                 disabled={actionLoading}
@@ -228,13 +228,13 @@ export default function TicketDetailPage() {
                         alt="Attachment"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.style.display = 'none';
+                          e.target.style.display = "none";
                           e.target.parentElement.classList.add(
-                            'bg-gray-100',
-                            'dark:bg-gray-800',
-                            'flex',
-                            'items-center',
-                            'justify-center'
+                            "bg-gray-100",
+                            "dark:bg-gray-800",
+                            "flex",
+                            "items-center",
+                            "justify-center"
                           );
                         }}
                       />
@@ -266,7 +266,7 @@ export default function TicketDetailPage() {
             ) : (
               <div ref={repliesContainerRef} className="space-y-3">
                 {replies.map((reply, index) => {
-                  const isAdmin = reply.senderRole === 'admin' || reply.senderRole === 'superadmin';
+                  const isAdmin = reply.senderRole === "admin" || reply.senderRole === "superadmin";
                   const isMe = reply.sender?._id === user?._id;
 
                   return (
@@ -275,13 +275,13 @@ export default function TicketDetailPage() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: Math.min(index * 0.03, 0.3) }}
-                      className={`flex ${isAdmin ? 'justify-start' : 'justify-end'}`}
+                      className={`flex ${isAdmin ? "justify-start" : "justify-end"}`}
                     >
                       <div
                         className={`max-w-[85%] sm:max-w-[70%] rounded-2xl p-4 ${
                           isAdmin
-                            ? 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
-                            : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                            ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
+                            : "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-2">
@@ -291,16 +291,16 @@ export default function TicketDetailPage() {
                             <User className="w-4 h-4 opacity-80" />
                           )}
                           <span
-                            className={`text-xs font-semibold ${isAdmin ? 'text-purple-700 dark:text-purple-300' : 'opacity-90'}`}
+                            className={`text-xs font-semibold ${isAdmin ? "text-purple-700 dark:text-purple-300" : "opacity-90"}`}
                           >
                             {isAdmin
-                              ? 'Support Team'
+                              ? "Support Team"
                               : isMe
-                                ? 'You'
-                                : reply.sender?.fullName || 'User'}
+                                ? "You"
+                                : reply.sender?.fullName || "User"}
                           </span>
                           <span
-                            className={`text-xs ml-auto ${isAdmin ? 'text-gray-400' : 'opacity-60'}`}
+                            className={`text-xs ml-auto ${isAdmin ? "text-gray-400" : "opacity-60"}`}
                           >
                             {new Date(reply.createdAt).toLocaleString()}
                           </span>
@@ -330,7 +330,7 @@ export default function TicketDetailPage() {
                   onChange={(e) => setMessage(e.target.value)}
                   className="min-h-[80px] rounded-xl resize-none bg-transparent"
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                    if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       handleSendReply(e);
                     }
@@ -354,7 +354,7 @@ export default function TicketDetailPage() {
           {isClosed && (
             <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
               <p>This ticket is {ticketDetail.status.toLowerCase()}.</p>
-              {ticketDetail.status === 'Solved' && (
+              {ticketDetail.status === "Solved" && (
                 <p className="text-sm mt-1">You can reopen it if the issue persists.</p>
               )}
             </div>
@@ -380,7 +380,7 @@ export default function TicketDetailPage() {
               alt="Full view"
               className="max-w-full max-h-[85vh] rounded-xl object-contain"
               onError={(e) => {
-                e.target.style.display = 'none';
+                e.target.style.display = "none";
               }}
             />
           </div>

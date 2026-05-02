@@ -1,6 +1,6 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchCompanies } from '../redux/companySlice';
-import { useEffect } from 'react';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCompanies } from "../redux/companySlice";
+import { useEffect } from "react";
 
 const useCompanies = () => {
   const dispatch = useDispatch();

@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
-import * as taskApi from '../services/taskApi.js';
-import { toast } from 'sonner';
+import { createSlice, createAsyncThunk, createEntityAdapter } from "@reduxjs/toolkit";
+import * as taskApi from "../services/taskApi.js";
+import { toast } from "sonner";
 
 // RTK Entity Adapter for normalized tasks state
 const tasksAdapter = createEntityAdapter({
@@ -11,73 +11,73 @@ const tasksAdapter = createEntityAdapter({
 // Initial state
 const initialState = tasksAdapter.getInitialState({
   stats: null,
-  status: 'idle', // idle | loading | succeeded | failed
+  status: "idle", // idle | loading | succeeded | failed
   error: null,
   selectedTask: null,
 });
 
 // Async Thunks
-export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, { rejectWithValue }) => {
+export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async (_, { rejectWithValue }) => {
   try {
     const response = await taskApi.getMyTasks();
     return response.data.data || [];
   } catch (error) {
-    toast.error('Failed to fetch tasks');
-    return rejectWithValue(error.response?.data?.message || 'Failed to fetch tasks');
+    toast.error("Failed to fetch tasks");
+    return rejectWithValue(error.response?.data?.message || "Failed to fetch tasks");
   }
 });
 
 export const createTask = createAsyncThunk(
-  'tasks/createTask',
+  "tasks/createTask",
   async (taskData, { rejectWithValue }) => {
     try {
       const response = await taskApi.createTask(taskData);
-      toast.success('Task created successfully!');
+      toast.success("Task created successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create task');
+      toast.error(error.response?.data?.message || "Failed to create task");
       return rejectWithValue(error.response?.data);
     }
   }
 );
 
 export const updateTask = createAsyncThunk(
-  'tasks/updateTask',
+  "tasks/updateTask",
   async ({ id, ...taskData }, { rejectWithValue }) => {
     try {
       const response = await taskApi.updateTask(id, taskData);
-      toast.success('Task updated successfully!');
+      toast.success("Task updated successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update task');
+      toast.error(error.response?.data?.message || "Failed to update task");
       return rejectWithValue(error.response?.data);
     }
   }
 );
 
-export const deleteTask = createAsyncThunk('tasks/deleteTask', async (id, { rejectWithValue }) => {
+export const deleteTask = createAsyncThunk("tasks/deleteTask", async (id, { rejectWithValue }) => {
   try {
     await taskApi.deleteTask(id);
-    toast.success('Task deleted successfully!');
+    toast.success("Task deleted successfully!");
     return id;
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Failed to delete task');
+    toast.error(error.response?.data?.message || "Failed to delete task");
     return rejectWithValue(error.response?.data);
   }
 });
 
-export const toggleTask = createAsyncThunk('tasks/toggleTask', async (id, { rejectWithValue }) => {
+export const toggleTask = createAsyncThunk("tasks/toggleTask", async (id, { rejectWithValue }) => {
   try {
     const response = await taskApi.toggleTask(id);
-    toast.success('Task status updated!');
+    toast.success("Task status updated!");
     return response.data.data;
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Failed to toggle task');
+    toast.error(error.response?.data?.message || "Failed to toggle task");
     return rejectWithValue(error.response?.data);
   }
 });
 
-export const shareTask = createAsyncThunk('tasks/shareTask', async (id, { rejectWithValue }) => {
+export const shareTask = createAsyncThunk("tasks/shareTask", async (id, { rejectWithValue }) => {
   try {
     const response = await taskApi.shareTask(id);
     const shareUrl = `${window.location.origin}/share/task/${response.data.shareId}`;
@@ -85,13 +85,13 @@ export const shareTask = createAsyncThunk('tasks/shareTask', async (id, { reject
     toast.success(`Share link copied to clipboard!`);
     return response.data.data;
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Failed to generate share link');
+    toast.error(error.response?.data?.message || "Failed to generate share link");
     return rejectWithValue(error.response?.data);
   }
 });
 
 export const fetchTaskStats = createAsyncThunk(
-  'tasks/fetchTaskStats',
+  "tasks/fetchTaskStats",
   async (_, { rejectWithValue }) => {
     try {
       const response = await taskApi.getTaskStats();
@@ -103,13 +103,13 @@ export const fetchTaskStats = createAsyncThunk(
 );
 
 export const fetchPublicTask = createAsyncThunk(
-  'tasks/fetchPublicTask',
+  "tasks/fetchPublicTask",
   async (shareId, { rejectWithValue }) => {
     try {
       const response = await taskApi.getPublicTask(shareId);
       return response.data.data;
     } catch (error) {
-      toast.error('Task not found');
+      toast.error("Task not found");
       return rejectWithValue(error.response?.data);
     }
   }
@@ -117,7 +117,7 @@ export const fetchPublicTask = createAsyncThunk(
 
 // Slice
 const tasksSlice = createSlice({
-  name: 'tasks',
+  name: "tasks",
   initialState,
   reducers: {
     taskAdded: tasksAdapter.addOne,
@@ -135,14 +135,14 @@ const tasksSlice = createSlice({
     builder
       // Fetch Tasks
       .addCase(fetchTasks.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         tasksAdapter.setAll(state, action.payload);
       })
       .addCase(fetchTasks.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.payload;
       })
 

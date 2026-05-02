@@ -1,23 +1,23 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../services/api';
-import { toast } from 'sonner';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../services/api";
+import { toast } from "sonner";
 
 export const generateYoutubeSummary = createAsyncThunk(
-  'youtube/generateSummary',
+  "youtube/generateSummary",
   async (url, { rejectWithValue, getState }) => {
     try {
       const state = getState();
       const credits = state.user.user?.credits || 0;
 
       if (credits < 1) {
-        toast.error('No credits left!');
-        return rejectWithValue('No credits');
+        toast.error("No credits left!");
+        return rejectWithValue("No credits");
       }
 
-      const response = await api.post('/api/ai/youtube-summary', { url });
+      const response = await api.post("/api/ai/youtube-summary", { url });
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to generate summary';
+      const message = error.response?.data?.message || "Failed to generate summary";
       toast.error(message);
       return rejectWithValue(message);
     }
@@ -25,7 +25,7 @@ export const generateYoutubeSummary = createAsyncThunk(
 );
 
 const youtubeSlice = createSlice({
-  name: 'youtube',
+  name: "youtube",
   initialState: {
     loading: false,
     data: null, // {title, thumbnail, duration, videoId, summary: {english, hindi}, timestamps:[], highlights:[]}
@@ -51,7 +51,7 @@ const youtubeSlice = createSlice({
         state.creditsLeft = action.payload.data.creditsLeft;
         state.apiResponse = action.payload;
 
-        toast.success('Pro Summary generated!');
+        toast.success("Pro Summary generated!");
       })
       .addCase(generateYoutubeSummary.rejected, (state, action) => {
         state.loading = false;

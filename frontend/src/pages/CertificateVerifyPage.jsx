@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../services/api";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   ShieldCheck,
@@ -17,10 +17,10 @@ import {
   Download,
   Share2,
   Crown,
-} from 'lucide-react';
+} from "lucide-react";
 
-import Confetti from 'react-confetti';
-import { toast } from 'sonner';
+import Confetti from "react-confetti";
+import { toast } from "sonner";
 
 export default function CertificateVerifyPage() {
   const { id } = useParams();
@@ -33,7 +33,7 @@ export default function CertificateVerifyPage() {
   const [data, setData] = useState(null);
 
   const logoUrl =
-    'https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png';
+    "https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png";
 
   useEffect(() => {
     verifyCertificate();
@@ -64,12 +64,12 @@ export default function CertificateVerifyPage() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: 'Verified PlaceMentor Certificate',
+          title: "Verified PlaceMentor Certificate",
           text: `${data?.badgeName} - ${data?.fullName}`,
           url: window.location.href,
         });
       } else {
-        toast.info('Sharing not supported');
+        toast.info("Sharing not supported");
       }
     } catch {}
   };
@@ -158,10 +158,10 @@ export default function CertificateVerifyPage() {
 
                     <div className="flex items-center gap-3">
                       <Calendar className="w-5 h-5 text-yellow-400" />
-                      {new Date(data.issuedAt).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
+                      {new Date(data.issuedAt).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
                       })}
                     </div>
 
@@ -230,7 +230,7 @@ export default function CertificateVerifyPage() {
               </div>
 
               <Button
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/")}
                 className="mt-8 h-14 rounded-2xl w-full bg-slate-800 hover:bg-slate-700"
               >
                 Go Home

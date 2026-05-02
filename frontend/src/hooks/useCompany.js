@@ -1,7 +1,7 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchCompany, clearCompany, fetchCompanies } from '../redux/companySlice';
-import useAuth from './useAuth';
-import { toast } from 'sonner';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCompany, clearCompany, fetchCompanies } from "../redux/companySlice";
+import useAuth from "./useAuth";
+import { toast } from "sonner";
 
 const useCompany = () => {
   const dispatch = useDispatch();
@@ -11,12 +11,12 @@ const useCompany = () => {
 
   const getCompany = async (name) => {
     if (!name?.trim()) {
-      toast.error('Enter a company name');
+      toast.error("Enter a company name");
       return null;
     }
 
     if (!user?._id) {
-      toast.error('Please login first');
+      toast.error("Please login first");
       await getCurrentUser();
       return null;
     }
@@ -27,9 +27,9 @@ const useCompany = () => {
       const res = await dispatch(fetchCompany({ name: name.trim(), userId: user._id }));
 
       if (res?.error) {
-        let message = 'Something went wrong';
+        let message = "Something went wrong";
 
-        if (typeof res.payload === 'string') {
+        if (typeof res.payload === "string") {
           message = res.payload;
         } else if (res.payload?.message) {
           message = res.payload.message;
@@ -49,7 +49,7 @@ const useCompany = () => {
 
       return data;
     } catch (err) {
-      toast.error(err?.message || 'Failed to fetch company');
+      toast.error(err?.message || "Failed to fetch company");
       return null;
     }
   };

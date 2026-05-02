@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Brain,
   MessageCircle,
@@ -16,16 +16,16 @@ import {
   ArrowLeft,
   Menu,
   X,
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import ReactMarkdown from 'react-markdown';
-import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github-dark.css';
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
 
-import Navbar from '../components/Navbar';
-import useAICoach from '../hooks/useAICoach';
-import Footer from '@/components/Footer';
+import Navbar from "../components/Navbar";
+import useAICoach from "../hooks/useAICoach";
+import Footer from "@/components/Footer";
 
 const AICoach = () => {
   const navigate = useNavigate();
@@ -50,25 +50,25 @@ const AICoach = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   const quickPrompts = [
-    { id: 'dsa', label: 'DSA Doubt', icon: BookOpen },
-    { id: 'resume', label: 'Resume Review', icon: FileText },
-    { id: 'hr', label: 'Mock HR', icon: Mic },
-    { id: 'aptitude', label: 'Aptitude', icon: Zap },
-    { id: 'roadmap', label: '30 Day Roadmap', icon: Map },
-    { id: 'motivation', label: 'Motivation', icon: Sparkles },
-    { id: 'debug', label: 'Debug Code', icon: Bug },
+    { id: "dsa", label: "DSA Doubt", icon: BookOpen },
+    { id: "resume", label: "Resume Review", icon: FileText },
+    { id: "hr", label: "Mock HR", icon: Mic },
+    { id: "aptitude", label: "Aptitude", icon: Zap },
+    { id: "roadmap", label: "30 Day Roadmap", icon: Map },
+    { id: "motivation", label: "Motivation", icon: Sparkles },
+    { id: "debug", label: "Debug Code", icon: Bug },
   ];
 
   const copyText = async (text) => {
     await navigator.clipboard.writeText(text);
-    toast.success('Copied');
+    toast.success("Copied");
   };
 
   const time = (value) => {
-    if (!value) return '';
+    if (!value) return "";
     return new Date(value).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -105,7 +105,7 @@ const AICoach = () => {
             {/* SIDEBAR */}
             <aside
               className={`fixed lg:static top-0 left-0 z-50 h-full w-[290px] transform transition-transform duration-300 ${
-                sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+                sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
               }`}
             >
               <div className="h-full rounded-none lg:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm p-5 flex flex-col">
@@ -193,8 +193,8 @@ const AICoach = () => {
                           }}
                           className={`w-full text-left p-3 rounded-2xl border transition ${
                             currentChatId === chat._id
-                              ? 'bg-blue-50 border-blue-500 dark:bg-slate-800'
-                              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                              ? "bg-blue-50 border-blue-500 dark:bg-slate-800"
+                              : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                           }`}
                         >
                           <p className="font-medium text-sm line-clamp-1">{chat.title}</p>
@@ -213,7 +213,7 @@ const AICoach = () => {
               <div className="px-5 md:px-7 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate("/dashboard")}
                     className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center"
                   >
                     <ArrowLeft className="w-5 h-5" />
@@ -226,7 +226,7 @@ const AICoach = () => {
                   <div>
                     <h1 className="font-bold text-xl">AI Coach</h1>
                     <p className="text-sm text-slate-500">
-                      {currentChatId ? 'Ongoing conversation' : 'Ask anything about placements'}
+                      {currentChatId ? "Ongoing conversation" : "Ask anything about placements"}
                     </p>
                   </div>
                 </div>
@@ -273,16 +273,16 @@ const AICoach = () => {
                     messages.map((msg, i) => (
                       <div
                         key={i}
-                        className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                       >
                         <div
                           className={`max-w-[92%] md:max-w-[74%] px-5 py-4 rounded-3xl shadow-sm ${
-                            msg.role === 'user'
-                              ? 'bg-[#2563eb] text-white'
-                              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800'
+                            msg.role === "user"
+                              ? "bg-[#2563eb] text-white"
+                              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
                           }`}
                         >
-                          {msg.role === 'ai' ? (
+                          {msg.role === "ai" ? (
                             <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert prose-p:text-slate-800 dark:prose-p:text-slate-100 prose-headings:text-slate-900 dark:prose-headings:text-white prose-strong:text-slate-900 dark:prose-strong:text-white prose-li:text-slate-800 dark:prose-li:text-slate-100 prose-code:text-blue-600 dark:prose-code:text-cyan-400 prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-pre:rounded-2xl prose-pre:border prose-pre:border-slate-700">
                               <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
                                 {msg.text}
@@ -294,7 +294,7 @@ const AICoach = () => {
 
                           <div
                             className={`mt-3 flex items-center gap-2 text-xs ${
-                              msg.role === 'user' ? 'justify-end text-white/80' : 'text-slate-500'
+                              msg.role === "user" ? "justify-end text-white/80" : "text-slate-500"
                             }`}
                           >
                             <span>{time(msg.timestamp)}</span>
@@ -339,7 +339,7 @@ const AICoach = () => {
                     disabled={loading}
                     className="flex-1 resize-none px-5 py-4 rounded-3xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 outline-none focus:ring-2 focus:ring-[#2563eb] min-h-[56px] max-h-36"
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
+                      if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         sendHandler();
                       }
@@ -351,7 +351,7 @@ const AICoach = () => {
                     disabled={!input.trim() || loading}
                     className="w-14 h-14 rounded-3xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white flex items-center justify-center disabled:opacity-50"
                   >
-                    <MessageCircle className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                    <MessageCircle className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
                   </button>
                 </div>
 

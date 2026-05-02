@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, AlertCircle } from 'lucide-react';
-import { useAdminCreate } from '../../hooks/useAdminCreate';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import api from '../../services/api.js';
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, AlertCircle } from "lucide-react";
+import { useAdminCreate } from "../../hooks/useAdminCreate";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api.js";
 
 const AdminCreatePotd = () => {
   const [questions, setQuestions] = useState([
     {
       id: 1,
-      text: '',
-      options: ['', '', '', ''],
-      correct: '',
-      difficulty: 'easy',
-      category: '',
-      explanation: '',
+      text: "",
+      options: ["", "", "", ""],
+      correct: "",
+      difficulty: "easy",
+      category: "",
+      explanation: "",
     },
   ]);
   const { loading, error, success, createPotd } = useAdminCreate();
@@ -37,12 +37,12 @@ const AdminCreatePotd = () => {
       ...questions,
       {
         id: newId,
-        text: '',
-        options: ['', '', '', ''],
-        correct: '',
-        difficulty: 'easy',
-        category: '',
-        explanation: '',
+        text: "",
+        options: ["", "", "", ""],
+        correct: "",
+        difficulty: "easy",
+        category: "",
+        explanation: "",
       },
     ]);
   };
@@ -69,8 +69,8 @@ const AdminCreatePotd = () => {
     e.preventDefault();
 
     if (questions.length < 15) {
-      console.log(' Less than 15 questions');
-      toast.error('Minimum 15 questions required for POTD');
+      console.log(" Less than 15 questions");
+      toast.error("Minimum 15 questions required for POTD");
       return;
     }
 
@@ -83,8 +83,8 @@ const AdminCreatePotd = () => {
         !q.category
     );
     if (hasEmpty) {
-      console.log(' Empty fields detected');
-      toast.error('Please fill all fields completely');
+      console.log(" Empty fields detected");
+      toast.error("Please fill all fields completely");
       return;
     }
 
@@ -102,10 +102,10 @@ const AdminCreatePotd = () => {
     try {
       await createPotd(potdData);
 
-      toast.success('POTD created successfully!');
-      navigate('/admin/potd');
+      toast.success("POTD created successfully!");
+      navigate("/admin/potd");
     } catch (err) {
-      toast.error(error || 'Failed to create POTD');
+      toast.error(error || "Failed to create POTD");
     }
   };
 
@@ -127,10 +127,10 @@ const AdminCreatePotd = () => {
           type="button"
           onClick={async () => {
             try {
-              await api.post('/api/potd/generate');
-              toast.success(' POTD Generated!');
+              await api.post("/api/potd/generate");
+              toast.success(" POTD Generated!");
             } catch {
-              toast.error('Failed to generate');
+              toast.error("Failed to generate");
             }
           }}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl ml-5"
@@ -183,7 +183,7 @@ const AdminCreatePotd = () => {
                 </label>
                 <Input
                   value={question.text}
-                  onChange={(e) => updateQuestion(question.id, 'text', e.target.value)}
+                  onChange={(e) => updateQuestion(question.id, "text", e.target.value)}
                   placeholder="Enter the question..."
                   className="h-16 text-xl resize-none"
                 />
@@ -221,7 +221,7 @@ const AdminCreatePotd = () => {
                   </label>
                   <Select
                     value={question.correct}
-                    onValueChange={(v) => updateQuestion(question.id, 'correct', v)}
+                    onValueChange={(v) => updateQuestion(question.id, "correct", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select correct option" />
@@ -240,7 +240,7 @@ const AdminCreatePotd = () => {
                   </label>
                   <Select
                     value={question.difficulty}
-                    onValueChange={(v) => updateQuestion(question.id, 'difficulty', v)}
+                    onValueChange={(v) => updateQuestion(question.id, "difficulty", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select difficulty" />
@@ -258,7 +258,7 @@ const AdminCreatePotd = () => {
                   </label>
                   <Select
                     value={question.category}
-                    onValueChange={(v) => updateQuestion(question.id, 'category', v)}
+                    onValueChange={(v) => updateQuestion(question.id, "category", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -280,7 +280,7 @@ const AdminCreatePotd = () => {
                 </label>
                 <Input
                   value={question.explanation}
-                  onChange={(e) => updateQuestion(question.id, 'explanation', e.target.value)}
+                  onChange={(e) => updateQuestion(question.id, "explanation", e.target.value)}
                   placeholder="Detailed explanation for this question..."
                 />
               </div>
@@ -325,7 +325,7 @@ const AdminCreatePotd = () => {
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => navigate('/admin/potd')}
+                onClick={() => navigate("/admin/potd")}
                 className="px-12 py-8 rounded-3xl font-bold text-lg"
               >
                 Cancel
@@ -342,7 +342,7 @@ const AdminCreatePotd = () => {
                     Creating POTD...
                   </>
                 ) : (
-                  'Create POTD'
+                  "Create POTD"
                 )}
               </Button>
             </div>

@@ -1,69 +1,69 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import api from '../services/api';
-import { useDispatch } from 'react-redux';
-import { setUserData } from '../redux/userSlice';
-import { toast } from 'sonner';
-import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
-import { trackEvent } from '../hooks/useAnalytics';
+import React, { useState, useEffect, useRef } from "react";
+import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import api from "../services/api";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
+import { toast } from "sonner";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import { trackEvent } from "../hooks/useAnalytics";
 
 function Pricing() {
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState('free');
+  const [selectedPlan, setSelectedPlan] = useState("free");
   const [loadingPlan, setLoadingPlan] = useState(null);
   const dispatch = useDispatch();
 
   const plans = [
     {
-      id: 'free',
-      name: 'Free',
-      price: '₹0',
+      id: "free",
+      name: "Free",
+      price: "₹0",
       credits: 100,
-      description: 'Perfect for beginners starting interview preparation.',
+      description: "Perfect for beginners starting interview preparation.",
       features: [
-        '100 AI Interview Credits',
-        'Basic Performance Report',
-        'Voice Interview Access',
-        'Limited History Tracking',
+        "100 AI Interview Credits",
+        "Basic Performance Report",
+        "Voice Interview Access",
+        "Limited History Tracking",
       ],
       default: true,
     },
     {
-      id: 'basic',
-      name: 'Starter Pack',
-      price: '₹100',
+      id: "basic",
+      name: "Starter Pack",
+      price: "₹100",
       credits: 150,
-      description: 'Great for focused practice and skill improvement.',
+      description: "Great for focused practice and skill improvement.",
       features: [
-        '150 AI Interview Credits',
-        'Detailed Feedback',
-        'Performance Analytics',
-        'Full Interview History',
+        "150 AI Interview Credits",
+        "Detailed Feedback",
+        "Performance Analytics",
+        "Full Interview History",
       ],
     },
     {
-      id: 'pro',
-      name: 'Pro Pack',
-      price: '₹500',
+      id: "pro",
+      name: "Pro Pack",
+      price: "₹500",
       credits: 650,
-      description: 'Best value for serious job preparation.',
+      description: "Best value for serious job preparation.",
       features: [
-        '650 AI Interview Credits',
-        'Advanced AI Feedback',
-        'Skill Trend Analysis',
-        'Priority AI Processing',
+        "650 AI Interview Credits",
+        "Advanced AI Feedback",
+        "Skill Trend Analysis",
+        "Priority AI Processing",
       ],
-      badge: 'Best Value',
+      badge: "Best Value",
     },
   ];
 
   const hasTrackedPremium = useRef(false);
   useEffect(() => {
     if (!hasTrackedPremium.current) {
-      trackEvent('premium_page_visit');
+      trackEvent("premium_page_visit");
       hasTrackedPremium.current = true;
     }
   }, []);
@@ -71,12 +71,12 @@ function Pricing() {
   const handlePayment = async (plan) => {
     try {
       setLoadingPlan(plan.id);
-      trackEvent('premium_button_click');
+      trackEvent("premium_button_click");
 
-      const amount = plan.id === 'basic' ? 100 : plan.id === 'pro' ? 500 : 0;
+      const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 500 : 0;
 
       const result = await api.post(
-        '/api/payment/order',
+        "/api/payment/order",
         {
           planId: plan.id,
           amount,
@@ -88,21 +88,21 @@ function Pricing() {
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: result.data.amount,
-        currency: 'INR',
-        name: 'Place-Mentor',
+        currency: "INR",
+        name: "Place-Mentor",
         description: `${plan.name} - ${plan.credits} Credits`,
         order_id: result.data.id,
 
         handler: async function (response) {
-          const res = await api.post('/api/payment/verify', response, { withCredentials: true });
+          const res = await api.post("/api/payment/verify", response, { withCredentials: true });
 
           dispatch(setUserData(res.data.user));
-          toast.success('Credits added successfully!');
-          navigate('/dashboard');
+          toast.success("Credits added successfully!");
+          navigate("/dashboard");
         },
 
         theme: {
-          color: '#2563eb',
+          color: "#2563eb",
         },
       };
 
@@ -128,7 +128,7 @@ function Pricing() {
         {/* Header */}
         <div className="max-w-6xl mx-auto mb-14 flex items-start gap-4">
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
             className="mt-2 p-3 rounded-full
             bg-white dark:bg-gray-900
             shadow-sm hover:shadow-md
@@ -169,10 +169,10 @@ function Pricing() {
                 className={`relative rounded-3xl p-8 transition-all duration-300 border
                 ${
                   isSelected
-                    ? 'border-blue-600 shadow-2xl bg-white dark:bg-gray-900'
-                    : 'border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-md'
+                    ? "border-blue-600 shadow-2xl bg-white dark:bg-gray-900"
+                    : "border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-md"
                 }
-                ${plan.default ? 'cursor-default' : 'cursor-pointer'}`}
+                ${plan.default ? "cursor-default" : "cursor-pointer"}`}
               >
                 {/* Badge */}
                 {plan.badge && (
@@ -249,15 +249,15 @@ function Pricing() {
                     className={`w-full mt-8 py-3 rounded-xl font-semibold transition-all duration-300
                     ${
                       isSelected
-                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700'
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
                     }`}
                   >
                     {loadingPlan === plan.id
-                      ? 'Processing...'
+                      ? "Processing..."
                       : isSelected
-                        ? 'Proceed to Pay'
-                        : 'Select Plan'}
+                        ? "Proceed to Pay"
+                        : "Select Plan"}
                   </button>
                 )}
               </motion.div>

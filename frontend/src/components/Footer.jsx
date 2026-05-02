@@ -1,5 +1,5 @@
-import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -20,25 +20,25 @@ const Footer = () => {
           <h3 className="font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm text-gray-600">
             <li
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate("/dashboard")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Dashboard
             </li>
             <li
-              onClick={() => navigate('/companies')}
+              onClick={() => navigate("/companies")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Companies
             </li>
             <li
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate("/quiz")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Practice
             </li>
             <li
-              onClick={() => navigate('/notes')}
+              onClick={() => navigate("/notes")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Notes
@@ -51,25 +51,25 @@ const Footer = () => {
           <h3 className="font-semibold mb-3">Resources</h3>
           <ul className="space-y-2 text-sm text-gray-600">
             <li
-              onClick={() => navigate('/resources')}
+              onClick={() => navigate("/resources")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               DSA Sheet
             </li>
             <li
-              onClick={() => navigate('/potd')}
+              onClick={() => navigate("/potd")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Aptitude
             </li>
             <li
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate("/quiz")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Interview Prep
             </li>
             <li
-              onClick={() => navigate('/resume-analyzer')}
+              onClick={() => navigate("/resume-analyzer")}
               className="cursor-pointer hover:text-indigo-600 hover:underline"
             >
               Resume Tips
@@ -82,15 +82,15 @@ const Footer = () => {
           <h3 className="font-semibold mb-3">Connect</h3>
           <div className="flex gap-4 text-gray-600 text-xl">
             <FaGithub
-              onClick={() => window.open('https://github.com', '_blank')}
+              onClick={() => window.open("https://github.com", "_blank")}
               className="cursor-pointer hover:text-indigo-600 transition"
             />
             <FaLinkedin
-              onClick={() => window.open('https://linkedin.com', '_blank')}
+              onClick={() => window.open("https://linkedin.com", "_blank")}
               className="cursor-pointer hover:text-indigo-600 transition"
             />
             <FaTwitter
-              onClick={() => window.open('https://twitter.com', '_blank')}
+              onClick={() => window.open("https://twitter.com", "_blank")}
               className="cursor-pointer hover:text-indigo-600 transition"
             />
           </div>

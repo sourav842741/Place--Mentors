@@ -1,11 +1,11 @@
-import React, { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchStreak, updateRemainingTime } from '../redux/streakSlice';
-import { useCountdown } from '../hooks/useCountdown';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Skeleton } from './ui/skeleton.jsx';
-import { Flame, Crown, Clock, CalendarDays } from 'lucide-react';
+import React, { useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchStreak, updateRemainingTime } from "../redux/streakSlice";
+import { useCountdown } from "../hooks/useCountdown";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Skeleton } from "./ui/skeleton.jsx";
+import { Flame, Crown, Clock, CalendarDays } from "lucide-react";
 
 const StreakCalendar = () => {
   const dispatch = useDispatch();
@@ -39,8 +39,8 @@ const StreakCalendar = () => {
   }, [formattedTime, dispatch]);
 
   const currentDate = new Date();
-  const currentMonth = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-  const todayStr = currentDate.toISOString().split('T')[0];
+  const currentMonth = currentDate.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+  const todayStr = currentDate.toISOString().split("T")[0];
 
   // Generate calendar
   const getDaysInMonth = (date) => {
@@ -53,7 +53,7 @@ const StreakCalendar = () => {
     for (let i = 0; i < firstDay; i++) days.push(null);
 
     for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day).toISOString().split('T')[0]);
+      days.push(new Date(year, month, day).toISOString().split("T")[0]);
     }
 
     return days;
@@ -70,26 +70,26 @@ const StreakCalendar = () => {
 
   // 🔥 FINAL FIXED LOGIC
   const getDayClass = (dateStr) => {
-    if (!dateStr) return 'invisible';
+    if (!dateStr) return "invisible";
 
     const isToday = dateStr === todayStr;
     const completed = isCompleted(dateStr);
 
     // 🟢 COMPLETED FIRST (IMPORTANT)
     if (completed && isToday) {
-      return 'bg-green-500 text-white ring-2 ring-green-300 scale-110';
+      return "bg-green-500 text-white ring-2 ring-green-300 scale-110";
     }
 
     if (completed) {
-      return 'bg-gradient-to-r from-green-400 to-emerald-500 border-green-400 text-white';
+      return "bg-gradient-to-r from-green-400 to-emerald-500 border-green-400 text-white";
     }
 
     // 🔵 TODAY (if not completed)
     if (isToday) {
-      return 'ring-2 ring-blue-400 ring-offset-2 bg-blue-100 border-blue-300';
+      return "ring-2 ring-blue-400 ring-offset-2 bg-blue-100 border-blue-300";
     }
 
-    return 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-white/10';
+    return "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-white/10";
   };
 
   if (loading) {
@@ -126,7 +126,7 @@ const StreakCalendar = () => {
           <div className="flex items-center gap-2">
             <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
               <Flame className="w-3 h-3 mr-1" />
-              {currentStreak} day{currentStreak !== 1 ? 's' : ''}
+              {currentStreak} day{currentStreak !== 1 ? "s" : ""}
             </Badge>
 
             {todaySolved && (
@@ -155,7 +155,7 @@ const StreakCalendar = () => {
           </div>
 
           <div className="grid grid-cols-7 gap-1">
-            {['S', 'M', 'T', 'W', 'Th', 'F', 'S'].map((day, i) => (
+            {["S", "M", "T", "W", "Th", "F", "S"].map((day, i) => (
               <div
                 key={i}
                 className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center"

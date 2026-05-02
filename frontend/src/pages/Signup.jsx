@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Moon, Sun, Upload, ImageIcon, User } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Moon, Sun, Upload, ImageIcon, User } from "lucide-react";
 
-import AuthLayout from '../components/AuthLayout';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import AuthLayout from "../components/AuthLayout";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
-import useAuth from '../hooks/useAuth';
+import useAuth from "../hooks/useAuth";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -17,10 +17,10 @@ export default function Signup() {
   const [isDark, setIsDark] = useState(false);
 
   const [form, setForm] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    skills: '',
+    fullName: "",
+    email: "",
+    password: "",
+    skills: "",
   });
 
   const [avatar, setAvatar] = useState(null);
@@ -31,22 +31,22 @@ export default function Signup() {
 
   /* THEME LOAD */
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
       setIsDark(false);
     }
   }, []);
 
   /* THEME TOGGLE */
   const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle('dark');
+    const isNowDark = document.documentElement.classList.toggle("dark");
     setIsDark(isNowDark);
-    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
   };
 
   const handleChange = (e) => {
@@ -56,7 +56,7 @@ export default function Signup() {
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
 
-    if (type === 'avatar') {
+    if (type === "avatar") {
       setAvatar(file);
       setAvatarPreview(URL.createObjectURL(file));
     } else {
@@ -67,13 +67,13 @@ export default function Signup() {
 
   const handleSubmit = async () => {
     if (!form.fullName || !form.email || !form.password) {
-      return toast.warning('Please fill all required fields');
+      return toast.warning("Please fill all required fields");
     }
 
     setLoading(true);
 
     try {
-      const skillsArray = form.skills ? form.skills.split(',').map((s) => s.trim()) : [];
+      const skillsArray = form.skills ? form.skills.split(",").map((s) => s.trim()) : [];
 
       const res = await sendSignupOtp({
         ...form,
@@ -81,16 +81,16 @@ export default function Signup() {
       });
 
       if (res.success) {
-        toast.success('OTP sent 📩');
+        toast.success("OTP sent 📩");
 
-        navigate('/verify-otp', {
+        navigate("/verify-otp", {
           state: { ...form, skills: skillsArray, avatar, coverImage },
         });
       } else {
-        toast.error(res.message || 'Signup failed');
+        toast.error(res.message || "Signup failed");
       }
     } catch {
-      toast.error('Signup failed ❌');
+      toast.error("Signup failed ❌");
     } finally {
       setLoading(false);
     }
@@ -179,7 +179,7 @@ export default function Signup() {
             </div>
           )}
 
-          <input type="file" hidden onChange={(e) => handleFileChange(e, 'avatar')} />
+          <input type="file" hidden onChange={(e) => handleFileChange(e, "avatar")} />
         </label>
 
         {/* COVER */}
@@ -196,7 +196,7 @@ export default function Signup() {
             </div>
           )}
 
-          <input type="file" hidden onChange={(e) => handleFileChange(e, 'cover')} />
+          <input type="file" hidden onChange={(e) => handleFileChange(e, "cover")} />
         </label>
 
         {/* SIGNUP BUTTON */}
@@ -205,7 +205,7 @@ export default function Signup() {
           disabled={loading}
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
         >
-          {loading ? 'Creating...' : 'Sign Up'}
+          {loading ? "Creating..." : "Sign Up"}
         </Button>
 
         {/* GOOGLE */}
@@ -214,11 +214,11 @@ export default function Signup() {
             const res = await googleLogin();
 
             if (res.success) {
-              toast.success('Login successful');
+              toast.success("Login successful");
 
-              navigate('/splash');
+              navigate("/splash");
             } else if (res.requiresTwoFactor) {
-              navigate('/verify-2fa', {
+              navigate("/verify-2fa", {
                 state: {
                   tempAuthToken: res.tempAuthToken,
                   role: res.role,
@@ -226,7 +226,7 @@ export default function Signup() {
                 },
               });
             } else {
-              toast.error(res.message || 'Google login failed');
+              toast.error(res.message || "Google login failed");
             }
           }}
           className="w-full flex items-center justify-center gap-3
@@ -240,7 +240,7 @@ export default function Signup() {
 
         {/* LOGIN */}
         <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link
             to="/login"
             className="text-blue-600 dark:text-blue-400 font-medium hover:underline"

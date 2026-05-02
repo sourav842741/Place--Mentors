@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAdminAnalytics } from '../../hooks/useAdminAnalytics';
-import { useAdminTickets } from '../../hooks/useTickets';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAdminAnalytics } from "../../hooks/useAdminAnalytics";
+import { useAdminTickets } from "../../hooks/useTickets";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -10,9 +10,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   Users,
   UserPlus,
@@ -37,7 +37,7 @@ import {
   Ticket,
   AlertCircle,
   ArrowUp,
-} from 'lucide-react';
+} from "lucide-react";
 
 import {
   LineChart,
@@ -55,17 +55,17 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
+} from "recharts";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 const cardStyle =
-  'border border-gray-200 bg-white text-gray-900 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-white';
+  "border border-gray-200 bg-white text-gray-900 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-white";
 
 const softCard =
-  'border border-gray-200 bg-gradient-to-br from-white to-gray-50 text-gray-900 shadow-sm dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900 dark:text-white';
+  "border border-gray-200 bg-gradient-to-br from-white to-gray-50 text-gray-900 shadow-sm dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900 dark:text-white";
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#6b7280'];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#6b7280"];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -96,7 +96,7 @@ const AdminDashboard = () => {
 
   const hourlyData =
     data?.hourlyTraffic?.visitsByHour?.map((item) => ({
-      hour: `${String(item.hour).padStart(2, '0')}:00`,
+      hour: `${String(item.hour).padStart(2, "0")}:00`,
       visits: item.visits,
     })) || [];
 
@@ -109,19 +109,19 @@ const AdminDashboard = () => {
 
   const deviceData = [
     {
-      name: 'Desktop',
+      name: "Desktop",
       value: data?.deviceAnalytics?.desktop || 0,
-      color: '#3b82f6',
+      color: "#3b82f6",
     },
     {
-      name: 'Mobile',
+      name: "Mobile",
       value: data?.deviceAnalytics?.mobile || 0,
-      color: '#10b981',
+      color: "#10b981",
     },
     {
-      name: 'Tablet',
+      name: "Tablet",
       value: data?.deviceAnalytics?.tablet || 0,
-      color: '#f59e0b',
+      color: "#f59e0b",
     },
   ].filter((d) => d.value > 0);
 
@@ -223,7 +223,7 @@ const AdminDashboard = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate('/admin/tickets')}
+            onClick={() => navigate("/admin/tickets")}
             className="rounded-xl"
           >
             Manage Tickets
@@ -287,7 +287,7 @@ const AdminDashboard = () => {
 
             <MiniBox
               label="Weak Area"
-              value={data?.advancedMetrics?.topWeakSkills?.[0]?._id || 'N/A'}
+              value={data?.advancedMetrics?.topWeakSkills?.[0]?._id || "N/A"}
             />
           </CardContent>
         </Card>
@@ -497,7 +497,7 @@ const AdminDashboard = () => {
         )}
 
         {!loading && premiumTrendData.length > 0 && (
-          <Card className={softCard + ' mt-6'}>
+          <Card className={softCard + " mt-6"}>
             <CardHeader>
               <CardTitle>Last 7 Days Premium Clicks</CardTitle>
             </CardHeader>
@@ -538,7 +538,7 @@ const AdminDashboard = () => {
         )}
 
         {!loading && hourlyData.length > 0 && (
-          <Card className={softCard + ' mt-6'}>
+          <Card className={softCard + " mt-6"}>
             <CardHeader>
               <CardTitle>Visits by Hour (Last 24h)</CardTitle>
             </CardHeader>
@@ -597,7 +597,7 @@ const AdminDashboard = () => {
         )}
 
         {!loading && cookieTrendData.length > 0 && (
-          <Card className={softCard + ' mt-6'}>
+          <Card className={softCard + " mt-6"}>
             <CardHeader>
               <CardTitle>Last 7 Days Cookie Trend</CardTitle>
             </CardHeader>

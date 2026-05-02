@@ -1,14 +1,14 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../services/api';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../services/api";
 
 export const fetchAdminAnalytics = createAsyncThunk(
-  'admin/fetchAnalytics',
+  "admin/fetchAnalytics",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/admin/analytics');
+      const response = await api.get("/api/admin/analytics");
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch analytics');
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch analytics");
     }
   }
 );
@@ -20,7 +20,7 @@ const initialState = {
 };
 
 const adminSlice = createSlice({
-  name: 'admin',
+  name: "admin",
   initialState,
   reducers: {
     clearError: (state) => {

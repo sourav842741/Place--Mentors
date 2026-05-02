@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchHistory,
   sendMessage,
@@ -13,9 +13,9 @@ import {
   selectHistory,
   selectHistoryLoading,
   selectCurrentChatId,
-} from '../redux/aiCoachSlice';
-import api from '../services/api.js';
-import { toast } from 'sonner';
+} from "../redux/aiCoachSlice";
+import api from "../services/api.js";
+import { toast } from "sonner";
 
 const useAICoach = () => {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const useAICoach = () => {
   /* =========================
      LOCAL STATE
   ========================= */
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -42,8 +42,8 @@ const useAICoach = () => {
   ========================= */
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'end',
+      behavior: "smooth",
+      block: "end",
     });
   }, []);
 
@@ -73,7 +73,7 @@ const useAICoach = () => {
 
     if (!text || loading) return;
 
-    setInput('');
+    setInput("");
 
     try {
       await dispatch(
@@ -83,7 +83,7 @@ const useAICoach = () => {
         })
       ).unwrap();
     } catch (error) {
-      toast.error('Failed to send message');
+      toast.error("Failed to send message");
     }
   }, [input, loading, currentChatId, dispatch]);
 
@@ -95,7 +95,7 @@ const useAICoach = () => {
       try {
         await dispatch(newQuickChat(type)).unwrap();
       } catch (error) {
-        toast.error('Failed to generate quick response');
+        toast.error("Failed to generate quick response");
       }
     },
     [dispatch]
@@ -119,7 +119,7 @@ const useAICoach = () => {
           scrollToBottom();
         }, 100);
       } catch (error) {
-        toast.error('Failed to load chat');
+        toast.error("Failed to load chat");
       }
     },
     [dispatch, scrollToBottom]
@@ -142,7 +142,7 @@ const useAICoach = () => {
   const clearCurrentChat = useCallback(async () => {
     if (!currentChatId) return;
 
-    const ok = window.confirm('Delete this chat permanently?');
+    const ok = window.confirm("Delete this chat permanently?");
 
     if (!ok) return;
 
@@ -151,9 +151,9 @@ const useAICoach = () => {
 
       dispatch(clearMessages());
 
-      toast.success('Chat deleted successfully');
+      toast.success("Chat deleted successfully");
     } catch (error) {
-      toast.error('Failed to delete chat');
+      toast.error("Failed to delete chat");
     }
   }, [currentChatId, dispatch]);
 

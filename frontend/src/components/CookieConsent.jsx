@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Cookie, X, Check } from 'lucide-react';
-import api from '../services/api';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Cookie, X, Check } from "lucide-react";
+import api from "../services/api";
 
-const CONSENT_KEY = 'cookie_consent';
+const CONSENT_KEY = "cookie_consent";
 
 /* Helpers */
 const getStoredConsent = () => {
@@ -34,7 +34,7 @@ const setStoredConsent = (status, days) => {
 export const hasCookieConsent = () => {
   const consent = getStoredConsent();
 
-  return consent && consent.status === 'accepted' && consent.expiresAt > Date.now();
+  return consent && consent.status === "accepted" && consent.expiresAt > Date.now();
 };
 
 const CookieConsent = () => {
@@ -51,7 +51,7 @@ const CookieConsent = () => {
 
   const sendEvent = async (eventType) => {
     try {
-      await api.post('/api/admin/track-event', {
+      await api.post("/api/admin/track-event", {
         eventType,
         metadata: {},
       });
@@ -59,15 +59,15 @@ const CookieConsent = () => {
   };
 
   const handleAccept = async () => {
-    setStoredConsent('accepted', 8); // 8 days
+    setStoredConsent("accepted", 8); // 8 days
     setVisible(false);
-    await sendEvent('cookie_accept');
+    await sendEvent("cookie_accept");
   };
 
   const handleReject = async () => {
-    setStoredConsent('rejected', 3); // 3 days
+    setStoredConsent("rejected", 3); // 3 days
     setVisible(false);
-    await sendEvent('cookie_reject');
+    await sendEvent("cookie_reject");
   };
 
   if (!visible) return null;
@@ -80,7 +80,7 @@ const CookieConsent = () => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{
-            type: 'spring',
+            type: "spring",
             stiffness: 300,
             damping: 28,
           }}

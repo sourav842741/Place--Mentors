@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -7,13 +7,13 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   Calendar,
@@ -27,17 +27,17 @@ import {
   Loader2,
   Plus,
   Minus,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { formatDistanceToNow, format } from 'date-fns';
-import { adjustUserCredits } from '../../redux/adminUserSlice';
-import { toast } from 'sonner';
+import { formatDistanceToNow, format } from "date-fns";
+import { adjustUserCredits } from "../../redux/adminUserSlice";
+import { toast } from "sonner";
 
 const UserProfileModal = ({ user, isOpen, onClose }) => {
   const dispatch = useDispatch();
 
   const [creditDialogOpen, setCreditDialogOpen] = useState(false);
-  const [creditAmount, setCreditAmount] = useState('');
+  const [creditAmount, setCreditAmount] = useState("");
   const [creditLoading, setCreditLoading] = useState(false);
 
   if (!user) return null;
@@ -53,48 +53,48 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
 
   /* LAST SEEN */
   const getLastSeenText = () => {
-    if (user.isOnline) return 'Active now';
-    if (!user.lastSeen) return 'Never active';
+    if (user.isOnline) return "Active now";
+    if (!user.lastSeen) return "Never active";
 
     try {
       return `Last seen ${formatDistanceToNow(new Date(user.lastSeen), {
         addSuffix: true,
       })}`;
     } catch {
-      return 'Unknown';
+      return "Unknown";
     }
   };
 
   /* DATE */
   const formatDate = (date) => {
     try {
-      return format(new Date(date), 'MMM dd, yyyy');
+      return format(new Date(date), "MMM dd, yyyy");
     } catch {
-      return 'Unknown';
+      return "Unknown";
     }
   };
 
-  const initials = (user.fullName || user.name || 'U')
-    .split(' ')
+  const initials = (user.fullName || user.name || "U")
+    .split(" ")
     .slice(0, 2)
     .map((n) => n[0])
-    .join('');
+    .join("");
 
   const handleCreditAction = async (type) => {
     const amount = Number(creditAmount);
     if (!Number.isInteger(amount) || amount <= 0) {
-      toast.error('Please enter a valid positive integer amount');
+      toast.error("Please enter a valid positive integer amount");
       return;
     }
 
     setCreditLoading(true);
     try {
       await dispatch(adjustUserCredits({ userId: user._id, amount, type })).unwrap();
-      toast.success(`Successfully ${type === 'add' ? 'added' : 'removed'} ${amount} credits`);
+      toast.success(`Successfully ${type === "add" ? "added" : "removed"} ${amount} credits`);
       setCreditDialogOpen(false);
-      setCreditAmount('');
+      setCreditAmount("");
     } catch (err) {
-      toast.error(err?.message || 'Failed to adjust credits');
+      toast.error(err?.message || "Failed to adjust credits");
     } finally {
       setCreditLoading(false);
     }
@@ -126,7 +126,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
               {/* INFO */}
               <div className="space-y-1">
                 <DialogTitle className="text-2xl sm:text-3xl font-bold text-white">
-                  {user.fullName || user.name || 'User'}
+                  {user.fullName || user.name || "User"}
                 </DialogTitle>
 
                 <DialogDescription className="text-blue-100 text-sm sm:text-base flex items-center gap-2">
@@ -146,7 +146,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
               <StatCard
                 icon={Shield}
                 label="Role"
-                value={user.role?.toUpperCase() || 'USER'}
+                value={user.role?.toUpperCase() || "USER"}
                 color="from-emerald-500 to-teal-600"
               />
 
@@ -191,7 +191,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
                     </h3>
 
                     <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-                      Reason: {user.banReason || 'No reason provided'}
+                      Reason: {user.banReason || "No reason provided"}
                     </p>
                   </div>
                 </div>
@@ -221,7 +221,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
                           </p>
 
                           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            {formatDate(ban.bannedAt)} •{' '}
+                            {formatDate(ban.bannedAt)} •{" "}
                             {formatDistanceToNow(new Date(ban.bannedAt), {
                               addSuffix: true,
                             })}
@@ -260,11 +260,11 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
               <Button
                 variant="outline"
                 className={`rounded-xl h-11 ${
-                  user.isBanned ? 'border-red-500 text-red-600' : 'border-green-500 text-green-600'
+                  user.isBanned ? "border-red-500 text-red-600" : "border-green-500 text-green-600"
                 }`}
               >
                 <Ban className="w-4 h-4 mr-2" />
-                {user.isBanned ? 'BANNED' : 'ACTIVE'}
+                {user.isBanned ? "BANNED" : "ACTIVE"}
               </Button>
 
               <Button
@@ -289,7 +289,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
               Adjust Credits
             </DialogTitle>
             <DialogDescription className="text-gray-500 dark:text-gray-400">
-              Current credits:{' '}
+              Current credits:{" "}
               <span className="font-bold text-gray-900 dark:text-white">{user.credits || 0}</span>
             </DialogDescription>
           </DialogHeader>
@@ -321,7 +321,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
               variant="outline"
               onClick={() => {
                 setCreditDialogOpen(false);
-                setCreditAmount('');
+                setCreditAmount("");
               }}
               disabled={creditLoading}
               className="rounded-xl h-11"
@@ -331,7 +331,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
             <Button
               variant="destructive"
               disabled={creditLoading || !creditAmount}
-              onClick={() => handleCreditAction('remove')}
+              onClick={() => handleCreditAction("remove")}
               className="rounded-xl h-11 gap-2"
             >
               {creditLoading ? (
@@ -343,7 +343,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
             </Button>
             <Button
               disabled={creditLoading || !creditAmount}
-              onClick={() => handleCreditAction('add')}
+              onClick={() => handleCreditAction("add")}
               className="rounded-xl h-11 gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
             >
               {creditLoading ? (

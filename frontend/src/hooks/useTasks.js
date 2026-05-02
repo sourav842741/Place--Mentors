@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTasks,
   fetchTaskStats,
@@ -11,7 +11,7 @@ import {
   deleteTask,
   toggleTask,
   shareTask,
-} from '../redux/tasksSlice';
+} from "../redux/tasksSlice";
 
 const useTasks = () => {
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ const useTasks = () => {
     shareTask: shareExistingTask,
     refetchTasks,
     refetchStats,
-    isLoading: status === 'loading',
+    isLoading: status === "loading",
   };
 };
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import api from '../services/api';
-import Step3Report from '../components/Step3QuizResult';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../services/api";
+import Step3Report from "../components/Step3QuizResult";
 
 function InterviewReport() {
   const { id } = useParams();
@@ -10,7 +10,7 @@ function InterviewReport() {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const result = await api.get('/api/interview/report/' + id, {
+        const result = await api.get("/api/interview/report/" + id, {
           withCredentials: true,
         });
 

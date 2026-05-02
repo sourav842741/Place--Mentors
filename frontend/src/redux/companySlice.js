@@ -1,39 +1,39 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../services/api';
-import { toast } from 'sonner';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../services/api";
+import { toast } from "sonner";
 
 export const fetchCompany = createAsyncThunk(
-  'company/fetchCompany',
+  "company/fetchCompany",
   async ({ name, userId }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/api/company', { name, userId });
+      const response = await api.post("/api/company", { name, userId });
       if (response.data.success) {
         return response.data;
       }
       return rejectWithValue(response.data);
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Network error' });
+      return rejectWithValue(error.response?.data || { message: "Network error" });
     }
   }
 );
 
 export const fetchCompanies = createAsyncThunk(
-  'company/fetchCompanies',
+  "company/fetchCompanies",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/all');
+      const response = await api.get("/api/all");
       if (response.data.success) {
         return response.data.companies;
       }
       return rejectWithValue(response.data);
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Network error' });
+      return rejectWithValue(error.response?.data || { message: "Network error" });
     }
   }
 );
 
 const companySlice = createSlice({
-  name: 'company',
+  name: "company",
   initialState: {
     company: null,
     loading: false,
@@ -64,11 +64,11 @@ const companySlice = createSlice({
         state.loading = false;
         state.company = action.payload.company;
         state.credits = action.payload.remainingCredits;
-        toast.success(`Fetched ${action.payload.company?.name || 'Company'} data!`);
+        toast.success(`Fetched ${action.payload.company?.name || "Company"} data!`);
       })
       .addCase(fetchCompany.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Failed to fetch company';
+        state.error = action.payload?.message || "Failed to fetch company";
         toast.error(state.error);
       })
       // Companies list cases
@@ -82,7 +82,7 @@ const companySlice = createSlice({
       })
       .addCase(fetchCompanies.rejected, (state, action) => {
         state.companiesLoading = false;
-        state.companiesError = action.payload?.message || 'Failed to fetch companies';
+        state.companiesError = action.payload?.message || "Failed to fetch companies";
         toast.error(state.companiesError);
       });
   },

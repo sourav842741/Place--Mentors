@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Play,
   Calendar,
@@ -12,23 +12,23 @@ import {
   RefreshCw,
   Sparkles,
   AlertCircle,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-import api from '../services/api';
-import useAuth from '@/hooks/useAuth';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import api from "../services/api";
+import useAuth from "@/hooks/useAuth";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function AIPlanner() {
   const { user } = useSelector((state) => state.user);
@@ -40,11 +40,11 @@ export default function AIPlanner() {
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
-    goal: '',
-    company: '',
+    goal: "",
+    company: "",
     daysLeft: 30,
     dailyHours: 4,
-    level: 'beginner',
+    level: "beginner",
   });
   const [showForm, setShowForm] = useState(false);
   const [syncModal, setSyncModal] = useState(false);
@@ -52,15 +52,15 @@ export default function AIPlanner() {
     authorized: false,
     loading: true,
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [updatingTask, setUpdatingTask] = useState(null);
-  const [successMsg, setSuccessMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState("");
 
   // Auto-clear success message
   useEffect(() => {
     if (successMsg) {
-      const timer = setTimeout(() => setSuccessMsg(''), 3000);
+      const timer = setTimeout(() => setSuccessMsg(""), 3000);
       return () => clearTimeout(timer);
     }
   }, [successMsg]);
@@ -68,7 +68,7 @@ export default function AIPlanner() {
   // Load planner
   const fetchPlanner = useCallback(async (plannerId = null) => {
     try {
-      const url = plannerId ? `/api/planner/${plannerId}` : '/api/planner/my';
+      const url = plannerId ? `/api/planner/${plannerId}` : "/api/planner/my";
 
       const res = await api.get(url, { withCredentials: true });
 
@@ -79,7 +79,7 @@ export default function AIPlanner() {
 
       setPlanner(res.data);
     } catch (err) {
-      console.error('Fetch error:', err.response?.data || err.message);
+      console.error("Fetch error:", err.response?.data || err.message);
       setPlanner(null); // 🔥 important
     }
   }, []);
@@ -87,8 +87,8 @@ export default function AIPlanner() {
   useEffect(() => {
     // Check for Google Calendar success param
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('calendar') === 'connected') {
-      setSuccessMsg(' Google Calendar connected successfully!');
+    if (urlParams.get("calendar") === "connected") {
+      setSuccessMsg(" Google Calendar connected successfully!");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
@@ -98,7 +98,7 @@ export default function AIPlanner() {
 
     const loadData = async () => {
       setIsLoading(true);
-      setError('');
+      setError("");
       try {
         if (id) {
           await fetchPlanner(id);
@@ -106,14 +106,14 @@ export default function AIPlanner() {
           await fetchPlanner();
         }
       } catch (err) {
-        setError(id ? 'Plan not found' : 'No active plan');
+        setError(id ? "Plan not found" : "No active plan");
       } finally {
         setIsLoading(false);
       }
 
       // Load calendar status
       try {
-        const res = await api.get('/api/planner/calendar/status', {
+        const res = await api.get("/api/planner/calendar/status", {
           withCredentials: true,
         });
         setCalendarStatus({ ...res.data, loading: false });
@@ -126,12 +126,12 @@ export default function AIPlanner() {
 
   const handleGoogleOAuth = async () => {
     try {
-      const res = await api.get('/api/planner/calendar/auth', {
+      const res = await api.get("/api/planner/calendar/auth", {
         withCredentials: true,
       });
       window.location.href = res.data.authUrl;
     } catch (err) {
-      alert('Failed to get auth URL');
+      alert("Failed to get auth URL");
     }
   };
 
@@ -139,20 +139,20 @@ export default function AIPlanner() {
     e.preventDefault();
     setCreating(true);
     try {
-      const res = await api.post('/api/planner/create', formData, {
+      const res = await api.post("/api/planner/create", formData, {
         withCredentials: true,
       });
       navigate(`/ai-planner/${res.data.plannerId}`);
       setShowForm(false);
       setFormData({
-        goal: '',
-        company: '',
+        goal: "",
+        company: "",
         daysLeft: 30,
         dailyHours: 4,
-        level: 'beginner',
+        level: "beginner",
       });
     } catch (err) {
-      alert(err.response?.data?.message || 'Error creating planner');
+      alert(err.response?.data?.message || "Error creating planner");
     }
     setCreating(false);
   };
@@ -178,7 +178,7 @@ export default function AIPlanner() {
 
     try {
       await api.post(
-        '/api/planner/complete',
+        "/api/planner/complete",
         {
           dayIndex: dayIdx,
           taskIndex: taskIdx,
@@ -186,11 +186,11 @@ export default function AIPlanner() {
         { withCredentials: true }
       );
       await fetchPlanner(planner._id);
-      setSuccessMsg(' Task completed!');
+      setSuccessMsg(" Task completed!");
     } catch (err) {
       await fetchPlanner(planner._id);
-      console.error('Complete error:', err.response?.data || err.message);
-      setSuccessMsg(' Completion failed');
+      console.error("Complete error:", err.response?.data || err.message);
+      setSuccessMsg(" Completion failed");
     } finally {
       setUpdatingTask(null);
     }
@@ -198,21 +198,21 @@ export default function AIPlanner() {
 
   const syncToCalendar = async () => {
     if (!planner || !user) {
-      alert('Please create a planner and connect Google Calendar first');
+      alert("Please create a planner and connect Google Calendar first");
       setSyncModal(false);
       return;
     }
     try {
       const res = await api.post(
-        '/api/planner/calendar',
+        "/api/planner/calendar",
         { plannerId: planner._id },
         { withCredentials: true }
       );
       alert(` Synced ${res.data.syncedCount} new events to Google Calendar!`);
       setSyncModal(false);
     } catch (err) {
-      console.error('Sync error:', err.response?.data);
-      alert(err.response?.data?.message || 'Sync failed. Check console for details.');
+      console.error("Sync error:", err.response?.data);
+      alert(err.response?.data?.message || "Sync failed. Check console for details.");
     }
   };
 
@@ -359,7 +359,7 @@ export default function AIPlanner() {
                       <RefreshCw className="animate-spin mr-2" />
                     ) : (
                       <Sparkles className="mr-2" />
-                    )}{' '}
+                    )}{" "}
                     Generate Mentor Plan (30 credits)
                   </Button>
                 </form>
@@ -388,8 +388,8 @@ export default function AIPlanner() {
                               key={taskIdx}
                               className={`p-4 rounded-xl border transition ${
                                 isCurrent
-                                  ? 'bg-white dark:bg-gray-900 shadow-md border-gray-200 dark:border-white/10'
-                                  : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-white/10'
+                                  ? "bg-white dark:bg-gray-900 shadow-md border-gray-200 dark:border-white/10"
+                                  : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-white/10"
                               }`}
                             >
                               {/* TITLE */}
@@ -404,7 +404,7 @@ export default function AIPlanner() {
 
                               {/* DESCRIPTION */}
                               <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                {task.explanation || 'No explanation'}
+                                {task.explanation || "No explanation"}
                               </p>
 
                               {/* META */}
@@ -443,7 +443,7 @@ export default function AIPlanner() {
                               {/* VIDEO */}
                               {task.videoUrl && (
                                 <iframe
-                                  src={task.videoUrl.replace('watch?v=', 'embed/')}
+                                  src={task.videoUrl.replace("watch?v=", "embed/")}
                                   className="w-full h-[300px] md:h-[400px] mt-3 rounded-xl"
                                 />
                               )}
@@ -487,16 +487,16 @@ export default function AIPlanner() {
                   <Button
                     onClick={() => setShowForm(true)}
                     size="lg"
-                    variant={planner ? 'outline' : 'default'}
+                    variant={planner ? "outline" : "default"}
                     className={`
                   ${
                     planner
-                      ? 'border-gray-300 hover:bg-gray-50'
-                      : 'bg-linear-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
+                      ? "border-gray-300 hover:bg-gray-50"
+                      : "bg-linear-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
                   }
                 `}
                   >
-                    <Play className="mr-2" /> {planner ? 'Create New Plan' : 'Create Plan'}
+                    <Play className="mr-2" /> {planner ? "Create New Plan" : "Create Plan"}
                   </Button>
                 </div>
               )

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Search, X, Brain } from 'lucide-react';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { Label } from './ui/label';
-import useCompany from '../hooks/useCompany';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { Search, X, Brain } from "lucide-react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import useCompany from "../hooks/useCompany";
+import { toast } from "sonner";
 
 const CompanySearch = ({ onSearch, showAIBtn, onAIGenerate }) => {
-  const [companyName, setCompanyName] = useState('');
+  const [companyName, setCompanyName] = useState("");
   const { getCompany, loading, company } = useCompany();
 
   const handleSubmit = async (e) => {
@@ -15,11 +15,11 @@ const CompanySearch = ({ onSearch, showAIBtn, onAIGenerate }) => {
     if (!companyName.trim()) return;
     await getCompany(companyName);
     if (onSearch) onSearch(companyName);
-    setCompanyName('');
+    setCompanyName("");
   };
 
   const clearInput = () => {
-    setCompanyName('');
+    setCompanyName("");
   };
 
   return (

@@ -1,15 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   maintenanceMode: null,
-  maintenanceTitle: '',
-  maintenanceMessage: '',
-  maintenanceImage: '',
+  maintenanceTitle: "",
+  maintenanceMessage: "",
+  maintenanceImage: "",
   maintenanceAllowAdminAccess: true,
 };
 
 const maintenanceSlice = createSlice({
-  name: 'maintenance',
+  name: "maintenance",
   initialState,
   reducers: {
     setMaintenanceState(state, action) {

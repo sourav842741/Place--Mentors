@@ -1,18 +1,18 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { setUserData, logoutUser, setLoading } from '../redux/userSlice';
-import api from '../services/api';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../utils/firebase';
-import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
-import { socket } from '../socket';
-import { toast } from 'sonner';
+import { useDispatch, useSelector } from "react-redux";
+import { setUserData, logoutUser, setLoading } from "../redux/userSlice";
+import api from "../services/api";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
+import { socket } from "../socket";
+import { toast } from "sonner";
 
 const getDeviceId = () => {
-  let deviceId = localStorage.getItem('pm_device_id');
+  let deviceId = localStorage.getItem("pm_device_id");
   if (!deviceId) {
     deviceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
-    localStorage.setItem('pm_device_id', deviceId);
+    localStorage.setItem("pm_device_id", deviceId);
   }
   return deviceId;
 };
@@ -26,7 +26,7 @@ const useAuth = () => {
   // ================= LOGIN =================
   const login = async (form) => {
     try {
-      const res = await api.post('/api/auth/signin', {
+      const res = await api.post("/api/auth/signin", {
         ...form,
         deviceId: getDeviceId(),
       });
@@ -45,24 +45,24 @@ const useAuth = () => {
       }
 
       if (data?.deviceId) {
-        localStorage.setItem('pm_device_id', data.deviceId);
+        localStorage.setItem("pm_device_id", data.deviceId);
       }
 
       dispatch(setUserData(data));
 
       if (data?._id) {
-        socket.emit('join', data._id);
-        console.log('Socket joined room after login:', data._id);
+        socket.emit("join", data._id);
+        console.log("Socket joined room after login:", data._id);
       }
 
       return res.data;
     } catch (err) {
-      console.error('LOGIN ERROR:', err);
+      console.error("LOGIN ERROR:", err);
 
       return {
         success: false,
         statusCode: err.response?.status,
-        message: err.response?.data?.message || 'Login failed',
+        message: err.response?.data?.message || "Login failed",
       };
     }
   };
@@ -70,7 +70,7 @@ const useAuth = () => {
   // ================= VERIFY 2FA =================
   const verify2FA = async (tempAuthToken, token, rememberDevice = false) => {
     try {
-      const res = await api.post('/api/auth/2fa/login', {
+      const res = await api.post("/api/auth/2fa/login", {
         tempAuthToken,
         token,
         rememberDevice,
@@ -79,22 +79,22 @@ const useAuth = () => {
       const data = res.data?.data;
 
       if (data?.deviceId) {
-        localStorage.setItem('pm_device_id', data.deviceId);
+        localStorage.setItem("pm_device_id", data.deviceId);
       }
 
       dispatch(setUserData(data));
       if (data?._id) {
-        socket.emit('join', data._id);
+        socket.emit("join", data._id);
       }
 
       return { success: true, data };
     } catch (err) {
-      console.error('2FA VERIFY ERROR:', err);
+      console.error("2FA VERIFY ERROR:", err);
 
       return {
         success: false,
         statusCode: err.response?.status,
-        message: err.response?.data?.message || '2FA verification failed',
+        message: err.response?.data?.message || "2FA verification failed",
       };
     }
   };
@@ -102,12 +102,12 @@ const useAuth = () => {
   // ================= 2FA SETUP =================
   const setup2FA = async () => {
     try {
-      const res = await api.post('/api/auth/2fa/setup');
+      const res = await api.post("/api/auth/2fa/setup");
       return { success: true, data: res.data?.data };
     } catch (err) {
       return {
         success: false,
-        message: err.response?.data?.message || 'Failed to setup 2FA',
+        message: err.response?.data?.message || "Failed to setup 2FA",
       };
     }
   };
@@ -115,12 +115,12 @@ const useAuth = () => {
   // ================= 2FA ENABLE =================
   const enable2FA = async (token) => {
     try {
-      const res = await api.post('/api/auth/2fa/enable', { token });
+      const res = await api.post("/api/auth/2fa/enable", { token });
       return { success: true, data: res.data?.data };
     } catch (err) {
       return {
         success: false,
-        message: err.response?.data?.message || 'Failed to enable 2FA',
+        message: err.response?.data?.message || "Failed to enable 2FA",
       };
     }
   };
@@ -128,12 +128,12 @@ const useAuth = () => {
   // ================= 2FA DISABLE =================
   const disable2FA = async (password, token) => {
     try {
-      await api.post('/api/auth/2fa/disable', { password, token });
+      await api.post("/api/auth/2fa/disable", { password, token });
       return { success: true };
     } catch (err) {
       return {
         success: false,
-        message: err.response?.data?.message || 'Failed to disable 2FA',
+        message: err.response?.data?.message || "Failed to disable 2FA",
       };
     }
   };
@@ -141,12 +141,12 @@ const useAuth = () => {
   // ================= 2FA STATUS =================
   const get2FAStatus = async () => {
     try {
-      const res = await api.get('/api/auth/2fa/status');
+      const res = await api.get("/api/auth/2fa/status");
       return { success: true, data: res.data?.data };
     } catch (err) {
       return {
         success: false,
-        message: err.response?.data?.message || 'Failed to get 2FA status',
+        message: err.response?.data?.message || "Failed to get 2FA status",
       };
     }
   };
@@ -154,12 +154,12 @@ const useAuth = () => {
   // ================= LOGOUT =================
   const logout = async () => {
     try {
-      await api.get('/api/auth/signout');
+      await api.get("/api/auth/signout");
     } catch (err) {
-      console.error('Logout Error:', err);
+      console.error("Logout Error:", err);
     } finally {
       dispatch(logoutUser());
-      navigate('/');
+      navigate("/");
     }
   };
 
@@ -168,7 +168,7 @@ const useAuth = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await api.get('/api/auth/me', {
+      const res = await api.get("/api/auth/me", {
         withCredentials: true,
       });
 
@@ -177,16 +177,16 @@ const useAuth = () => {
       dispatch(setUserData(userData));
 
       if (userData?._id) {
-        socket.emit('join', userData._id);
-        console.log('Socket joined room for user', userData._id);
+        socket.emit("join", userData._id);
+        console.log("Socket joined room for user", userData._id);
       }
     } catch (err) {
       console.error(err);
 
       if (err.response?.status === 403) {
-        const msg = err.response?.data?.message || 'Your account has been suspended.';
+        const msg = err.response?.data?.message || "Your account has been suspended.";
 
-        if (msg.toLowerCase().includes('suspended') || msg.toLowerCase().includes('banned')) {
+        if (msg.toLowerCase().includes("suspended") || msg.toLowerCase().includes("banned")) {
           toast.error(msg, { duration: 8000 });
         }
       }
@@ -202,7 +202,7 @@ const useAuth = () => {
   // ================= SIGNUP SEND OTP =================
   const sendSignupOtp = async (data) => {
     try {
-      await api.post('/api/auth/signup/send-otp', {
+      await api.post("/api/auth/signup/send-otp", {
         ...data,
         skills: data.skills,
       });
@@ -221,10 +221,10 @@ const useAuth = () => {
     try {
       const formData = new FormData();
 
-      formData.append('email', data.email);
-      formData.append('otp', data.otp);
+      formData.append("email", data.email);
+      formData.append("otp", data.otp);
 
-      const res = await api.post('/api/auth/signup/verify-otp', formData);
+      const res = await api.post("/api/auth/signup/verify-otp", formData);
 
       dispatch(setUserData(res.data.data));
 
@@ -242,19 +242,19 @@ const useAuth = () => {
     try {
       const formData = new FormData();
 
-      if (data.fullName) formData.append('fullName', data.fullName);
+      if (data.fullName) formData.append("fullName", data.fullName);
 
       if (data.skills) {
-        formData.append('skills', JSON.stringify(data.skills));
+        formData.append("skills", JSON.stringify(data.skills));
       }
 
-      if (data.avatar) formData.append('avatar', data.avatar);
+      if (data.avatar) formData.append("avatar", data.avatar);
 
       if (data.coverImage) {
-        formData.append('coverImage', data.coverImage);
+        formData.append("coverImage", data.coverImage);
       }
 
-      const res = await api.put('/api/auth/profile', formData);
+      const res = await api.put("/api/auth/profile", formData);
 
       dispatch(setUserData(res.data.data));
 
@@ -270,7 +270,7 @@ const useAuth = () => {
   // ================= UPDATE SKILLS =================
   const updateSkills = async (skills) => {
     try {
-      const res = await api.put('/api/auth/skills', {
+      const res = await api.put("/api/auth/skills", {
         skills,
       });
 
@@ -288,7 +288,7 @@ const useAuth = () => {
   // ================= PASSWORD RESET =================
   const sendResetOtp = async (data) => {
     try {
-      await api.post('/api/auth/password/send-otp', data);
+      await api.post("/api/auth/password/send-otp", data);
 
       return { success: true };
     } catch (err) {
@@ -301,7 +301,7 @@ const useAuth = () => {
 
   const resetPassword = async (data) => {
     try {
-      await api.post('/api/auth/password/reset', data);
+      await api.post("/api/auth/password/reset", data);
 
       return { success: true };
     } catch (err) {
@@ -318,7 +318,7 @@ const useAuth = () => {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      const res = await api.post('/api/auth/google', {
+      const res = await api.post("/api/auth/google", {
         fullName: firebaseUser.displayName,
         email: firebaseUser.email,
         avatar: firebaseUser.photoURL,
@@ -342,14 +342,14 @@ const useAuth = () => {
       if (data?.success) {
         dispatch(setUserData(data.user));
         if (data.user?._id) {
-          socket.emit('join', data.user._id);
+          socket.emit("join", data.user._id);
         }
         return data;
       }
 
       return {
         success: false,
-        message: 'Google login failed',
+        message: "Google login failed",
       };
     } catch (err) {
       console.error(err);
@@ -357,7 +357,7 @@ const useAuth = () => {
       return {
         success: false,
         statusCode: err.response?.status,
-        message: err.response?.data?.message || 'Google login failed',
+        message: err.response?.data?.message || "Google login failed",
       };
     }
   };
@@ -365,7 +365,7 @@ const useAuth = () => {
   // ================= TIME TRACK =================
   const updateTimeSpent = async (minutes) => {
     try {
-      const res = await api.post('/api/xp/time', {
+      const res = await api.post("/api/xp/time", {
         minutes,
       });
 

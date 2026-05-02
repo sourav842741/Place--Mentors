@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Settings,
   RefreshCw,
@@ -12,19 +12,19 @@ import {
   Rocket,
   Sparkles,
   Wrench,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import useSettings from '../hooks/useSettings';
-import SplashScreen from '../components/SplashScreen';
+import useSettings from "../hooks/useSettings";
+import SplashScreen from "../components/SplashScreen";
 
 export default function MaintenancePage() {
   const navigate = useNavigate();
 
   const [time, setTime] = useState(new Date());
-  const [theme, setTheme] = useState(localStorage.getItem('maintenance-theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem("maintenance-theme") || "light");
 
   const maintenanceRealtime = useSelector((state) => state.maintenance);
   const { data: settings, isLoading } = useSettings();
@@ -41,7 +41,7 @@ export default function MaintenancePage() {
       maintenanceRealtime?.maintenanceMode === false || settings?.data?.maintenanceMode === false;
 
     if (isOff) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [maintenanceRealtime, settings, navigate]);
 
@@ -56,12 +56,12 @@ export default function MaintenancePage() {
 
   /* Theme */
   useEffect(() => {
-    localStorage.setItem('maintenance-theme', theme);
+    localStorage.setItem("maintenance-theme", theme);
 
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
 
@@ -86,10 +86,10 @@ export default function MaintenancePage() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
             <Button
               variant="outline"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="rounded-xl"
             >
-              {theme === 'dark' ? (
+              {theme === "dark" ? (
                 <>
                   <Sun className="w-4 h-4 mr-2" />
                   Light Mode
@@ -105,7 +105,7 @@ export default function MaintenancePage() {
             <div className="text-center sm:text-right">
               <div className="flex items-center justify-center sm:justify-end gap-2 font-bold text-lg">
                 <Clock3 className="w-5 h-5 text-emerald-500" />
-                {time.toLocaleTimeString('en-IN')}
+                {time.toLocaleTimeString("en-IN")}
               </div>
 
               <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -137,7 +137,7 @@ export default function MaintenancePage() {
               </div>
 
               <CardTitle className="text-3xl sm:text-4xl font-bold">
-                {maintenanceData.maintenanceTitle || 'Under Maintenance'}
+                {maintenanceData.maintenanceTitle || "Under Maintenance"}
               </CardTitle>
 
               <CardDescription className="text-base sm:text-lg mt-3 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
@@ -231,7 +231,7 @@ export default function MaintenancePage() {
                 </Button>
 
                 <Button
-                  onClick={() => navigate('/maintenance-hub')}
+                  onClick={() => navigate("/maintenance-hub")}
                   className="h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500"
                 >
                   <Rocket className="w-5 h-5 mr-2" />
@@ -241,7 +241,7 @@ export default function MaintenancePage() {
                 <Button
                   variant="outline"
                   className="h-12 rounded-xl relative z-50"
-                  onClick={() => navigate('/support')}
+                  onClick={() => navigate("/support")}
                 >
                   <Mail className="w-5 h-5 mr-2" />
                   Support

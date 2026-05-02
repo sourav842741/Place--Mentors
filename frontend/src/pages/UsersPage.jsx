@@ -1,12 +1,12 @@
-import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { useSendFriendRequest } from '../hooks/useFriends';
-import api from '../services/api';
-import { ArrowLeft, UserPlus } from 'lucide-react';
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { useSendFriendRequest } from "../hooks/useFriends";
+import api from "../services/api";
+import { ArrowLeft, UserPlus } from "lucide-react";
 
 // ================= USER CARD =================
 const UserCard = ({ user, isPending, isFriend, onAddFriend }) => {
@@ -35,9 +35,9 @@ const UserCard = ({ user, isPending, isFriend, onAddFriend }) => {
 
         <Button size="sm" className="w-full" disabled={isPending || isFriend} onClick={onAddFriend}>
           {isPending ? (
-            'Pending...'
+            "Pending..."
           ) : isFriend ? (
-            'Friends'
+            "Friends"
           ) : (
             <>
               <UserPlus className="w-4 h-4 mr-1" />
@@ -58,16 +58,16 @@ export default function UsersPage() {
 
   // 🔥 FIXED QUERY (NO ERROR GUARANTEED)
   const { data: users = [], isLoading } = useQuery({
-    queryKey: ['discoverUsers'],
+    queryKey: ["discoverUsers"],
     queryFn: async () => {
       try {
-        const res = await api.get('/api/users/discover');
+        const res = await api.get("/api/users/discover");
 
-        console.log('DISCOVER API:', res.data);
+        console.log("DISCOVER API:", res.data);
 
         return res.data?.data?.users ?? [];
       } catch (err) {
-        console.log('Discover Error:', err);
+        console.log("Discover Error:", err);
         return [];
       }
     },
@@ -76,8 +76,8 @@ export default function UsersPage() {
   const handleAddFriend = (userId) => {
     sendFriendRequest.mutate(userId, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['discoverUsers'] });
-        queryClient.invalidateQueries({ queryKey: ['friends'] });
+        queryClient.invalidateQueries({ queryKey: ["discoverUsers"] });
+        queryClient.invalidateQueries({ queryKey: ["friends"] });
       },
     });
   };
@@ -96,7 +96,7 @@ export default function UsersPage() {
     <div className="min-h-screen p-6">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <Button onClick={() => navigate('/profile')}>
+        <Button onClick={() => navigate("/profile")}>
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back
         </Button>

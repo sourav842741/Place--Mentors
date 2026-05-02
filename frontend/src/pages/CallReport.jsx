@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Mic,
   Clock,
@@ -11,12 +11,12 @@ import {
   Share2,
   MicOff,
   Phone,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Navbar from '../components/Navbar';
-import { fetchVoiceReport } from '../redux/voiceSlice';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Navbar from "../components/Navbar";
+import { fetchVoiceReport } from "../redux/voiceSlice";
 
 const CallReport = () => {
   const { id } = useParams();
@@ -89,7 +89,7 @@ const CallReport = () => {
                   </div>
                   <div>
                     <h1 className="text-3xl font-black">
-                      {report.mode?.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                      {report.mode?.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                     </h1>
                     <div className="flex items-center gap-4 text-blue-100 mt-2">
                       <div className="flex items-center gap-1">
@@ -140,13 +140,13 @@ const CallReport = () => {
                   <div className="text-center">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
                       {report.score >= 80
-                        ? 'Excellent!'
+                        ? "Excellent!"
                         : report.score >= 60
-                          ? 'Good!'
-                          : 'Keep Practicing!'}
+                          ? "Good!"
+                          : "Keep Practicing!"}
                     </p>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      You're {report.score >= 80 ? 'interview ready' : 'improving fast'}
+                      You're {report.score >= 80 ? "interview ready" : "improving fast"}
                     </p>
                   </div>
                 </div>
@@ -185,7 +185,7 @@ const CallReport = () => {
               <CardContent className="p-8">
                 <div className="prose prose-lg max-w-none dark:prose-invert">
                   <p className="text-2xl font-bold mb-6 leading-tight text-gray-900 dark:text-white">
-                    "{report.feedback.split('.')[0]}"
+                    "{report.feedback.split(".")[0]}"
                   </p>
                   <div className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                     {report.feedback}

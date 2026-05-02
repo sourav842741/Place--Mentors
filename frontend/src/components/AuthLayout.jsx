@@ -1,4 +1,4 @@
-import { Code2, Brain, Briefcase } from 'lucide-react';
+import { Code2, Brain, Briefcase } from "lucide-react";
 
 export default function AuthLayout({ children }) {
   return (
@@ -38,7 +38,7 @@ export default function AuthLayout({ children }) {
             className="text-4xl font-bold leading-tight
             text-gray-900 dark:text-white"
           >
-            Welcome to{' '}
+            Welcome to{" "}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               PlaceMentor
             </span>

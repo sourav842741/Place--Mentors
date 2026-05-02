@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import useCompanies from '../hooks/useCompanies';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Skeleton } from '../components/ui/skeleton';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import useCompanies from "../hooks/useCompanies";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Skeleton } from "../components/ui/skeleton";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 import {
   Building2,
   Search,
@@ -17,31 +17,31 @@ import {
   Filter,
   AlertCircle,
   Brain,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   GlassCard,
   GlassCardContent,
   GlassCardHeader,
   GlassCardTitle,
   GlassCardDescription,
-} from '../components/ui/glass-card';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { cn } from '../lib/utils';
-import Footer from '@/components/Footer';
-import SuccessStories from '@/components/SuccessStories';
+} from "../components/ui/glass-card";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { cn } from "../lib/utils";
+import Footer from "@/components/Footer";
+import SuccessStories from "@/components/SuccessStories";
 
 const AllCompanies = () => {
   const navigate = useNavigate();
   const { companies, loading, error, refetch } = useCompanies();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterDifficulty, setFilterDifficulty] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterDifficulty, setFilterDifficulty] = useState("all");
 
   const filteredCompanies = companies.filter((company) => {
     const matchesSearch =
       company.overview?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       company.name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDifficulty =
-      filterDifficulty === 'all' || company.hiring?.difficulty === filterDifficulty;
+      filterDifficulty === "all" || company.hiring?.difficulty === filterDifficulty;
     return matchesSearch && matchesDifficulty;
   });
 
@@ -120,7 +120,7 @@ const AllCompanies = () => {
               </Button>
 
               <Button
-                onClick={() => navigate('/ai-search')}
+                onClick={() => navigate("/ai-search")}
                 className="
         rounded-xl
         bg-black text-white
@@ -151,11 +151,11 @@ const AllCompanies = () => {
             </div>
 
             <div className="flex gap-2 flex-wrap">
-              {['all', 'Easy', 'Medium', 'Hard'].map((level) => (
+              {["all", "Easy", "Medium", "Hard"].map((level) => (
                 <Button
                   key={level}
                   size="sm"
-                  variant={filterDifficulty === level ? 'default' : 'outline'}
+                  variant={filterDifficulty === level ? "default" : "outline"}
                   onClick={() => setFilterDifficulty(level)}
                   className="rounded-full text-xs px-3 transition-colors duration-300"
                 >
@@ -180,7 +180,7 @@ const AllCompanies = () => {
                 <div className="flex justify-center gap-3 mt-6">
                   <Button
                     variant="outline"
-                    onClick={() => setSearchTerm('')}
+                    onClick={() => setSearchTerm("")}
                     className="transition-colors duration-300"
                   >
                     Clear
@@ -192,13 +192,13 @@ const AllCompanies = () => {
               </div>
             ) : (
               filteredCompanies.map((company) => {
-                const difficulty = company.hiring?.difficulty || 'Medium';
+                const difficulty = company.hiring?.difficulty || "Medium";
 
                 const badgeColors = {
-                  Easy: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+                  Easy: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
                   Medium:
-                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-                  Hard: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+                  Hard: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
                 };
 
                 return (

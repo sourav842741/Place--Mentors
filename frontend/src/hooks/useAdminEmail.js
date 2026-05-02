@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchEmailStats,
   fetchEmailLogs,
   sendSingleEmail as sendSingleThunk,
   sendBulkEmail as sendBulkThunk,
   testTemplate as testTemplateThunk,
-} from '../redux/slices/emailAdminSlice';
-import { clearError, clearSendResult } from '../redux/slices/emailAdminSlice';
+} from "../redux/slices/emailAdminSlice";
+import { clearError, clearSendResult } from "../redux/slices/emailAdminSlice";
 
 export const useAdminEmail = () => {
   const dispatch = useDispatch();

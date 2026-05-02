@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { debounce } from 'lodash'; // Assume lodash or implement simple debounce
-import Navbar from '../components/Navbar';
-import useJobs from '../hooks/useJobs';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { debounce } from "lodash"; // Assume lodash or implement simple debounce
+import Navbar from "../components/Navbar";
+import useJobs from "../hooks/useJobs";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import { Skeleton } from '../components/ui/skeleton';
+} from "../components/ui/select";
+import { Skeleton } from "../components/ui/skeleton";
 import {
   Sheet,
   SheetContent,
@@ -22,10 +22,10 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '../components/ui/sheet';
-import { Separator } from '../components/ui/separator';
-import { ScrollArea } from '../components/ui/scroll-area';
-import { Switch } from '../components/ui/switch';
+} from "../components/ui/sheet";
+import { Separator } from "../components/ui/separator";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Switch } from "../components/ui/switch";
 
 import {
   Search,
@@ -42,9 +42,9 @@ import {
   Globe,
   Users,
   Zap,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { trackEvent } from '../hooks/useAnalytics';
+} from "lucide-react";
+import { toast } from "sonner";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const JobsPage = () => {
   const {
@@ -64,15 +64,15 @@ const JobsPage = () => {
     filters: reduxFilters,
   } = useJobs();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [location, setLocation] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [location, setLocation] = useState("");
   const [localFilters, setLocalFilters] = useState({
-    jobType: '',
-    experienceLevel: '',
+    jobType: "",
+    experienceLevel: "",
     remote: false,
-    salaryMin: '',
+    salaryMin: "",
   });
-  const [view, setView] = useState('all'); // 'all' | 'matched'
+  const [view, setView] = useState("all"); // 'all' | 'matched'
   const [currentPage, setCurrentPage] = useState(1);
 
   // Sync local filters with redux
@@ -85,7 +85,7 @@ const JobsPage = () => {
   useEffect(() => {
     loadJobs(currentPage);
     if (!hasTrackedJobs.current) {
-      trackEvent('jobs_page_clicked', { source: 'page_mount', page: currentPage });
+      trackEvent("jobs_page_clicked", { source: "page_mount", page: currentPage });
       hasTrackedJobs.current = true;
     }
   }, [currentPage]);
@@ -109,28 +109,28 @@ const JobsPage = () => {
 
   const clearFilters = () => {
     setLocalFilters({
-      jobType: '',
-      experienceLevel: '',
+      jobType: "",
+      experienceLevel: "",
       remote: false,
-      salaryMin: '',
+      salaryMin: "",
     });
-    setSearchTerm('');
-    setLocation('');
+    setSearchTerm("");
+    setLocation("");
     updateFilters({});
     loadJobs(1);
   };
 
   const switchView = (newView) => {
     setView(newView);
-    if (newView === 'matched') {
+    if (newView === "matched") {
       getMatchedJobs();
     }
   };
 
-  const currentJobs = view === 'matched' ? matchedJobs : jobs;
+  const currentJobs = view === "matched" ? matchedJobs : jobs;
 
   const formatDate = (dateStr) =>
-    dateStr ? new Date(dateStr).toLocaleDateString() : 'Recently Posted';
+    dateStr ? new Date(dateStr).toLocaleDateString() : "Recently Posted";
   const formatSalary = (salary) => (salary ? `$${salary}k+` : null);
 
   const JobSkeleton = () => (
@@ -161,8 +161,8 @@ const JobsPage = () => {
       onClick={() => setSelectedJob(job._id)}
       className={`cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 border-2 p-6 h-fit ${
         selectedJobId === job._id
-          ? 'border-indigo-500 bg-indigo-50 shadow-2xl ring-2 ring-indigo-200/50'
-          : 'hover:border-indigo-200 border-gray-200'
+          ? "border-indigo-500 bg-indigo-50 shadow-2xl ring-2 ring-indigo-200/50"
+          : "hover:border-indigo-200 border-gray-200"
       }`}
     >
       <CardHeader className="pb-2">
@@ -183,7 +183,7 @@ const JobsPage = () => {
             className="h-10 w-10 p-0"
           >
             <Star
-              className={`h-5 w-5 transition-all ${job.isBookmarked ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
+              className={`h-5 w-5 transition-all ${job.isBookmarked ? "fill-yellow-400 text-yellow-400" : "text-gray-400"}`}
             />
           </Button>
         </div>
@@ -209,7 +209,7 @@ const JobsPage = () => {
           )}
         </div>
         <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
-          {job.description?.replace(/<[^>]*>/g, '')}
+          {job.description?.replace(/<[^>]*>/g, "")}
         </p>
         {job.tags?.length > 0 && (
           <div className="flex flex-wrap gap-1">
@@ -249,9 +249,9 @@ const JobsPage = () => {
       const jobUrl = `${window.location.origin}/jobs/${selectedJob._id}`;
       try {
         await navigator.clipboard.writeText(jobUrl);
-        toast.success('Job link copied!');
+        toast.success("Job link copied!");
       } catch {
-        toast.error('Copy failed');
+        toast.error("Copy failed");
       }
     };
 
@@ -291,7 +291,7 @@ const JobsPage = () => {
               className="flex-1 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700"
               onClick={() => {
                 applyToJob(selectedJob._id);
-                if (selectedJob.applyLink) window.open(selectedJob.applyLink, '_blank');
+                if (selectedJob.applyLink) window.open(selectedJob.applyLink, "_blank");
               }}
             >
               <Mail className="mr-2 h-4 w-4" />
@@ -307,7 +307,7 @@ const JobsPage = () => {
 
           <div
             className="prose prose-sm max-w-none text-gray-800 leading-relaxed dark:text-white"
-            dangerouslySetInnerHTML={{ __html: selectedJob.description || '' }}
+            dangerouslySetInnerHTML={{ __html: selectedJob.description || "" }}
           />
 
           {selectedJob.tags?.length > 0 && (
@@ -427,23 +427,23 @@ const JobsPage = () => {
                   dark:bg-gray-900/80 dark:border-gray-800 transition-colors duration-300"
             >
               <Button
-                variant={view === 'all' ? 'default' : 'outline'}
-                onClick={() => switchView('all')}
+                variant={view === "all" ? "default" : "outline"}
+                onClick={() => switchView("all")}
                 className={`font-medium transition-all duration-300 ${
-                  view === 'all'
-                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800'
+                  view === "all"
+                    ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                 }`}
               >
                 All Jobs ({jobs.length})
               </Button>
 
               <Button
-                variant={view === 'matched' ? 'default' : 'outline'}
+                variant={view === "matched" ? "default" : "outline"}
                 className={`font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${
-                  view === 'matched'
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800'
+                  view === "matched"
+                    ? "bg-purple-600 hover:bg-purple-700 text-white"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
                 }`}
               >
                 AI Matches ({matchedJobs.length})
@@ -576,7 +576,7 @@ const JobsPage = () => {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {view === 'matched' ? 'AI Matched Jobs' : 'Latest Jobs'}
+                  {view === "matched" ? "AI Matched Jobs" : "Latest Jobs"}
                 </h2>
                 {pagination && (
                   <div className="text-sm text-gray-500">

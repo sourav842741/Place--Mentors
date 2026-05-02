@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { useAcceptFriendRequest, useRejectFriendRequest } from '../hooks/useFriends';
-import { useMutation } from '@tanstack/react-query';
-import api from '../services/api';
-import { loadFriends } from '../redux/userSlice';
-import { Users, User } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useAcceptFriendRequest, useRejectFriendRequest } from "../hooks/useFriends";
+import { useMutation } from "@tanstack/react-query";
+import api from "../services/api";
+import { loadFriends } from "../redux/userSlice";
+import { Users, User } from "lucide-react";
+import { toast } from "sonner";
 
 const FriendCard = ({
   friend,
@@ -17,7 +17,7 @@ const FriendCard = ({
   onReject,
   onChallenge,
   loading = false,
-  challengeText = '⚔️ Challenge',
+  challengeText = "⚔️ Challenge",
   disabledChallenge = false,
 }) => {
   return (
@@ -43,7 +43,7 @@ const FriendCard = ({
               className="flex-1 bg-green-500 hover:bg-green-600"
               onClick={onAccept}
             >
-              {loading ? 'Accepting...' : 'Accept'}
+              {loading ? "Accepting..." : "Accept"}
             </Button>
 
             <Button
@@ -65,7 +65,7 @@ const FriendCard = ({
             className="w-full bg-red-500 hover:bg-red-600 text-white"
             onClick={onChallenge}
           >
-            {loading ? 'Sending...' : challengeText}
+            {loading ? "Sending..." : challengeText}
           </Button>
         )}
       </div>
@@ -143,7 +143,7 @@ export default function FriendsSection({ friendsData }) {
     },
 
     onSuccess: (_, friendId) => {
-      toast.success('⚔️ Challenge sent!');
+      toast.success("⚔️ Challenge sent!");
       setChallengeLoadingId(null);
 
       const expiresAt = Date.now() + 120000;
@@ -157,7 +157,7 @@ export default function FriendsSection({ friendsData }) {
     },
 
     onError: () => {
-      toast.error('Failed to send challenge');
+      toast.error("Failed to send challenge");
       setChallengeLoadingId(null);
     },
   });
@@ -198,8 +198,8 @@ export default function FriendsSection({ friendsData }) {
                   cooldown > 0
                     ? `Wait ${Math.floor(cooldown / 60)}:${(cooldown % 60)
                         .toString()
-                        .padStart(2, '0')}`
-                    : '⚔️ Challenge'
+                        .padStart(2, "0")}`
+                    : "⚔️ Challenge"
                 }
               />
             );
@@ -228,7 +228,7 @@ export default function FriendsSection({ friendsData }) {
 
                   acceptFriend.mutate(req._id, {
                     onSuccess: () => {
-                      toast.success('Friend accepted ✅');
+                      toast.success("Friend accepted ✅");
 
                       dispatch(
                         loadFriends({
@@ -244,7 +244,7 @@ export default function FriendsSection({ friendsData }) {
                     },
 
                     onError: () => {
-                      toast.error('Failed to accept');
+                      toast.error("Failed to accept");
                       setLoadingId(null);
                     },
                   });
@@ -254,7 +254,7 @@ export default function FriendsSection({ friendsData }) {
 
                   rejectFriend.mutate(req._id, {
                     onSuccess: () => {
-                      toast('Friend rejected');
+                      toast("Friend rejected");
 
                       dispatch(
                         loadFriends({

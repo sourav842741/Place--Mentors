@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { CheckCircle, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
-const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { CheckCircle, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+const GameBoard = ({ level, userCSS, isWon = false, className = "" }) => {
   const [containerStyle, setContainerStyle] = useState({});
   const [fruitStyles, setFruitStyles] = useState({});
   const [isAnimating, setIsAnimating] = useState(false);
@@ -9,14 +9,14 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
 
   const parseCSS = useCallback((css) => {
     const container = {
-      display: 'flex !important',
-      justifyContent: 'flex-start',
-      alignItems: 'stretch',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      gap: '0',
-      height: '100%',
-      position: 'relative',
+      display: "flex !important",
+      justifyContent: "flex-start",
+      alignItems: "stretch",
+      flexDirection: "row",
+      flexWrap: "nowrap",
+      gap: "0",
+      height: "100%",
+      position: "relative",
     };
     const fruitsStyle = {};
 
@@ -31,20 +31,20 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
 
       // Container selectors (body, .container, *)
       if (selector.match(/^(body|\*|div|\.container)/i)) {
-        const propPairs = props.split(';').filter((p) => p.trim());
+        const propPairs = props.split(";").filter((p) => p.trim());
         propPairs.forEach((pair) => {
-          const [prop, value] = pair.split(':').map((p) => p.trim());
+          const [prop, value] = pair.split(":").map((p) => p.trim());
           if (
             prop &&
             value &&
             [
-              'display',
-              'justify-content',
-              'align-items',
-              'flex-direction',
-              'flex-wrap',
-              'gap',
-              'height',
+              "display",
+              "justify-content",
+              "align-items",
+              "flex-direction",
+              "flex-wrap",
+              "gap",
+              "height",
             ].includes(prop)
           ) {
             const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
@@ -58,10 +58,10 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
       if (classMatch) {
         const cls = classMatch[1];
         fruitsStyle[cls] = fruitsStyle[cls] || {};
-        const propPairs = props.split(';').filter((p) => p.trim());
+        const propPairs = props.split(";").filter((p) => p.trim());
         propPairs.forEach((pair) => {
-          const [prop, value] = pair.split(':').map((p) => p.trim());
-          if (prop && value && ['order', 'align-self', 'flex-grow', 'flex-shrink'].includes(prop)) {
+          const [prop, value] = pair.split(":").map((p) => p.trim());
+          if (prop && value && ["order", "align-self", "flex-grow", "flex-shrink"].includes(prop)) {
             const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
             fruitsStyle[cls][camelProp] = value;
           }
@@ -88,17 +88,17 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
 
   const getBasketPosition = (fruit, index) => ({
     left:
-      fruit.targetX === 'right'
-        ? 'calc(75% - 2rem)'
-        : fruit.targetX === 'center'
-          ? 'calc(50% - 2rem)'
-          : '1rem',
+      fruit.targetX === "right"
+        ? "calc(75% - 2rem)"
+        : fruit.targetX === "center"
+          ? "calc(50% - 2rem)"
+          : "1rem",
     bottom:
-      fruit.targetY === 'bottom'
-        ? '1rem'
-        : fruit.targetY === 'center'
-          ? 'calc(50% - 2rem)'
-          : 'calc(25% - 2rem)',
+      fruit.targetY === "bottom"
+        ? "1rem"
+        : fruit.targetY === "center"
+          ? "calc(50% - 2rem)"
+          : "calc(25% - 2rem)",
   });
 
   return (
@@ -119,7 +119,7 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
         className={`
           relative w-full h-full rounded-2xl flex items-stretch justify-start p-8 box-border
           transition-all duration-700 ease-out
-          ${isWon ? 'bg-gradient-to-br from-emerald-500/10 to-green-500/20 ring-8 ring-emerald-400/50 shadow-2xl shadow-emerald-500/25 animate-celebrate' : 'bg-white/60 dark:bg-slate-900/70 backdrop-blur-xl'}
+          ${isWon ? "bg-gradient-to-br from-emerald-500/10 to-green-500/20 ring-8 ring-emerald-400/50 shadow-2xl shadow-emerald-500/25 animate-celebrate" : "bg-white/60 dark:bg-slate-900/70 backdrop-blur-xl"}
         `}
         style={containerStyle}
       >
@@ -132,7 +132,7 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
               border-4 backdrop-blur-sm
               bg-gradient-to-br from-amber-400/80 to-orange-400/80 dark:from-amber-600/70 dark:to-orange-600/70
               shadow-lg hover:shadow-xl transition-all duration-300 cursor-default
-              ${fruit.targetX === 'right' || fruit.targetY === 'bottom' ? 'animate-bounce-subtle' : ''}
+              ${fruit.targetX === "right" || fruit.targetY === "bottom" ? "animate-bounce-subtle" : ""}
             `}
             style={getBasketPosition(fruit, index)}
           >
@@ -145,15 +145,15 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
           const fruitClass = fruit.class || `fruit${index + 1}`;
           const baseStyle = {
             order: fruit.order || index + 1,
-            width: '72px',
-            height: '72px',
-            fontSize: '2.2rem',
-            display: 'flex !important',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: "72px",
+            height: "72px",
+            fontSize: "2.2rem",
+            display: "flex !important",
+            alignItems: "center",
+            justifyContent: "center",
             flexShrink: 0,
-            transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            willChange: 'transform',
+            transition: "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            willChange: "transform",
             ...fruitStyles[fruitClass],
           };
 
@@ -166,7 +166,7 @@ const GameBoard = ({ level, userCSS, isWon = false, className = '' }) => {
                 hover:scale-110 active:scale-95 hover:shadow-3xl active:shadow-xl
                 transition-all duration-300
                 font-bold select-none drop-shadow-2xl
-                ${isWon ? 'animate-celebrate-fruit bg-gradient-to-br from-emerald-400/90 to-green-500/90 shadow-emerald-500/50 dark:shadow-emerald-400/40' : 'bg-gradient-to-br from-orange-500/90 via-red-500/90 to-pink-500/90 shadow-lg hover:shadow-2xl dark:shadow-pink-500/40'}
+                ${isWon ? "animate-celebrate-fruit bg-gradient-to-br from-emerald-400/90 to-green-500/90 shadow-emerald-500/50 dark:shadow-emerald-400/40" : "bg-gradient-to-br from-orange-500/90 via-red-500/90 to-pink-500/90 shadow-lg hover:shadow-2xl dark:shadow-pink-500/40"}
                 ${fruitClass}
               `}
               style={baseStyle}

@@ -1,17 +1,17 @@
-import api from '../services/api';
+import api from "../services/api";
 
-const CONSENT_KEY = 'cookie_consent';
-const QUEUE_KEY = 'analytics_queue';
+const CONSENT_KEY = "cookie_consent";
+const QUEUE_KEY = "analytics_queue";
 
 const hasConsent = () => {
   try {
     const raw = localStorage.getItem(CONSENT_KEY);
     if (!raw) return false;
 
-    if (raw === 'accepted') return true;
+    if (raw === "accepted") return true;
 
     const parsed = JSON.parse(raw);
-    return parsed?.status === 'accepted' && parsed?.expiresAt > Date.now();
+    return parsed?.status === "accepted" && parsed?.expiresAt > Date.now();
   } catch {
     return false;
   }
@@ -20,19 +20,19 @@ const hasConsent = () => {
 const detectDeviceType = () => {
   const ua = navigator.userAgent;
 
-  if (/mobile|android|iphone|ipod/i.test(ua)) return 'mobile';
-  if (/ipad|tablet/i.test(ua)) return 'tablet';
+  if (/mobile|android|iphone|ipod/i.test(ua)) return "mobile";
+  if (/ipad|tablet/i.test(ua)) return "tablet";
 
-  return 'desktop';
+  return "desktop";
 };
 
 const flushQueue = async () => {
   try {
-    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
 
     if (!queue.length) return;
 
-    const res = await api.post('/api/admin/track-events-batch', { events: queue });
+    const res = await api.post("/api/admin/track-events-batch", { events: queue });
 
     if (res.data?.data?.count > 0) {
       localStorage.removeItem(QUEUE_KEY);
@@ -56,9 +56,9 @@ export const trackEvent = async (eventType, metadata = {}) => {
   };
 
   try {
-    await api.post('/api/admin/track-event', payload);
+    await api.post("/api/admin/track-event", payload);
   } catch {
-    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
 
     queue.push({
       ...payload,
@@ -71,8 +71,8 @@ export const trackEvent = async (eventType, metadata = {}) => {
 };
 
 // Flush on load and online
-if (typeof window !== 'undefined') {
-  window.addEventListener('online', flushQueue);
+if (typeof window !== "undefined") {
+  window.addEventListener("online", flushQueue);
   flushQueue();
 }
 

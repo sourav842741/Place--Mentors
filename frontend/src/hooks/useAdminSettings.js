@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import api from '../services/api';
-import { toast } from 'sonner';
+import api from "../services/api";
+import { toast } from "sonner";
 
 export default function useAdminSettings() {
   const queryClient = useQueryClient();
@@ -16,10 +16,10 @@ export default function useAdminSettings() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['adminSettings'],
+    queryKey: ["adminSettings"],
 
     queryFn: async () => {
-      const { data } = await api.get('/api/admin/settings');
+      const { data } = await api.get("/api/admin/settings");
 
       return data;
     },
@@ -35,25 +35,25 @@ export default function useAdminSettings() {
   =========================== */
   const updateMutation = useMutation({
     mutationFn: async (updates) => {
-      const { data } = await api.put('/api/admin/settings', updates);
+      const { data } = await api.put("/api/admin/settings", updates);
 
       return data;
     },
 
     onSuccess: (response) => {
       queryClient.invalidateQueries({
-        queryKey: ['adminSettings'],
+        queryKey: ["adminSettings"],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ['settings'],
+        queryKey: ["settings"],
       });
 
-      toast.success(response?.message || 'Settings updated successfully!');
+      toast.success(response?.message || "Settings updated successfully!");
     },
 
     onError: (error) => {
-      toast.error(error?.response?.data?.message || 'Update failed');
+      toast.error(error?.response?.data?.message || "Update failed");
     },
   });
 

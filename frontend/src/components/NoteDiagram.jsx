@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import mermaid from 'mermaid';
+import React, { useEffect, useRef, useState } from "react";
+import mermaid from "mermaid";
 
-const NoteDiagram = ({ diagramData, className = '' }) => {
+const NoteDiagram = ({ diagramData, className = "" }) => {
   const svgRef = useRef(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,8 +20,8 @@ const NoteDiagram = ({ diagramData, className = '' }) => {
         // Mermaid config
         mermaid.initialize({
           startOnLoad: false,
-          theme: 'default',
-          securityLevel: 'loose',
+          theme: "default",
+          securityLevel: "loose",
         });
 
         const { svg } = await mermaid.render(

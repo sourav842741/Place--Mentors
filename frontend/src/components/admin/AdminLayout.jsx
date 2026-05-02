@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import AdminNavbar from './AdminNavbar';
-import AdminSidebar from './AdminSidebar';
-import DiagramViewer from './DiagramViewer';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import AdminNavbar from "./AdminNavbar";
+import AdminSidebar from "./AdminSidebar";
+import DiagramViewer from "./DiagramViewer";
 
 export default function AdminLayout() {
   const [isOpen, setIsOpen] = useState(false);

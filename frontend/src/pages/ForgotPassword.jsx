@@ -1,45 +1,45 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Moon, Sun, ArrowLeft, Mail, SendHorizonal } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Moon, Sun, ArrowLeft, Mail, SendHorizonal } from "lucide-react";
 
-import useAuth from '../hooks/useAuth';
-import { toast } from 'sonner';
+import useAuth from "../hooks/useAuth";
+import { toast } from "sonner";
 
 export default function ForgotPassword() {
   const { sendResetOtp } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
   /* LOAD THEME */
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
       setIsDark(false);
     }
   }, []);
 
   /* TOGGLE THEME */
   const toggleTheme = () => {
-    const nowDark = document.documentElement.classList.toggle('dark');
+    const nowDark = document.documentElement.classList.toggle("dark");
 
     setIsDark(nowDark);
-    localStorage.setItem('theme', nowDark ? 'dark' : 'light');
+    localStorage.setItem("theme", nowDark ? "dark" : "light");
   };
 
   /* SEND OTP */
   const handleSendOtp = async () => {
     if (!email) {
-      return toast.warning('Please enter your email');
+      return toast.warning("Please enter your email");
     }
 
     setLoading(true);
@@ -48,16 +48,16 @@ export default function ForgotPassword() {
       const res = await sendResetOtp({ email });
 
       if (res.success) {
-        toast.success('OTP sent to your email 📩');
+        toast.success("OTP sent to your email 📩");
 
-        navigate('/reset-password', {
+        navigate("/reset-password", {
           state: { email },
         });
       } else {
-        toast.error(res.message || 'Failed to send OTP');
+        toast.error(res.message || "Failed to send OTP");
       }
     } catch {
-      toast.error('Something went wrong');
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export default function ForgotPassword() {
 
           {/* BACK */}
           <button
-            onClick={() => navigate('/login')}
+            onClick={() => navigate("/login")}
             className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -140,7 +140,7 @@ export default function ForgotPassword() {
             className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white font-semibold shadow-lg"
           >
             <SendHorizonal className="w-4 h-4 mr-2" />
-            {loading ? 'Sending...' : 'Send OTP'}
+            {loading ? "Sending..." : "Send OTP"}
           </Button>
 
           {/* FOOT TEXT */}

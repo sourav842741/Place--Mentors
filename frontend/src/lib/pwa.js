@@ -3,22 +3,22 @@ let isPWAInstalled = false;
 
 // 🔥 Initialize PWA
 export const initializePWA = (setShowInstall) => {
-  window.addEventListener('beforeinstallprompt', (e) => {
+  window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
 
     deferredPrompt = e;
 
-    console.log('🔥 Install available');
+    console.log("🔥 Install available");
 
     // 👉 UI ko bolo button show kare
     if (setShowInstall) setShowInstall(true);
   });
 
-  window.addEventListener('appinstalled', () => {
+  window.addEventListener("appinstalled", () => {
     isPWAInstalled = true;
     deferredPrompt = null;
 
-    console.log('✅ PWA Installed Successfully');
+    console.log("✅ PWA Installed Successfully");
 
     if (setShowInstall) setShowInstall(false);
   });
@@ -32,7 +32,7 @@ export const canInstall = () => {
 // 🚀 Trigger install
 export const installApp = async () => {
   if (!deferredPrompt) {
-    console.log('❌ Install not available yet');
+    console.log("❌ Install not available yet");
     return;
   }
 
@@ -40,11 +40,11 @@ export const installApp = async () => {
 
   const choice = await deferredPrompt.userChoice;
 
-  if (choice.outcome === 'accepted') {
-    console.log('✅ User installed the app');
+  if (choice.outcome === "accepted") {
+    console.log("✅ User installed the app");
     isPWAInstalled = true;
   } else {
-    console.log('❌ User dismissed install');
+    console.log("❌ User dismissed install");
   }
 
   deferredPrompt = null;
@@ -52,12 +52,12 @@ export const installApp = async () => {
 
 // ⚙️ Register SW
 export const registerSW = async () => {
-  if ('serviceWorker' in navigator) {
+  if ("serviceWorker" in navigator) {
     try {
-      await navigator.serviceWorker.register('/sw.js');
-      console.log('✅ SW Registered');
+      await navigator.serviceWorker.register("/sw.js");
+      console.log("✅ SW Registered");
     } catch (error) {
-      console.log('❌ SW Failed:', error);
+      console.log("❌ SW Failed:", error);
     }
   }
 };

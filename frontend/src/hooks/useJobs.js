@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchJobs,
   matchJobs,
@@ -9,11 +9,11 @@ import {
   fetchSingleJob,
   setSelectedJobId,
   clearSelectedJob,
-} from '../redux/jobSlice';
+} from "../redux/jobSlice";
 
-import { selectAllJobs, selectSelectedJobId, selectSingleJob } from '../redux/jobSlice';
+import { selectAllJobs, selectSelectedJobId, selectSingleJob } from "../redux/jobSlice";
 
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
 const useJobs = () => {
   const dispatch = useDispatch();

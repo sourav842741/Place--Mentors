@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Confetti from 'react-confetti';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Confetti from "react-confetti";
+import { useNavigate } from "react-router-dom";
 
-import { useMaintenanceDashboard } from '../hooks/useMaintenanceQuestions';
-import api from '../services/api';
+import { useMaintenanceDashboard } from "../hooks/useMaintenanceQuestions";
+import api from "../services/api";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 import {
   ArrowLeft,
@@ -29,19 +29,19 @@ import {
   XCircle,
   Sun,
   Moon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import SplashScreen from '../components/SplashScreen';
+import SplashScreen from "../components/SplashScreen";
 
 const modules = [
-  { id: 'hr', title: 'HR Rapid Fire', icon: Mic, type: 'hr' },
-  { id: 'coding', title: 'Coding Quiz', icon: Code, type: 'coding' },
-  { id: 'aptitude', title: 'Aptitude Quiz', icon: Brain, type: 'aptitude' },
-  { id: 'vocab', title: 'Vocabulary', icon: BookOpen, type: 'vocab' },
-  { id: 'myth', title: 'Myth vs Fact', icon: ScrollText, type: 'myth' },
-  { id: 'quote', title: 'Motivation', icon: Quote, type: 'quote' },
-  { id: 'resume', title: 'Resume Score', icon: FileText },
-  { id: 'salary', title: 'Salary Calculator', icon: DollarSign },
+  { id: "hr", title: "HR Rapid Fire", icon: Mic, type: "hr" },
+  { id: "coding", title: "Coding Quiz", icon: Code, type: "coding" },
+  { id: "aptitude", title: "Aptitude Quiz", icon: Brain, type: "aptitude" },
+  { id: "vocab", title: "Vocabulary", icon: BookOpen, type: "vocab" },
+  { id: "myth", title: "Myth vs Fact", icon: ScrollText, type: "myth" },
+  { id: "quote", title: "Motivation", icon: Quote, type: "quote" },
+  { id: "resume", title: "Resume Score", icon: FileText },
+  { id: "salary", title: "Salary Calculator", icon: DollarSign },
 ];
 
 export default function MaintenanceProductivityHub() {
@@ -52,9 +52,9 @@ export default function MaintenanceProductivityHub() {
   const [time, setTime] = useState(new Date());
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const [theme, setTheme] = useState(localStorage.getItem('maintenance-theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem("maintenance-theme") || "light");
 
-  const [salary, setSalary] = useState('');
+  const [salary, setSalary] = useState("");
   const [monthly, setMonthly] = useState(0);
 
   const [resumeScore, setResumeScore] = useState({
@@ -89,18 +89,18 @@ export default function MaintenanceProductivityHub() {
 
   // ================= THEME =================
   useEffect(() => {
-    localStorage.setItem('maintenance-theme', theme);
+    localStorage.setItem("maintenance-theme", theme);
 
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
 
   // ================= DAILY STREAK =================
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('maintenance-streak-data')) || {
+    const saved = JSON.parse(localStorage.getItem("maintenance-streak-data")) || {
       count: 0,
       lastDate: null,
     };
@@ -111,7 +111,7 @@ export default function MaintenanceProductivityHub() {
   const saveProgress = () => {
     const today = new Date().toDateString();
 
-    const saved = JSON.parse(localStorage.getItem('maintenance-streak-data')) || {
+    const saved = JSON.parse(localStorage.getItem("maintenance-streak-data")) || {
       count: 0,
       lastDate: null,
     };
@@ -134,7 +134,7 @@ export default function MaintenanceProductivityHub() {
       lastDate: today,
     };
 
-    localStorage.setItem('maintenance-streak-data', JSON.stringify(data));
+    localStorage.setItem("maintenance-streak-data", JSON.stringify(data));
 
     setStreak(newCount);
 
@@ -219,10 +219,10 @@ export default function MaintenanceProductivityHub() {
 
             <Button
               variant="outline"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="rounded-xl"
             >
-              {theme === 'dark' ? (
+              {theme === "dark" ? (
                 <>
                   <Sun className="w-4 h-4 mr-2" />
                   Light
@@ -239,7 +239,7 @@ export default function MaintenanceProductivityHub() {
           <div className="text-center lg:text-right">
             <div className="flex items-center justify-center lg:justify-end gap-2 font-bold text-xl">
               <Clock3 className="w-5 h-5 text-emerald-500" />
-              {time.toLocaleTimeString('en-IN')}
+              {time.toLocaleTimeString("en-IN")}
             </div>
 
             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -333,8 +333,8 @@ export default function MaintenanceProductivityHub() {
                         </div>
 
                         {question.options?.length > 0 &&
-                        item.id !== 'myth' &&
-                        item.id !== 'quote' ? (
+                        item.id !== "myth" &&
+                        item.id !== "quote" ? (
                           <div className="space-y-2">
                             {question.options.map((op, i) => {
                               const isCorrect = op === question.answer;
@@ -347,10 +347,10 @@ export default function MaintenanceProductivityHub() {
                                   onClick={() => handleOptionClick(item.type, op)}
                                   className={`w-full px-4 py-3 rounded-xl text-left border transition  ${
                                     reveal && isCorrect
-                                      ? 'border-emerald-500 bg-emerald-500/10'
+                                      ? "border-emerald-500 bg-emerald-500/10"
                                       : reveal && isSelected && !isCorrect
-                                        ? 'border-red-500 bg-red-500/10'
-                                        : 'border-slate-200 dark:border-slate-700'
+                                        ? "border-red-500 bg-red-500/10"
+                                        : "border-slate-200 dark:border-slate-700"
                                   }`}
                                 >
                                   {String.fromCharCode(65 + i)}. {op}
@@ -372,8 +372,8 @@ export default function MaintenanceProductivityHub() {
 
                         {reveal &&
                           question.options?.length > 0 &&
-                          item.id !== 'myth' &&
-                          item.id !== 'quote' && (
+                          item.id !== "myth" &&
+                          item.id !== "quote" && (
                             <div className="rounded-xl p-3 border">
                               {selected === question.answer ? (
                                 <p className="text-emerald-500 flex items-center gap-2 font-semibold">
@@ -389,7 +389,7 @@ export default function MaintenanceProductivityHub() {
                             </div>
                           )}
                       </>
-                    ) : item.id === 'salary' ? (
+                    ) : item.id === "salary" ? (
                       <>
                         <Input
                           placeholder="Enter CTC in LPA"
@@ -405,7 +405,7 @@ export default function MaintenanceProductivityHub() {
                           </h2>
                         </div>
                       </>
-                    ) : item.id === 'resume' ? (
+                    ) : item.id === "resume" ? (
                       <>
                         <div className="space-y-2">
                           {Object.keys(resumeScore).map((key) => (

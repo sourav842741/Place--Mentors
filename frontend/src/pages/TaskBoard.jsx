@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import Navbar from '../components/Navbar';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useSelector } from "react-redux";
+import Navbar from "../components/Navbar";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
-import useTasks from '../hooks/useTasks';
-import TaskStats from '../components/tasks/TaskStats';
-import TaskCard from '../components/tasks/TaskCard';
-import TaskForm from '../components/tasks/TaskForm';
-import TaskFilters from '../components/tasks/TaskFilters';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { ListTodo, Filter, RefreshCw } from 'lucide-react';
-import Footer from '@/components/Footer';
+} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import useTasks from "../hooks/useTasks";
+import TaskStats from "../components/tasks/TaskStats";
+import TaskCard from "../components/tasks/TaskCard";
+import TaskForm from "../components/tasks/TaskForm";
+import TaskFilters from "../components/tasks/TaskFilters";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { ListTodo, Filter, RefreshCw } from "lucide-react";
+import Footer from "@/components/Footer";
 
 const TaskBoard = () => {
   const { user } = useSelector((state) => state.user);
@@ -42,11 +42,11 @@ const TaskBoard = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [filters, setFilters] = useState({
-    searchTerm: '',
-    categoryFilter: '',
-    statusFilter: '',
-    priorityFilter: '',
-    sortBy: 'newest',
+    searchTerm: "",
+    categoryFilter: "",
+    statusFilter: "",
+    priorityFilter: "",
+    sortBy: "newest",
   });
 
   // Filter and sort tasks
@@ -68,9 +68,9 @@ const TaskBoard = () => {
 
       // Status
       if (filters.statusFilter) {
-        if (filters.statusFilter === 'Completed') {
+        if (filters.statusFilter === "Completed") {
           filtered = filtered.filter((task) => task.completed);
-        } else if (filters.statusFilter === 'Pending') {
+        } else if (filters.statusFilter === "Pending") {
           filtered = filtered.filter((task) => !task.completed);
         }
       }
@@ -82,10 +82,10 @@ const TaskBoard = () => {
 
       // Sort
       switch (filters.sortBy) {
-        case 'oldest':
+        case "oldest":
           filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
           break;
-        case 'due-soon':
+        case "due-soon":
           filtered.sort((a, b) => {
             if (!a.dueDate && !b.dueDate) return 0;
             if (!a.dueDate) return 1;
@@ -93,7 +93,7 @@ const TaskBoard = () => {
             return new Date(a.dueDate) - new Date(b.dueDate);
           });
           break;
-        case 'newest':
+        case "newest":
         default:
           filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           break;
@@ -116,11 +116,11 @@ const TaskBoard = () => {
 
   const clearFilters = () => {
     setFilters({
-      searchTerm: '',
-      categoryFilter: '',
-      statusFilter: '',
-      priorityFilter: '',
-      sortBy: 'newest',
+      searchTerm: "",
+      categoryFilter: "",
+      statusFilter: "",
+      priorityFilter: "",
+      sortBy: "newest",
     });
   };
 
@@ -128,7 +128,7 @@ const TaskBoard = () => {
     try {
       await createTask(formData);
       setShowCreateDialog(false);
-      toast.success('Task created successfully!');
+      toast.success("Task created successfully!");
       refetchStats();
     } catch (error) {
       // Error toast handled in thunk
@@ -140,7 +140,7 @@ const TaskBoard = () => {
       await updateTask(editTask._id, formData);
       setShowEditDialog(false);
       setEditTask(null);
-      toast.success('Task updated successfully!');
+      toast.success("Task updated successfully!");
       refetchStats();
     } catch (error) {
       // Error toast handled in thunk
@@ -268,14 +268,14 @@ const TaskBoard = () => {
                 <CardContent className="py-20 text-center">
                   <ListTodo className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                   <h3 className="text-2xl font-bold text-foreground mb-2">
-                    {isLoading ? 'Loading tasks...' : 'No tasks found'}
+                    {isLoading ? "Loading tasks..." : "No tasks found"}
                   </h3>
                   <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                     {isLoading
-                      ? 'Fetching your tasks...'
+                      ? "Fetching your tasks..."
                       : filters.searchTerm || activeFiltersCount > 0
-                        ? 'Try adjusting your filters or search terms'
-                        : 'Get started by creating your first task above.'}
+                        ? "Try adjusting your filters or search terms"
+                        : "Get started by creating your first task above."}
                   </p>
                   {!isLoading && (
                     <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>

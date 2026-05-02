@@ -1,26 +1,26 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
-import { setUserData } from '../redux/userSlice';
-import { Pencil, Award, Ticket, ArrowRight } from 'lucide-react';
+import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { setUserData } from "../redux/userSlice";
+import { Pencil, Award, Ticket, ArrowRight } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
-import { toast } from 'sonner';
-import StreakCalendar from '@/components/StreakCalendar.jsx';
-import Footer from '@/components/Footer';
-import FriendsSection from '@/components/FriendsSection';
-import { useFriends } from '../hooks/useFriends';
-import Navbar from '@/components/Navbar';
+import { toast } from "sonner";
+import StreakCalendar from "@/components/StreakCalendar.jsx";
+import Footer from "@/components/Footer";
+import FriendsSection from "@/components/FriendsSection";
+import { useFriends } from "../hooks/useFriends";
+import Navbar from "@/components/Navbar";
 
 export default function Profile() {
   const { user } = useSelector((state) => state.user);
@@ -31,8 +31,8 @@ export default function Profile() {
 
   const { data: friendsData } = useFriends();
 
-  const [fullName, setFullName] = useState(user?.fullName || '');
-  const [skills, setSkills] = useState(user?.skills?.join(', ') || '');
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [skills, setSkills] = useState(user?.skills?.join(", ") || "");
 
   const [avatar, setAvatar] = useState(null);
   const [cover, setCover] = useState(null);
@@ -43,22 +43,22 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem("theme");
 
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
   useEffect(() => {
     const fetchBadges = async () => {
       try {
-        const res = await api.get('/api/xp/badges');
+        const res = await api.get("/api/xp/badges");
         setBadges(res.data.badges);
       } catch (err) {
-        console.log('Badge fetch error', err);
+        console.log("Badge fetch error", err);
       }
     };
     fetchBadges();
@@ -68,7 +68,7 @@ export default function Profile() {
     if (!file) return;
     const url = URL.createObjectURL(file);
 
-    if (type === 'avatar') {
+    if (type === "avatar") {
       setAvatar(file);
       setAvatarPreview(url);
     } else {
@@ -82,19 +82,19 @@ export default function Profile() {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append('fullName', fullName);
-      if (avatar) formData.append('avatar', avatar);
-      if (cover) formData.append('coverImage', cover);
+      formData.append("fullName", fullName);
+      if (avatar) formData.append("avatar", avatar);
+      if (cover) formData.append("coverImage", cover);
 
-      const res = await api.put('/api/auth/profile', formData);
+      const res = await api.put("/api/auth/profile", formData);
 
       dispatch(setUserData(res.data.data));
-      toast.success('Profile updated successfully 🎉');
+      toast.success("Profile updated successfully 🎉");
 
       setAvatar(null);
       setCover(null);
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Profile update failed ❌');
+      toast.error(err?.response?.data?.message || "Profile update failed ❌");
     } finally {
       setLoading(false);
     }
@@ -102,16 +102,16 @@ export default function Profile() {
 
   const updateSkills = async () => {
     try {
-      const skillArray = skills.split(',').map((s) => s.trim());
+      const skillArray = skills.split(",").map((s) => s.trim());
 
-      const res = await api.put('/api/auth/skills', {
+      const res = await api.put("/api/auth/skills", {
         skills: skillArray,
       });
 
       dispatch(setUserData(res.data.data));
-      toast.success('Skills updated');
+      toast.success("Skills updated");
     } catch (err) {
-      toast.error('Failed to update skills');
+      toast.error("Failed to update skills");
     }
   };
 
@@ -133,12 +133,12 @@ export default function Profile() {
             )}
 
             <label className="absolute top-4 right-4 transition bg-black/60 text-white px-3 py-1 rounded-lg cursor-pointer text-sm mt-10 ">
-              {' '}
+              {" "}
               Change Cover
               <input
                 type="file"
                 hidden
-                onChange={(e) => handlePreview(e.target.files[0], 'cover')}
+                onChange={(e) => handlePreview(e.target.files[0], "cover")}
               />
             </label>
           </div>
@@ -150,7 +150,7 @@ export default function Profile() {
               <div className="flex items-center gap-4 -mt-14">
                 <div className="relative">
                   <img
-                    src={avatarPreview || 'https://via.placeholder.com/100'}
+                    src={avatarPreview || "https://via.placeholder.com/100"}
                     className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover"
                   />
 
@@ -159,7 +159,7 @@ export default function Profile() {
                     <input
                       type="file"
                       hidden
-                      onChange={(e) => handlePreview(e.target.files[0], 'avatar')}
+                      onChange={(e) => handlePreview(e.target.files[0], "avatar")}
                     />
                   </label>
                 </div>
@@ -174,12 +174,12 @@ export default function Profile() {
 
               {/* RIGHT ACTIONS */}
               <div className="flex gap-2 flex-wrap">
-                <Button onClick={() => navigate('/dashboard')} className="rounded-xl px-4">
+                <Button onClick={() => navigate("/dashboard")} className="rounded-xl px-4">
                   ← Dashboard
                 </Button>
 
                 <Button
-                  onClick={() => navigate('/users')}
+                  onClick={() => navigate("/users")}
                   className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl"
                 >
                   👥 Add Friends
@@ -236,7 +236,7 @@ export default function Profile() {
                           className="absolute inset-0 bg-slate-300 dark:bg-slate-700"
                           style={{
                             clipPath:
-                              'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                              "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
                           }}
                         ></div>
 
@@ -245,7 +245,7 @@ export default function Profile() {
                           className="absolute inset-[3px] bg-white dark:bg-[#1a1a1a] flex flex-col items-center justify-center overflow-hidden"
                           style={{
                             clipPath:
-                              'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                              "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
                           }}
                         >
                           {/* Top Accent (LeetCode Style Gradient) */}
@@ -253,7 +253,7 @@ export default function Profile() {
 
                           {/* Icon / Number */}
                           <div className="relative z-10 flex flex-col items-center">
-                            <span className="text-3xl mb-0.5">{badge.icon || ' 🏆'}</span>
+                            <span className="text-3xl mb-0.5">{badge.icon || " 🏆"}</span>
                             <span className="text-[10px] font-black tracking-tighter text-slate-400 dark:text-slate-500 uppercase">
                               DAYS
                             </span>
@@ -263,7 +263,7 @@ export default function Profile() {
                           <div
                             className="absolute bottom-0 w-full h-[30%] bg-slate-100 dark:bg-slate-800 flex items-center justify-center"
                             style={{
-                              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+                              clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
                             }}
                           >
                             <span className="text-[9px] font-bold text-slate-600 dark:text-slate-300">
@@ -282,10 +282,10 @@ export default function Profile() {
                           {badge.name}
                         </h3>
                         <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1">
-                          {new Date(badge.earnedAt).toLocaleDateString('en-GB', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
+                          {new Date(badge.earnedAt).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
                           })}
                         </p>
                       </div>
@@ -315,7 +315,7 @@ export default function Profile() {
                 {/* SMALL CLEAN BUTTONS */}
                 <div className="grid md:grid-cols-2 gap-5">
                   <Button
-                    onClick={() => navigate('/certificates')}
+                    onClick={() => navigate("/certificates")}
                     className="h-16 rounded-2xl text-base font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-xl"
                   >
                     <Award className="w-5 h-5 mr-2" />
@@ -323,7 +323,7 @@ export default function Profile() {
                   </Button>
 
                   <Button
-                    onClick={() => navigate('/certificates')}
+                    onClick={() => navigate("/certificates")}
                     variant="outline"
                     className="h-16 rounded-2xl text-base font-bold border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
@@ -365,7 +365,7 @@ export default function Profile() {
                       disabled={loading}
                       className="h-12 rounded-xl font-bold"
                     >
-                      {loading ? 'Saving...' : 'Save Changes'}
+                      {loading ? "Saving..." : "Save Changes"}
                     </Button>
                   </DialogContent>
                 </Dialog>
@@ -408,7 +408,7 @@ export default function Profile() {
                   </div>
                 </div>
                 <Button
-                  onClick={() => navigate('/support')}
+                  onClick={() => navigate("/support")}
                   className="h-12 px-6 rounded-2xl font-bold bg-white text-blue-600 hover:bg-white/90 shadow-lg"
                 >
                   Get Support
@@ -425,7 +425,7 @@ export default function Profile() {
                   disabled={loading}
                   className="h-14 px-8 rounded-2xl font-bold bg-purple-600 hover:bg-purple-700"
                 >
-                  {loading ? 'Saving...' : 'Save Photo Changes'}
+                  {loading ? "Saving..." : "Save Photo Changes"}
                 </Button>
               </div>
             )}

@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchMyTickets,
   fetchTicketDetail,
@@ -13,8 +13,8 @@ import {
   clearTicketDetail,
   updateTicketFromSocket,
   removeTicketFromSocket,
-} from '../redux/ticketSlice';
-import { socket } from '../socket';
+} from "../redux/ticketSlice";
+import { socket } from "../socket";
 
 export const useTickets = () => {
   const dispatch = useDispatch();
@@ -51,12 +51,12 @@ export const useTickets = () => {
       dispatch(removeTicketFromSocket(data));
     };
 
-    socket.on('ticket:updated', handleTicketUpdate);
-    socket.on('ticket:deleted', handleTicketDelete);
+    socket.on("ticket:updated", handleTicketUpdate);
+    socket.on("ticket:deleted", handleTicketDelete);
 
     return () => {
-      socket.off('ticket:updated', handleTicketUpdate);
-      socket.off('ticket:deleted', handleTicketDelete);
+      socket.off("ticket:updated", handleTicketUpdate);
+      socket.off("ticket:deleted", handleTicketDelete);
     };
   }, [dispatch]);
 
@@ -128,12 +128,12 @@ export const useAdminTickets = () => {
       dispatch(removeTicketFromSocket(data));
     };
 
-    socket.on('ticket:updated', handleTicketUpdate);
-    socket.on('ticket:deleted', handleTicketDelete);
+    socket.on("ticket:updated", handleTicketUpdate);
+    socket.on("ticket:deleted", handleTicketDelete);
 
     return () => {
-      socket.off('ticket:updated', handleTicketUpdate);
-      socket.off('ticket:deleted', handleTicketDelete);
+      socket.off("ticket:updated", handleTicketUpdate);
+      socket.off("ticket:deleted", handleTicketDelete);
     };
   }, [dispatch]);
 

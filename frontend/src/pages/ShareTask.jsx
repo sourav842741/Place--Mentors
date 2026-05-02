@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   CheckCircle2,
   Calendar,
@@ -12,9 +12,9 @@ import {
   User,
   ExternalLink,
   Share2,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import * as taskApi from '../services/taskApi';
+} from "lucide-react";
+import { toast } from "sonner";
+import * as taskApi from "../services/taskApi";
 
 const ShareTask = () => {
   const { shareId } = useParams();
@@ -33,8 +33,8 @@ const ShareTask = () => {
       const response = await taskApi.getPublicTask(shareId);
       setTask(response.data);
     } catch (error) {
-      toast.error('Task not found or has been deleted');
-      navigate('/dashboard/tasks');
+      toast.error("Task not found or has been deleted");
+      navigate("/dashboard/tasks");
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ const ShareTask = () => {
     const shareUrl = window.location.href;
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
-    toast.success('Share link copied!');
+    toast.success("Share link copied!");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -57,11 +57,11 @@ const ShareTask = () => {
   const Icon = categoryIcon[task?.category];
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -91,16 +91,16 @@ const ShareTask = () => {
   }
 
   const categoryColors = {
-    Study: 'bg-gradient-to-r from-purple-500 to-indigo-500',
-    Job: 'bg-gradient-to-r from-emerald-500 to-teal-500',
-    Personal: 'bg-gradient-to-r from-pink-500 to-rose-500',
+    Study: "bg-gradient-to-r from-purple-500 to-indigo-500",
+    Job: "bg-gradient-to-r from-emerald-500 to-teal-500",
+    Personal: "bg-gradient-to-r from-pink-500 to-rose-500",
   };
 
   const priorityColors = {
-    High: 'ring-red-500/30 bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
+    High: "ring-red-500/30 bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800",
     Medium:
-      'ring-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
-    Low: 'ring-sky-500/30 bg-sky-50/50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800',
+      "ring-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800",
+    Low: "ring-sky-500/30 bg-sky-50/50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800",
   };
 
   const isOverdue = task.dueDate && !task.completed && new Date(task.dueDate) < new Date();
@@ -114,7 +114,7 @@ const ShareTask = () => {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
               <div
-                className={`p-3 rounded-2xl ${categoryColors[task.category] || 'bg-gray-500'} shadow-lg`}
+                className={`p-3 rounded-2xl ${categoryColors[task.category] || "bg-gray-500"} shadow-lg`}
               >
                 {Icon && <Icon className="w-6 h-6 text-white" />}
               </div>
@@ -125,8 +125,8 @@ const ShareTask = () => {
                 <div className="flex items-center gap-2">
                   <Badge
                     className={cn(
-                      'font-medium text-sm px-3 py-1 shadow-md',
-                      priorityColors[task.priority] || 'bg-gray-100 dark:bg-gray-800'
+                      "font-medium text-sm px-3 py-1 shadow-md",
+                      priorityColors[task.priority] || "bg-gray-100 dark:bg-gray-800"
                     )}
                   >
                     {task.priority}
@@ -145,7 +145,7 @@ const ShareTask = () => {
             </div>
             <Button onClick={copyShareLink} className="gap-2">
               <Share2 className="w-4 h-4" />
-              {copied ? 'Copied!' : 'Share'}
+              {copied ? "Copied!" : "Share"}
             </Button>
           </div>
 
@@ -153,9 +153,9 @@ const ShareTask = () => {
           <Card className="border-0 shadow-2xl overflow-hidden">
             <div
               className={cn(
-                'p-8 border-b',
-                categoryColors[task.category] || 'bg-gradient-to-r from-gray-900 to-gray-800',
-                'text-white'
+                "p-8 border-b",
+                categoryColors[task.category] || "bg-gradient-to-r from-gray-900 to-gray-800",
+                "text-white"
               )}
             >
               <div className="flex items-center justify-between">
@@ -187,10 +187,10 @@ const ShareTask = () => {
                 {task.dueDate && (
                   <div
                     className={cn(
-                      'space-y-2 p-4 rounded-xl border',
+                      "space-y-2 p-4 rounded-xl border",
                       isOverdue
-                        ? 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20'
-                        : 'border-border bg-muted/50'
+                        ? "border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20"
+                        : "border-border bg-muted/50"
                     )}
                   >
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
@@ -214,10 +214,10 @@ const ShareTask = () => {
                   <div className="flex items-center gap-3">
                     <div
                       className={cn(
-                        'flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm',
+                        "flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm",
                         task.completed
-                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200 border-gray-200 dark:border-gray-700'
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-200 border-gray-200 dark:border-gray-700"
                       )}
                     >
                       {task.completed ? (
@@ -248,7 +248,7 @@ const ShareTask = () => {
                   </Button>
                   <Button
                     variant="secondary"
-                    onClick={() => navigate('/dashboard/tasks')}
+                    onClick={() => navigate("/dashboard/tasks")}
                     size="sm"
                   >
                     View All Tasks

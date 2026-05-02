@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calendar, Eye, Sparkles, Clock, CheckCircle, RefreshCw } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import api from '../services/api';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Calendar, Eye, Sparkles, Clock, CheckCircle, RefreshCw } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import api from "../services/api";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function PlannerHistory() {
   const navigate = useNavigate();
@@ -24,12 +24,12 @@ export default function PlannerHistory() {
 
       // Load calendar status
       try {
-        const res = await api.get('/api/planner/calendar/status', {
+        const res = await api.get("/api/planner/calendar/status", {
           withCredentials: true,
         });
         setCalendarStatus({ ...res.data, loading: false });
       } catch (err) {
-        console.error('Calendar status error:', err);
+        console.error("Calendar status error:", err);
         setCalendarStatus({ authorized: false, loading: false });
       }
     };
@@ -38,14 +38,14 @@ export default function PlannerHistory() {
 
   const fetchPlanners = async () => {
     try {
-      const res = await api.get('/api/planner/all', { withCredentials: true });
+      const res = await api.get("/api/planner/all", { withCredentials: true });
       if (Array.isArray(res.data)) {
         setPlanners(res.data);
       } else {
         setPlanners([]);
       }
     } catch (err) {
-      console.error('Failed to fetch planners');
+      console.error("Failed to fetch planners");
       setPlanners([]);
     } finally {
       setLoading(false);
@@ -54,27 +54,27 @@ export default function PlannerHistory() {
 
   const handleGoogleOAuth = async () => {
     try {
-      const res = await api.get('/api/planner/calendar/auth', {
+      const res = await api.get("/api/planner/calendar/auth", {
         withCredentials: true,
       });
       window.location.href = res.data.authUrl;
     } catch (err) {
-      alert('Failed to get auth URL');
+      alert("Failed to get auth URL");
     }
   };
 
   const syncPlannerToCalendar = async (plannerId) => {
     if (!planners.length) {
-      alert('No planners available');
+      alert("No planners available");
       return;
     }
     setSyncing((prev) => ({ ...prev, [plannerId]: true }));
     try {
-      const res = await api.post('/api/planner/calendar', { plannerId }, { withCredentials: true });
+      const res = await api.post("/api/planner/calendar", { plannerId }, { withCredentials: true });
       alert(`Synced ${res.data.syncedCount} new events!`);
     } catch (err) {
-      console.error('Sync error:', err.response?.data);
-      alert(err.response?.data?.message || 'Sync failed. Check server logs.');
+      console.error("Sync error:", err.response?.data);
+      alert(err.response?.data?.message || "Sync failed. Check server logs.");
     } finally {
       setSyncing((prev) => ({ ...prev, [plannerId]: false }));
     }
@@ -111,7 +111,7 @@ export default function PlannerHistory() {
                 Planner History
               </h1>
 
-              <Button onClick={() => navigate('/ai-planner')} className="flex items-center gap-2">
+              <Button onClick={() => navigate("/ai-planner")} className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 New Plan
               </Button>
@@ -172,7 +172,7 @@ export default function PlannerHistory() {
                   Create your first mentor roadmap
                 </p>
 
-                <Button onClick={() => navigate('/ai-planner')} size="lg">
+                <Button onClick={() => navigate("/ai-planner")} size="lg">
                   Create First Plan
                 </Button>
               </Card>
@@ -194,7 +194,7 @@ export default function PlannerHistory() {
                         </span>
 
                         <Badge variant="secondary" className="shrink-0 whitespace-nowrap">
-                          {planner.company || 'General'}
+                          {planner.company || "General"}
                         </Badge>
                       </CardTitle>
                     </CardHeader>

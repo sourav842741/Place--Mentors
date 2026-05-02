@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
-import { ArrowLeft, TrendingUp, Brain, Award, History, RotateCcw, Target } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Brain, Award, History, RotateCcw, Target } from "lucide-react";
 
-import { toast } from 'sonner';
-import predictionApi from '../services/predictionApi';
-import { trackEvent } from '../hooks/useAnalytics';
+import { toast } from "sonner";
+import predictionApi from "../services/predictionApi";
+import { trackEvent } from "../hooks/useAnalytics";
 
 const PlacementPredictor = () => {
   const navigate = useNavigate();
@@ -31,21 +31,21 @@ const PlacementPredictor = () => {
   const [history, setHistory] = useState([]);
 
   const [formData, setFormData] = useState({
-    collegeTier: '',
-    cgpa: '',
-    skillsLevel: '',
-    dsaLevel: '',
-    projectsCount: '',
-    communicationLevel: '',
-    internshipExperience: '',
+    collegeTier: "",
+    cgpa: "",
+    skillsLevel: "",
+    dsaLevel: "",
+    projectsCount: "",
+    communicationLevel: "",
+    internshipExperience: "",
   });
 
-  const tiers = ['Tier 1', 'Tier 2', 'Tier 3'];
-  const skills = ['Beginner', 'Intermediate', 'Strong'];
-  const dsa = ['Weak', 'Average', 'Good'];
-  const projects = ['0', '1-2', '3+'];
-  const comm = ['Weak', 'Average', 'Good'];
-  const internship = ['No', 'Yes'];
+  const tiers = ["Tier 1", "Tier 2", "Tier 3"];
+  const skills = ["Beginner", "Intermediate", "Strong"];
+  const dsa = ["Weak", "Average", "Good"];
+  const projects = ["0", "1-2", "3+"];
+  const comm = ["Weak", "Average", "Good"];
+  const internship = ["No", "Yes"];
 
   useEffect(() => {
     fetchHistory();
@@ -77,17 +77,17 @@ const PlacementPredictor = () => {
 
     try {
       setLoading(true);
-      trackEvent('placement_predictor_used');
+      trackEvent("placement_predictor_used");
 
       const res = await predictionApi.predictPlacement(formData);
 
       setResult(res.data.prediction);
 
-      toast.success('Prediction generated successfully');
+      toast.success("Prediction generated successfully");
 
       fetchHistory();
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Prediction failed');
+      toast.error(error?.response?.data?.message || "Prediction failed");
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,7 @@ const PlacementPredictor = () => {
     setFormData(item.inputs);
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   };
 
@@ -132,7 +132,7 @@ const PlacementPredictor = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <Select
                     value={formData.collegeTier}
-                    onValueChange={(v) => handleInput('collegeTier', v)}
+                    onValueChange={(v) => handleInput("collegeTier", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="College Tier" />
@@ -150,14 +150,14 @@ const PlacementPredictor = () => {
                     placeholder="CGPA"
                     type="number"
                     value={formData.cgpa}
-                    onChange={(e) => handleInput('cgpa', e.target.value)}
+                    onChange={(e) => handleInput("cgpa", e.target.value)}
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <Select
                     value={formData.skillsLevel}
-                    onValueChange={(v) => handleInput('skillsLevel', v)}
+                    onValueChange={(v) => handleInput("skillsLevel", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Skills Level" />
@@ -173,7 +173,7 @@ const PlacementPredictor = () => {
 
                   <Select
                     value={formData.dsaLevel}
-                    onValueChange={(v) => handleInput('dsaLevel', v)}
+                    onValueChange={(v) => handleInput("dsaLevel", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="DSA Level" />
@@ -191,7 +191,7 @@ const PlacementPredictor = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <Select
                     value={formData.projectsCount}
-                    onValueChange={(v) => handleInput('projectsCount', v)}
+                    onValueChange={(v) => handleInput("projectsCount", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Projects" />
@@ -207,7 +207,7 @@ const PlacementPredictor = () => {
 
                   <Select
                     value={formData.communicationLevel}
-                    onValueChange={(v) => handleInput('communicationLevel', v)}
+                    onValueChange={(v) => handleInput("communicationLevel", v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Communication" />
@@ -224,7 +224,7 @@ const PlacementPredictor = () => {
 
                 <Select
                   value={formData.internshipExperience}
-                  onValueChange={(v) => handleInput('internshipExperience', v)}
+                  onValueChange={(v) => handleInput("internshipExperience", v)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Internship Experience" />
@@ -243,7 +243,7 @@ const PlacementPredictor = () => {
                   disabled={loading}
                   className="w-full h-12 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600"
                 >
-                  {loading ? 'Analyzing...' : 'Predict Now'}
+                  {loading ? "Analyzing..." : "Predict Now"}
                 </Button>
               </form>
             </CardContent>

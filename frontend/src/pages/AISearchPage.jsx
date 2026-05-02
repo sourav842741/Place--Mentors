@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import CompanySearch from '../components/CompanySearch';
-import useCompany from '../hooks/useCompany';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { updateCredits } from '../redux/userSlice';
-import { Brain } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import Footer from '@/components/Footer';
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
+import CompanySearch from "../components/CompanySearch";
+import useCompany from "../hooks/useCompany";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateCredits } from "../redux/userSlice";
+import { Brain } from "lucide-react";
+import { Button } from "../components/ui/button";
+import Footer from "@/components/Footer";
 
 const AISearchPage = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const { getCompany, loading } = useCompany();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -70,7 +70,7 @@ const AISearchPage = () => {
                   Searching...
                 </span>
               ) : (
-                'Search'
+                "Search"
               )}
             </Button>
           </div>

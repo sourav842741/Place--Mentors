@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
-import { FaArrowLeft } from 'react-icons/fa';
-import Footer from '@/components/Footer';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { FaArrowLeft } from "react-icons/fa";
+import Footer from "@/components/Footer";
 
 function InterviewHistory() {
   const [interviews, setInterviews] = useState([]);
@@ -11,7 +11,7 @@ function InterviewHistory() {
   useEffect(() => {
     const getMyInterviews = async () => {
       try {
-        const result = await api.get('/api/interview/get-interview', {
+        const result = await api.get("/api/interview/get-interview", {
           withCredentials: true,
         });
 
@@ -35,7 +35,7 @@ function InterviewHistory() {
           {/* HEADER */}
           <div className="mb-10 w-full flex items-start gap-4 flex-wrap">
             <button
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate("/quiz")}
               className="mt-1 p-3 rounded-full 
               bg-white dark:bg-gray-900
               shadow-sm hover:shadow-md
@@ -109,9 +109,9 @@ function InterviewHistory() {
                       {/* STATUS */}
                       <span
                         className={`px-4 py-1 rounded-full text-xs font-medium ${
-                          item.status === 'completed'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                          item.status === "completed"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
                         }`}
                       >
                         {item.status}

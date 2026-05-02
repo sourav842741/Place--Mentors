@@ -1,9 +1,9 @@
-import React from 'react';
-import { FaArrowLeft } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import React from "react";
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 import {
   Area,
@@ -13,11 +13,11 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
+} from "recharts";
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import Footer from './Footer';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import Footer from "./Footer";
 
 function Step3Report({ result }) {
   const navigate = useNavigate();
@@ -48,51 +48,51 @@ function Step3Report({ result }) {
 
   const skills = [
     {
-      label: 'Confidence',
+      label: "Confidence",
       value: confidence,
     },
     {
-      label: 'Communication',
+      label: "Communication",
       value: communication,
     },
     {
-      label: 'Correctness',
+      label: "Correctness",
       value: correctness,
     },
   ];
 
-  let performanceText = '';
-  let shortTagline = '';
+  let performanceText = "";
+  let shortTagline = "";
 
   if (finalScore >= 8) {
-    performanceText = 'Ready for job opportunities.';
-    shortTagline = 'Excellent clarity and structured responses.';
+    performanceText = "Ready for job opportunities.";
+    shortTagline = "Excellent clarity and structured responses.";
   } else if (finalScore >= 5) {
-    performanceText = 'Needs minor improvement before interviews.';
-    shortTagline = 'Good foundation, refine articulation.';
+    performanceText = "Needs minor improvement before interviews.";
+    shortTagline = "Good foundation, refine articulation.";
   } else {
-    performanceText = 'Significant improvement required.';
-    shortTagline = 'Work on clarity and confidence.';
+    performanceText = "Significant improvement required.";
+    shortTagline = "Work on clarity and confidence.";
   }
 
   const score = finalScore;
   const percentage = (score / 10) * 100;
 
   const downloadPDF = () => {
-    const doc = new jsPDF('p', 'mm', 'a4');
+    const doc = new jsPDF("p", "mm", "a4");
 
     const pageWidth = doc.internal.pageSize.getWidth();
 
     doc.setFontSize(18);
-    doc.text('AI Interview Performance Report', pageWidth / 2, 20, { align: 'center' });
+    doc.text("AI Interview Performance Report", pageWidth / 2, 20, { align: "center" });
 
     autoTable(doc, {
       startY: 35,
-      head: [['#', 'Question', 'Score', 'Feedback']],
+      head: [["#", "Question", "Score", "Feedback"]],
       body: questionWiseScore.map((q, i) => [i + 1, q.question, `${q.score}/10`, q.feedback]),
     });
 
-    doc.save('AI_Interview_Report.pdf');
+    doc.save("AI_Interview_Report.pdf");
   };
 
   return (
@@ -110,7 +110,7 @@ function Step3Report({ result }) {
         >
           <div className="w-full flex items-start gap-4 flex-wrap">
             <button
-              onClick={() => navigate('/history')}
+              onClick={() => navigate("/history")}
               className="mt-1 p-3 rounded-full
             bg-white dark:bg-gray-900
             shadow-sm hover:shadow-md
@@ -163,9 +163,9 @@ function Step3Report({ result }) {
                   value={percentage}
                   text={`${score}/10`}
                   styles={buildStyles({
-                    pathColor: '#2563eb',
-                    textColor: '#2563eb',
-                    trailColor: '#e5e7eb',
+                    pathColor: "#2563eb",
+                    textColor: "#2563eb",
+                    trailColor: "#e5e7eb",
                   })}
                 />
               </div>
@@ -272,7 +272,7 @@ function Step3Report({ result }) {
                         <p className="text-xs text-gray-400">Question {i + 1}</p>
 
                         <p className="font-semibold text-gray-900 dark:text-white">
-                          {q.question || 'Question not available'}
+                          {q.question || "Question not available"}
                         </p>
                       </div>
 
@@ -296,7 +296,7 @@ function Step3Report({ result }) {
                       </p>
 
                       <p className="text-sm text-gray-700 dark:text-gray-300">
-                        {q.feedback?.trim() || 'No feedback available'}
+                        {q.feedback?.trim() || "No feedback available"}
                       </p>
                     </div>
                   </div>

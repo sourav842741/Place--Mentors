@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, RotateCcw, HelpCircle, Check, X } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Play, RotateCcw, HelpCircle, Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 const CodeEditor = ({
   starterCode,
@@ -11,7 +11,7 @@ const CodeEditor = ({
   isWon = false,
   onRun,
 }) => {
-  const [inputCSS, setInputCSS] = useState('');
+  const [inputCSS, setInputCSS] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const textareaRef = useRef(null);
@@ -33,9 +33,9 @@ const CodeEditor = ({
   const handleRun = () => {
     if (isValid) {
       onRun?.();
-      toast.success('Perfect! 🎉 CSS applied correctly.');
+      toast.success("Perfect! 🎉 CSS applied correctly.");
     } else {
-      toast.error('Not quite right. Check the instruction!');
+      toast.error("Not quite right. Check the instruction!");
     }
     setUserCSS(inputCSS);
   };
@@ -43,7 +43,7 @@ const CodeEditor = ({
   const handleReset = () => {
     setInputCSS(starterCode);
     setUserCSS(starterCode);
-    toast.message('Reset to starter code');
+    toast.message("Reset to starter code");
   };
 
   const handleHint = () => {
@@ -54,15 +54,15 @@ const CodeEditor = ({
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
+    if (e.key === "Enter" && e.ctrlKey) {
       e.preventDefault();
       handleRun();
     }
-    if (e.key === 'Tab') {
+    if (e.key === "Tab") {
       e.preventDefault();
       const start = textareaRef.current.selectionStart;
       const end = textareaRef.current.selectionEnd;
-      setInputCSS(inputCSS.substring(0, start) + '  ' + inputCSS.substring(end));
+      setInputCSS(inputCSS.substring(0, start) + "  " + inputCSS.substring(end));
       textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
     }
   };
@@ -83,7 +83,7 @@ const CodeEditor = ({
           ) : (
             <X className="w-4 h-4 text-slate-400" />
           )}
-          <span>{isValid ? 'Valid' : 'Live Preview'}</span>
+          <span>{isValid ? "Valid" : "Live Preview"}</span>
         </div>
       </div>
 
@@ -103,10 +103,10 @@ const CodeEditor = ({
             transition-all duration-200 placeholder-slate-400 dark:placeholder-slate-500
             ${
               isValid
-                ? 'border-green-300 ring-green-200/50 bg-green-50/50 dark:bg-green-900/20 dark:border-green-500/50'
+                ? "border-green-300 ring-green-200/50 bg-green-50/50 dark:bg-green-900/20 dark:border-green-500/50"
                 : isWon
-                  ? 'border-green-400 ring-green-300/50 bg-green-50/80 dark:border-green-500 dark:bg-green-900/40'
-                  : 'border-slate-200 dark:border-slate-700 ring-transparent hover:border-slate-300 dark:hover:border-slate-600'
+                  ? "border-green-400 ring-green-300/50 bg-green-50/80 dark:border-green-500 dark:bg-green-900/40"
+                  : "border-slate-200 dark:border-slate-700 ring-transparent hover:border-slate-300 dark:hover:border-slate-600"
             }
           `}
           spellCheck="false"
@@ -129,7 +129,7 @@ const CodeEditor = ({
             className="p-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-1.5 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none hover:scale-105 active:scale-95"
           >
             <Play className="w-4 h-4" />
-            {isValid ? 'Complete!' : 'Run'}
+            {isValid ? "Complete!" : "Run"}
           </button>
 
           <button

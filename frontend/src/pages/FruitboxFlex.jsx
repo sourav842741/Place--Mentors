@@ -1,13 +1,13 @@
-import React from 'react';
-import Navbar from '../components/Navbar';
-import useFruitbox from '../hooks/useFruitbox';
-import LevelCard from '../components/Fruitbox/LevelCard';
-import MonacoCodeEditor from '../components/Fruitbox/MonacoCodeEditor';
-import GameBoard from '../components/Fruitbox/GameBoard';
-import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
-import { toast } from 'sonner';
-import Footer from '@/components/Footer';
+import React from "react";
+import Navbar from "../components/Navbar";
+import useFruitbox from "../hooks/useFruitbox";
+import LevelCard from "../components/Fruitbox/LevelCard";
+import MonacoCodeEditor from "../components/Fruitbox/MonacoCodeEditor";
+import GameBoard from "../components/Fruitbox/GameBoard";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 const FruitboxFlex = () => {
   const {
@@ -31,14 +31,14 @@ const FruitboxFlex = () => {
     const isCorrect = validateSolution(cssCode);
 
     if (!isCorrect) {
-      toast.error('Wrong answer. Try again!');
+      toast.error("Wrong answer. Try again!");
       return;
     }
 
     if (!progress?.completedLevels?.includes(currentLevelId)) {
       await completeLevel(currentLevelId, currentLevel.xpReward);
     } else {
-      toast.success('Already completed ');
+      toast.success("Already completed ");
     }
   };
 
@@ -54,7 +54,7 @@ const FruitboxFlex = () => {
     if (currentLevelId < levels.length) {
       setCurrentLevelId((prev) => prev + 1);
     } else {
-      toast.success('🎉 All Levels Completed!');
+      toast.success("🎉 All Levels Completed!");
     }
   };
 

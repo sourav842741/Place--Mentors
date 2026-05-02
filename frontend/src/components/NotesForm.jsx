@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { Download, Loader2, BookOpen, Star } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useGenerateNotesMutation, useGeneratePDFMutation } from '../redux/notesSlice';
-import NoteDiagram from './NoteDiagram';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import Navbar from './Navbar';
+import React, { useState } from "react";
+import { Download, Loader2, BookOpen, Star } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useGenerateNotesMutation, useGeneratePDFMutation } from "../redux/notesSlice";
+import NoteDiagram from "./NoteDiagram";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import Navbar from "./Navbar";
 
 const NotesForm = () => {
   const [form, setForm] = useState({
-    topic: '',
-    classLevel: '',
-    examType: '',
+    topic: "",
+    classLevel: "",
+    examType: "",
     revisionMode: false,
     includeDiagram: false,
     includeChart: false,
@@ -35,7 +35,7 @@ const NotesForm = () => {
       const result = await generateNotes(form).unwrap();
       setCurrentNote(result.data);
     } catch (err) {
-      console.error('Generate error:', err);
+      console.error("Generate error:", err);
     }
   };
 
@@ -45,7 +45,7 @@ const NotesForm = () => {
     try {
       const blob = await generatePDF(currentNote).unwrap();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `ExamNotesAI-${form.topic}.pdf`;
       document.body.appendChild(link);
@@ -53,7 +53,7 @@ const NotesForm = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('PDF error:', err);
+      console.error("PDF error:", err);
     }
   };
 
@@ -68,7 +68,7 @@ const NotesForm = () => {
               <Card key={stars}>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-1">
-                    {stars.split('').map((_, i) => (
+                    {stars.split("").map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-500" />
                     ))}
                     <CardTitle className="text-sm font-semibold">{stars} Level</CardTitle>
@@ -125,7 +125,7 @@ const NotesForm = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate("/dashboard")}
               className="flex items-center gap-1"
             >
               ← Dashboard
@@ -202,7 +202,7 @@ const NotesForm = () => {
                     Generating with AI...
                   </>
                 ) : (
-                  'Generate Topper-Level Notes'
+                  "Generate Topper-Level Notes"
                 )}
               </Button>
             </form>
@@ -268,7 +268,7 @@ const NotesForm = () => {
           prose-headings:text-gray-900 dark:prose-headings:text-white"
                 >
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {String(currentNote?.notes || '')}
+                    {String(currentNote?.notes || "")}
                   </ReactMarkdown>
                 </div>
               </CardContent>
@@ -276,7 +276,7 @@ const NotesForm = () => {
 
             {/* QUESTIONS */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {renderList('🎯 Quick Revision Points', currentNote.revisionPoints)}
+              {renderList("🎯 Quick Revision Points", currentNote.revisionPoints)}
 
               <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">
                 <CardHeader>
@@ -286,8 +286,8 @@ const NotesForm = () => {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  {renderList('Short Questions', currentNote.questions?.short)}
-                  {renderList('Long Questions', currentNote.questions?.long)}
+                  {renderList("Short Questions", currentNote.questions?.short)}
+                  {renderList("Long Questions", currentNote.questions?.long)}
 
                   {currentNote.questions?.diagram && (
                     <p className="text-sm italic bg-blue-50 dark:bg-gray-800 p-3 rounded">

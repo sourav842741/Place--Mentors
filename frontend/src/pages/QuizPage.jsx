@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import Step1QuizSetup from '../components/Step1QuizSetup';
-import Step2QuizPlay from '../components/Step2QuizPlay';
-import Step3QuizResult from '../components/Step3QuizResult';
-import QuizNav from '../components/QuizNav';
+import React, { useState } from "react";
+import Step1QuizSetup from "../components/Step1QuizSetup";
+import Step2QuizPlay from "../components/Step2QuizPlay";
+import Step3QuizResult from "../components/Step3QuizResult";
+import QuizNav from "../components/QuizNav";
 
 function QuizPage() {
   const [step, setStep] = useState(1);

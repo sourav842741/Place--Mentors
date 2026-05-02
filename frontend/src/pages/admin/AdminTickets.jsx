@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Filter,
@@ -24,39 +24,39 @@ import {
   BarChart3,
   Reply,
   Bot,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useAdminTickets } from '@/hooks/useTickets';
-import { socket } from '@/socket';
-import TicketStatusBadge from '@/components/support/TicketStatusBadge';
-import TicketPriorityBadge from '@/components/support/TicketPriorityBadge';
+} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAdminTickets } from "@/hooks/useTickets";
+import { socket } from "@/socket";
+import TicketStatusBadge from "@/components/support/TicketStatusBadge";
+import TicketPriorityBadge from "@/components/support/TicketPriorityBadge";
 
-const STATUS_OPTIONS = ['All', 'Open', 'In Progress', 'Solved', 'Rejected'];
-const PRIORITY_OPTIONS = ['All', 'Low', 'Medium', 'High'];
+const STATUS_OPTIONS = ["All", "Open", "In Progress", "Solved", "Rejected"];
+const PRIORITY_OPTIONS = ["All", "Low", "Medium", "High"];
 const CATEGORY_OPTIONS = [
-  'All',
-  'Login Issue',
-  'Payment',
-  'Premium',
-  'Bug Report',
-  'Resume',
-  'Interview',
-  'Account',
-  'Other',
+  "All",
+  "Login Issue",
+  "Payment",
+  "Premium",
+  "Bug Report",
+  "Resume",
+  "Interview",
+  "Account",
+  "Other",
 ];
 
 export default function AdminTickets() {
@@ -80,18 +80,18 @@ export default function AdminTickets() {
     resetTicketDetail,
   } = useAdminTickets();
 
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [priorityFilter, setPriorityFilter] = useState('All');
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [sortBy, setSortBy] = useState('updatedAt');
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [priorityFilter, setPriorityFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("updatedAt");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [selectedTicketId, setSelectedTicketId] = useState(null);
-  const [replyMessage, setReplyMessage] = useState('');
-  const [internalNoteInput, setInternalNoteInput] = useState('');
+  const [replyMessage, setReplyMessage] = useState("");
+  const [internalNoteInput, setInternalNoteInput] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [showImage, setShowImage] = useState(null);
-  const [activeTab, setActiveTab] = useState('conversation'); // conversation | internal
+  const [activeTab, setActiveTab] = useState("conversation"); // conversation | internal
 
   const repliesEndRef = useRef(null);
   const detailScrollRef = useRef(null);
@@ -101,9 +101,9 @@ export default function AdminTickets() {
       sortBy,
       sortOrder,
     };
-    if (statusFilter !== 'All') params.status = statusFilter;
-    if (priorityFilter !== 'All') params.priority = priorityFilter;
-    if (categoryFilter !== 'All') params.category = categoryFilter;
+    if (statusFilter !== "All") params.status = statusFilter;
+    if (priorityFilter !== "All") params.priority = priorityFilter;
+    if (categoryFilter !== "All") params.category = categoryFilter;
     if (search.trim()) params.search = search.trim();
     loadAllTickets(params);
   }, [statusFilter, priorityFilter, categoryFilter, search, sortBy, sortOrder, loadAllTickets]);
@@ -124,19 +124,19 @@ export default function AdminTickets() {
 
   const handleViewTicket = (id) => {
     setSelectedTicketId(id);
-    setActiveTab('conversation');
+    setActiveTab("conversation");
     loadTicketDetail(id);
-    socket.emit('join_ticket', id);
+    socket.emit("join_ticket", id);
   };
 
   const handleCloseDetail = () => {
     if (selectedTicketId) {
-      socket.emit('leave_ticket', selectedTicketId);
+      socket.emit("leave_ticket", selectedTicketId);
     }
     setSelectedTicketId(null);
     resetTicketDetail();
-    setReplyMessage('');
-    setInternalNoteInput('');
+    setReplyMessage("");
+    setInternalNoteInput("");
   };
 
   const handleStatusChange = (ticketId, newStatus) => {
@@ -146,13 +146,13 @@ export default function AdminTickets() {
   const handleReply = () => {
     if (!replyMessage.trim() || !selectedTicketId) return;
     addReply(selectedTicketId, replyMessage.trim(), false);
-    setReplyMessage('');
+    setReplyMessage("");
   };
 
   const handleAddInternalNote = () => {
     if (!internalNoteInput.trim() || !selectedTicketId) return;
     addReply(selectedTicketId, internalNoteInput.trim(), true);
-    setInternalNoteInput('');
+    setInternalNoteInput("");
   };
 
   const handleDelete = (ticketId) => {
@@ -166,52 +166,52 @@ export default function AdminTickets() {
   // Auto-scroll replies
   useEffect(() => {
     if (repliesEndRef.current) {
-      repliesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      repliesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [replies, internalNotes, activeTab]);
 
   const statCards = [
     {
-      label: 'Total',
+      label: "Total",
       value: stats?.total || 0,
       icon: Inbox,
-      color: 'text-blue-500',
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
+      color: "text-blue-500",
+      bg: "bg-blue-50 dark:bg-blue-900/20",
     },
     {
-      label: 'Open',
+      label: "Open",
       value: stats?.open || 0,
       icon: AlertCircle,
-      color: 'text-amber-500',
-      bg: 'bg-amber-50 dark:bg-amber-900/20',
+      color: "text-amber-500",
+      bg: "bg-amber-50 dark:bg-amber-900/20",
     },
     {
-      label: 'In Progress',
+      label: "In Progress",
       value: stats?.inProgress || 0,
       icon: Clock,
-      color: 'text-purple-500',
-      bg: 'bg-purple-50 dark:bg-purple-900/20',
+      color: "text-purple-500",
+      bg: "bg-purple-50 dark:bg-purple-900/20",
     },
     {
-      label: 'Solved',
+      label: "Solved",
       value: stats?.solved || 0,
       icon: CheckCircle2,
-      color: 'text-green-500',
-      bg: 'bg-green-50 dark:bg-green-900/20',
+      color: "text-green-500",
+      bg: "bg-green-50 dark:bg-green-900/20",
     },
     {
-      label: 'Rejected',
+      label: "Rejected",
       value: stats?.rejected || 0,
       icon: XCircle,
-      color: 'text-red-500',
-      bg: 'bg-red-50 dark:bg-red-900/20',
+      color: "text-red-500",
+      bg: "bg-red-50 dark:bg-red-900/20",
     },
     {
-      label: 'High Priority',
+      label: "High Priority",
       value: stats?.highPriority || 0,
       icon: ArrowUp,
-      color: 'text-red-600',
-      bg: 'bg-red-50 dark:bg-red-900/20',
+      color: "text-red-600",
+      bg: "bg-red-50 dark:bg-red-900/20",
     },
   ];
 
@@ -344,9 +344,9 @@ export default function AdminTickets() {
             size="icon"
             className="h-10 w-10 rounded-xl"
             onClick={() => {
-              setSortOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'));
+              setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
             }}
-            title={`Sort ${sortOrder === 'desc' ? 'Ascending' : 'Descending'}`}
+            title={`Sort ${sortOrder === "desc" ? "Ascending" : "Descending"}`}
           >
             <ArrowDownUp className="w-4 h-4" />
           </Button>
@@ -437,7 +437,7 @@ export default function AdminTickets() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {STATUS_OPTIONS.filter((s) => s !== 'All').map((s) => (
+                            {STATUS_OPTIONS.filter((s) => s !== "All").map((s) => (
                               <SelectItem key={s} value={s}>
                                 {s}
                               </SelectItem>
@@ -527,7 +527,7 @@ export default function AdminTickets() {
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                     <p className="text-gray-500 dark:text-gray-400 text-xs">User</p>
                     <p className="font-medium text-gray-900 dark:text-white truncate">
-                      {ticketDetail.user?.fullName || 'N/A'}
+                      {ticketDetail.user?.fullName || "N/A"}
                     </p>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
@@ -577,13 +577,13 @@ export default function AdminTickets() {
                         alt="Attachment"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.style.display = 'none';
+                          e.target.style.display = "none";
                           e.target.parentElement.classList.add(
-                            'bg-gray-100',
-                            'dark:bg-gray-800',
-                            'flex',
-                            'items-center',
-                            'justify-center'
+                            "bg-gray-100",
+                            "dark:bg-gray-800",
+                            "flex",
+                            "items-center",
+                            "justify-center"
                           );
                         }}
                       />
@@ -600,9 +600,9 @@ export default function AdminTickets() {
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    variant={activeTab === 'conversation' ? 'default' : 'outline'}
-                    onClick={() => setActiveTab('conversation')}
-                    className={`rounded-full text-xs ${activeTab === 'conversation' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : ''}`}
+                    variant={activeTab === "conversation" ? "default" : "outline"}
+                    onClick={() => setActiveTab("conversation")}
+                    className={`rounded-full text-xs ${activeTab === "conversation" ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" : ""}`}
                   >
                     <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
                     Conversation ({replies.length})
@@ -610,9 +610,9 @@ export default function AdminTickets() {
                   {internalNotes.length > 0 && (
                     <Button
                       size="sm"
-                      variant={activeTab === 'internal' ? 'default' : 'outline'}
-                      onClick={() => setActiveTab('internal')}
-                      className={`rounded-full text-xs ${activeTab === 'internal' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' : ''}`}
+                      variant={activeTab === "internal" ? "default" : "outline"}
+                      onClick={() => setActiveTab("internal")}
+                      className={`rounded-full text-xs ${activeTab === "internal" ? "bg-gradient-to-r from-orange-500 to-red-500 text-white" : ""}`}
                     >
                       <Shield className="w-3.5 h-3.5 mr-1.5" />
                       Internal ({internalNotes.length})
@@ -621,7 +621,7 @@ export default function AdminTickets() {
                 </div>
 
                 {/* CONVERSATION */}
-                {activeTab === 'conversation' && (
+                {activeTab === "conversation" && (
                   <div className="space-y-3">
                     {replies.length === 0 ? (
                       <div className="text-center py-8 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
@@ -632,23 +632,23 @@ export default function AdminTickets() {
                       <div className="space-y-3">
                         {replies.map((reply) => {
                           const isAdmin =
-                            reply.senderRole === 'admin' || reply.senderRole === 'superadmin';
+                            reply.senderRole === "admin" || reply.senderRole === "superadmin";
 
                           return (
                             <div
                               key={reply._id}
-                              className={`flex ${isAdmin ? 'justify-start' : 'justify-end'}`}
+                              className={`flex ${isAdmin ? "justify-start" : "justify-end"}`}
                             >
                               <div
                                 className={`max-w-[85%] rounded-2xl p-3.5 text-sm ${
                                   isAdmin
-                                    ? 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700'
-                                    : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                                    ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+                                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                                 }`}
                               >
                                 <div className="flex items-center gap-2 mb-1.5">
                                   <div
-                                    className={`w-6 h-6 rounded-full flex items-center justify-center ${isAdmin ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-white/20'}`}
+                                    className={`w-6 h-6 rounded-full flex items-center justify-center ${isAdmin ? "bg-purple-100 dark:bg-purple-900/30" : "bg-white/20"}`}
                                   >
                                     {isAdmin ? (
                                       <Shield className="w-3 h-3 text-purple-600 dark:text-purple-300" />
@@ -657,20 +657,20 @@ export default function AdminTickets() {
                                     )}
                                   </div>
                                   <span
-                                    className={`font-semibold text-xs ${isAdmin ? 'text-purple-700 dark:text-purple-300' : 'opacity-90'}`}
+                                    className={`font-semibold text-xs ${isAdmin ? "text-purple-700 dark:text-purple-300" : "opacity-90"}`}
                                   >
                                     {isAdmin
-                                      ? reply.sender?.fullName || 'Support Team'
-                                      : reply.sender?.fullName || 'User'}
+                                      ? reply.sender?.fullName || "Support Team"
+                                      : reply.sender?.fullName || "User"}
                                   </span>
                                   <span
-                                    className={`text-[10px] ml-auto ${isAdmin ? 'text-gray-400' : 'opacity-60'}`}
+                                    className={`text-[10px] ml-auto ${isAdmin ? "text-gray-400" : "opacity-60"}`}
                                   >
                                     {new Date(reply.createdAt).toLocaleString()}
                                   </span>
                                 </div>
                                 <p
-                                  className={`whitespace-pre-wrap leading-relaxed ${isAdmin ? 'text-gray-900 dark:text-white' : ''}`}
+                                  className={`whitespace-pre-wrap leading-relaxed ${isAdmin ? "text-gray-900 dark:text-white" : ""}`}
                                 >
                                   {reply.message}
                                 </p>
@@ -685,7 +685,7 @@ export default function AdminTickets() {
                 )}
 
                 {/* INTERNAL NOTES */}
-                {activeTab === 'internal' && (
+                {activeTab === "internal" && (
                   <div className="space-y-3">
                     {internalNotes.length === 0 ? (
                       <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
@@ -700,7 +700,7 @@ export default function AdminTickets() {
                           <div className="flex items-center gap-2 mb-1.5">
                             <Shield className="w-4 h-4 text-orange-500" />
                             <span className="font-semibold text-xs text-orange-800 dark:text-orange-200">
-                              {note.sender?.fullName || 'Admin'}
+                              {note.sender?.fullName || "Admin"}
                             </span>
                             <span className="text-[10px] text-gray-400 ml-auto">
                               {new Date(note.createdAt).toLocaleString()}
@@ -719,7 +719,7 @@ export default function AdminTickets() {
 
               {/* STICKY REPLY INPUT */}
               <div className="border-t border-gray-200 dark:border-gray-800 px-6 py-4 bg-gray-50/50 dark:bg-gray-900/50">
-                {activeTab === 'conversation' ? (
+                {activeTab === "conversation" ? (
                   <div className="space-y-3">
                     <Textarea
                       placeholder="Type your reply to the user..."
@@ -727,7 +727,7 @@ export default function AdminTickets() {
                       onChange={(e) => setReplyMessage(e.target.value)}
                       className="rounded-xl resize-none min-h-[80px] bg-white dark:bg-gray-900"
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
+                        if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
                           handleReply();
                         }
@@ -763,7 +763,7 @@ export default function AdminTickets() {
                         onChange={(e) => setInternalNoteInput(e.target.value)}
                         className="rounded-xl bg-white dark:bg-gray-900"
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
+                          if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
                             handleAddInternalNote();
                           }
@@ -836,7 +836,7 @@ export default function AdminTickets() {
               alt="Full view"
               className="max-w-full max-h-[85vh] rounded-xl object-contain"
               onError={(e) => {
-                e.target.style.display = 'none';
+                e.target.style.display = "none";
               }}
             />
           </div>

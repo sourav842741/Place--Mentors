@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdminUsers } from '../redux/adminUserSlice';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAdminUsers } from "../redux/adminUserSlice";
 
 export const useAdminUsers = () => {
   const dispatch = useDispatch();

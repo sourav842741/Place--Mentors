@@ -1,16 +1,16 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useDebounce } from 'use-debounce';
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "use-debounce";
 
-import { promoteUser, demoteUser, banUser, unbanUser } from '../../redux/adminUserSlice';
+import { promoteUser, demoteUser, banUser, unbanUser } from "../../redux/adminUserSlice";
 
-import { toast } from 'sonner';
-import { exportUsersCSV } from '../../services/api';
-import UserProfileModal from '../../components/admin/UserProfileModal';
-import { useAdminUsers } from '../../hooks/useAdminUsers';
+import { toast } from "sonner";
+import { exportUsersCSV } from "../../services/api";
+import UserProfileModal from "../../components/admin/UserProfileModal";
+import { useAdminUsers } from "../../hooks/useAdminUsers";
 
 /* CARD */
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /* TABLE */
 import {
@@ -20,15 +20,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 /* UI */
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 import {
   Dialog,
@@ -37,7 +37,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
 import {
   Select,
@@ -45,7 +45,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 /* ICONS */
 import {
@@ -62,7 +62,7 @@ import {
   Eye,
   Loader2,
   MoreHorizontal,
-} from 'lucide-react';
+} from "lucide-react";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -70,8 +70,8 @@ const Users = () => {
   const currentUser = useSelector((state) => state.user.user);
 
   // Filter & Search State
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
   const [searchDebounced] = useDebounce(search, 300);
   const [page, setPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
@@ -79,7 +79,7 @@ const Users = () => {
 
   const UserCard = ({ user }) => {
     const statusIcon = getStatusIcon(user);
-    const roleLabel = user.isSuperAdmin ? 'OWNER' : user.role === 'admin' ? 'ADMIN' : 'USER';
+    const roleLabel = user.isSuperAdmin ? "OWNER" : user.role === "admin" ? "ADMIN" : "USER";
     return (
       <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
@@ -94,11 +94,11 @@ const Users = () => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-white">
-                    {(user.fullName || user.name || 'U')
-                      .split(' ')
+                    {(user.fullName || user.name || "U")
+                      .split(" ")
                       .slice(0, 2)
                       .map((n) => n[0])
-                      .join('')}
+                      .join("")}
                   </div>
                 )}
               </div>
@@ -112,16 +112,16 @@ const Users = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{user.email}</p>
             <div className="flex flex-wrap gap-2 mt-2">
               <Badge
-                className={`${user.isSuperAdmin ? 'bg-gradient-to-r from-purple-600 to-pink-600' : user.role === 'admin' ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-emerald-500 to-teal-600'} text-white px-3 py-1 shadow-md`}
+                className={`${user.isSuperAdmin ? "bg-gradient-to-r from-purple-600 to-pink-600" : user.role === "admin" ? "bg-gradient-to-r from-orange-500 to-red-500" : "bg-gradient-to-r from-emerald-500 to-teal-600"} text-white px-3 py-1 shadow-md`}
               >
                 {roleLabel}
               </Badge>
               <div className="flex items-center gap-2">
                 {statusIcon}
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium shadow-md ${user.isBanned ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : user.isOnline ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium shadow-md ${user.isBanned ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300" : user.isOnline ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300" : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"}`}
                 >
-                  {user.isBanned ? 'BANNED' : user.isOnline ? 'ONLINE' : 'OFFLINE'}
+                  {user.isBanned ? "BANNED" : user.isOnline ? "ONLINE" : "OFFLINE"}
                 </span>
               </div>
             </div>
@@ -154,16 +154,16 @@ const Users = () => {
                   View
                 </Button>
                 {currentUser?.isSuperAdmin && !user.isSuperAdmin ? (
-                  user.role === 'admin' ? (
+                  user.role === "admin" ? (
                     <Button
                       size="sm"
                       variant="destructive"
                       onClick={async () => {
                         try {
                           await dispatch(demoteUser(user._id)).unwrap();
-                          toast.success('Demoted to User ✅');
+                          toast.success("Demoted to User ✅");
                         } catch (err) {
-                          toast.error(err?.message || 'Failed to demote');
+                          toast.error(err?.message || "Failed to demote");
                         }
                       }}
                       className="h-9 px-3"
@@ -176,9 +176,9 @@ const Users = () => {
                       onClick={async () => {
                         try {
                           await dispatch(promoteUser(user._id)).unwrap();
-                          toast.success('Promoted to Admin 🚀');
+                          toast.success("Promoted to Admin 🚀");
                         } catch (err) {
-                          toast.error(err?.message || 'Failed to promote');
+                          toast.error(err?.message || "Failed to promote");
                         }
                       }}
                       className="h-9 px-3 bg-indigo-600 hover:bg-indigo-700"
@@ -205,7 +205,7 @@ const Users = () => {
                 ) : (
                     currentUser?.isSuperAdmin
                       ? !user.isSuperAdmin && user._id !== currentUser?._id
-                      : currentUser?.role === 'admin' && user.role === 'user' && !user.isSuperAdmin
+                      : currentUser?.role === "admin" && user.role === "user" && !user.isSuperAdmin
                   ) ? (
                   <Button
                     size="sm"
@@ -236,15 +236,15 @@ const Users = () => {
   // Stats counts
   const totalUsers = allUsers?.length ?? 0;
   const onlineUsers = allUsers?.filter((u) => u.isOnline).length ?? 0;
-  const adminUsers = allUsers?.filter((u) => u.role === 'admin' || u.isSuperAdmin).length ?? 0;
+  const adminUsers = allUsers?.filter((u) => u.role === "admin" || u.isSuperAdmin).length ?? 0;
   const bannedUsers = allUsers?.filter((u) => u.isBanned).length ?? 0;
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
     setIsMobile(mediaQuery.matches);
     const handler = (e) => setIsMobile(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
   // Modal States
@@ -259,14 +259,14 @@ const Users = () => {
   const [banModal, setBanModal] = useState({
     open: false,
     userId: null,
-    userName: '',
+    userName: "",
   });
   const [unbanModal, setUnbanModal] = useState({
     open: false,
     userId: null,
-    userName: '',
+    userName: "",
   });
-  const [banReason, setBanReason] = useState('');
+  const [banReason, setBanReason] = useState("");
 
   // Derived filtered users
   const filteredUsers = useMemo(() => {
@@ -277,18 +277,18 @@ const Users = () => {
       const term = searchDebounced.toLowerCase();
       filtered = filtered.filter(
         (user) =>
-          (user.fullName || user.name || '').toLowerCase().includes(term) ||
+          (user.fullName || user.name || "").toLowerCase().includes(term) ||
           user.email.toLowerCase().includes(term)
       );
     }
 
     // Filter
-    if (filter === 'admin') filtered = filtered.filter((u) => u.role === 'admin' || u.isSuperAdmin);
-    else if (filter === 'user')
-      filtered = filtered.filter((u) => u.role === 'user' && !u.isSuperAdmin);
-    else if (filter === 'banned') filtered = filtered.filter((u) => u.isBanned);
-    else if (filter === 'online') filtered = filtered.filter((u) => u.isOnline);
-    else if (filter === 'offline') filtered = filtered.filter((u) => !u.isOnline && !u.isBanned);
+    if (filter === "admin") filtered = filtered.filter((u) => u.role === "admin" || u.isSuperAdmin);
+    else if (filter === "user")
+      filtered = filtered.filter((u) => u.role === "user" && !u.isSuperAdmin);
+    else if (filter === "banned") filtered = filtered.filter((u) => u.isBanned);
+    else if (filter === "online") filtered = filtered.filter((u) => u.isOnline);
+    else if (filter === "offline") filtered = filtered.filter((u) => !u.isOnline && !u.isBanned);
 
     return filtered;
   }, [allUsers, searchDebounced, filter]);
@@ -303,19 +303,19 @@ const Users = () => {
 
   // Time ago formatter
   const timeAgo = (dateStr) => {
-    if (!dateStr) return 'Never';
+    if (!dateStr) return "Never";
     try {
       const date = new Date(dateStr);
       const now = Date.now();
       const diff = Math.floor((now - date) / 1000);
 
-      if (diff < 60) return 'Just now';
+      if (diff < 60) return "Just now";
       if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
       if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
       if (diff < 2592000) return `${Math.floor(diff / 86400)} days ago`;
-      return 'Long ago';
+      return "Long ago";
     } catch {
-      return 'Unknown';
+      return "Unknown";
     }
   };
 
@@ -328,45 +328,45 @@ const Users = () => {
   const handleExport = async () => {
     try {
       const headers = [
-        'Full Name',
-        'Email',
-        'Role',
-        'Level',
-        'Credits',
-        'Status',
-        'Last Seen',
-        'Joined Date',
+        "Full Name",
+        "Email",
+        "Role",
+        "Level",
+        "Credits",
+        "Status",
+        "Last Seen",
+        "Joined Date",
       ];
 
       const rows = filteredUsers.map((user) => [
-        `"${user.fullName || user.name || ''}"`,
-        `"${user.email || ''}"`,
-        `"${user.isSuperAdmin ? 'OWNER' : user.role || 'USER'}"`,
+        `"${user.fullName || user.name || ""}"`,
+        `"${user.email || ""}"`,
+        `"${user.isSuperAdmin ? "OWNER" : user.role || "USER"}"`,
         `"${user.level || 1}"`,
         `"${user.credits || 0}"`,
-        `"${user.isBanned ? 'BANNED' : user.isOnline ? 'ACTIVE NOW' : 'OFFLINE'}"`,
-        `"${user.lastSeen ? new Date(user.lastSeen).toLocaleString() : 'Never'}"`,
+        `"${user.isBanned ? "BANNED" : user.isOnline ? "ACTIVE NOW" : "OFFLINE"}"`,
+        `"${user.lastSeen ? new Date(user.lastSeen).toLocaleString() : "Never"}"`,
         `"${
           user.createdAt
-            ? new Date(user.createdAt).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
+            ? new Date(user.createdAt).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
               })
-            : ''
+            : ""
         }"`,
       ]);
 
-      const csvContent = headers.join(',') + '\n' + rows.map((row) => row.join(',')).join('\n');
+      const csvContent = headers.join(",") + "\n" + rows.map((row) => row.join(",")).join("\n");
 
       const blob = new Blob(
-        ['\uFEFF' + csvContent], // UTF support
-        { type: 'text/csv;charset=utf-8;' }
+        ["\uFEFF" + csvContent], // UTF support
+        { type: "text/csv;charset=utf-8;" }
       );
 
       const url = window.URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `users-${new Date().toISOString().slice(0, 10)}.csv`;
 
@@ -374,9 +374,9 @@ const Users = () => {
       link.click();
       link.remove();
 
-      toast.success('Excel exported successfully ');
+      toast.success("Excel exported successfully ");
     } catch (error) {
-      toast.error('Export failed ');
+      toast.error("Export failed ");
     }
   };
 
@@ -596,14 +596,14 @@ const Users = () => {
                   No users found
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
-                  {searchDebounced || filter !== 'all'
-                    ? 'Try adjusting your search or filter'
-                    : 'No users yet. Invite your first user!'}
+                  {searchDebounced || filter !== "all"
+                    ? "Try adjusting your search or filter"
+                    : "No users yet. Invite your first user!"}
                 </p>
                 <Button
                   onClick={() => {
-                    setSearch('');
-                    setFilter('all');
+                    setSearch("");
+                    setFilter("all");
                     setPage(1);
                   }}
                 >
@@ -648,10 +648,10 @@ const Users = () => {
                     {paginatedUsers.map((user) => {
                       const statusIcon = getStatusIcon(user);
                       const roleLabel = user.isSuperAdmin
-                        ? 'OWNER'
-                        : user.role === 'admin'
-                          ? 'ADMIN'
-                          : 'USER';
+                        ? "OWNER"
+                        : user.role === "admin"
+                          ? "ADMIN"
+                          : "USER";
 
                       return (
                         <TableRow
@@ -670,11 +670,11 @@ const Users = () => {
                                     />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center text-xl font-bold text-white">
-                                      {(user.fullName || user.name || 'U')
-                                        .split(' ')
+                                      {(user.fullName || user.name || "U")
+                                        .split(" ")
                                         .slice(0, 2)
                                         .map((n) => n[0])
-                                        .join('')}
+                                        .join("")}
                                     </div>
                                   )}
                                 </div>
@@ -693,10 +693,10 @@ const Users = () => {
                             <Badge
                               className={`${
                                 user.isSuperAdmin
-                                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                  : user.role === 'admin'
-                                    ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'
-                                    : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700'
+                                  ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                                  : user.role === "admin"
+                                    ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                                    : "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
                               } text-white px-3 py-1 shadow-md`}
                             >
                               {roleLabel}
@@ -719,17 +719,17 @@ const Users = () => {
                               <Badge
                                 className={`px-3 py-1 shadow-md ${
                                   user.isBanned
-                                    ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                                    ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                                     : user.isOnline
-                                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 shadow-emerald-200'
-                                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 shadow-emerald-200"
+                                      : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
                                 }`}
                               >
                                 {user.isBanned
-                                  ? 'BANNED'
+                                  ? "BANNED"
                                   : user.isOnline
-                                    ? 'ACTIVE NOW'
-                                    : 'OFFLINE'}
+                                    ? "ACTIVE NOW"
+                                    : "OFFLINE"}
                               </Badge>
                             </div>
                           </TableCell>
@@ -756,16 +756,16 @@ const Users = () => {
                               </Button>
 
                               {currentUser?.isSuperAdmin && !user.isSuperAdmin ? (
-                                user.role === 'admin' ? (
+                                user.role === "admin" ? (
                                   <Button
                                     size="sm"
                                     variant="destructive"
                                     onClick={async () => {
                                       try {
                                         await dispatch(demoteUser(user._id)).unwrap();
-                                        toast.success('Demoted to User ✅');
+                                        toast.success("Demoted to User ✅");
                                       } catch (err) {
-                                        toast.error(err?.message || 'Failed to demote');
+                                        toast.error(err?.message || "Failed to demote");
                                       }
                                     }}
                                     className="h-8 px-3"
@@ -778,9 +778,9 @@ const Users = () => {
                                     onClick={async () => {
                                       try {
                                         await dispatch(promoteUser(user._id)).unwrap();
-                                        toast.success('Promoted to Admin 🚀');
+                                        toast.success("Promoted to Admin 🚀");
                                       } catch (err) {
-                                        toast.error(err?.message || 'Failed to promote');
+                                        toast.error(err?.message || "Failed to promote");
                                       }
                                     }}
                                     className="h-8 px-3 bg-indigo-600 hover:bg-indigo-700"
@@ -808,8 +808,8 @@ const Users = () => {
                               ) : (
                                   currentUser?.isSuperAdmin
                                     ? !user.isSuperAdmin && user._id !== currentUser?._id
-                                    : currentUser?.role === 'admin' &&
-                                      user.role === 'user' &&
+                                    : currentUser?.role === "admin" &&
+                                      user.role === "user" &&
                                       !user.isSuperAdmin
                                 ) ? (
                                 <Button
@@ -846,7 +846,7 @@ const Users = () => {
           {totalPages > 1 && (
             <div className="px-8 py-6 bg-gradient-to-r from-slate-50 to-indigo-50 dark:from-slate-900/50 dark:to-slate-800/50 border-t flex items-center justify-between">
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Showing {(page - 1) * PER_PAGE + 1} to{' '}
+                Showing {(page - 1) * PER_PAGE + 1} to{" "}
                 {Math.min(page * PER_PAGE, filteredUsers.length)} of {filteredUsers.length} users
               </div>
               <div className="flex items-center gap-2">
@@ -865,10 +865,10 @@ const Users = () => {
                     return (
                       <Button
                         key={pageNum}
-                        variant={pageNum === page ? 'default' : 'outline'}
+                        variant={pageNum === page ? "default" : "outline"}
                         size="sm"
                         onClick={() => setPage(pageNum)}
-                        className={`h-10 px-4 rounded-xl font-mono min-w-[2.5rem] ${pageNum === page ? 'bg-indigo-600 hover:bg-indigo-700 shadow-lg' : ''}`}
+                        className={`h-10 px-4 rounded-xl font-mono min-w-[2.5rem] ${pageNum === page ? "bg-indigo-600 hover:bg-indigo-700 shadow-lg" : ""}`}
                       >
                         {pageNum}
                       </Button>
@@ -900,7 +900,7 @@ const Users = () => {
       {/* BAN MODAL - PRESERVED */}
       <Dialog
         open={banModal.open}
-        onOpenChange={(open) => !open && setBanModal({ open: false, userId: null, userName: '' })}
+        onOpenChange={(open) => !open && setBanModal({ open: false, userId: null, userName: "" })}
       >
         <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
@@ -921,8 +921,8 @@ const Users = () => {
             <Button
               variant="outline"
               onClick={() => {
-                setBanReason('');
-                setBanModal({ open: false, userId: null, userName: '' });
+                setBanReason("");
+                setBanModal({ open: false, userId: null, userName: "" });
               }}
             >
               Cancel
@@ -938,11 +938,11 @@ const Users = () => {
                       banReason: banReason.trim(),
                     })
                   ).unwrap();
-                  toast.success('User banned 🚫');
-                  setBanReason('');
-                  setBanModal({ open: false, userId: null, userName: '' });
+                  toast.success("User banned 🚫");
+                  setBanReason("");
+                  setBanModal({ open: false, userId: null, userName: "" });
                 } catch (err) {
-                  toast.error(err?.message || 'Failed to ban user');
+                  toast.error(err?.message || "Failed to ban user");
                 }
               }}
             >
@@ -955,7 +955,7 @@ const Users = () => {
       {/* UNBAN MODAL - PRESERVED */}
       <Dialog
         open={unbanModal.open}
-        onOpenChange={(open) => !open && setUnbanModal({ open: false, userId: null, userName: '' })}
+        onOpenChange={(open) => !open && setUnbanModal({ open: false, userId: null, userName: "" })}
       >
         <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
@@ -965,7 +965,7 @@ const Users = () => {
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
-              onClick={() => setUnbanModal({ open: false, userId: null, userName: '' })}
+              onClick={() => setUnbanModal({ open: false, userId: null, userName: "" })}
             >
               Cancel
             </Button>
@@ -974,10 +974,10 @@ const Users = () => {
               onClick={async () => {
                 try {
                   await dispatch(unbanUser(unbanModal.userId)).unwrap();
-                  toast.success('User unbanned ✅');
-                  setUnbanModal({ open: false, userId: null, userName: '' });
+                  toast.success("User unbanned ✅");
+                  setUnbanModal({ open: false, userId: null, userName: "" });
                 } catch (err) {
-                  toast.error(err?.message || 'Failed to unban user');
+                  toast.error(err?.message || "Failed to unban user");
                 }
               }}
             >

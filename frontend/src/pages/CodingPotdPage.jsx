@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCpotd,
   submitCpotdCode,
@@ -8,19 +8,19 @@ import {
   setTimer,
   timeUp,
   resetCodingPotd,
-} from '../redux/codingPotdSlice.js';
-import Editor from '@monaco-editor/react';
-import useCompiler from '../hooks/useCompiler';
-import { Button } from '@/components/ui/button.jsx';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Play, Send, Clock, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import Navbar from '@/components/Navbar.jsx';
+} from "../redux/codingPotdSlice.js";
+import Editor from "@monaco-editor/react";
+import useCompiler from "../hooks/useCompiler";
+import { Button } from "@/components/ui/button.jsx";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.jsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
+import { Play, Send, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import Navbar from "@/components/Navbar.jsx";
 
-import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import Footer from '@/components/Footer.jsx';
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import Footer from "@/components/Footer.jsx";
 
 const CodingPotdPage = () => {
   const dispatch = useDispatch();
@@ -35,11 +35,11 @@ const CodingPotdPage = () => {
     timeUp: isTimeUp,
   } = useSelector((state) => state.codingPotd);
   const { executeCode, result: execResult, isLoading: execLoading } = useCompiler();
-  const [code, setCode] = useState('// Write your code here');
+  const [code, setCode] = useState("// Write your code here");
   const [codeMap, setCodeMap] = useState({});
-  const [language, setLanguage] = useState('javascript');
-  const [customInput, setCustomInput] = useState('');
-  const [activeTab, setActiveTab] = useState('description');
+  const [language, setLanguage] = useState("javascript");
+  const [customInput, setCustomInput] = useState("");
+  const [activeTab, setActiveTab] = useState("description");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
@@ -68,17 +68,17 @@ const CodingPotdPage = () => {
     if (codeMap[currentQuestionIndex]) {
       setCode(codeMap[currentQuestionIndex]);
     } else {
-      setCode('// Write your code here');
+      setCode("// Write your code here");
     }
 
-    setCustomInput('');
+    setCustomInput("");
   }, [currentQuestionIndex, codeMap]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const handleRun = () => {
     if (currentQuestion) {
-      executeCode(code, language, customInput || currentQuestion.sampleTestCases[0]?.input || '');
+      executeCode(code, language, customInput || currentQuestion.sampleTestCases[0]?.input || "");
     }
   };
   const handleSubmit = async () => {
@@ -102,7 +102,7 @@ const CodingPotdPage = () => {
   };
 
   useEffect(() => {
-    console.log('EXEC RESULT:', execResult);
+    console.log("EXEC RESULT:", execResult);
   }, [execResult]);
 
   if (loading && !questions.length) return <div>Loading CPOTD...</div>;
@@ -122,7 +122,7 @@ const CodingPotdPage = () => {
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
                 <span className="text-2xl font-mono">
-                  {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+                  {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
                 </span>
               </div>
               <Badge variant="secondary" className="text-lg px-4 py-2">
@@ -138,10 +138,10 @@ const CodingPotdPage = () => {
                 <Badge
                   className={`text-lg px-4 py-2 ${
                     submissionResult.isAccepted
-                      ? 'bg-green-500'
+                      ? "bg-green-500"
                       : submissionResult.results.some((r) => r.error)
-                        ? 'bg-yellow-500'
-                        : 'bg-red-500'
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
                   }`}
                 >
                   {submissionResult.isAccepted ? (
@@ -170,8 +170,8 @@ const CodingPotdPage = () => {
               <Card
                 className={`${
                   submissionResult.isAccepted
-                    ? 'bg-linear-to-r from-green-900/50 to-emerald-900/50 border-green-500'
-                    : 'bg-linear-to-r from-red-900/50 to-rose-900/50 border-red-500'
+                    ? "bg-linear-to-r from-green-900/50 to-emerald-900/50 border-green-500"
+                    : "bg-linear-to-r from-red-900/50 to-rose-900/50 border-red-500"
                 }`}
               >
                 <CardHeader>
@@ -183,7 +183,7 @@ const CodingPotdPage = () => {
                     {submissionResult.results.map((r, i) => (
                       <div
                         key={i}
-                        className={`p-4 rounded-xl mb-3 border ${r.passed ? 'bg-green-500/10 border-green-400' : r.error ? 'bg-yellow-500/10 border-yellow-400' : 'bg-red-500/10 border-red-400'}`}
+                        className={`p-4 rounded-xl mb-3 border ${r.passed ? "bg-green-500/10 border-green-400" : r.error ? "bg-yellow-500/10 border-yellow-400" : "bg-red-500/10 border-red-400"}`}
                       >
                         <div className="flex items-center gap-3 mb-2">
                           {r.passed ? (
@@ -196,9 +196,9 @@ const CodingPotdPage = () => {
                           <span className="font-semibold">Test {r.testCase}</span>
                           <Badge
                             variant="outline"
-                            className={`ml-auto ${r.passed ? 'border-green-500 text-green-700' : r.error ? 'border-yellow-500 text-yellow-700' : 'border-red-500 text-red-700'}`}
+                            className={`ml-auto ${r.passed ? "border-green-500 text-green-700" : r.error ? "border-yellow-500 text-yellow-700" : "border-red-500 text-red-700"}`}
                           >
-                            {r.passed ? 'Passed' : r.error ? 'Error' : 'Failed'}
+                            {r.passed ? "Passed" : r.error ? "Error" : "Failed"}
                           </Badge>
                         </div>
                         {r.error && (
@@ -274,11 +274,11 @@ const CodingPotdPage = () => {
                     <div className="flex items-center gap-3">
                       <Badge
                         variant={
-                          currentQuestion?.difficulty === 'easy'
-                            ? 'default'
-                            : currentQuestion?.difficulty === 'medium'
-                              ? 'secondary'
-                              : 'destructive'
+                          currentQuestion?.difficulty === "easy"
+                            ? "default"
+                            : currentQuestion?.difficulty === "medium"
+                              ? "secondary"
+                              : "destructive"
                         }
                       >
                         {currentQuestion?.difficulty?.toUpperCase()}
@@ -404,7 +404,7 @@ const CodingPotdPage = () => {
                       language={language}
                       value={code}
                       onChange={(val) => {
-                        const safeCode = val || '';
+                        const safeCode = val || "";
 
                         setCode(safeCode);
 
@@ -461,8 +461,8 @@ const CodingPotdPage = () => {
                     <CardContent>
                       <pre className="bg-black/50 p-4 rounded text-xs overflow-auto max-h-32 font-mono">
                         {execResult
-                          ? execResult.output?.trim() || execResult.error || 'No output'
-                          : 'Click Run to see output'}
+                          ? execResult.output?.trim() || execResult.error || "No output"
+                          : "Click Run to see output"}
                       </pre>
                     </CardContent>
                   </Card>

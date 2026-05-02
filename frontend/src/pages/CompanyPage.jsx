@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import CompanySearch from '../components/CompanySearch';
-import useCompany from '../hooks/useCompany';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Skeleton } from '../components/ui/skeleton';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Badge } from '../components/ui/badge';
+import React, { useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import CompanySearch from "../components/CompanySearch";
+import useCompany from "../hooks/useCompany";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Skeleton } from "../components/ui/skeleton";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Badge } from "../components/ui/badge";
 import {
   Building2,
   Users,
@@ -18,9 +18,9 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
-} from 'lucide-react';
-import { Button } from '../components/ui/button';
-import Footer from '@/components/Footer';
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import Footer from "@/components/Footer";
 
 const CompanyPage = () => {
   const { name: paramName } = useParams();
@@ -68,7 +68,7 @@ const CompanyPage = () => {
             <div className="flex items-center gap-4">
               <Button
                 variant="outline"
-                onClick={() => navigate('/companies')}
+                onClick={() => navigate("/companies")}
                 className="rounded-xl shadow-sm hover:shadow-md transition"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -77,10 +77,10 @@ const CompanyPage = () => {
 
               <div>
                 <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 ">
-                  {company?.overview?.name || 'Company Details'}
+                  {company?.overview?.name || "Company Details"}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {company?.overview?.tagline || 'Preparation guide'}
+                  {company?.overview?.tagline || "Preparation guide"}
                 </p>
               </div>
             </div>
@@ -100,7 +100,7 @@ const CompanyPage = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <h3 className="font-bold text-xl">{company?.overview?.name || 'N/A'}</h3>
+                      <h3 className="font-bold text-xl">{company?.overview?.name || "N/A"}</h3>
                       {company?.overview?.tagline && (
                         <p className="text-2xl font-light italic text-gray-600 mt-2 dark:text-white">
                           {company?.overview?.tagline}
@@ -108,15 +108,15 @@ const CompanyPage = () => {
                       )}
                     </div>
                     <p className="text-gray-600 leading-relaxed dark:text-white">
-                      {company?.overview?.description || 'No description available'}
+                      {company?.overview?.description || "No description available"}
                     </p>
 
                     <p className="text-gray-600 leading-relaxed dark:text-white">
-                      {company?.overview?.industry || 'No description available'}
+                      {company?.overview?.industry || "No description available"}
                     </p>
 
                     <p className="text-gray-600 leading-relaxed dark:text-white">
-                      {company?.overview?.headquarters || 'No description available'}
+                      {company?.overview?.headquarters || "No description available"}
                     </p>
                   </CardContent>
                 </Card>
@@ -163,18 +163,18 @@ const CompanyPage = () => {
                       <>
                         <div className="text-center p-4 bg-green-50 rounded-lg">
                           <p className="text-2xl font-bold text-green-700">
-                            {company.salary.average || 'N/A'}
+                            {company.salary.average || "N/A"}
                           </p>
                           <p className="text-sm text-green-600">Average CTC</p>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <span className="font-semibold">Intern:</span>{' '}
-                            {company.salary.intern || 'N/A'}
+                            <span className="font-semibold">Intern:</span>{" "}
+                            {company.salary.intern || "N/A"}
                           </div>
                           <div>
-                            <span className="font-semibold">Bonus:</span>{' '}
-                            {company.salary.bonus || 'N/A'}
+                            <span className="font-semibold">Bonus:</span>{" "}
+                            {company.salary.bonus || "N/A"}
                           </div>
                         </div>
                       </>
@@ -199,20 +199,20 @@ const CompanyPage = () => {
                       <>
                         <div className="p-4 bg-blue-50 rounded-lg text-center">
                           <p className="text-lg font-bold text-blue-700">
-                            {company.examTimeline.expected || 'N/A'}
+                            {company.examTimeline.expected || "N/A"}
                           </p>
                           <p className="text-sm text-blue-600">Expected</p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-2 text-sm">
                           <div>
-                            <span className="font-semibold">Last Year:</span>{' '}
-                            {company.examTimeline.lastYear || 'N/A'}
+                            <span className="font-semibold">Last Year:</span>{" "}
+                            {company.examTimeline.lastYear || "N/A"}
                           </div>
 
                           <div>
-                            <span className="font-semibold">Note:</span>{' '}
-                            {company.examTimeline.note || 'N/A'}
+                            <span className="font-semibold">Note:</span>{" "}
+                            {company.examTimeline.note || "N/A"}
                           </div>
                         </div>
                       </>
@@ -261,21 +261,21 @@ const CompanyPage = () => {
                           <div className="p-3 bg-green-50 rounded-lg text-center">
                             <p className="text-sm text-gray-500">Aptitude</p>
                             <p className="font-bold text-green-700">
-                              {company.cutoff.aptitude || 'N/A'}
+                              {company.cutoff.aptitude || "N/A"}
                             </p>
                           </div>
 
                           <div className="p-3 bg-yellow-50 rounded-lg text-center">
                             <p className="text-sm text-gray-500">Coding</p>
                             <p className="font-bold text-yellow-700">
-                              {company.cutoff.coding || 'N/A'}
+                              {company.cutoff.coding || "N/A"}
                             </p>
                           </div>
                         </div>
 
                         <div className="p-3 bg-blue-50 rounded-lg text-sm dark:text-black">
                           <span className="font-semibold">Note: </span>
-                          {company.cutoff.note || 'N/A'}
+                          {company.cutoff.note || "N/A"}
                         </div>
                       </>
                     ) : (
@@ -320,15 +320,15 @@ const CompanyPage = () => {
                                 <div className="space-y-2">
                                   {[
                                     {
-                                      title: 'Quantitative',
+                                      title: "Quantitative",
                                       topics: company?.preparation?.topics?.aptitude?.quantitative,
                                     },
                                     {
-                                      title: 'Logical',
+                                      title: "Logical",
                                       topics: company?.preparation?.topics?.aptitude?.logical,
                                     },
                                     {
-                                      title: 'Verbal',
+                                      title: "Verbal",
                                       topics: company?.preparation?.topics?.aptitude?.verbal,
                                     },
                                   ].map(
@@ -359,15 +359,15 @@ const CompanyPage = () => {
                                 <div className="space-y-2">
                                   {[
                                     {
-                                      title: 'OS',
+                                      title: "OS",
                                       topics: company?.preparation?.topics?.coreSubjects?.os,
                                     },
                                     {
-                                      title: 'DBMS',
+                                      title: "DBMS",
                                       topics: company?.preparation?.topics?.coreSubjects?.dbms,
                                     },
                                     {
-                                      title: 'OOPS',
+                                      title: "OOPS",
                                       topics: company?.preparation?.topics?.coreSubjects?.oops,
                                     },
                                   ].map(
@@ -398,11 +398,11 @@ const CompanyPage = () => {
                                 <div className="space-y-2">
                                   {[
                                     {
-                                      title: 'System Design',
+                                      title: "System Design",
                                       topics: company?.preparation?.topics?.advanced?.systemDesign,
                                     },
                                     {
-                                      title: 'CS Concepts',
+                                      title: "CS Concepts",
                                       topics: company?.preparation?.topics?.advanced?.csConcepts,
                                     },
                                   ].map(
@@ -453,16 +453,16 @@ const CompanyPage = () => {
                             <div className="space-y-1">
                               {company?.resources?.youtube
                                 ?.filter((item) => {
-                                  const url = typeof item === 'string' ? item : item?.link;
-                                  return url && typeof url === 'string';
+                                  const url = typeof item === "string" ? item : item?.link;
+                                  return url && typeof url === "string";
                                 })
                                 .map((item, i) => {
-                                  const url = typeof item === 'string' ? item : item.link;
+                                  const url = typeof item === "string" ? item : item.link;
                                   const displayText =
-                                    (typeof item === 'object' && item.title
+                                    (typeof item === "object" && item.title
                                       ? item.title
-                                      : url.replace('https://www.youtube.com/watch?v=', '')
-                                    ).slice(0, 50) + (url.length > 50 ? '...' : '');
+                                      : url.replace("https://www.youtube.com/watch?v=", "")
+                                    ).slice(0, 50) + (url.length > 50 ? "..." : "");
                                   return (
                                     <a
                                       key={i}

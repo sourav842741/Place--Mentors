@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createManualPotd,
   createManualCpotd,
   clearError,
   clearSuccess,
-} from '../redux/adminCreateSlice';
+} from "../redux/adminCreateSlice";
 
 export const useAdminCreate = () => {
   const dispatch = useDispatch();

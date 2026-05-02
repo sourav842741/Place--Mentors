@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import Editor from '@monaco-editor/react';
-import useCompiler from '../hooks/useCompiler';
-import { Play, Loader2 } from 'lucide-react';
-import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
+import React, { useState } from "react";
+import Editor from "@monaco-editor/react";
+import useCompiler from "../hooks/useCompiler";
+import { Play, Loader2 } from "lucide-react";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 const boilerplates = {
   javascript: `console.log("Hello World");`,
@@ -23,7 +23,7 @@ public class Main {
   }
 }`,
 
-  'c++': `#include <iostream>
+  "c++": `#include <iostream>
 using namespace std;
 
 int main() {
@@ -35,12 +35,12 @@ int main() {
 };
 
 const CodeEditor = () => {
-  const [language, setLanguage] = useState('javascript');
-  const [code, setCode] = useState(boilerplates['javascript']);
+  const [language, setLanguage] = useState("javascript");
+  const [code, setCode] = useState(boilerplates["javascript"]);
 
   //  TERMINAL STATES
   const [terminalInput, setTerminalInput] = useState([]);
-  const [currentLine, setCurrentLine] = useState('');
+  const [currentLine, setCurrentLine] = useState("");
 
   const { executeCode, result, isLoading, error } = useCompiler();
 
@@ -54,13 +54,13 @@ const CodeEditor = () => {
     const allInputs = [...terminalInput];
 
     //  agar last line type karke Enter nahi dabaya
-    if (currentLine.trim() !== '') {
+    if (currentLine.trim() !== "") {
       allInputs.push(currentLine);
     }
 
-    const finalInput = allInputs.join('\n');
+    const finalInput = allInputs.join("\n");
 
-    console.log('FINAL INPUT:', finalInput); // debug
+    console.log("FINAL INPUT:", finalInput); // debug
 
     executeCode(code, language, finalInput);
   };
@@ -122,7 +122,7 @@ const CodeEditor = () => {
               <Editor
                 height="100%"
                 theme="vs-dark"
-                language={language === 'c++' ? 'cpp' : language}
+                language={language === "c++" ? "cpp" : language}
                 value={code}
                 onChange={(val) => setCode(val)}
                 options={{ minimap: { enabled: false } }}
@@ -143,9 +143,9 @@ const CodeEditor = () => {
                 value={currentLine}
                 onChange={(e) => setCurrentLine(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     setTerminalInput((prev) => [...prev, currentLine]);
-                    setCurrentLine('');
+                    setCurrentLine("");
                   }
                 }}
                 className="w-full bg-black outline-none"

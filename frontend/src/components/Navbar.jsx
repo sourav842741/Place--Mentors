@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 import {
   Menu,
@@ -25,16 +25,16 @@ import {
   Mic,
   Ticket,
   Users,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { BsCoin } from 'react-icons/bs';
+import { BsCoin } from "react-icons/bs";
 
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser } from '../redux/userSlice';
-import api from '../services/api';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutUser } from "../redux/userSlice";
+import api from "../services/api";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -42,13 +42,13 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-import { socket } from '../socket';
+import { socket } from "../socket";
 
 export default function Navbar() {
   const user = useSelector((state) => state.user.user);
@@ -67,55 +67,55 @@ export default function Navbar() {
   const [showNotif, setShowNotif] = useState(false);
 
   const [showThemePopup, setShowThemePopup] = useState(false);
-  const [popupContent, setPopupContent] = useState({ icon: null, title: '', subtitle: '' });
+  const [popupContent, setPopupContent] = useState({ icon: null, title: "", subtitle: "" });
 
   useEffect(() => {
     if (!isAuth || !user?._id) return;
 
-    socket.emit('join', user._id);
+    socket.emit("join", user._id);
 
-    socket.on('notification', (data) => {
+    socket.on("notification", (data) => {
       setNotifications((prev) => [data, ...prev]);
     });
 
-    socket.on('online_users', (count) => {
+    socket.on("online_users", (count) => {
       // Global online can be used here if needed
     });
 
     return () => {
-      socket.off('notification');
-      socket.off('online_users');
+      socket.off("notification");
+      socket.off("online_users");
     };
   }, [isAuth, user?._id]);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : 'auto';
+    document.body.style.overflow = mobileOpen ? "hidden" : "auto";
   }, [mobileOpen]);
 
   // Sync dark mode state
   useEffect(() => {
     const handleThemeChange = () => {
-      const dark = document.documentElement.classList.contains('dark');
+      const dark = document.documentElement.classList.contains("dark");
       setIsDark(dark);
     };
 
-    window.addEventListener('storage', handleThemeChange);
+    window.addEventListener("storage", handleThemeChange);
     handleThemeChange(); // Initial check
 
-    return () => window.removeEventListener('storage', handleThemeChange);
+    return () => window.removeEventListener("storage", handleThemeChange);
   }, []);
 
   const toggleDark = () => {
     const wasDark = isDark;
-    const isNowDark = document.documentElement.classList.toggle('dark');
+    const isNowDark = document.documentElement.classList.toggle("dark");
     setIsDark(isNowDark);
-    localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
+    localStorage.setItem("theme", isNowDark ? "dark" : "light");
 
     // Show premium popup
     setPopupContent({
       icon: isNowDark ? Moon : Sun,
-      title: isNowDark ? 'Dark Mode Enabled' : 'Light Mode Enabled',
-      subtitle: isNowDark ? 'Night vibes activated 🌙' : 'Sunshine is back ☀️',
+      title: isNowDark ? "Dark Mode Enabled" : "Light Mode Enabled",
+      subtitle: isNowDark ? "Night vibes activated 🌙" : "Sunshine is back ☀️",
     });
     setShowThemePopup(true);
 
@@ -124,57 +124,57 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
       setIsDark(true);
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
       setIsDark(false);
     }
   }, []);
 
   const handleLogout = async () => {
     try {
-      await api.get('/api/auth/signout', {
+      await api.get("/api/auth/signout", {
         withCredentials: true,
       });
 
       dispatch(logoutUser());
-      navigate('/');
+      navigate("/");
     } catch (err) {}
   };
 
   const getInitials = (name) => {
-    if (!name) return 'U';
-    const words = name.trim().split(' ');
+    if (!name) return "U";
+    const words = name.trim().split(" ");
     if (words.length === 1) return words[0][0]?.toUpperCase();
     return (words[0][0] + words[words.length - 1][0]).toUpperCase();
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: ListTodo, label: 'TaskBoard', path: '/dashboard/tasks' },
-    { icon: Building2, label: 'All Companies', path: '/companies' },
-    { icon: BookOpen, label: 'Interview Practice', path: '/quiz' },
-    { icon: Briefcase, label: 'Jobs', path: '/jobs' },
-    { icon: Sparkles, label: 'AI Planner', path: '/ai-planner' },
-    { icon: Calendar, label: 'Planner History', path: '/planner-history' },
-    { icon: FileText, label: 'AI Analyzer', path: '/resume-analyzer' },
-    { icon: Code, label: 'Code Compiler', path: '/code-editor' },
-    { icon: Puzzle, label: 'Fruitbox Flex', path: '/dashboard/fruitbox-flex' },
-    { icon: BookOpen, label: 'AI Notes', path: '/notes' },
-    { icon: Users, label: 'Interview Experience', path: '/interview-experience' },
-    { icon: MessageSquare, label: 'Community', path: '/doubts' },
-    { icon: Zap, label: 'Resume Generator', path: '/resume-generator' },
-    { icon: Bot, label: 'AI Coach', path: '/ai-coach' },
-    { icon: Mic, label: 'AI Voice Coach', path: '/ai-voice-coach' },
-    { icon: Brain, label: 'YouTube Summary', path: '/youtube-summary' },
-    { icon: BookOpen, label: 'DSA Resources', path: '/resources' },
+    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+    { icon: ListTodo, label: "TaskBoard", path: "/dashboard/tasks" },
+    { icon: Building2, label: "All Companies", path: "/companies" },
+    { icon: BookOpen, label: "Interview Practice", path: "/quiz" },
+    { icon: Briefcase, label: "Jobs", path: "/jobs" },
+    { icon: Sparkles, label: "AI Planner", path: "/ai-planner" },
+    { icon: Calendar, label: "Planner History", path: "/planner-history" },
+    { icon: FileText, label: "AI Analyzer", path: "/resume-analyzer" },
+    { icon: Code, label: "Code Compiler", path: "/code-editor" },
+    { icon: Puzzle, label: "Fruitbox Flex", path: "/dashboard/fruitbox-flex" },
+    { icon: BookOpen, label: "AI Notes", path: "/notes" },
+    { icon: Users, label: "Interview Experience", path: "/interview-experience" },
+    { icon: MessageSquare, label: "Community", path: "/doubts" },
+    { icon: Zap, label: "Resume Generator", path: "/resume-generator" },
+    { icon: Bot, label: "AI Coach", path: "/ai-coach" },
+    { icon: Mic, label: "AI Voice Coach", path: "/ai-voice-coach" },
+    { icon: Brain, label: "YouTube Summary", path: "/youtube-summary" },
+    { icon: BookOpen, label: "DSA Resources", path: "/resources" },
 
-    { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
-    { icon: Ticket, label: 'Support', path: '/support' },
+    { icon: Trophy, label: "Leaderboard", path: "/leaderboard" },
+    { icon: Ticket, label: "Support", path: "/support" },
   ];
 
   const isLoading = loading;
@@ -184,7 +184,7 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 shadow-md dark:shadow-black/20 transition-colors duration-300 flex items-center justify-between z-50">
         {/* LEFT */}
         <div className="w-full flex items-center justify-between px-4 md:px-6">
-          {' '}
+          {" "}
           <button
             className="lg:hidden p-2 rounded-xl transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 cursor-pointer"
             onClick={() => setMobileOpen(true)}
@@ -193,7 +193,7 @@ export default function Navbar() {
           </button>
           <div className="flex items-center gap-6">
             <div
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate("/dashboard")}
               className="flex items-center gap-2 cursor-pointer group"
             >
               {/* ICON */}
@@ -259,8 +259,8 @@ export default function Navbar() {
                   <div
                     className={`p-2.5 bg-gradient-to-br rounded-xl shadow-lg flex-shrink-0 ${
                       isDark
-                        ? 'from-slate-600 to-slate-800 bg-slate-600/50 animate-pulse'
-                        : 'from-amber-400 to-orange-400 bg-amber-400/50 animate-sparkle'
+                        ? "from-slate-600 to-slate-800 bg-slate-600/50 animate-pulse"
+                        : "from-amber-400 to-orange-400 bg-amber-400/50 animate-sparkle"
                     }`}
                   >
                     {popupContent.icon ? <popupContent.icon className="h-6 w-6" /> : null}
@@ -356,7 +356,7 @@ p-2 rounded"
                     key={credits}
                     className="text-xs sm:text-sm md:text-base font-semibold dark:text-black"
                   >
-                    {isLoading ? '...' : credits}
+                    {isLoading ? "..." : credits}
                   </span>
                 </button>
 
@@ -373,7 +373,7 @@ p-2 rounded"
                     </p>
 
                     <button
-                      onClick={() => navigate('/pricing')}
+                      onClick={() => navigate("/pricing")}
                       className="w-full 
             bg-black text-white 
             py-2 md:py-2.5 
@@ -409,7 +409,7 @@ p-2 rounded"
                 </div>
 
                 <DropdownMenuItem
-                  onClick={() => navigate('/profile')}
+                  onClick={() => navigate("/profile")}
                   className="border-2 focus:bg-blue-500 cursor-pointer"
                 >
                   Profile
@@ -451,7 +451,7 @@ p-2 rounded"
                       <span className="font-semibold">{credits} Credits</span>
                     </DropdownMenuLabel>
                     <DropdownMenuItem
-                      onClick={() => navigate('/pricing')}
+                      onClick={() => navigate("/pricing")}
                       className="focus:bg-blue-500 px-2 py-1.5"
                     >
                       Buy More Credits
@@ -463,8 +463,8 @@ p-2 rounded"
 
                 <DropdownMenuSeparator />
 
-                {user?.role === 'admin' && (
-                  <DropdownMenuItem onClick={() => navigate('/admin/dashboard')}>
+                {user?.role === "admin" && (
+                  <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
                     Admin Panel
                   </DropdownMenuItem>
                 )}
@@ -505,12 +505,12 @@ p-2 rounded"
                 onClick={() => navigate(item.path)}
                 className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-100 hover:-translate-x-1 hover:shadow-md ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]'
-                    : 'text-foreground hover:text-blue-700'
+                    ? "bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]"
+                    : "text-foreground hover:text-blue-700"
                 }`}
               >
                 <item.icon
-                  className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`}
+                  className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-muted-foreground group-hover:text-blue-600 transition-colors"}`}
                 />
                 <span className="text-sm font-medium">{item.label}</span>
               </button>
@@ -531,12 +531,12 @@ p-2 rounded"
                 onClick={() => navigate(item.path)}
                 className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-blue-50 hover:-translate-x-1 hover:shadow-md ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]'
-                    : 'text-foreground hover:text-blue-700'
+                    ? "bg-blue-600 text-white shadow-lg relative shadow-blue-200 before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-7 before:bg-white before:rounded-sm before:shadow-sm scale-[1.02]"
+                    : "text-foreground hover:text-blue-700"
                 }`}
               >
                 <item.icon
-                  className={`w-5 h-5 shrink-0 ${isActive ? 'text-blue-600' : 'text-muted-foreground group-hover:text-blue-600 transition-colors'}`}
+                  className={`w-5 h-5 shrink-0 ${isActive ? "text-blue-600" : "text-muted-foreground group-hover:text-blue-600 transition-colors"}`}
                 />
                 <span className="text-sm font-medium">{item.label}</span>
               </button>
@@ -557,7 +557,7 @@ p-2 rounded"
 
           {/* User Card */}
           <div className="p-3 rounded-xl bg-muted/50 backdrop-blur-sm flex items-center gap-3 shadow-sm hover:shadow-md transition-all duration-200 border border-border/50">
-            {user?.avatar && user.avatar !== 'null' ? (
+            {user?.avatar && user.avatar !== "null" ? (
               <img
                 src={user.avatar}
                 className="w-10 h-10 rounded-xl object-cover ring-2 ring-muted/50"
@@ -602,7 +602,7 @@ p-2 rounded"
               {/* PROFILE CARD */}
               <button
                 onClick={() => {
-                  navigate('/profile');
+                  navigate("/profile");
                   setMobileOpen(false);
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98] transition text-left"
@@ -632,14 +632,14 @@ p-2 rounded"
                     className={`group flex items-center gap-3 p-3 w-full text-left rounded-xl transition-all duration-300 cursor-pointer
               ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 active:bg-blue-100 dark:active:bg-gray-700'
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 active:bg-blue-100 dark:active:bg-gray-700"
               }
               active:scale-[0.98]`}
                   >
                     <item.icon
                       className={`w-5 h-5 shrink-0 ${
-                        isActive ? 'text-white' : 'text-gray-500 dark:text-gray-400'
+                        isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
                       }`}
                     />
                     {item.label}

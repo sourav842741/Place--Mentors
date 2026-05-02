@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
   Sparkles,
@@ -20,7 +20,7 @@ import {
   Zap,
   Target,
   Award,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -34,21 +34,21 @@ export default function LandingPage() {
   const [slide, setSlide] = useState(0);
 
   const gallery = [
-    'https://drive.google.com/file/d/1nWzcfBcFzmBcR7k9Q3p8-i7RQOlyPKDr/preview',
-    'https://drive.google.com/file/d/1QbQnlztsXVLmxaViLnX7hFSugHy4usMq/preview',
-    'https://drive.google.com/file/d/1VTykObLV0ZSUZvzeUChct322zKH5X-Wy/preview',
-    'https://drive.google.com/file/d/1RUG-NIheQutDhmSagbO40ZgVqZFI2pHA/preview',
+    "https://drive.google.com/file/d/1nWzcfBcFzmBcR7k9Q3p8-i7RQOlyPKDr/preview",
+    "https://drive.google.com/file/d/1QbQnlztsXVLmxaViLnX7hFSugHy4usMq/preview",
+    "https://drive.google.com/file/d/1VTykObLV0ZSUZvzeUChct322zKH5X-Wy/preview",
+    "https://drive.google.com/file/d/1RUG-NIheQutDhmSagbO40ZgVqZFI2pHA/preview",
   ];
 
   useEffect(() => {
-    if (user) navigate('/dashboard');
+    if (user) navigate("/dashboard");
   }, [user]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
+    const saved = localStorage.getItem("theme");
 
-    if (saved === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (saved === "dark") {
+      document.documentElement.classList.add("dark");
       setDark(true);
     }
 
@@ -69,23 +69,23 @@ export default function LandingPage() {
   }, []);
 
   const toggleTheme = () => {
-    const mode = document.documentElement.classList.toggle('dark');
+    const mode = document.documentElement.classList.toggle("dark");
     setDark(mode);
-    localStorage.setItem('theme', mode ? 'dark' : 'light');
+    localStorage.setItem("theme", mode ? "dark" : "light");
   };
 
   const faqs = [
     {
-      q: 'Is PlaceMentor free to start?',
-      a: 'Yes, you can begin free and use core features instantly.',
+      q: "Is PlaceMentor free to start?",
+      a: "Yes, you can begin free and use core features instantly.",
     },
     {
-      q: 'Can I improve coding here?',
-      a: 'Yes, coding battles, POTD and practice tools are included.',
+      q: "Can I improve coding here?",
+      a: "Yes, coding battles, POTD and practice tools are included.",
     },
     {
-      q: 'Does AI Planner help placements?',
-      a: 'Yes, it creates roadmap based on your goals.',
+      q: "Does AI Planner help placements?",
+      a: "Yes, it creates roadmap based on your goals.",
     },
   ];
 
@@ -113,14 +113,14 @@ export default function LandingPage() {
             <Button
               variant="outline"
               className="hidden sm:flex rounded-xl"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
             >
               Login
             </Button>
 
             <Button
               className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate("/signup")}
             >
               Start Free
             </Button>
@@ -141,10 +141,10 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-5xl md:text-6xl font-black leading-tight">
-            Build Your{' '}
+            Build Your{" "}
             <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
               Dream Career
-            </span>{' '}
+            </span>{" "}
             Faster 🚀
           </h1>
 
@@ -157,7 +157,7 @@ export default function LandingPage() {
             <Button
               size="lg"
               className="rounded-2xl px-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate("/signup")}
             >
               Join Free Now
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -167,7 +167,7 @@ export default function LandingPage() {
               size="lg"
               variant="outline"
               className="rounded-2xl px-8"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
             >
               Login
             </Button>
@@ -303,7 +303,7 @@ export default function LandingPage() {
                 className="w-full px-5 py-4 flex justify-between font-semibold text-left"
               >
                 {item.q}
-                <ChevronDown className={`w-5 h-5 transition ${faq === i ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-5 h-5 transition ${faq === i ? "rotate-180" : ""}`} />
               </button>
 
               {faq === i && (
@@ -325,7 +325,7 @@ export default function LandingPage() {
 
           <Button
             className="mt-7 bg-white text-indigo-700 rounded-2xl px-10"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate("/signup")}
           >
             Get Started Free
           </Button>
