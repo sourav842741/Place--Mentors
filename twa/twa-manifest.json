@@ -1,0 +1,18 @@
+{
+  "packageName": "com.placementor.app",
+  "launchUrl": "https://placementor.online/",
+  "display": "standalone",
+  "name": "Place Mentor",
+  "shortName": "Mentor",
+  "icons": [
+    {
+      "src": "https://placementor.online/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "themeColor": "#0f172a",
+  "backgroundColor": "#0f172a",
+  "startUrl": "https://placementor.online/",
+  "features": {}
+}

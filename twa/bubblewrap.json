@@ -1,0 +1,23 @@
+{
+  "appVersionCode": 1,
+  "appVersionName": "1.0.0",
+  "packageId": "com.placementor.app",
+  "appName": "Place Mentor",
+  "shortName": "Mentor",
+  "display": "standalone",
+  "iconUrls": [
+    "https://placementor.online/icons/android-chrome-512x512.png"
+  ],
+  "maskableIconUrl": "https://placementor.online/icons/android-chrome-512x512.png",
+  "splashScreenFadeOutDuration": 3000,
+  "themeColor": "#0f172a",
+  "backgroundColor": "#0f172a",
+  "enableSiteSettingsShortcut": true,
+  "security": {
+    "crossOrigin": "trusted-web-activity",
+    "hasHostPermission": "include",
+    "notifications": "optional"
+  },
+  "fallbackPageUrl": "/offline.html",
+  "hostHoleFile": ""
+}

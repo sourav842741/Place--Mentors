@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.placementor.app",
+      "sha256_cert_fingerprints": [
+        "FD:22:F4:16:6F:EF:1B:74:A1:AE:DF:CC:E9:18:92:4B:A2:59:5D:69:67:FC:A7:CF:A0:9C:90:F6:3D:76:86:FA"
+      ]
+    }
+  }
+]

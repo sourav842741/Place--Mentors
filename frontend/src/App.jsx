@@ -63,6 +63,7 @@ import SupportPage from "./pages/SupportPage";
 import TicketDetailPage from "./pages/TicketDetailPage";
 import AdminTickets from "./pages/admin/AdminTickets";
 import InterviewExperienceComingSoon from "./pages/InterviewExperienceComingSoon";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -305,8 +306,10 @@ function App() {
           <Route path="/voice-report/:id" element={<CallReport />} />
           <Route path="/support" element={<SupportPage />} />
           <Route path="/support/ticket/:id" element={<TicketDetailPage />} />
-          <Route path="/interview-experience" element={<InterviewExperienceComingSoon />} />
-          <Route path="/maintenance-hub" element={<MaintenanceProductivityHub />} />
+        <Route path="/interview-experience" element={<InterviewExperienceComingSoon />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/maintenance-hub" element={<MaintenanceProductivityHub />} />
+
         </Route>
 
         {/* SPECIAL */}
