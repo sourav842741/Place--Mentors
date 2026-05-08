@@ -66,11 +66,15 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
 
   const otp = generateOTP();
 
+  const emailKey = email.toLowerCase().trim();
+
+  // Keep Mongo write as a fallback (graceful degradation)
   await TempUser.findOneAndUpdate(
-    { email: email.toLowerCase().trim() },
+
+    { email: emailKey },
     {
       fullName: fullName.trim(),
-      email: email.toLowerCase().trim(),
+      email: emailKey,
       password,
       skills,
       otp,
@@ -79,13 +83,24 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
     { upsert: true, returnDocument: "after" }
   );
 
+  // Redis OTP write (preferred)
+  // If Redis fails, flow still works via Mongo.
   try {
-    await sendSignupOtpMail(email, otp);
+    const { redisSet, hashKey } = await import("../utils/redisCache.js");
+    const key = `otp:signup:${hashKey(emailKey)}`;
+    await redisSet(key, otp, 300);
+  } catch {
+    // ignore redis failure
+  }
+
+  try {
+    await sendSignupOtpMail(emailKey, otp);
   } catch (error) {
     throw new ApiError(500, "Failed to send signup OTP");
   }
 
   return res.status(200).json(new ApiResponse(200, null, "OTP sent to email"));
+
 });
 
 // ================= VERIFY SIGNUP OTP =================
@@ -96,13 +111,42 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Email and OTP are required");
   }
 
-  const tempUser = await TempUser.findOne({
-    email: email.toLowerCase().trim(),
-  });
+  const emailKey = email.toLowerCase().trim();
 
-  if (!tempUser || tempUser.otp !== otp || tempUser.otpExpires < Date.now()) {
-    throw new ApiError(400, "Invalid or expired OTP");
+  // Prefer Redis OTP verification
+  // Fallback to Mongo if Redis is down/missing key.
+  let redisOtp = null;
+  try {
+    const { redisGet, redisDel, hashKey } = await import("../utils/redisCache.js");
+    const key = `otp:signup:${hashKey(emailKey)}`;
+    redisOtp = await redisGet(key);
+
+    if (redisOtp !== null) {
+      if (String(redisOtp) !== String(otp)) {
+        throw new ApiError(400, "Invalid or expired OTP");
+      }
+
+      // Delete on successful verification
+      await redisDel(key);
+    }
+  } catch {
+    // ignore redis errors; fall back to Mongo
   }
+
+  const tempUser = await TempUser.findOne({ email: emailKey });
+
+  if (redisOtp === null) {
+    // Redis miss => validate using Mongo
+    if (!tempUser || tempUser.otp !== otp || tempUser.otpExpires < Date.now()) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+  } else {
+    // Redis verified; still ensure temp user exists so signup can proceed safely.
+    if (!tempUser || tempUser.otpExpires < Date.now()) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+  }
+
 
   const hashedPassword = await bcrypt.hash(tempUser.password, 12);
 
@@ -422,7 +466,9 @@ export const googleAuth = asyncHandler(async (req, res) => {
 export const sendResetOtp = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
-  const user = await User.findOne({ email: email.toLowerCase().trim() });
+  const emailKey = email.toLowerCase().trim();
+
+  const user = await User.findOne({ email: emailKey });
 
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -430,30 +476,67 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
 
   const otp = generateOTP();
 
+  // Mongo fallback
+
   user.resetOtp = otp;
   user.resetOtpExpires = Date.now() + 5 * 60 * 1000;
   await user.save();
 
+  // Redis write (preferred)
   try {
-    await sendResetOtpMail(email, otp);
+    const { redisSet, hashKey } = await import("../utils/redisCache.js");
+    const key = `otp:reset:${hashKey(emailKey)}`;
+    await redisSet(key, otp, 300);
+  } catch {
+    // ignore redis failure
+  }
+
+  try {
+    await sendResetOtpMail(emailKey, otp);
   } catch (error) {
     throw new ApiError(500, "Failed to send reset OTP");
   }
 
   return res.status(200).json(new ApiResponse(200, null, "Reset OTP sent to email"));
+
 });
 
 // ================= RESET PASSWORD =================
 export const resetPassword = asyncHandler(async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
-  const user = await User.findOne({
-    email: email.toLowerCase().trim(),
-  });
+  const emailKey = email.toLowerCase().trim();
 
-  if (!user || user.resetOtp !== otp || user.resetOtpExpires < Date.now()) {
-    throw new ApiError(400, "Invalid or expired OTP");
+  // Prefer Redis OTP verification; fallback to Mongo.
+  let redisOtp = null;
+  try {
+    const { redisGet, redisDel, hashKey } = await import("../utils/redisCache.js");
+    const key = `otp:reset:${hashKey(emailKey)}`;
+    redisOtp = await redisGet(key);
+
+    if (redisOtp !== null && String(redisOtp) !== String(otp)) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+
+    if (redisOtp !== null) {
+      await redisDel(key);
+    }
+  } catch {
+    // ignore redis failures
   }
+
+  const user = await User.findOne({ email: emailKey });
+
+  if (redisOtp === null) {
+    if (!user || user.resetOtp !== otp || user.resetOtpExpires < Date.now()) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+  } else {
+    if (!user || user.resetOtpExpires < Date.now()) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+  }
+
 
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
@@ -473,11 +556,39 @@ export const resetPassword = asyncHandler(async (req, res) => {
 export const verifyResetOtp = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
 
-  const user = await User.findOne({ email });
+  const emailKey = email.toLowerCase().trim();
 
-  if (!user || user.resetOtp !== otp || user.resetOtpExpires < Date.now()) {
-    throw new ApiError(400, "Invalid or expired OTP");
+  let redisOtp = null;
+  try {
+    const { redisGet, redisDel, hashKey } = await import("../utils/redisCache.js");
+    const key = `otp:reset:${hashKey(emailKey)}`;
+    redisOtp = await redisGet(key);
+
+    if (redisOtp !== null) {
+      if (String(redisOtp) !== String(otp)) {
+        throw new ApiError(400, "Invalid or expired OTP");
+      }
+
+      // Delete on successful verification
+      await redisDel(key);
+    }
+  } catch {
+    // ignore redis errors; fall back to Mongo
   }
+
+  const user = await User.findOne({ email: emailKey });
+
+  if (redisOtp === null) {
+    if (!user || user.resetOtp !== otp || user.resetOtpExpires < Date.now()) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+  } else {
+    // Redis verified; ensure Mongo doc exists and isn't obviously expired.
+    if (!user || user.resetOtpExpires < Date.now()) {
+      throw new ApiError(400, "Invalid or expired OTP");
+    }
+  }
+
 
   user.isOtpVerified = true;
   user.resetOtp = undefined;

@@ -3,14 +3,19 @@ services:
     image: mongo:7
     container_name: placementor-mongo
     restart: unless-stopped
+
     ports:
       - "27017:27017"
+
     volumes:
       - mongo_data:/data/db
+
     environment:
       MONGO_INITDB_DATABASE: placementor
+
     networks:
       - placementor-network
+
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -18,37 +23,66 @@ services:
       retries: 5
       start_period: 10s
 
+  redis:
+    image: redis:7
+    container_name: placementor-redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis_data:/data
+
+    command: ["redis-server", "--appendonly", "yes"]
+
+    networks:
+      - placementor-network
+
   backend:
     image: souravkumar09/placementor-backend:latest
     container_name: placementor-backend
     restart: unless-stopped
+
     ports:
       - "5000:5000"
+
     env_file:
       - ./backend/.env
+
     environment:
       NODE_ENV: production
       PORT: 5000
       MONGOURL: mongodb://mongo:27017/placementor
       CLIENT_URL: http://localhost:3000
-      BASE_URL: http://localhost:5000
       FRONTEND_URL: http://localhost:3000
+      BASE_URL: http://localhost:5000
+      REDIS_URL: redis://redis:6379
+
     depends_on:
       mongo:
         condition: service_healthy
-    networks:
-      - placementor-network
+
+      redis:
+        condition: service_started
+
     volumes:
       - backend_uploads:/app/uploads
+
+    networks:
+      - placementor-network
 
   frontend:
     image: souravkumar09/placementor-frontend:latest
     container_name: placementor-frontend
     restart: unless-stopped
+
     ports:
       - "3000:80"
+
     depends_on:
       - backend
+
     networks:
       - placementor-network
 
@@ -59,3 +93,4 @@ networks:
 volumes:
   mongo_data:
   backend_uploads:
+  redis_data:

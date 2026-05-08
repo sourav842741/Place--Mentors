@@ -250,9 +250,21 @@ export const getOrCreateTodayPotd = async () => {
     console.log(` [POTD-SVC] Saved weekly ${potd._id}`);
     return potd;
   } catch (error) {
-    console.error(" [POTD-SVC] Failed:", error.message);
-    throw error;
-  }
+  console.error(" [POTD-SVC] AI failed:", error.message);
+
+  console.log(" [POTD-SVC] Using full fallback questions");
+
+  const fallbackPotd = await Potd.create({
+    date: now.toISOString().split("T")[0],
+    questions: FULL_FALLBACK_QUESTIONS,
+    generatedAt: now,
+    isManual: true,
+  });
+
+  console.log(" [POTD-SVC] Fallback POTD saved");
+
+  return fallbackPotd;
+}
 };
 
 // Manual trigger

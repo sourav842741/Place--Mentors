@@ -3,11 +3,30 @@ import User from "../models/user.model.js";
 import { addXP } from "../utils/xpManager.js";
 import { getOrCreateTodayPotd, generateTodayPotd } from "../services/potd.service.js";
 
+import { redisGetJson, redisSet } from "../utils/redisCache.js";
+import { cacheKey } from "../utils/cacheKeys.js";
+
+
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
 // ================= GENERATE POTD =================
 export const generatePotd = asyncHandler(async (req, res) => {
   const potd = await generateTodayPotd();
+
+  // Best-effort cache refresh (do not block request)
+  try {
+    await redisSet(
+      cacheKey.potdToday(),
+      {
+        success: true,
+        message: "POTD generated successfully",
+        data: potd,
+      },
+      3 * 60 * 60
+    );
+  } catch {
+    // ignore
+  }
 
   return res.status(201).json({
     success: true,
@@ -16,16 +35,36 @@ export const generatePotd = asyncHandler(async (req, res) => {
   });
 });
 
+
 // ================= GET TODAY POTD =================
 export const getTodayPotd = asyncHandler(async (req, res) => {
+  const key = cacheKey.potdToday();
+  const ttlSeconds = 3 * 60 * 60; // 3 hours buffer; POTD changes on cron/manual
+
+  try {
+    const cached = await redisGetJson(key);
+    if (cached) return res.status(200).json(cached);
+  } catch {
+    // ignore redis failure
+  }
+
   const potd = await getOrCreateTodayPotd();
 
-  return res.status(200).json({
+  const payload = {
     success: true,
     message: "Today's POTD",
     data: potd,
-  });
+  };
+
+  try {
+    await redisSet(key, payload, ttlSeconds);
+  } catch {
+    // ignore
+  }
+
+  return res.status(200).json(payload);
 });
+
 
 // ================= SUBMIT POTD =================
 export const submitPotd = asyncHandler(async (req, res) => {

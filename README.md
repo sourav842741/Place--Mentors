@@ -152,6 +152,13 @@ The fastest way to get the entire stack running is with Docker Compose. All serv
 
 - No need to install node_modules manually when using Docker.
 
+## ⚠️ Important:
+The `.env` file must be created inside the `backend` root folder (`Place--Mentors/backend/.env`).
+Without this file, the backend server will not start and the application will not work properly.
+
+
+
+
 
 ## ⚡ 30 Second Start Setup
 
@@ -159,6 +166,11 @@ The fastest way to get the entire stack running is with Docker Compose. All serv
 # Clone the repository
 git clone https://github.com/sourav842741/Place--Mentors.git
 cd Place--Mentors
+
+
+Create backend .env file cd backend 
+Windows type nul > .env 
+Mac/Linux touch .env
 
 # Start everything (builds images and starts containers)
 docker compose up --build
@@ -216,6 +228,13 @@ VIDEOSDK_API_KEY=your_videosdk_key
 VIDEOSDK_SECRET_KEY=your_videosdk_secret
 ADZUNA_APP_ID=your_adzuna_id
 ADZUNA_APP_KEY=your_adzuna_key
+REDIS_ENABLED=
+REDIS_HOST=
+REDIS_PORT=
+REDIS_PASSWORD=
+REDIS_DB=0
+REDIS_TLS=
+REDIS_KEY_PREFIX=
 ```
 
 ### Useful Docker Commands

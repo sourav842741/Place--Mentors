@@ -47,6 +47,12 @@ import supportRouter from "./routes/support.routes.js";
 import setupSecurity from "./middlewares/security.js";
 import { attachSocketAuth } from "./middlewares/socketAuth.js";
 
+import { initRedisClient } from "./utils/redisClient.js";
+import { redisGuard } from "./middlewares/redisGuard.js";
+import { redisRateLimiter } from "./middlewares/redisRateLimiter.js";
+import { hashKey } from "./utils/redisCache.js";
+
+
 const isSuperAdminUser = (user) => user?.isSuperAdmin === true || user?.role === "superadmin";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
@@ -90,6 +96,87 @@ app.use(
 );
 
 setupSecurity(app);
+
+// Attach Redis availability flag (never blocks requests)
+app.use(redisGuard);
+
+// Redis-backed rate limiting (multi-instance safe)
+// NOTE: Existing express-rate-limit in security.js is still applied.
+// Redis RL is only extra protection for auth/OTP abuse.
+
+const authLimiter = (opts) =>
+  redisRateLimiter({
+    prefix: "rl:auth",
+    ...opts,
+    keyBuilder: (req, ip) => {
+      // Use IP as primary dimension for unauthenticated routes.
+      // For OTP endpoints, email is also included (hashed) to prevent distributed brute force.
+      return opts?.useEmailHash && req.body?.email
+        ? `${ip}:${hashKey(req.body.email.toLowerCase().trim())}`
+        : ip;
+    },
+  });
+
+
+// Signup send OTP (stricter)
+app.use(
+  "/api/auth/signup/send-otp",
+  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many OTP requests. Try again later." })
+);
+
+// Signup verify OTP (stricter)
+app.use(
+  "/api/auth/signup/verify-otp",
+  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many OTP verification attempts. Try again later." })
+);
+
+// Password reset send OTP (stricter)
+app.use(
+  "/api/auth/password/send-otp",
+  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many reset OTP requests. Try again later." })
+);
+
+// Password reset verify OTP (stricter)
+app.use(
+  "/api/auth/password/verify-otp",
+  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many reset OTP verification attempts. Try again later." })
+);
+
+// Password reset final (moderate)
+app.use(
+  "/api/auth/password/reset",
+  authLimiter({ windowSeconds: 30 * 60, max: 10, useEmailHash: true, message: "Too many password reset attempts. Try again later." })
+);
+
+// Signin and Google auth (moderate)
+app.use(
+  "/api/auth/signin",
+  redisRateLimiter({
+    prefix: "rl:signin",
+    windowSeconds: 15 * 60,
+    max: 20,
+    keyBuilder: (req, ip) => {
+      const email = req.body?.email ? hashKey(req.body.email.toLowerCase().trim()) : null;
+      return email ? `${ip}:${email}` : ip;
+    },
+    message: "Too many sign-in attempts. Please try again later.",
+  })
+);
+
+app.use(
+  "/api/auth/google",
+  redisRateLimiter({
+    prefix: "rl:google",
+    windowSeconds: 15 * 60,
+    max: 20,
+    keyBuilder: (req, ip) => {
+      const email = req.body?.email ? hashKey(req.body.email.toLowerCase().trim()) : null;
+      return email ? `${ip}:${email}` : ip;
+    },
+    message: "Too many login attempts. Please try again later.",
+  })
+);
+
 
 app.use(
   helmet({
@@ -623,6 +710,15 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDb();
+
+    // Initialize Redis but never crash the server if Redis is down.
+    try {
+      await initRedisClient();
+      console.log(" [REDIS] init complete");
+    } catch (e) {
+      console.warn(" [REDIS] init failed, continuing without Redis.", e?.message || e);
+    }
+
 
     //  Startup recovery for missed POTD/CPOTD
     try {

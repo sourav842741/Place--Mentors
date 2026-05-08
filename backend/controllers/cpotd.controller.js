@@ -5,21 +5,55 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import axios from "axios";
 import { getOrCreateTodayCpotd, generateTodayCpotd } from "../services/cpotd.service.js";
 
+import { redisGetJson, redisSet } from "../utils/redisCache.js";
+import { cacheKey } from "../utils/cacheKeys.js";
+
 const getTodayDate = () => new Date().toISOString().split("T")[0];
+
 
 //  Generate CPOTD (manual trigger)
 export const generateCpotd = asyncHandler(async (req, res) => {
   const cpotd = await generateTodayCpotd();
 
+  // Best-effort cache refresh
+  try {
+    await redisSet(
+      cacheKey.cpotdToday(),
+      new ApiResponse(201, cpotd, "CPOTD generated"),
+      3 * 60 * 60
+    );
+  } catch {
+    // ignore
+  }
+
   return res.status(201).json(new ApiResponse(201, cpotd, "CPOTD generated"));
 });
 
+
 //  Get Today CPOTD (auto generate if not exists)
 export const getTodayCpotd = asyncHandler(async (req, res) => {
-  const cpotd = await getOrCreateTodayCpotd();
+  const key = cacheKey.cpotdToday();
+  const ttlSeconds = 3 * 60 * 60; // 3 hours buffer
 
-  return res.status(200).json(new ApiResponse(200, cpotd));
+  try {
+    const cached = await redisGetJson(key);
+    if (cached) return res.status(200).json(cached);
+  } catch {
+    // ignore
+  }
+
+  const cpotd = await getOrCreateTodayCpotd();
+  const payload = new ApiResponse(200, cpotd);
+
+  try {
+    await redisSet(key, payload, ttlSeconds);
+  } catch {
+    // ignore
+  }
+
+  return res.status(200).json(payload);
 });
+
 
 //  Submit CPOTD
 export const submitCpotd = asyncHandler(async (req, res) => {
