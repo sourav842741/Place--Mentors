@@ -75,8 +75,6 @@ const AICoach = () => {
   return (
     <>
       <div className="min-h-screen bg-[#f5f6fa] dark:bg-slate-950 text-slate-900 dark:text-white transition-colors md:mt-16">
-        <Navbar />
-
         <div className="h-[calc(100vh-64px)] p-3 md:p-5">
           <div className="h-full max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-[290px_1fr] gap-5">
             {/* MOBILE TOP */}
