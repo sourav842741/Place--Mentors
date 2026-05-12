@@ -54,6 +54,7 @@ jobs:
       RESEND_API_KEY: re_test_key
       RAZORPAY_KEY_ID: test_key
       RAZORPAY_KEY_SECRET: test_secret
+      RABBITMQ_URL: amqp://localhost:5672
 
     steps:
       - name: Checkout Code
