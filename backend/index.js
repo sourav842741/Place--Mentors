@@ -51,7 +51,7 @@ import { initRedisClient } from "./utils/redisClient.js";
 import { redisGuard } from "./middlewares/redisGuard.js";
 import { redisRateLimiter } from "./middlewares/redisRateLimiter.js";
 import { hashKey } from "./utils/redisCache.js";
-
+import { startEmailConsumer } from "./consumers/emailConsumer.js";
 
 const isSuperAdminUser = (user) => user?.isSuperAdmin === true || user?.role === "superadmin";
 
@@ -117,35 +117,59 @@ const authLimiter = (opts) =>
     },
   });
 
-
 // Signup send OTP (stricter)
 app.use(
   "/api/auth/signup/send-otp",
-  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many OTP requests. Try again later." })
+  authLimiter({
+    windowSeconds: 15 * 60,
+    max: 5,
+    useEmailHash: true,
+    message: "Too many OTP requests. Try again later.",
+  })
 );
 
 // Signup verify OTP (stricter)
 app.use(
   "/api/auth/signup/verify-otp",
-  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many OTP verification attempts. Try again later." })
+  authLimiter({
+    windowSeconds: 15 * 60,
+    max: 5,
+    useEmailHash: true,
+    message: "Too many OTP verification attempts. Try again later.",
+  })
 );
 
 // Password reset send OTP (stricter)
 app.use(
   "/api/auth/password/send-otp",
-  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many reset OTP requests. Try again later." })
+  authLimiter({
+    windowSeconds: 15 * 60,
+    max: 5,
+    useEmailHash: true,
+    message: "Too many reset OTP requests. Try again later.",
+  })
 );
 
 // Password reset verify OTP (stricter)
 app.use(
   "/api/auth/password/verify-otp",
-  authLimiter({ windowSeconds: 15 * 60, max: 5, useEmailHash: true, message: "Too many reset OTP verification attempts. Try again later." })
+  authLimiter({
+    windowSeconds: 15 * 60,
+    max: 5,
+    useEmailHash: true,
+    message: "Too many reset OTP verification attempts. Try again later.",
+  })
 );
 
 // Password reset final (moderate)
 app.use(
   "/api/auth/password/reset",
-  authLimiter({ windowSeconds: 30 * 60, max: 10, useEmailHash: true, message: "Too many password reset attempts. Try again later." })
+  authLimiter({
+    windowSeconds: 30 * 60,
+    max: 10,
+    useEmailHash: true,
+    message: "Too many password reset attempts. Try again later.",
+  })
 );
 
 // Signin and Google auth (moderate)
@@ -176,7 +200,6 @@ app.use(
     message: "Too many login attempts. Please try again later.",
   })
 );
-
 
 app.use(
   helmet({
@@ -719,6 +742,13 @@ const startServer = async () => {
       console.warn(" [REDIS] init failed, continuing without Redis.", e?.message || e);
     }
 
+    try {
+      await startEmailConsumer();
+
+      console.log("Email Consumer Started");
+    } catch (e) {
+      console.error("Failed To Start Email Consumer", e);
+    }
 
     //  Startup recovery for missed POTD/CPOTD
     try {

@@ -6,7 +6,6 @@ import { getOrCreateTodayPotd, generateTodayPotd } from "../services/potd.servic
 import { redisGetJson, redisSet } from "../utils/redisCache.js";
 import { cacheKey } from "../utils/cacheKeys.js";
 
-
 const getTodayDate = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
 // ================= GENERATE POTD =================
@@ -34,7 +33,6 @@ export const generatePotd = asyncHandler(async (req, res) => {
     data: potd,
   });
 });
-
 
 // ================= GET TODAY POTD =================
 export const getTodayPotd = asyncHandler(async (req, res) => {
@@ -64,7 +62,6 @@ export const getTodayPotd = asyncHandler(async (req, res) => {
 
   return res.status(200).json(payload);
 });
-
 
 // ================= SUBMIT POTD =================
 export const submitPotd = asyncHandler(async (req, res) => {

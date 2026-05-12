@@ -60,4 +60,3 @@ export const blacklistToken = async (token) => {
     return false;
   }
 };
-

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
+    "amqplib": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
@@ -51,7 +52,7 @@
     "razorpay": "^2.9.6",
     "react-markdown": "^10.1.0",
     "redis": "^5.12.1",
-    "resend": "^6.12.0",
+    "resend": "^6.12.3",
     "socket.io": "^4.8.3",
     "speakeasy": "^2.0.0",
     "twilio": "^6.0.0"

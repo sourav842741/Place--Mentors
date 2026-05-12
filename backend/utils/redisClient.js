@@ -109,4 +109,3 @@ export const shutdownRedis = async () => {
   redisClient = null;
   redisStatus = { ready: false, lastError: null };
 };
-

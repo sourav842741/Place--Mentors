@@ -5,10 +5,7 @@ import { redisGetJson, redisSet } from "../utils/redisCache.js";
  * - Never blocks requests if Redis is down.
  * - Uses keyBuilder to control key size/cardinality.
  */
-export const redisCacheWrapper = ({
-  keyBuilder,
-  ttlSeconds = 60,
-} = {}) => {
+export const redisCacheWrapper = ({ keyBuilder, ttlSeconds = 60 } = {}) => {
   if (!keyBuilder) {
     throw new Error("redisCacheWrapper requires keyBuilder");
   }
@@ -41,4 +38,3 @@ export const redisCacheWrapper = ({
     next();
   };
 };
-

@@ -8,4 +8,3 @@ export const redisGuard = (req, _res, next) => {
   req.redisAvailable = isRedisReady();
   next();
 };
-

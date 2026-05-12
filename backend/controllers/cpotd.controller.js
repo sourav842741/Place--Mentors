@@ -10,7 +10,6 @@ import { cacheKey } from "../utils/cacheKeys.js";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
-
 //  Generate CPOTD (manual trigger)
 export const generateCpotd = asyncHandler(async (req, res) => {
   const cpotd = await generateTodayCpotd();
@@ -28,7 +27,6 @@ export const generateCpotd = asyncHandler(async (req, res) => {
 
   return res.status(201).json(new ApiResponse(201, cpotd, "CPOTD generated"));
 });
-
 
 //  Get Today CPOTD (auto generate if not exists)
 export const getTodayCpotd = asyncHandler(async (req, res) => {
@@ -53,7 +51,6 @@ export const getTodayCpotd = asyncHandler(async (req, res) => {
 
   return res.status(200).json(payload);
 });
-
 
 //  Submit CPOTD
 export const submitCpotd = asyncHandler(async (req, res) => {

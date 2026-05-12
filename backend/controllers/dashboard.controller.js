@@ -67,9 +67,7 @@ export const getStreak = asyncHandler(async (req, res) => {
     // ignore
   }
 
-  const user = await User.findById(req.user._id).select(
-    "streakCount longestStreak dailyStats"
-  );
+  const user = await User.findById(req.user._id).select("streakCount longestStreak dailyStats");
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -153,21 +151,16 @@ export const getTaskStats = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const finalStats =
-    stats[0] || {
-      totalTasks: 0,
-      completedTasks: 0,
-      pendingTasks: 0,
-      studyTasks: 0,
-      jobTasks: 0,
-      personalTasks: 0,
-    };
+  const finalStats = stats[0] || {
+    totalTasks: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+    studyTasks: 0,
+    jobTasks: 0,
+    personalTasks: 0,
+  };
 
-  const response = new ApiResponse(
-    200,
-    finalStats,
-    "Task stats fetched successfully"
-  );
+  const response = new ApiResponse(200, finalStats, "Task stats fetched successfully");
 
   try {
     await redisSet(key, response, DASHBOARD_TTL_SECONDS);
@@ -177,6 +170,3 @@ export const getTaskStats = asyncHandler(async (req, res) => {
 
   return res.status(200).json(response);
 });
-
-
-

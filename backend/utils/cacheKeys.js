@@ -8,8 +8,7 @@ export const cacheKey = {
   potdToday: () => `cache:potd:today`,
   cpotdToday: () => `cache:cpotd:today`,
 
-  leaderboardDaily: ({ date, page, limit }) =>
-    `cache:leaderboard:daily:${date}:p${page}:l${limit}`,
+  leaderboardDaily: ({ date, page, limit }) => `cache:leaderboard:daily:${date}:p${page}:l${limit}`,
 
   leaderboardTopThreeForPage: ({ date }) => `cache:leaderboard:top3:${date}`,
 
@@ -20,4 +19,3 @@ export const cacheKey = {
   // helper to hash arbitrary strings for keys
   hash: (value) => hashKey(value),
 };
-

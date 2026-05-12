@@ -1,7 +1,13 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import TempUser from "../models/tempUser.model.js";
-import { sendSignupOtpMail, sendResetOtpMail, sendWelcomeMail } from "../config/mail.js";
+import { enqueueEmailJob } from "../producers/emailProducer.js";
+import {
+  buildSignupOtpTemplate,
+  buildResetOtpTemplate,
+  buildWelcomeTemplate,
+} from "../config/mail.js";
+
 import genToken, { genTempToken, verifyTempToken } from "../config/token.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import { deleteFromCloudinary } from "../config/cloudinary.js";
@@ -70,7 +76,6 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
 
   // Keep Mongo write as a fallback (graceful degradation)
   await TempUser.findOneAndUpdate(
-
     { email: emailKey },
     {
       fullName: fullName.trim(),
@@ -93,14 +98,22 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
     // ignore redis failure
   }
 
+  // Enqueue email job asynchronously (do NOT block request)
   try {
-    await sendSignupOtpMail(emailKey, otp);
+    const { subject, html } = buildSignupOtpTemplate(otp);
+
+    await enqueueEmailJob({
+      to: emailKey,
+      subject,
+      html,
+      meta: { jobType: "signup_otp" },
+    });
   } catch (error) {
-    throw new ApiError(500, "Failed to send signup OTP");
+    // Controller must remain fast; queue failures should not break signup flow.
+    console.error("[AUTH] Failed to enqueue signup OTP email job", error?.message || error);
   }
 
   return res.status(200).json(new ApiResponse(200, null, "OTP sent to email"));
-
 });
 
 // ================= VERIFY SIGNUP OTP =================
@@ -147,7 +160,6 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
     }
   }
 
-
   const hashedPassword = await bcrypt.hash(tempUser.password, 12);
 
   const { avatarUrl, coverUrl } = await handleImageUploads(req);
@@ -174,7 +186,20 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Account issue. Contact support.");
   }
 
-  await sendWelcomeMail(user.email, user.fullName);
+  // Async welcome email enqueue (do NOT block signup completion)
+  try {
+    const { subject, html } = buildWelcomeTemplate(user.fullName);
+
+    await enqueueEmailJob({
+      to: user.email,
+      subject,
+      html,
+      meta: { jobType: "welcome_email" },
+    });
+  } catch (error) {
+    console.error("[AUTH] Failed to enqueue welcome email job", error?.message || error);
+  }
+
   await TempUser.deleteOne({ email: tempUser.email });
 
   user.streakCount = 1;
@@ -393,7 +418,19 @@ export const googleAuth = asyncHandler(async (req, res) => {
       credits: 100,
     });
 
-    await sendWelcomeMail(user.email, user.fullName);
+    // Async welcome email enqueue (do NOT block google auth)
+    try {
+      const { subject, html } = buildWelcomeTemplate(user.fullName);
+
+      await enqueueEmailJob({
+        to: user.email,
+        subject,
+        html,
+        meta: { jobType: "welcome_email" },
+      });
+    } catch (error) {
+      console.error("[AUTH] Failed to enqueue google welcome email job", error?.message || error);
+    }
   }
 
   if (user.isBanned) {
@@ -491,14 +528,21 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
     // ignore redis failure
   }
 
+  // Enqueue reset OTP email asynchronously (do NOT block request)
   try {
-    await sendResetOtpMail(emailKey, otp);
+    const { subject, html } = buildResetOtpTemplate(otp);
+
+    await enqueueEmailJob({
+      to: emailKey,
+      subject,
+      html,
+      meta: { jobType: "reset_otp" },
+    });
   } catch (error) {
-    throw new ApiError(500, "Failed to send reset OTP");
+    console.error("[AUTH] Failed to enqueue reset OTP email job", error?.message || error);
   }
 
   return res.status(200).json(new ApiResponse(200, null, "Reset OTP sent to email"));
-
 });
 
 // ================= RESET PASSWORD =================
@@ -536,7 +580,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid or expired OTP");
     }
   }
-
 
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
@@ -588,7 +631,6 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid or expired OTP");
     }
   }
-
 
   user.isOtpVerified = true;
   user.resetOtp = undefined;
