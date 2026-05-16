@@ -23,6 +23,32 @@ services:
       retries: 5
       start_period: 10s
 
+  postgres:
+    image: postgres:16-alpine
+    container_name: placementor-postgres
+    restart: unless-stopped
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_DB: placementor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - placementor-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d placementor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   redis:
     image: redis:7
     container_name: placementor-redis
@@ -53,11 +79,27 @@ services:
     environment:
       NODE_ENV: production
       PORT: 5000
+
+      # Mongo
       MONGOURL: mongodb://mongo:27017/placementor
+
+      # Frontend URLs
       CLIENT_URL: http://localhost:3000
       FRONTEND_URL: http://localhost:3000
+
+      # Backend URL
       BASE_URL: http://localhost:5000
+
+      # Redis
       REDIS_URL: redis://redis:6379
+
+      # PostgreSQL
+      PAYMENTS_PG_ENABLED: "true"
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: placementor
+      PGUSER: postgres
+      PGPASSWORD: postgres
 
     depends_on:
       mongo:
@@ -65,6 +107,9 @@ services:
 
       redis:
         condition: service_started
+
+      postgres:
+        condition: service_healthy
 
     volumes:
       - backend_uploads:/app/uploads
@@ -92,5 +137,6 @@ networks:
 
 volumes:
   mongo_data:
+  postgres_data:
   backend_uploads:
   redis_data:
