@@ -104,16 +104,20 @@ graph TB
 | Redux Toolkit | 2+ | State Management |
 | Socket.io-client | 4+ | Real-time |
 
-**Backend:**
+### Backend Infrastructure 
+
 | Tech | Purpose |
 |------|---------|
-| Express.js | API Framework |
-| Mongoose | ODM |
-| Socket.io | Real-time |
-| JWT + bcrypt | Authentication |
-| Multer + Cloudinary | File Upload |
-| Node-cron | Scheduling |
+| MongoDB | Main Database |
+| PostgreSQL | Payment & transactional storage |
+| Redis | Caching, sessions & queues |
+| RabbitMQ | Background email/job processing |
+| Socket.io | Real-time communication |
 
+### Markdown:-
+- ⚡ Redis-powered caching for high performance
+- 📨 RabbitMQ-based async email queue system
+- 🐘 PostgreSQL for transactional payment management
 
 
 ## 📱 Screenshots & Video Demo
