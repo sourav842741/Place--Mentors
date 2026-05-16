@@ -27,18 +27,20 @@ const CATEGORIES = [
 
 const PRIORITIES = ["Low", "Medium", "High"];
 
-export default function CreateTicketModal({ open, onClose, onSubmit, loading }) {
+export default function CreateTicketModal({ open, onClose, onSubmit, loading, prefill }) {
   const { user } = useSelector((state) => state.user);
+
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
-    subject: "",
-    category: "",
-    priority: "Low",
-    description: "",
+    subject: prefill?.subject || "",
+    category: prefill?.category || "",
+    priority: prefill?.priority || "Low",
+    description: prefill?.description || "",
     email: user?.email || "",
     mobile: "",
   });
+
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});

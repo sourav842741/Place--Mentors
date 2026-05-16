@@ -62,6 +62,7 @@ import PlacementPredictor from "./pages/PlacementPredictor";
 import SupportPage from "./pages/SupportPage";
 import TicketDetailPage from "./pages/TicketDetailPage";
 import AdminTickets from "./pages/admin/AdminTickets";
+import AdminPayments from "./pages/admin/AdminPayments";
 import InterviewExperienceComingSoon from "./pages/InterviewExperienceComingSoon";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
@@ -88,6 +89,7 @@ import Certificates from "./pages/Certificates.jsx";
 import CookieConsent from "./components/CookieConsent";
 import MaintenanceProductivityHub from "./pages/MaintenanceProductivityHub";
 import ProjectDocs from "./pages/ProjectDocs";
+import Payments from "./pages/Payments";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -262,6 +264,7 @@ function App() {
             <Route path="/admin/security" element={<AdminSecurity />} />
             <Route path="/admin/maintenance-manager" element={<AdminMaintenanceManager />} />
             <Route path="/admin/tickets" element={<AdminTickets />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
           </Route>
         </Route>
 
@@ -306,10 +309,10 @@ function App() {
           <Route path="/voice-report/:id" element={<CallReport />} />
           <Route path="/support" element={<SupportPage />} />
           <Route path="/support/ticket/:id" element={<TicketDetailPage />} />
-        <Route path="/interview-experience" element={<InterviewExperienceComingSoon />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/maintenance-hub" element={<MaintenanceProductivityHub />} />
-
+          <Route path="/payments" element={<Payments />} />
+          <Route path="/interview-experience" element={<InterviewExperienceComingSoon />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/maintenance-hub" element={<MaintenanceProductivityHub />} />
         </Route>
 
         {/* SPECIAL */}

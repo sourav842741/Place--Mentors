@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -36,8 +37,20 @@ const TABS = [
 
 export default function SupportPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("ai");
   const [showModal, setShowModal] = useState(false);
+
+  const ticketPrefill = useMemo(() => {
+    return location?.state?.ticketPrefill || null;
+  }, [location?.state]);
+
+  useEffect(() => {
+    if (!ticketPrefill) return;
+    setActiveTab("ticket");
+    setShowModal(true);
+  }, [ticketPrefill]);
+
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
@@ -386,6 +399,7 @@ export default function SupportPage() {
         onClose={() => setShowModal(false)}
         onSubmit={handleCreateTicket}
         loading={actionLoading}
+        prefill={ticketPrefill}
       />
     </>
   );

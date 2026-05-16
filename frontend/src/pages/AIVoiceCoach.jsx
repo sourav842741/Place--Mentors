@@ -136,7 +136,7 @@ const AIVoiceCoach = () => {
 
   return (
     <>
-    <Navbar/>
+      <Navbar />
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 px-4 md:px-8 py-8 lg:mt-14 lg:ml-64 md:mt-16">
         {/* HERO */}

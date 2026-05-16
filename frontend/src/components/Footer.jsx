@@ -7,7 +7,6 @@ const Footer = () => {
   return (
     <footer className="bg-white dark:bg-gray-900 border-t dark:border-gray-800 mt-10 lg:ml-64 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 py-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-        
         {/* Logo + About */}
         <div>
           <h2 className="text-xl font-bold text-indigo-600">Place Mentor</h2>
@@ -53,7 +52,6 @@ const Footer = () => {
               onClick={() => navigate("/privacy-policy")}
               className="cursor-pointer flex items-center gap-2 hover:text-indigo-600 hover:underline transition"
             >
-             
               Privacy Policy
             </li>
           </ul>

@@ -24,5 +24,4 @@ export const verifyTempToken = (token) => {
   }
 };
 
-
 export default genToken;

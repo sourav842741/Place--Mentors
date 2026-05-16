@@ -13,30 +13,18 @@ const requiredEnvVars = [
 ];
 
 // Enable PostgreSQL validation only when payments PG mode is enabled
-const isPaymentsPgEnabled =
-  process.env.PAYMENTS_PG_ENABLED === "true";
+const isPaymentsPgEnabled = process.env.PAYMENTS_PG_ENABLED === "true";
 
 if (isPaymentsPgEnabled) {
-  requiredEnvVars.push(
-    "PGHOST",
-    "PGPORT",
-    "PGDATABASE",
-    "PGUSER",
-    "PGPASSWORD"
-  );
+  requiredEnvVars.push("PGHOST", "PGPORT", "PGDATABASE", "PGUSER", "PGPASSWORD");
 }
 
 // Find missing vars
-const missingVars = requiredEnvVars.filter(
-  (varName) => !process.env[varName]
-);
+const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 // Fail fast
 if (missingVars.length > 0) {
-  console.error(
-    "[FATAL] Missing required environment variables:",
-    missingVars.join(", ")
-  );
+  console.error("[FATAL] Missing required environment variables:", missingVars.join(", "));
 
   process.exit(1);
 }

@@ -1,6 +1,5 @@
 import { startEmailConsumer } from "../consumers/emailConsumer.js";
 
-
 const main = async () => {
   await startEmailConsumer();
 };

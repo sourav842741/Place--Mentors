@@ -25,6 +25,9 @@ import {
   Mic,
   Ticket,
   Users,
+  Receipt,
+  CheckCircle2,
+  Clock3,
 } from "lucide-react";
 
 import { BsCoin } from "react-icons/bs";
@@ -65,6 +68,8 @@ export default function Navbar() {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
+  const [paymentHistory, setPaymentHistory] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(false);
 
   const [showThemePopup, setShowThemePopup] = useState(false);
   const [popupContent, setPopupContent] = useState({ icon: null, title: "", subtitle: "" });
@@ -134,6 +139,26 @@ export default function Navbar() {
       setIsDark(false);
     }
   }, []);
+
+  useEffect(() => {
+    const loadPayments = async () => {
+      if (!isAuth) return;
+
+      try {
+        setLoadingPayments(true);
+
+        const res = await api.get("/api/payment/me?page=1&limit=4");
+
+        setPaymentHistory(res.data?.data?.payments || []);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoadingPayments(false);
+      }
+    };
+
+    loadPayments();
+  }, [isAuth]);
 
   const handleLogout = async () => {
     try {
@@ -363,25 +388,137 @@ p-2 rounded"
                 {showCreditPopup && (
                   <div
                     className="absolute right-0 mt-3 
-      w-48 sm:w-56 md:w-64 
-      bg-white shadow-xl border rounded-xl 
-      p-3 sm:p-4 md:p-5 
-      z-50 animate-in fade-in zoom-in-95"
+    w-[340px]
+    bg-white dark:bg-[#0B1120]
+    border border-gray-200 dark:border-white/10
+    shadow-2xl rounded-3xl
+    p-5
+    z-50 animate-in fade-in zoom-in-95 duration-300"
                   >
-                    <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-3">
-                      Need more credits?
-                    </p>
+                    {/* HEADER */}
+                    <div className="flex items-center justify-between mb-5">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                          Credit Wallet
+                        </h3>
 
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Manage credits & view history
+                        </p>
+                      </div>
+
+                      <div className="w-11 h-11 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                        <BsCoin className="text-white text-lg" />
+                      </div>
+                    </div>
+
+                    {/* CREDIT CARD */}
+                    <div className="rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 p-5 text-white shadow-xl">
+                      <p className="text-sm opacity-80">Available Credits</p>
+
+                      <h2 className="text-4xl font-black mt-2">{credits}</h2>
+
+                      <div className="mt-4 flex items-center gap-2 text-xs opacity-80">
+                        <Receipt className="w-4 h-4" />
+                        Last transactions available below
+                      </div>
+                    </div>
+
+                    {/* HISTORY */}
+                    <div className="mt-5">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                          Recent Transactions
+                        </h4>
+
+                        <button
+                          onClick={() => {
+                            navigate("/payments");
+                            setShowCreditPopup(false);
+                          }}
+                          className="text-xs font-medium text-indigo-600 hover:text-indigo-500 transition"
+                        >
+                          View All
+                        </button>
+                      </div>
+
+                      <div className="space-y-3 max-h-[230px] overflow-y-auto pr-1">
+                        {loadingPayments ? (
+                          <div className="text-sm text-center py-6 text-gray-500">
+                            Loading history...
+                          </div>
+                        ) : paymentHistory.length === 0 ? (
+                          <div className="text-sm text-center py-6 text-gray-500 dark:text-gray-400">
+                            No payment history found
+                          </div>
+                        ) : (
+                          paymentHistory.map((p) => (
+                            <div
+                              key={p.id}
+                              className="rounded-2xl border border-gray-200 dark:border-white/10 
+              bg-gray-50 dark:bg-white/5 
+              p-3 hover:shadow-md transition"
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                                      p.status === "paid" ? "bg-green-500/10" : "bg-yellow-500/10"
+                                    }`}
+                                  >
+                                    {p.status === "paid" ? (
+                                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                    ) : (
+                                      <Clock3 className="w-5 h-5 text-yellow-500" />
+                                    )}
+                                  </div>
+
+                                  <div>
+                                    <p className="font-semibold text-sm text-gray-900 dark:text-white">
+                                      {p.planId || p.plan_id || "Credits"}
+                                    </p>
+
+                                    <p className="text-xs text-gray-500">
+                                      {new Date(p.createdAt || p.created_at).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="text-right">
+                                  <p className="font-bold text-sm text-gray-900 dark:text-white">
+                                    ₹{p.amount}
+                                  </p>
+
+                                  {p.credits_added || p.status === "paid" ? (
+                                    <p className="text-xs text-green-500 font-medium">
+                                      +{p.credits} credits added
+                                    </p>
+                                  ) : p.status === "failed" ? (
+                                    <p className="text-xs text-red-500 font-medium">
+                                      Credits not added
+                                    </p>
+                                  ) : (
+                                    <p className="text-xs text-yellow-500 font-medium">
+                                      Credits pending
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+
+                    {/* ACTION BUTTON */}
                     <button
                       onClick={() => navigate("/pricing")}
-                      className="w-full 
-            bg-black text-white 
-            py-2 md:py-2.5 
-            rounded-lg 
-            text-xs sm:text-sm md:text-base 
-            hover:bg-gray-800 transition"
+                      className="w-full mt-5 h-12 rounded-2xl 
+      bg-gradient-to-r from-indigo-600 to-purple-600 
+      hover:opacity-90
+      text-white font-semibold transition-all duration-300 shadow-lg"
                     >
-                      Buy Credits
+                      Buy More Credits
                     </button>
                   </div>
                 )}

@@ -13,6 +13,7 @@ import {
   FileText,
   ChevronRight,
   ShieldCheck,
+  CreditCard,
 } from "lucide-react";
 
 const menuItems = [
@@ -28,6 +29,11 @@ const menuItems = [
     path: "/admin/maintenance-manager",
   },
   { icon: Ticket, label: "Tickets", path: "/admin/tickets" },
+  {
+    icon: CreditCard,
+    label: "Payments",
+    path: "/admin/payments",
+  },
   {
     icon: FileText,
     label: "Project Docs",

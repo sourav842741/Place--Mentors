@@ -14,16 +14,13 @@ const requiredEnvVars = ["PGHOST", "PGPORT", "PGDATABASE", "PGUSER", "PGPASSWORD
 // Tests and local dev may run without Postgres.
 // Fail fast only when explicitly enabled.
 if (requiredEnvVars.length && process.env.PAYMENTS_PG_ENABLED === "true") {
-  throw new Error(
-    `[PG] Missing required environment variables: ${requiredEnvVars.join(", ")}`
-  );
+  throw new Error(`[PG] Missing required environment variables: ${requiredEnvVars.join(", ")}`);
 }
 
 // If Postgres is not enabled, keep pool importable without crashing.
 if (!requiredEnvVars.length) {
   // ok
 }
-
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -62,5 +59,3 @@ const pool = new Pool({
 });
 
 export default pool;
-
-

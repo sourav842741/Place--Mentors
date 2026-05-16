@@ -3,7 +3,6 @@ import razorpay from "../services/razorpay.service.js";
 import crypto from "crypto";
 import { paymentRepository } from "../repositories/payment.repository.pg.js";
 
-
 const PRICE_SHEET = {
   basic: { amount: 100, credits: 150 },
   pro: { amount: 500, credits: 650 },
@@ -35,16 +34,15 @@ export const createOrder = async (req, res) => {
       status: "created",
     });
 
-
     return res.json(order);
   } catch (error) {
-  console.error("[Payment Order Error]", error);
+    console.error("[Payment Order Error]", error);
 
-  return res.status(500).json({
-    message: error.message,
-    stack: error.stack,
-  });
-}
+    return res.status(500).json({
+      message: error.message,
+      stack: error.stack,
+    });
+  }
 };
 
 export const verifyPayment = async (req, res) => {
@@ -65,9 +63,7 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: "Invalid payment signature" });
     }
 
-    const existingPayment = await paymentRepository.getPaymentByRazorpayOrderId(
-      razorpay_order_id
-    );
+    const existingPayment = await paymentRepository.getPaymentByRazorpayOrderId(razorpay_order_id);
 
     if (!existingPayment) {
       return res.status(404).json({ message: "Payment not found" });
@@ -77,7 +73,6 @@ export const verifyPayment = async (req, res) => {
     if (existingPayment.credits_added === true || existingPayment.status === "paid") {
       return res.json({ message: "Already processed" });
     }
-
 
     // Atomically acquire processing lock.
     const { acquired, payment } = await paymentRepository.acquireForProcessing({
@@ -99,13 +94,10 @@ export const verifyPayment = async (req, res) => {
       return res.json({ message: "Already processed" });
     }
 
-
     // Hybrid consistency: ONLY finalize Postgres to paid after Mongo credits update succeeds.
     try {
       // Re-check just before crediting to prevent double credits under all retries.
-      const latest = await paymentRepository.getPaymentByRazorpayOrderId(
-        razorpay_order_id
-      );
+      const latest = await paymentRepository.getPaymentByRazorpayOrderId(razorpay_order_id);
       if (latest?.credits_added === true) {
         return res.json({ message: "Already processed" });
       }
@@ -154,7 +146,6 @@ export const verifyPayment = async (req, res) => {
       await paymentRepository.markFailed({ razorpayOrderId: razorpay_order_id });
       return res.status(500).json({ message: "Failed to verify Razorpay payment" });
     }
-
   } catch (error) {
     console.error("[Payment] Verify flow failure", {
       razorpay_order_id: req.body?.razorpay_order_id,
@@ -164,3 +155,79 @@ export const verifyPayment = async (req, res) => {
   }
 };
 
+// ================= READ-ONLY PAYMENT VISIBILITY =================
+
+export const getMyPayments = async (req, res) => {
+  const userId = req.user?._id;
+
+  const { page = 1, limit = 20, status } = req.query;
+
+  try {
+    const result = await paymentRepository.getPaymentsByUser({
+      userId,
+      page: Number(page),
+      limit: Number(limit),
+      status,
+    });
+
+    const paymentsRaw = Array.isArray(result?.payments) ? result.payments : [];
+
+    // Frontend user UI: minimal fields (no internal order/payment IDs)
+    const payments = paymentsRaw.map((p) => ({
+      id: p.id,
+      planId: p.plan_id,
+      amount: p.amount,
+      credits: p.credits,
+      status: p.status,
+      creditsAdded: p.credits_added,
+      createdAt: p.created_at,
+    }));
+
+    return res.json({
+      success: true,
+      message: "Payments fetched successfully",
+      data: {
+        payments,
+        pagination: result?.pagination || {
+          page: Number(page),
+          limit: Number(limit),
+          total: 0,
+          pages: 0,
+        },
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err?.message || "Failed to fetch payments",
+    });
+  }
+};
+
+export const getAllPaymentsForAdmin = async (req, res) => {
+  const { page = 1, limit = 20, status, search, planId } = req.query;
+
+  try {
+    const result = await paymentRepository.getAllPaymentsForAdmin({
+      page: Number(page),
+      limit: Number(limit),
+      status,
+      search,
+      planId,
+    });
+
+    return res.json({
+      success: true,
+      message: "Admin payments fetched successfully",
+      data: {
+        payments: result.payments,
+        pagination: result.pagination,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err?.message || "Failed to fetch admin payments",
+    });
+  }
+};

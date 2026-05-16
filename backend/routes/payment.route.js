@@ -7,7 +7,11 @@ import { createOrder, verifyPayment } from "../validators/payment.validator.js";
 import {
   createOrder as createOrderController,
   verifyPayment as verifyPaymentController,
+  getMyPayments,
+  getAllPaymentsForAdmin,
 } from "../controllers/payment.controller.js";
+
+import isAdmin from "../middlewares/admin.middleware.js";
 
 const paymentRouter = express.Router();
 
@@ -28,5 +32,10 @@ paymentRouter.post(
   validate(verifyPayment),
   verifyPaymentController
 );
+
+// ================= READ-ONLY PAYMENT VISIBILITY =================
+paymentRouter.get("/me", isAuth, getMyPayments);
+
+paymentRouter.get("/admin/all", isAuth, isAdmin, getAllPaymentsForAdmin);
 
 export default paymentRouter;
