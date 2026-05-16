@@ -47,6 +47,7 @@
     "nodemon": "^3.1.14",
     "pdfjs-dist": "^5.6.205",
     "pdfkit": "^0.18.0",
+    "pg": "^8.20.0",
     "puppeteer": "^24.40.0",
     "qrcode": "^1.5.4",
     "razorpay": "^2.9.6",
