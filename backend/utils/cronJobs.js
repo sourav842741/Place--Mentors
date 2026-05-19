@@ -11,10 +11,10 @@ const LOCATIONS = ["India", "Remote"];
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-const INTERVAL = 8 * 60 * 60 * 1000; // jobs - 8h
-
-// ✅ NEW: 7 days interval for POTD & CPOTD
-const POTD_INTERVAL = 7 * 24 * 60 * 60 * 1000;
+// ================= INTERVALS =================
+const JOBS_INTERVAL = 8 * 60 * 60 * 1000; // 8 hours
+const POTD_INTERVAL = 30 * 24 * 60 * 60 * 1000; // 30 days
+const NEWS_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
 
 const fetchAndSaveForQuery = async (keyword, location) => {
   console.log(`\n Fetching ${keyword} in ${location}...`);
@@ -35,107 +35,153 @@ const fetchAndSaveForQuery = async (keyword, location) => {
   }
 };
 
-// 🔥 MAIN CRON LOGIC
+// ================= MAIN CRON LOGIC =================
 export const runFullCronCycle = async () => {
   const today = new Date().toISOString().split("T")[0];
+
   console.log(`\n [CRON] Self-healing cycle for ${today}`);
 
   try {
     const now = new Date();
 
     // ================= JOBS =================
-    let state = await CronState.findOne({ name: "adzuna-cron" });
+    try {
+      console.log(" [CRON-JOBS] Check...");
 
-    if (state && now - new Date(state.lastRun) < INTERVAL) {
-      console.log(" [CRON-JOBS] Skipped (8h not due)");
-    } else {
-      console.log("\n [CRON-JOBS] Running Adzuna...");
-      for (const keyword of KEYWORDS) {
-        for (const location of LOCATIONS) {
-          await fetchAndSaveForQuery(keyword, location);
-          await delay(3000);
+      let jobsState = await CronState.findOne({ name: "adzuna-cron" });
+
+      if (
+        jobsState &&
+        now - new Date(jobsState.lastRun) < JOBS_INTERVAL
+      ) {
+        console.log(" [CRON-JOBS] Skipped (8h not due)");
+      } else {
+        console.log("\n [CRON-JOBS] Running Adzuna...");
+
+        for (const keyword of KEYWORDS) {
+          for (const location of LOCATIONS) {
+            await fetchAndSaveForQuery(keyword, location);
+            await delay(3000);
+          }
+        }
+
+        console.log(" [CRON-JOBS] Complete!");
+
+        if (!jobsState) {
+          await CronState.create({
+            name: "adzuna-cron",
+            lastRun: now,
+          });
+        } else {
+          jobsState.lastRun = now;
+          await jobsState.save();
         }
       }
-      console.log(" [CRON-JOBS] Complete!");
-
-      if (!state) {
-        await CronState.create({ name: "adzuna-cron", lastRun: now });
-      } else {
-        state.lastRun = now;
-        await state.save();
-      }
+    } catch (e) {
+      console.error(" [CRON-JOBS] Error:", e.message);
     }
 
-    // ================= POTD (7 DAYS) =================
+    // ================= POTD (30 DAYS) =================
     try {
       console.log(" [CRON-POTD] Check...");
 
       let potdState = await CronState.findOne({ name: "potd-cron" });
 
-      if (potdState && now - new Date(potdState.lastRun) < POTD_INTERVAL) {
-        console.log(" [CRON-POTD] Skipped (7d not due)");
+      if (
+        potdState &&
+        now - new Date(potdState.lastRun) < POTD_INTERVAL
+      ) {
+        console.log(" [CRON-POTD] Skipped (30d not due)");
       } else {
         console.log(" [CRON-POTD] Generating new POTD...");
+
         await getOrCreateTodayPotd();
 
         if (!potdState) {
-          await CronState.create({ name: "potd-cron", lastRun: now });
+          await CronState.create({
+            name: "potd-cron",
+            lastRun: now,
+          });
         } else {
           potdState.lastRun = now;
           await potdState.save();
         }
 
-        console.log(" [CRON-POTD] Done (weekly)");
+        console.log(" [CRON-POTD] Done (monthly)");
       }
     } catch (e) {
-      console.error(` [CRON-POTD] Error:`, e.message);
+      console.error(" [CRON-POTD] Error:", e.message);
     }
 
-    // ================= CPOTD (7 DAYS) =================
+    // ================= CPOTD (30 DAYS) =================
     try {
       console.log(" [CRON-CPOTD] Check...");
 
       let cpotdState = await CronState.findOne({ name: "cpotd-cron" });
 
-      if (cpotdState && now - new Date(cpotdState.lastRun) < POTD_INTERVAL) {
-        console.log(" [CRON-CPOTD] Skipped (7d not due)");
+      if (
+        cpotdState &&
+        now - new Date(cpotdState.lastRun) < POTD_INTERVAL
+      ) {
+        console.log(" [CRON-CPOTD] Skipped (30d not due)");
       } else {
         console.log(" [CRON-CPOTD] Generating new CPOTD...");
+
         await getOrCreateTodayCpotd();
 
         if (!cpotdState) {
-          await CronState.create({ name: "cpotd-cron", lastRun: now });
+          await CronState.create({
+            name: "cpotd-cron",
+            lastRun: now,
+          });
         } else {
           cpotdState.lastRun = now;
           await cpotdState.save();
         }
 
-        console.log(" [CRON-CPOTD] Done (weekly)");
+        console.log(" [CRON-CPOTD] Done (monthly)");
       }
     } catch (e) {
-      console.error(` [CRON-CPOTD] Error:`, e.message);
+      console.error(" [CRON-CPOTD] Error:", e.message);
     }
 
-    // ================= NEWS (4 HOURS) =================
-    const NEWS_INTERVAL = 4 * 60 * 60 * 1000;
-    let newsState = await CronState.findOne({ name: "news-cron" });
+    // ================= NEWS =================
+    try {
+      console.log(" [CRON-NEWS] Check...");
 
-    if (newsState && now - new Date(newsState.lastRun) < NEWS_INTERVAL) {
-      console.log(" [CRON-NEWS] Skipped (4h not due)");
-    } else {
-      console.log("\n [CRON-NEWS] Fetching + processing news...");
-      const newsCount = await fetchAndProcessNews();
-      console.log(`[CRON-NEWS] Complete! (${newsCount} articles)`);
+      let newsState = await CronState.findOne({ name: "news-cron" });
 
-      if (!newsState) {
-        await CronState.create({ name: "news-cron", lastRun: now });
+      if (
+        newsState &&
+        now - new Date(newsState.lastRun) < NEWS_INTERVAL
+      ) {
+        console.log(" [CRON-NEWS] Skipped (4h not due)");
       } else {
-        newsState.lastRun = now;
-        await newsState.save();
+        console.log("\n [CRON-NEWS] Fetching + processing news...");
+
+        const newsCount = await fetchAndProcessNews();
+
+        console.log(
+          ` [CRON-NEWS] Complete! (${newsCount} articles)`
+        );
+
+        if (!newsState) {
+          await CronState.create({
+            name: "news-cron",
+            lastRun: now,
+          });
+        } else {
+          newsState.lastRun = now;
+          await newsState.save();
+        }
       }
+    } catch (e) {
+      console.error(" [CRON-NEWS] Error:", e.message);
     }
 
-    console.log(` [CRON] All systems healthy for ${today} (incl. NEWS)`);
+    console.log(
+      ` [CRON] All systems healthy for ${today} (incl. NEWS)`
+    );
   } catch (error) {
     console.error(" [CRON] Cycle failed:", error.message);
   }
@@ -147,10 +193,12 @@ export const startCronJobs = () => {
     await runFullCronCycle();
   });
 
-  // Start email cron jobs
+  // ================= EMAIL CRONS =================
   startEmailCronJobs();
 
-  console.log(" [CRON] Self-healing + Email started (10min cycles)");
+  console.log(
+    " [CRON] Self-healing + Email started (10min cycles)"
+  );
 };
 
 export default { startCronJobs };

@@ -1,7 +1,8 @@
 import Potd from "../models/Potd.js";
 import { askAi, extractJSON } from "./openRouter.service.js";
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+// ================= INTERVAL =================
+const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
  * FULL STRUCTURED FALLBACK (15 QUESTIONS)
@@ -170,33 +171,42 @@ const isValidQuestion = (q) => {
 };
 
 export const getOrCreateTodayPotd = async () => {
-  console.log(" [POTD-SVC] Weekly check...");
+  console.log(" [POTD-SVC] Monthly check...");
 
   const now = new Date();
-  const sevenDaysAgo = new Date(now.getTime() - WEEK_MS);
+
+  // ================= CHECK LAST 30 DAYS =================
+  const thirtyDaysAgo = new Date(now.getTime() - MONTH_MS);
 
   let potd = await Potd.findOne({
-    createdAt: { $gte: sevenDaysAgo },
+    createdAt: { $gte: thirtyDaysAgo },
   }).sort({ createdAt: -1 });
 
+  // ================= MANUAL ENTRY =================
   if (potd?.isManual) {
-    console.log(" [POTD-SVC] Manual weekly POTD found");
+    console.log(" [POTD-SVC] Manual monthly POTD found");
     return potd;
   }
 
+  // ================= EXISTING REUSE =================
   if (potd) {
-    console.log(" [POTD-SVC] Existing weekly POTD reused");
+    console.log(" [POTD-SVC] Existing monthly POTD reused");
     return potd;
   }
 
-  console.log(" [POTD-SVC] Generating new weekly POTD...");
+  console.log(" [POTD-SVC] Generating new monthly POTD...");
 
   try {
     let questions = [];
 
-    // AI try 3 times
+    // ================= AI TRY (3 TIMES) =================
     for (let i = 0; i < 3; i++) {
-      const aiResponse = await askAi([{ role: "user", content: POTD_PROMPT }]);
+      const aiResponse = await askAi([
+        {
+          role: "user",
+          content: POTD_PROMPT,
+        },
+      ]);
 
       const data = extractJSON(aiResponse);
 
@@ -207,22 +217,28 @@ export const getOrCreateTodayPotd = async () => {
         break;
       }
 
-      console.log(`[POTD-SVC] Retry ${i + 1}: received ${validQuestions.length}`);
+      console.log(
+        ` [POTD-SVC] Retry ${i + 1}: received ${validQuestions.length}`
+      );
     }
 
-    // Fill remaining from AI
+    // ================= EXTRA AI FILL =================
     if (questions.length > 0 && questions.length < 15) {
       try {
         const extraRes = await askAi([
           {
             role: "user",
-            content: `Generate ${15 - questions.length} more MCQs in same raw JSON format only.`,
+            content: `Generate ${
+              15 - questions.length
+            } more MCQs in same raw JSON format only.`,
           },
         ]);
 
         const extraData = extractJSON(extraRes);
 
-        const extraQuestions = (extraData?.questions || []).filter(isValidQuestion);
+        const extraQuestions = (extraData?.questions || []).filter(
+          isValidQuestion
+        );
 
         questions = [...questions, ...extraQuestions];
       } catch {
@@ -230,24 +246,30 @@ export const getOrCreateTodayPotd = async () => {
       }
     }
 
-    // Final fallback fill to exactly 15
+    // ================= FALLBACK FILL =================
     if (questions.length < 15) {
       console.log(" [POTD-SVC] Using fallback fill");
 
       const needed = 15 - questions.length;
 
-      questions = [...questions, ...FULL_FALLBACK_QUESTIONS.slice(0, needed)];
+      questions = [
+        ...questions,
+        ...FULL_FALLBACK_QUESTIONS.slice(0, needed),
+      ];
     }
 
+    // Ensure exactly 15
     questions = questions.slice(0, 15);
 
+    // ================= SAVE =================
     potd = await Potd.create({
       date: now.toISOString().split("T")[0],
       questions,
       generatedAt: now,
     });
 
-    console.log(` [POTD-SVC] Saved weekly ${potd._id}`);
+    console.log(` [POTD-SVC] Saved monthly ${potd._id}`);
+
     return potd;
   } catch (error) {
     console.error(" [POTD-SVC] AI failed:", error.message);
@@ -267,7 +289,7 @@ export const getOrCreateTodayPotd = async () => {
   }
 };
 
-// Manual trigger
+// ================= MANUAL GENERATE =================
 export const generateTodayPotd = async () => {
   await Potd.deleteMany({});
   return await getOrCreateTodayPotd();

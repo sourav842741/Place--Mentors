@@ -1,7 +1,8 @@
 import CodingPotd from "../models/CodingPotd.js";
 import { askAi, extractJSON } from "./openRouter.service.js";
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+// ================= INTERVAL =================
+const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
  * -----------------------------------------
@@ -13,15 +14,20 @@ const CODING_FALLBACK = [
     title: "Two Sum",
     description:
       "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+
     inputFormat: "nums = [int array], target = int",
+
     outputFormat: "Return indices [i, j]",
+
     constraints: "2 ≤ nums.length ≤ 10^4",
+
     sampleTestCases: [
       {
         input: "nums = [2,7,11,15], target = 9",
         expectedOutput: "[0,1]",
       },
     ],
+
     hiddenTestCases: [
       {
         input: "nums = [3,2,4], target = 6",
@@ -32,29 +38,43 @@ const CODING_FALLBACK = [
         expectedOutput: "[0,1]",
       },
     ],
+
     difficulty: "easy",
-    solutionExplanation: "Use hashmap to store visited values and check complement.",
+
+    solutionExplanation:
+      "Use hashmap to store visited values and check complement.",
   },
+
   {
     title: "Number of Islands",
-    description: "Given a 2D grid of 1s and 0s, count number of islands.",
+
+    description:
+      "Given a 2D grid of 1s and 0s, count number of islands.",
+
     inputFormat: "grid = 2D array",
+
     outputFormat: "Return integer",
+
     constraints: "1 ≤ rows, cols ≤ 300",
+
     sampleTestCases: [
       {
         input: "grid = [[1,1,0],[1,1,0],[0,0,1]]",
         expectedOutput: "2",
       },
     ],
+
     hiddenTestCases: [
       {
         input: "grid = [[1,0,1],[0,1,0],[1,0,1]]",
         expectedOutput: "5",
       },
     ],
+
     difficulty: "medium",
-    solutionExplanation: "Use DFS/BFS to mark connected land cells.",
+
+    solutionExplanation:
+      "Use DFS/BFS to mark connected land cells.",
   },
 ];
 
@@ -64,18 +84,19 @@ Generate EXACTLY 2 coding interview problems in VALID JSON only.
 Rules:
 1. Problem 1 = Easy or Medium (array/string/hashmap)
 2. Problem 2 = Medium or Hard (tree/graph/dp)
-3. Include fields:
-title
-description
-inputFormat
-outputFormat
-constraints
-sampleTestCases [{input, expectedOutput}]
-hiddenTestCases [{input, expectedOutput}]
-difficulty
-solutionExplanation
 
-Return ONLY:
+Include fields:
+- title
+- description
+- inputFormat
+- outputFormat
+- constraints
+- sampleTestCases [{input, expectedOutput}]
+- hiddenTestCases [{input, expectedOutput}]
+- difficulty
+- solutionExplanation
+
+Return ONLY raw JSON.
 
 {
   "questions": [...]
@@ -90,6 +111,7 @@ Return ONLY:
 
 const safeString = (value = "") => {
   if (typeof value === "string") return value;
+
   return JSON.stringify(value);
 };
 
@@ -101,6 +123,7 @@ const normalizeDifficulty = (value = "easy") => {
   }
 
   if (val.includes("med")) return "medium";
+
   if (val.includes("har")) return "hard";
 
   return "easy";
@@ -111,7 +134,11 @@ const normalizeCases = (arr = [], isSample = false) => {
 
   return arr.map((item) => ({
     input: safeString(item?.input ?? ""),
-    expectedOutput: safeString(item?.expectedOutput ?? item?.output ?? ""),
+
+    expectedOutput: safeString(
+      item?.expectedOutput ?? item?.output ?? ""
+    ),
+
     isSample,
   }));
 };
@@ -120,21 +147,31 @@ const normalizeQuestions = (questions = []) => {
   return questions.map((q, index) => ({
     title: q?.title || `Problem ${index + 1}`,
 
-    description: q?.description || "Solve the problem efficiently.",
+    description:
+      q?.description || "Solve the problem efficiently.",
 
-    inputFormat: q?.inputFormat || "Read input from standard input.",
+    inputFormat:
+      q?.inputFormat || "Read input from standard input.",
 
-    outputFormat: q?.outputFormat || "Print the required output.",
+    outputFormat:
+      q?.outputFormat || "Print the required output.",
 
     constraints: q?.constraints || "N/A",
 
-    sampleTestCases: normalizeCases(q?.sampleTestCases, true),
+    sampleTestCases: normalizeCases(
+      q?.sampleTestCases,
+      true
+    ),
 
-    hiddenTestCases: normalizeCases(q?.hiddenTestCases, false),
+    hiddenTestCases: normalizeCases(
+      q?.hiddenTestCases,
+      false
+    ),
 
     difficulty: normalizeDifficulty(q?.difficulty),
 
-    solutionExplanation: q?.solutionExplanation || "",
+    solutionExplanation:
+      q?.solutionExplanation || "",
   }));
 };
 
@@ -143,7 +180,12 @@ const getTodayDate = () => {
 };
 
 const askAiForQuestions = async () => {
-  const response = await askAi([{ role: "user", content: CPOTD_PROMPT }]);
+  const response = await askAi([
+    {
+      role: "user",
+      content: CPOTD_PROMPT,
+    },
+  ]);
 
   const data = extractJSON(response);
 
@@ -161,29 +203,43 @@ const askAiForQuestions = async () => {
  */
 
 export const getOrCreateTodayCpotd = async () => {
-  console.log(" [CPOTD-SVC] Weekly check...");
+  console.log(" [CPOTD-SVC] Monthly check...");
 
   const now = new Date();
-  const sevenDaysAgo = new Date(now.getTime() - WEEK_MS);
+
+  // ================= CHECK LAST 30 DAYS =================
+  const thirtyDaysAgo = new Date(
+    now.getTime() - MONTH_MS
+  );
 
   /**
-   * If already generated in last 7 days -> reuse
+   * If already generated in last 30 days -> reuse
    */
   let existing = await CodingPotd.findOne({
-    createdAt: { $gte: sevenDaysAgo },
+    createdAt: { $gte: thirtyDaysAgo },
   }).sort({ createdAt: -1 });
 
+  // ================= MANUAL ENTRY =================
   if (existing?.isManual) {
-    console.log(" [CPOTD-SVC] Manual weekly CPOTD found");
+    console.log(
+      " [CPOTD-SVC] Manual monthly CPOTD found"
+    );
+
     return existing;
   }
 
+  // ================= REUSE EXISTING =================
   if (existing) {
-    console.log(" [CPOTD-SVC] Existing weekly CPOTD reused");
+    console.log(
+      " [CPOTD-SVC] Existing monthly CPOTD reused"
+    );
+
     return existing;
   }
 
-  console.log(" [CPOTD-SVC] Generating new weekly CPOTD...");
+  console.log(
+    " [CPOTD-SVC] Generating new monthly CPOTD..."
+  );
 
   try {
     let questions = [];
@@ -204,9 +260,13 @@ export const getOrCreateTodayCpotd = async () => {
           questions = aiQuestions;
         }
 
-        console.log(` [CPOTD-SVC] Retry ${i}: received ${aiQuestions.length}`);
+        console.log(
+          ` [CPOTD-SVC] Retry ${i}: received ${aiQuestions.length}`
+        );
       } catch (err) {
-        console.log(` [CPOTD-SVC] Retry ${i} failed`);
+        console.log(
+          ` [CPOTD-SVC] Retry ${i} failed`
+        );
       }
     }
 
@@ -216,13 +276,18 @@ export const getOrCreateTodayCpotd = async () => {
     if (questions.length < 2) {
       const need = 2 - questions.length;
 
-      questions = [...questions, ...CODING_FALLBACK.slice(0, need)];
+      questions = [
+        ...questions,
+        ...CODING_FALLBACK.slice(0, need),
+      ];
     }
 
     /**
      * Keep only 2 and sanitize
      */
-    questions = normalizeQuestions(questions.slice(0, 2));
+    questions = normalizeQuestions(
+      questions.slice(0, 2)
+    );
 
     /**
      * Avoid duplicate same date
@@ -234,20 +299,28 @@ export const getOrCreateTodayCpotd = async () => {
     });
 
     /**
-     * Create
+     * Create new CPOTD
      */
     const cpotd = await CodingPotd.create({
       date: today,
+
       questions,
+
       generatedAt: now,
+
       isManual: false,
     });
 
-    console.log(` [CPOTD-SVC] Saved weekly ${cpotd._id}`);
+    console.log(
+      ` [CPOTD-SVC] Saved monthly ${cpotd._id}`
+    );
 
     return cpotd;
   } catch (error) {
-    console.error(" [CPOTD-SVC] Weekly generation failed:", error.message);
+    console.error(
+      " [CPOTD-SVC] Monthly generation failed:",
+      error.message
+    );
 
     /**
      * Emergency fallback create
@@ -260,12 +333,17 @@ export const getOrCreateTodayCpotd = async () => {
 
     const fallback = await CodingPotd.create({
       date: today,
+
       questions: normalizeQuestions(CODING_FALLBACK),
+
       generatedAt: new Date(),
+
       isManual: false,
     });
 
-    console.log(" [CPOTD-SVC] Emergency fallback saved");
+    console.log(
+      " [CPOTD-SVC] Emergency fallback saved"
+    );
 
     return fallback;
   }
@@ -278,5 +356,6 @@ export const getOrCreateTodayCpotd = async () => {
  */
 export const generateTodayCpotd = async () => {
   await CodingPotd.deleteMany({});
+
   return await getOrCreateTodayCpotd();
 };
