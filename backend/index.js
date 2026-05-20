@@ -47,18 +47,26 @@ import supportRouter from "./routes/support.routes.js";
 import setupSecurity from "./middlewares/security.js";
 import { attachSocketAuth } from "./middlewares/socketAuth.js";
 
+import { initSentry, Sentry } from "./config/sentry.js";
+import sentryTestRouter from "./routes/sentry.routes.js";
+
+
 import { initRedisClient } from "./utils/redisClient.js";
 import { redisGuard } from "./middlewares/redisGuard.js";
 import { redisRateLimiter } from "./middlewares/redisRateLimiter.js";
 import { hashKey } from "./utils/redisCache.js";
 import { startEmailConsumer } from "./consumers/emailConsumer.js";
 
+
 const isSuperAdminUser = (user) => user?.isSuperAdmin === true || user?.role === "superadmin";
+
+initSentry();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
 const port = process.env.PORT || 5000;
+
 
 //  HTTP SERVER
 const server = http.createServer(app);
@@ -215,10 +223,31 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 
+// ================= SENTRY =================
+// Attach request context and capture request errors without changing existing responses.
+app.use((req, res, next) => {
+  try {
+    const scope = Sentry.getCurrentScope();
+    if (scope) {
+      scope.setContext("request", {
+        method: req.method,
+        url: req.originalUrl,
+        params: req.params,
+        query: req.query,
+      });
+    }
+  } catch (e) {
+    // Never block requests.
+  }
+  next();
+});
+
+
 // ================= HEALTH CHECK =================
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
@@ -254,7 +283,13 @@ app.use("/api/prediction", predictionRoutes);
 app.use("/api/tickets", ticketRouter);
 app.use("/api/support", supportRouter);
 
+// ================= SENTRY TEST =================
+app.use("/api", sentryTestRouter);
+
+Sentry.setupExpressErrorHandler(app);
+
 // ================= SOCKET EVENTS =================
+
 const connectedSockets = new Map(); // userId -> Set(socket.id)
 const activeBattles = new Map();
 
@@ -312,8 +347,8 @@ io.on("connection", (socket) => {
       }
 
       io.emit("online_users", connectedSockets.size);
-    } catch (error) {
-      // Silently handle error
+    } catch (e) {
+       Sentry.captureException(e);
     }
   });
 
@@ -510,6 +545,7 @@ io.on("connection", (socket) => {
 
       socket.emit("battle:started", { roomId });
     } catch (error) {
+       Sentry.captureException(error);
       socket.emit("battle:error", "Failed to start battle");
     }
   });
@@ -577,8 +613,8 @@ io.on("connection", (socket) => {
       if (challengedSocketId && io.sockets.sockets.has(challengedSocketId)) {
         io.to(challengedSocketId).emit("challenge:rejected", rejectData);
       }
-    } catch (error) {
-      // Silently handle
+    } catch (e) {
+      Sentry.captureException(e);
     }
   });
 
@@ -600,8 +636,8 @@ io.on("connection", (socket) => {
           remainingTime,
         });
       }
-    } catch (error) {
-      // Silently handle
+    } catch (e) {
+       Sentry.captureException(e);
     }
   });
 
@@ -669,12 +705,13 @@ io.on("connection", (socket) => {
         setTimeout(async () => {
           try {
             await Battle.deleteOne({ roomId });
-          } catch (error) {
-            // Silently handle
+          } catch (e) {
+             Sentry.captureException(e);
           }
         }, 120000);
       }
     } catch (error) {
+       Sentry.captureException(error);
       socket.emit("battle:error", "Submission failed");
     }
   });
@@ -726,10 +763,37 @@ io.on("connection", (socket) => {
   });
 });
 
+
 // ================= ERROR HANDLER =================
 app.use(errorHandler);
 
+// ================= PROCESS ERROR HANDLING (SENTRY) =================
+// Prevent duplicate handlers in test/hot-reload environments.
+if (!process.__sentryProcessHandlersAttached) {
+  process.__sentryProcessHandlersAttached = true;
+
+  process.on("unhandledRejection", (reason) => {
+    try {
+      Sentry.captureException(reason instanceof Error ? reason : new Error(String(reason)));
+    } catch (e) {
+      // Never crash due to Sentry.
+    }
+  });
+
+  process.on("uncaughtException", (err) => {
+    try {
+      Sentry.captureException(err);
+    } catch (e) {
+      // Never crash due to Sentry.
+    }
+
+    // Preserve existing shutdown behavior: let the process terminate.
+    // (Do not force exit here; current app already exits on critical startup failures.)
+  });
+}
+
 // ================= START SERVER =================
+
 const startServer = async () => {
   try {
     await connectDb();
@@ -772,6 +836,7 @@ const startServer = async () => {
       // Server started
     });
   } catch (error) {
+     Sentry.captureException(error);
     process.exit(1);
   }
 };
