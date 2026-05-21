@@ -240,9 +240,17 @@ app.use((req, res, next) => {
 });
 
 // ================= HEALTH CHECK =================
+// Lightweight endpoint for Render/UptimeRobot cold-start wakeups.
+// Must not depend on DB/Redis so it stays fast during server sleep.
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  res.status(200).json({
+    success: true,
+    message: "Server running",
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime() * 1000), // milliseconds
+  });
 });
+
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);

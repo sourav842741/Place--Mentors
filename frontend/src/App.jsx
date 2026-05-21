@@ -69,6 +69,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/admin/AdminRoute";
+import ServerWakeLoader from "./components/ServerWakeLoader";
+
 import AdminLayout from "./components/admin/AdminLayout";
 import InstallPopup from "./components/InstallPopup";
 import NotFoundPage from "./components/NotFoundPage";
@@ -211,10 +213,174 @@ function App() {
     };
   }, [dispatch, navigate]);
 
-  /* LOADER */
-  if (loading || settingsLoading) {
-    return null;
+ 
+ const [wakeState, setWakeState] = useState({
+  status: "checking", // checking | waiting | failed | ready
+  attempt: 0,
+  lastError: null,
+});
+
+useEffect(() => {
+  const healthUrl = `${import.meta.env.VITE_SERVER_URL}/api/health`;
+
+  const timeoutMs = 6000;
+  const retryEveryMs = 3000;
+  const maxRetries = 10;
+
+  let attempt = 0;
+  let settled = false;
+  let retryTimeout = null;
+  let requestTimeout = null;
+
+  const tryCheck = async () => {
+    if (settled) return;
+
+    const timeoutController = new AbortController();
+
+    requestTimeout = setTimeout(() => {
+      timeoutController.abort();
+    }, timeoutMs);
+
+    try {
+      const res = await fetch(healthUrl, {
+        method: "GET",
+        signal: timeoutController.signal,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.ok) {
+        settled = true;
+
+        setWakeState({
+          status: "ready",
+          attempt,
+          lastError: null,
+        });
+
+        return;
+      }
+
+      attempt += 1;
+
+      setWakeState({
+        status: "waiting",
+        attempt,
+        lastError: `Health check failed (${res.status})`,
+      });
+    } catch (e) {
+      attempt += 1;
+
+      const errorMessage =
+        e?.name === "AbortError"
+          ? "Server wake-up timeout"
+          : e?.message || "Network error";
+
+      setWakeState({
+        status: "waiting",
+        attempt,
+        lastError: errorMessage,
+      });
+    } finally {
+      if (requestTimeout) {
+        clearTimeout(requestTimeout);
+      }
+    }
+
+    // Max retry reached
+    if (attempt >= maxRetries) {
+      settled = true;
+
+      setWakeState({
+        status: "failed",
+        attempt,
+        lastError: "Server is still sleeping",
+      });
+
+      return;
+    }
+
+    // Retry safely
+    retryTimeout = setTimeout(() => {
+      tryCheck();
+    }, retryEveryMs);
+  };
+
+  // Initial start
+  setWakeState({
+    status: "checking",
+    attempt: 0,
+    lastError: null,
+  });
+
+  tryCheck();
+
+  return () => {
+    settled = true;
+
+    if (requestTimeout) {
+      clearTimeout(requestTimeout);
+    }
+
+    if (retryTimeout) {
+      clearTimeout(retryTimeout);
+    }
+  };
+}, []);
+
+if (wakeState.status !== "ready") {
+  if (wakeState.status === "failed") {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center px-4 bg-[#030712] text-white">
+        <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-2xl p-8 shadow-2xl">
+          <h2 className="text-2xl font-bold tracking-tight">
+            Server is taking too long to wake up
+          </h2>
+
+          <p className="mt-3 text-sm text-white/60 leading-relaxed">
+            The backend server is still starting on free-tier hosting.
+            Please refresh the page or try again in a few moments.
+          </p>
+
+          <div className="mt-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3">
+            <p className="text-xs text-red-300">
+              {wakeState.lastError || "Unknown error"}
+            </p>
+          </div>
+
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 w-full rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
   }
+
+  const phase =
+    wakeState.status === "waiting" ? "waking" : "starting";
+
+  return (
+    <ServerWakeLoader
+      phase={phase}
+      attempt={wakeState.attempt}
+    />
+  );
+}
+
+/* EXISTING APP LOADER */
+if (loading || settingsLoading) {
+  return (
+    <ServerWakeLoader
+      phase="starting"
+      attempt={0}
+    />
+  );
+}
+
 
   /* MAINTENANCE BLOCK
      ADMIN ROUTES ALWAYS ALLOWED */
