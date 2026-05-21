@@ -50,13 +50,11 @@ import { attachSocketAuth } from "./middlewares/socketAuth.js";
 import { initSentry, Sentry } from "./config/sentry.js";
 import sentryTestRouter from "./routes/sentry.routes.js";
 
-
 import { initRedisClient } from "./utils/redisClient.js";
 import { redisGuard } from "./middlewares/redisGuard.js";
 import { redisRateLimiter } from "./middlewares/redisRateLimiter.js";
 import { hashKey } from "./utils/redisCache.js";
 import { startEmailConsumer } from "./consumers/emailConsumer.js";
-
 
 const isSuperAdminUser = (user) => user?.isSuperAdmin === true || user?.role === "superadmin";
 
@@ -66,7 +64,6 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
 const port = process.env.PORT || 5000;
-
 
 //  HTTP SERVER
 const server = http.createServer(app);
@@ -242,12 +239,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // ================= HEALTH CHECK =================
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
-
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
@@ -348,7 +343,7 @@ io.on("connection", (socket) => {
 
       io.emit("online_users", connectedSockets.size);
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
     }
   });
 
@@ -545,7 +540,7 @@ io.on("connection", (socket) => {
 
       socket.emit("battle:started", { roomId });
     } catch (error) {
-       Sentry.captureException(error);
+      Sentry.captureException(error);
       socket.emit("battle:error", "Failed to start battle");
     }
   });
@@ -637,7 +632,7 @@ io.on("connection", (socket) => {
         });
       }
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
     }
   });
 
@@ -706,12 +701,12 @@ io.on("connection", (socket) => {
           try {
             await Battle.deleteOne({ roomId });
           } catch (e) {
-             Sentry.captureException(e);
+            Sentry.captureException(e);
           }
         }, 120000);
       }
     } catch (error) {
-       Sentry.captureException(error);
+      Sentry.captureException(error);
       socket.emit("battle:error", "Submission failed");
     }
   });
@@ -762,7 +757,6 @@ io.on("connection", (socket) => {
     });
   });
 });
-
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);
@@ -836,7 +830,7 @@ const startServer = async () => {
       // Server started
     });
   } catch (error) {
-     Sentry.captureException(error);
+    Sentry.captureException(error);
     process.exit(1);
   }
 };

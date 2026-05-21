@@ -12,34 +12,21 @@ const requiredEnvVars = [
   "RAZORPAY_KEY_SECRET",
 ];
 
-
-const isPaymentsPgEnabled =
-  process.env.PAYMENTS_PG_ENABLED === "true";
+const isPaymentsPgEnabled = process.env.PAYMENTS_PG_ENABLED === "true";
 
 if (isPaymentsPgEnabled) {
-  requiredEnvVars.push(
-    "PGHOST",
-    "PGPORT",
-    "PGDATABASE",
-    "PGUSER",
-    "PGPASSWORD"
-  );
+  requiredEnvVars.push("PGHOST", "PGPORT", "PGDATABASE", "PGUSER", "PGPASSWORD");
 }
 
 // Find missing vars
-const missingVars = requiredEnvVars.filter(
-  (varName) => !process.env[varName]
-);
+const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 // Skip strict validation during tests
 const isTestEnv = process.env.NODE_ENV === "test";
 
 // Fail fast only outside tests
 if (missingVars.length > 0 && !isTestEnv) {
-  console.error(
-    "[FATAL] Missing required environment variables:",
-    missingVars.join(", ")
-  );
+  console.error("[FATAL] Missing required environment variables:", missingVars.join(", "));
 
   process.exit(1);
 }
@@ -54,32 +41,25 @@ const ENV = {
 
   // JWT
   JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRES_IN:
-    process.env.JWT_EXPIRES_IN || "7d",
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "7d",
 
   // Frontend
   CLIENT_URL: process.env.CLIENT_URL,
 
   // Razorpay
-  RAZORPAY_KEY_ID:
-    process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
 
-  RAZORPAY_KEY_SECRET:
-    process.env.RAZORPAY_KEY_SECRET,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
 
   // Resend
-  RESEND_API_KEY:
-    process.env.RESEND_API_KEY,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
 
   // PostgreSQL Payments
-  PAYMENTS_PG_ENABLED:
-    isPaymentsPgEnabled,
+  PAYMENTS_PG_ENABLED: isPaymentsPgEnabled,
 
   PGHOST: process.env.PGHOST,
 
-  PGPORT:
-    parseInt(process.env.PGPORT, 10) ||
-    5432,
+  PGPORT: parseInt(process.env.PGPORT, 10) || 5432,
 
   PGDATABASE: process.env.PGDATABASE,
 

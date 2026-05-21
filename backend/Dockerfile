@@ -13,7 +13,6 @@ RUN apk add --no-cache python3 make g++
 COPY package*.json ./
 
 # Install production dependencies only
-# Note: nodemon is in dependencies, but we use `node index.js` for production
 RUN npm install --omit=dev
 
 # Copy application source code
@@ -21,6 +20,9 @@ COPY . .
 
 # Create uploads directory for multer (if used)
 RUN mkdir -p uploads
+
+# Environment
+ENV NODE_ENV=production
 
 # Expose backend port
 EXPOSE 5000
@@ -31,4 +33,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 
 # Start the server
 CMD ["node", "index.js"]
-

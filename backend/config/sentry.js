@@ -3,8 +3,6 @@ import * as Sentry from "@sentry/node";
 let initialized = false;
 
 const initSentry = () => {
-
-
   if (initialized) return;
   initialized = true;
 
@@ -30,5 +28,3 @@ const initSentry = () => {
 };
 
 export { initSentry, Sentry };
-
-

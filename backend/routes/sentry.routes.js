@@ -10,4 +10,3 @@ router.get("/sentry-test", (req, res, next) => {
 });
 
 export default router;
-

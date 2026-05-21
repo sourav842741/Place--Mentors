@@ -16,7 +16,10 @@ COPY . .
 
 # Build args from docker-compose
 ARG VITE_SERVER_URL
+ARG VITE_SENTRY_DSN
+
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
 
 # Build frontend
 RUN npm run build

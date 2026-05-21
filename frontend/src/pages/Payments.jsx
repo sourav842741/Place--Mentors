@@ -222,7 +222,7 @@ export default function Payments() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <Separator />
 
                         <div className="p-4 md:p-5 flex items-center justify-between gap-3">
