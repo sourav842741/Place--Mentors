@@ -5,7 +5,6 @@ import {
   BrainCircuit,
   Rocket,
   ShieldCheck,
-  Cpu,
 } from "lucide-react";
 
 function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
@@ -18,12 +17,12 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
   const theme = useMemo(() => {
     return {
       bg: isDark
-        ? "bg-[#030712] text-white"
-        : "bg-[#f6f8ff] text-[#0f172a]",
+        ? "bg-[#050816] text-white"
+        : "bg-gradient-to-br from-[#ffffff] via-[#f4f7ff] to-[#eef2ff] text-[#0f172a]",
 
       card: isDark
-        ? "bg-white/[0.05] border-white/10"
-        : "bg-white/80 border-black/10",
+        ? "bg-[#0b1120]/80 border-white/10"
+        : "bg-white/80 border-blue-100",
 
       secondary: isDark
         ? "text-white/60"
@@ -34,20 +33,20 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
         : "text-slate-500",
 
       grid: isDark
-        ? "rgba(255,255,255,0.08)"
-        : "rgba(15,23,42,0.08)",
+        ? "rgba(255,255,255,0.05)"
+        : "rgba(99,102,241,0.08)",
 
       glow1: isDark
-        ? "bg-cyan-500/20"
-        : "bg-cyan-300/40",
+        ? "bg-blue-500/20"
+        : "bg-blue-300/30",
 
       glow2: isDark
         ? "bg-purple-500/20"
-        : "bg-purple-300/40",
+        : "bg-purple-300/30",
 
       glow3: isDark
-        ? "bg-pink-500/10"
-        : "bg-pink-300/30",
+        ? "bg-indigo-500/10"
+        : "bg-indigo-300/20",
     };
   }, [isDark]);
 
@@ -110,7 +109,7 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute left-20 top-32 h-4 w-4 rounded-full bg-cyan-400 shadow-[0_0_30px_#22d3ee]"
+        className="absolute left-20 top-32 h-4 w-4 rounded-full bg-blue-400 shadow-[0_0_30px_#60a5fa]"
       />
 
       <motion.div
@@ -122,7 +121,7 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute bottom-24 right-20 h-4 w-4 rounded-full bg-pink-500 shadow-[0_0_30px_#ec4899]"
+        className="absolute bottom-24 right-20 h-4 w-4 rounded-full bg-purple-500 shadow-[0_0_30px_#a855f7]"
       />
 
       {/* MAIN */}
@@ -133,10 +132,10 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
         className="relative z-10 w-full max-w-4xl"
       >
         <div
-          className={`relative overflow-hidden rounded-[40px] border backdrop-blur-3xl shadow-[0_0_120px_rgba(59,130,246,0.12)] ${theme.card}`}
+          className={`relative overflow-hidden rounded-[40px] border backdrop-blur-3xl shadow-[0_0_120px_rgba(99,102,241,0.15)] ${theme.card}`}
         >
           {/* BORDER */}
-          <div className="absolute inset-0 rounded-[40px] p-[1px] bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-pink-500/30">
+          <div className="absolute inset-0 rounded-[40px] p-[1px] bg-gradient-to-r from-blue-500/30 via-cyan-400/30 to-purple-500/30">
             <div
               className={`h-full w-full rounded-[40px] ${
                 isDark ? "bg-[#050816]/95" : "bg-white/90"
@@ -150,44 +149,190 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
           </div>
 
           <div className="relative z-10 p-8 md:p-14">
+
             {/* TOP */}
             <div className="flex flex-col items-center justify-center text-center">
-              {/* LOGO */}
-              <motion.div
-                animate={{
-                  rotate: [0, 4, -4, 0],
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                }}
-                className="relative"
-              >
-                <div className="absolute inset-0 rounded-[32px] bg-cyan-400/30 blur-3xl" />
 
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-[32px] bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 shadow-[0_0_70px_rgba(59,130,246,0.6)]">
-                  <Cpu className="h-11 w-11 text-white" strokeWidth={2.5} />
-                </div>
-              </motion.div>
-
-              {/* SMALL LABEL */}
+              {/* LABEL */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="mt-8 flex items-center gap-2 text-cyan-400 text-sm md:text-base font-medium"
+                className="flex items-center gap-2 text-blue-400 text-sm md:text-base font-medium tracking-[0.2em]"
               >
                 <Sparkles size={16} />
                 AI Powered Placement Platform
               </motion.div>
 
-              {/* PLACEMENTOR TEXT */}
-              <div className="relative mt-8 flex items-center justify-center overflow-hidden">
+              {/* REALISTIC BOOK */}
+              <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                  rotate: [0, 1.2, -1.2, 0],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="relative mt-14"
+              >
                 {/* Glow */}
-                <div className="absolute h-32 w-[420px] bg-cyan-400/20 blur-3xl" />
+                <div className="absolute inset-0 bg-blue-500/10 blur-[120px] rounded-full" />
 
-                {/* Animated Text */}
+                <div className="relative w-[340px] h-[230px] mx-auto perspective-[2000px]">
+
+                  {/* SHADOW */}
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[280px] h-10 rounded-full bg-black/40 blur-3xl" />
+
+                  {/* BOOK COVER */}
+                  <div
+                    className={`absolute inset-0 rounded-[18px] overflow-hidden border shadow-[0_25px_60px_rgba(0,0,0,0.35)]
+                    ${
+                      isDark
+                        ? "bg-[#111827] border-blue-400/20"
+                        : "bg-white border-blue-200"
+                    }`}
+                  >
+
+                    {/* Left Page */}
+                    <div
+                      className={`absolute left-0 top-0 h-full w-1/2 border-r
+                      ${
+                        isDark
+                          ? "bg-[#0f172a] border-blue-400/10"
+                          : "bg-[#fafcff] border-blue-100"
+                      }`}
+                    >
+                      <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-black/10 to-transparent" />
+
+                      <div className="px-7 pt-8">
+                        <p className="text-[10px] uppercase tracking-[0.35em] text-blue-400/70">
+                          AI PLATFORM
+                        </p>
+
+                        <h2 className="mt-3 text-4xl font-black bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                          Place
+                        </h2>
+
+                        <div className="mt-8 space-y-3">
+                          <div className="h-2.5 w-24 rounded-full bg-blue-400/40" />
+                          <div className="h-2.5 w-20 rounded-full bg-blue-400/20" />
+                          <div className="h-2.5 w-16 rounded-full bg-blue-400/40" />
+                          <div className="h-2.5 w-24 rounded-full bg-blue-400/20" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Page */}
+                    <div
+                      className={`absolute right-0 top-0 h-full w-1/2
+                      ${
+                        isDark
+                          ? "bg-[#111827]"
+                          : "bg-white"
+                      }`}
+                    >
+                      <div className="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-black/10 to-transparent" />
+
+                      <div className="px-7 pt-8 text-right">
+                        <p className="text-[10px] uppercase tracking-[0.35em] text-purple-400/70">
+                          INTERVIEW AI
+                        </p>
+
+                        <h2 className="mt-3 text-4xl font-black bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                          Mentor
+                        </h2>
+
+                        <div className="mt-8 flex flex-col items-end space-y-3">
+                          <div className="h-2.5 w-24 rounded-full bg-purple-400/40" />
+                          <div className="h-2.5 w-20 rounded-full bg-purple-400/20" />
+                          <div className="h-2.5 w-16 rounded-full bg-purple-400/40" />
+                          <div className="h-2.5 w-24 rounded-full bg-purple-400/20" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Spine */}
+                    <div className="absolute left-1/2 top-0 -translate-x-1/2 h-full w-[10px] bg-gradient-to-b from-blue-500 via-cyan-400 to-purple-500 shadow-[0_0_30px_rgba(99,102,241,0.6)] z-40" />
+                  </div>
+
+                  {/* REAL PAGES */}
+                  {[...Array(14)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{
+                        rotateY: 0,
+                      }}
+                      animate={{
+                        rotateY: [0, -180, 0],
+                      }}
+                      transition={{
+                        duration: 3.2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.09,
+                      }}
+                      style={{
+                        transformStyle: "preserve-3d",
+                        zIndex: 30 - i,
+                      }}
+                      className="absolute left-1/2 top-0 h-full w-1/2 origin-left"
+                    >
+                      <div
+                        className={`relative h-full w-full rounded-r-[12px] border-r shadow-xl overflow-hidden
+                        ${
+                          isDark
+                            ? "bg-[#1e293b] border-blue-400/10"
+                            : "bg-white border-slate-200"
+                        }`}
+                      >
+
+                        {/* Page Texture */}
+                        <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle,#000_1px,transparent_1px)] [background-size:12px_12px]" />
+
+                        {/* Fold Shadow */}
+                        <div className="absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-black/10 to-transparent" />
+
+                        {/* Lines */}
+                        <div className="absolute left-5 top-8 rotate-[-8deg] space-y-3">
+                          <div className="h-2 w-16 rounded-full bg-blue-400/30" />
+                          <div className="h-2 w-12 rounded-full bg-blue-400/20" />
+                          <div className="h-2 w-14 rounded-full bg-blue-400/30" />
+                          <div className="h-2 w-10 rounded-full bg-blue-400/20" />
+                        </div>
+
+                        {/* Tiny Heading */}
+                        <div className="absolute right-5 top-6 text-[10px] tracking-[0.25em] uppercase text-blue-400/50">
+                          AI
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* LOADING */}
+                <motion.div
+                  animate={{
+                    opacity: [0.4, 1, 0.4],
+                    y: [0, -2, 0],
+                  }}
+                  transition={{
+                    duration: 1.8,
+                    repeat: Infinity,
+                  }}
+                  className={`mt-14 text-center tracking-[0.4em] uppercase text-sm font-medium ${
+                    isDark ? "text-blue-300" : "text-blue-600"
+                  }`}
+                >
+                  Loading AI Systems...
+                </motion.div>
+              </motion.div>
+
+              {/* PLACEMENTOR */}
+              <div className="relative mt-10 flex items-center justify-center overflow-hidden">
+                <div className="absolute h-32 w-[420px] bg-blue-400/20 blur-3xl" />
+
                 <motion.h1
                   initial={{
                     opacity: 0,
@@ -207,12 +352,11 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
                   }}
                   className="relative text-center text-6xl md:text-8xl font-black tracking-[-0.08em]"
                 >
-                  <span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(34,211,238,0.55)]">
+                  <span className="bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(99,102,241,0.35)]">
                     Placementor
                   </span>
                 </motion.h1>
 
-                {/* Scan Line */}
                 <motion.div
                   initial={{ x: "-120%" }}
                   animate={{ x: "220%" }}
@@ -233,7 +377,7 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
                 className={`mt-8 rounded-full px-5 py-2 text-sm border flex items-center gap-2 ${
                   isDark
                     ? "bg-white/5 border-white/10 text-white/70"
-                    : "bg-slate-100 border-slate-200 text-slate-700"
+                    : "bg-white border-blue-100 text-slate-700"
                 }`}
               >
                 <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -278,7 +422,7 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
 
               <div
                 className={`relative h-3 overflow-hidden rounded-full ${
-                  isDark ? "bg-white/10" : "bg-slate-200"
+                  isDark ? "bg-white/10" : "bg-blue-100"
                 }`}
               >
                 <motion.div
@@ -289,7 +433,7 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
                     duration: 1.3,
                     ease: "easeInOut",
                   }}
-                  className="absolute inset-y-0 w-1/3 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 shadow-[0_0_35px_rgba(59,130,246,0.7)]"
+                  className="absolute inset-y-0 w-1/3 rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 shadow-[0_0_35px_rgba(99,102,241,0.6)]"
                 />
               </div>
             </div>
@@ -318,11 +462,11 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
                   className={`rounded-2xl border p-5 backdrop-blur-xl ${
                     isDark
                       ? "border-white/10 bg-white/[0.03]"
-                      : "border-slate-200 bg-white/70"
+                      : "border-blue-100 bg-white/70"
                   }`}
                 >
                   <item.icon
-                    className="mb-4 text-cyan-400"
+                    className="mb-4 text-blue-500"
                     size={28}
                   />
 
@@ -343,8 +487,8 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
                 Free-tier cloud servers may take a few seconds to initialize.
               </p>
 
-              <div className="flex items-center gap-2 text-xs text-cyan-400">
-                <div className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+              <div className="flex items-center gap-2 text-xs text-blue-400">
+                <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
                 Establishing secure AI connection...
               </div>
             </div>
@@ -352,7 +496,7 @@ function ServerWakeLoader({ phase = "starting", attempt = 0 }) {
         </div>
       </motion.div>
 
-      {/* ANIMATIONS */}
+      {/* ANIMATION */}
       <style>{`
         @keyframes shine {
           0% {
