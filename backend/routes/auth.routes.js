@@ -21,8 +21,8 @@ import {
 
 import isAuth from "../middlewares/isAuth.js";
 import { upload } from "../middlewares/multer.js";
-import { strictLimiter } from "../middlewares/security.js";
 import validate from "../middlewares/validate.js";
+
 import {
   sendSignupOtp as sendSignupOtpSchema,
   signIn as signInSchema,
@@ -35,13 +35,37 @@ import {
 
 const authRouter = express.Router();
 
-// ================= AUTH =================
-authRouter.post("/signin", strictLimiter, validate(signInSchema), signIn);
-authRouter.get("/signout", signOut);
-authRouter.post("/google", strictLimiter, validate(googleAuthSchema), googleAuth);
+/* ==================================================
+   AUTH
+================================================== */
 
-// ================= SIGNUP WITH OTP =================
-authRouter.post("/signup/send-otp", strictLimiter, validate(sendSignupOtpSchema), sendSignupOtp);
+authRouter.post(
+  "/signin",
+  validate(signInSchema),
+  signIn
+);
+
+authRouter.get(
+  "/signout",
+  signOut
+);
+
+authRouter.post(
+  "/google",
+  validate(googleAuthSchema),
+  googleAuth
+);
+
+/* ==================================================
+   SIGNUP WITH OTP
+================================================== */
+
+authRouter.post(
+  "/signup/send-otp",
+  validate(sendSignupOtpSchema),
+  sendSignupOtp
+);
+
 authRouter.post(
   "/signup/verify-otp",
   upload.fields([
@@ -51,17 +75,32 @@ authRouter.post(
   verifySignupOtp
 );
 
-// ================= RESET PASSWORD =================
-authRouter.post("/password/send-otp", strictLimiter, validate(sendResetOtpSchema), sendResetOtp);
+/* ==================================================
+   RESET PASSWORD
+================================================== */
+
+authRouter.post(
+  "/password/send-otp",
+  validate(sendResetOtpSchema),
+  sendResetOtp
+);
+
 authRouter.post(
   "/password/verify-otp",
-  strictLimiter,
   validate(verifyResetOtpSchema),
   verifyResetOtp
 );
-authRouter.post("/password/reset", strictLimiter, validate(resetPasswordSchema), resetPassword);
 
-// ================= USER PROFILE =================
+authRouter.post(
+  "/password/reset",
+  validate(resetPasswordSchema),
+  resetPassword
+);
+
+/* ==================================================
+   USER PROFILE
+================================================== */
+
 authRouter.put(
   "/profile",
   isAuth,
@@ -73,16 +112,53 @@ authRouter.put(
   updateProfile
 );
 
-authRouter.put("/skills", isAuth, updateSkills);
+authRouter.put(
+  "/skills",
+  isAuth,
+  updateSkills
+);
 
-// ================= CURRENT USER =================
-authRouter.get("/me", isAuth, getCurrentUser);
+/* ==================================================
+   CURRENT USER
+================================================== */
 
-// ================= 2FA =================
-authRouter.get("/2fa/status", isAuth, getTwoFactorStatus);
-authRouter.post("/2fa/setup", isAuth, setupTwoFactor);
-authRouter.post("/2fa/enable", isAuth, enableTwoFactor);
-authRouter.post("/2fa/login", strictLimiter, verifyTwoFactorLogin);
-authRouter.post("/2fa/disable", isAuth, disableTwoFactor);
+authRouter.get(
+  "/me",
+  isAuth,
+  getCurrentUser
+);
+
+/* ==================================================
+   2FA
+================================================== */
+
+authRouter.get(
+  "/2fa/status",
+  isAuth,
+  getTwoFactorStatus
+);
+
+authRouter.post(
+  "/2fa/setup",
+  isAuth,
+  setupTwoFactor
+);
+
+authRouter.post(
+  "/2fa/enable",
+  isAuth,
+  enableTwoFactor
+);
+
+authRouter.post(
+  "/2fa/login",
+  verifyTwoFactorLogin
+);
+
+authRouter.post(
+  "/2fa/disable",
+  isAuth,
+  disableTwoFactor
+);
 
 export default authRouter;
