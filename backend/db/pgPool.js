@@ -3,8 +3,6 @@ import ENV from "../config/env.js";
 
 const { Pool } = pg;
 
-
-
 const requiredEnvVars = ["PGHOST", "PGPORT", "PGDATABASE", "PGUSER", "PGPASSWORD"].filter(
   (k) => !process.env[k]
 );
@@ -25,7 +23,6 @@ const sslEnabled =
   process.env.PGSSL === "true" ||
   process.env.PGSSL_ENABLED === "true";
 
-
 const ssl = sslEnabled
   ? {
       rejectUnauthorized: false,
@@ -43,12 +40,10 @@ const pool = new Pool({
   idleTimeoutMillis: Number(process.env.PG_IDLE_TIMEOUT_MS || 30000),
   connectionTimeoutMillis: Number(process.env.PG_CONNECTION_TIMEOUT_MS || 5000),
 
-
   statement_timeout: Number(process.env.PG_STATEMENT_TIMEOUT_MS || 5000),
 
   ...(ssl ? { ssl } : {}),
 
-  
   ...(isProd ? {} : {}),
 });
 

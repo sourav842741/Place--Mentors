@@ -6,6 +6,15 @@ const isAuth = async (req, res, next) => {
   try {
     let token = req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
 
+    // Production-safe debug (no token values)
+    // console.log("[AUTH ME]", {
+    //   ip: req.ip,
+    //   origin: req.headers.origin,
+    //   hasCookieToken: Boolean(req.cookies?.token),
+    //   hasAuthHeader: Boolean(req.headers.authorization),
+    //   path: req.originalUrl,
+    // });
+
     if (!token) {
       throw new ApiError(401, "Unauthorized: Token not found");
     }

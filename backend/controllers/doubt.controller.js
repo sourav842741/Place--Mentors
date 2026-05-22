@@ -25,7 +25,18 @@ export const askDoubt = async (req, res) => {
       return sendResponse(res, 400, false, "Question too long (max 2000 chars)");
     }
 
-    const aiAnswer = await askAi([{ role: "user", content: question.trim() }]);
+    let aiAnswer = null;
+
+    try {
+      aiAnswer = await askAi([
+        {
+          role: "user",
+          content: question.trim(),
+        },
+      ]);
+    } catch (error) {
+      console.error("AI FAILED:", error.message);
+    }
 
     const doubt = await Doubt.create({
       user: req.user?._id,

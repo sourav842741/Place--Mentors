@@ -501,16 +501,22 @@ export default function DoubtChatPage() {
                 {openId === d._id && (
                   <div className="border-t border-gray-200 dark:border-gray-700 p-4 md:p-6 space-y-4">
                     {/* AI Answer */}
-                    {d.aiAnswer && (
-                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                        <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-2">
-                          🤖 AI Answer
-                        </p>
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                      <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-2">
+                        🤖 AI Answer
+                      </p>
+
+                      {d.aiAnswer ? (
                         <div className="prose prose-sm max-w-none dark:prose-invert">
                           <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          AI answer not available yet. Community members can still help solve this
+                          doubt 💬
+                        </p>
+                      )}
+                    </div>
 
                     {/* Replies */}
                     <div className="space-y-3">
@@ -519,6 +525,7 @@ export default function DoubtChatPage() {
                           No replies yet. Be the first!
                         </p>
                       )}
+
                       {repliesMap[d._id]?.map((r) => (
                         <div
                           key={r._id}
@@ -536,10 +543,12 @@ export default function DoubtChatPage() {
                                 <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
                                   {r.user?.fullName || "User"}
                                 </p>
+
                                 <span className="text-[10px] text-gray-400">
                                   {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
                                 </span>
                               </div>
+
                               <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                                 {r.answer}
                               </p>
@@ -574,6 +583,7 @@ export default function DoubtChatPage() {
                           }
                         }}
                       />
+
                       <Button
                         onClick={() => handleReply(d._id)}
                         disabled={!replyText.trim()}

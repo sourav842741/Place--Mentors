@@ -200,6 +200,7 @@ export default function Login() {
      GOOGLE LOGIN
   ================================= */
   const handleGoogleLogin = async () => {
+    if (googleLoading || loading) return; // prevent duplicate clicks
     setGoogleLoading(true);
 
     try {
@@ -246,7 +247,30 @@ export default function Login() {
       //  Other errors
       toast.error(msg);
     } catch (error) {
-      toast.error("Something went wrong");
+      const status = error?.response?.status;
+      const backendMsg = error?.response?.data?.message;
+
+      // Firebase popup close/cancel handling
+      const firebaseCode = error?.code;
+      const firebaseMsg = error?.message;
+
+      if (firebaseCode === "auth/popup-closed-by-user" || /popup closed/i.test(firebaseMsg || "")) {
+        toast.error("Google sign-in popup closed.");
+        return;
+      }
+
+      if (status) {
+        toast.error(backendMsg || `Google sign-in failed (HTTP ${status})`);
+        return;
+      }
+
+      // axios/network error: request exists but no response
+      if (error?.request && !error?.response) {
+        toast.error(error?.message || "Network error while contacting auth server");
+        return;
+      }
+
+      toast.error(backendMsg || error?.message || "Something went wrong");
     } finally {
       setGoogleLoading(false);
     }
@@ -490,11 +514,12 @@ export default function Login() {
 
             <button
               onClick={handleGoogleLogin}
-              disabled={googleLoading}
-              className="w-full h-12 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-3"
+              disabled={googleLoading || loading}
+              className="w-full h-12 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" />
-              Continue with Google
+
+              {googleLoading ? "Connecting..." : "Continue with Google"}
             </button>
 
             <p className="text-sm text-center text-gray-500 dark:text-gray-400">

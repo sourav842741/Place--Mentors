@@ -8,6 +8,7 @@ import { useCallback } from "react";
 import { socket } from "../socket";
 import { toast } from "sonner";
 
+let googleInFlight = false;
 const getDeviceId = () => {
   let deviceId = localStorage.getItem("pm_device_id");
   if (!deviceId) {
@@ -51,6 +52,7 @@ const useAuth = () => {
       dispatch(setUserData(data));
 
       if (data?._id) {
+        if (!socket.connected) socket.connect();
         socket.emit("join", data._id);
         console.log("Socket joined room after login:", data._id);
       }
@@ -84,6 +86,7 @@ const useAuth = () => {
 
       dispatch(setUserData(data));
       if (data?._id) {
+        if (!socket.connected) socket.connect();
         socket.emit("join", data._id);
       }
 
@@ -158,6 +161,7 @@ const useAuth = () => {
     } catch (err) {
       console.error("Logout Error:", err);
     } finally {
+      socket.disconnect();
       dispatch(logoutUser());
       navigate("/");
     }
@@ -165,7 +169,12 @@ const useAuth = () => {
 
   // ================= GET CURRENT USER =================
   const getCurrentUser = useCallback(async () => {
+    // Guard: during active Google popup login, /me may 401 briefly.
+    // We must not purge auth state while login is inflight.
+    const googleInFlight = typeof window !== "undefined" && window.__googleLoginInFlight;
+
     try {
+      console.log("[AUTH ME] fetch start", { googleInFlight: Boolean(googleInFlight) });
       dispatch(setLoading(true));
 
       const res = await api.get("/api/auth/me", {
@@ -176,26 +185,58 @@ const useAuth = () => {
 
       dispatch(setUserData(userData));
 
+      // Connect socket only after valid auth
       if (userData?._id) {
+        if (!socket.connected) {
+          socket.connect();
+        }
+
         socket.emit("join", userData._id);
-        console.log("Socket joined room for user", userData._id);
+
+        console.log("✅ Socket joined room for user", userData._id);
       }
     } catch (err) {
-      console.error(err);
+      console.error("GET CURRENT USER ERROR:", err);
 
-      if (err.response?.status === 403) {
-        const msg = err.response?.data?.message || "Your account has been suspended.";
-
-        if (msg.toLowerCase().includes("suspended") || msg.toLowerCase().includes("banned")) {
-          toast.error(msg, { duration: 8000 });
-        }
-      }
-
+      // User not logged in yet
+      // This is NORMAL on refresh before login
       if (err.response?.status === 401 || err.response?.status === 403) {
+        // During Google login, cookie may not be persisted yet.
+        // Avoid logging out/purging state while popup flow is still finishing.
+        if (err.response?.status === 401 && googleInFlight) {
+          console.log("[AUTH ME] 401 during google inflight; skipping logout", {
+            googleInFlight: true,
+          });
+          return;
+        }
+
+        // Disconnect stale socket
+        socket.disconnect();
+
+        // Clear redux auth state
         dispatch(logoutUser());
+
+        // Only show toast for banned/suspended users
+        if (err.response?.status === 403) {
+          const msg = err.response?.data?.message || "Your account has been suspended.";
+
+          if (msg.toLowerCase().includes("suspended") || msg.toLowerCase().includes("banned")) {
+            toast.error(msg, {
+              duration: 8000,
+            });
+          }
+        }
+
+        // IMPORTANT:
+        // Don't show generic error for unauthenticated users
+        return;
       }
+
+      // Real server/network errors only
+      toast.error(err.response?.data?.message || "Something went wrong");
     } finally {
       dispatch(setLoading(false));
+      console.log("[AUTH ME] fetch end");
     }
   }, [dispatch]);
 
@@ -227,6 +268,14 @@ const useAuth = () => {
       const res = await api.post("/api/auth/signup/verify-otp", formData);
 
       dispatch(setUserData(res.data.data));
+
+      if (res.data.data?._id) {
+        if (!socket.connected) {
+          socket.connect();
+        }
+
+        socket.emit("join", res.data.data._id);
+      }
 
       return { success: true };
     } catch (err) {
@@ -314,8 +363,25 @@ const useAuth = () => {
 
   // ================= GOOGLE LOGIN =================
   const googleLogin = async () => {
+    if (googleInFlight) {
+      console.log("Google login already in progress");
+
+      return {
+        success: false,
+        message: "Google login already in progress",
+      };
+    }
+
+    googleInFlight = true;
+
+    // Expose inflight state for getCurrentUser() race-condition guard.
+    if (typeof window !== "undefined") {
+      window.__googleLoginInFlight = true;
+    }
+
     try {
       const result = await signInWithPopup(auth, provider);
+
       const firebaseUser = result.user;
 
       const res = await api.post("/api/auth/google", {
@@ -327,7 +393,7 @@ const useAuth = () => {
 
       const data = res.data;
 
-      // ✅ If 2FA required
+      // 2FA required
       if (data?.requiresTwoFactor) {
         return {
           success: true,
@@ -338,12 +404,20 @@ const useAuth = () => {
         };
       }
 
-      // ✅ Normal Success Login
+      // Normal success
       if (data?.success) {
         dispatch(setUserData(data.user));
+
         if (data.user?._id) {
+          if (!socket.connected) {
+            socket.connect();
+          }
+
           socket.emit("join", data.user._id);
+
+          console.log("Socket joined after Google login");
         }
+
         return data;
       }
 
@@ -352,13 +426,19 @@ const useAuth = () => {
         message: "Google login failed",
       };
     } catch (err) {
-      console.error(err);
+      console.error("GOOGLE LOGIN ERROR:", err);
 
       return {
         success: false,
         statusCode: err.response?.status,
         message: err.response?.data?.message || "Google login failed",
       };
+    } finally {
+      googleInFlight = false;
+      if (typeof window !== "undefined") {
+        window.__googleLoginInFlight = false;
+      }
+      console.log("[GOOGLE LOGIN] inflight=false");
     }
   };
 

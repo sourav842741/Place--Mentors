@@ -50,13 +50,11 @@ import { attachSocketAuth } from "./middlewares/socketAuth.js";
 import { initSentry, Sentry } from "./config/sentry.js";
 import sentryTestRouter from "./routes/sentry.routes.js";
 
-
 import { initRedisClient } from "./utils/redisClient.js";
 import { redisGuard } from "./middlewares/redisGuard.js";
 import { redisRateLimiter } from "./middlewares/redisRateLimiter.js";
 import { hashKey } from "./utils/redisCache.js";
 import { startEmailConsumer } from "./consumers/emailConsumer.js";
-
 
 const isSuperAdminUser = (user) => user?.isSuperAdmin === true || user?.role === "superadmin";
 
@@ -67,6 +65,9 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Render/Proxy (Render sits behind a reverse proxy). Without this, req.ip and secure detection
+// can be wrong, breaking cookie/security behavior and Redis rate-limiter keys.
+app.set("trust proxy", 1);
 
 //  HTTP SERVER
 const server = http.createServer(app);
@@ -130,7 +131,7 @@ app.use(
   "/api/auth/signup/send-otp",
   authLimiter({
     windowSeconds: 15 * 60,
-    max: 5,
+    max: 100,
     useEmailHash: true,
     message: "Too many OTP requests. Try again later.",
   })
@@ -141,7 +142,7 @@ app.use(
   "/api/auth/signup/verify-otp",
   authLimiter({
     windowSeconds: 15 * 60,
-    max: 5,
+    max: 100,
     useEmailHash: true,
     message: "Too many OTP verification attempts. Try again later.",
   })
@@ -152,7 +153,7 @@ app.use(
   "/api/auth/password/send-otp",
   authLimiter({
     windowSeconds: 15 * 60,
-    max: 5,
+    max: 100,
     useEmailHash: true,
     message: "Too many reset OTP requests. Try again later.",
   })
@@ -163,7 +164,7 @@ app.use(
   "/api/auth/password/verify-otp",
   authLimiter({
     windowSeconds: 15 * 60,
-    max: 5,
+    max: 100,
     useEmailHash: true,
     message: "Too many reset OTP verification attempts. Try again later.",
   })
@@ -174,7 +175,7 @@ app.use(
   "/api/auth/password/reset",
   authLimiter({
     windowSeconds: 30 * 60,
-    max: 10,
+    max: 100,
     useEmailHash: true,
     message: "Too many password reset attempts. Try again later.",
   })
@@ -186,7 +187,7 @@ app.use(
   redisRateLimiter({
     prefix: "rl:signin",
     windowSeconds: 15 * 60,
-    max: 20,
+    max: 100,
     keyBuilder: (req, ip) => {
       const email = req.body?.email ? hashKey(req.body.email.toLowerCase().trim()) : null;
       return email ? `${ip}:${email}` : ip;
@@ -200,10 +201,13 @@ app.use(
   redisRateLimiter({
     prefix: "rl:google",
     windowSeconds: 15 * 60,
-    max: 20,
+    max: 100,
     keyBuilder: (req, ip) => {
-      const email = req.body?.email ? hashKey(req.body.email.toLowerCase().trim()) : null;
-      return email ? `${ip}:${email}` : ip;
+      const email = req.body?.email ? req.body.email.toLowerCase().trim() : null;
+      const emailHash = email ? hashKey(email) : null;
+
+      // Fallback to ip only when we truly don't have an email.
+      return emailHash ? `${emailHash}` : `ip:${ip}`;
     },
     message: "Too many login attempts. Please try again later.",
   })
@@ -211,6 +215,7 @@ app.use(
 
 app.use(
   helmet({
+    crossOriginOpenerPolicy: false,
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
   })
@@ -242,12 +247,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // ================= HEALTH CHECK =================
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
-
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
@@ -348,7 +351,7 @@ io.on("connection", (socket) => {
 
       io.emit("online_users", connectedSockets.size);
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
     }
   });
 
@@ -545,7 +548,7 @@ io.on("connection", (socket) => {
 
       socket.emit("battle:started", { roomId });
     } catch (error) {
-       Sentry.captureException(error);
+      Sentry.captureException(error);
       socket.emit("battle:error", "Failed to start battle");
     }
   });
@@ -637,7 +640,7 @@ io.on("connection", (socket) => {
         });
       }
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
     }
   });
 
@@ -706,12 +709,12 @@ io.on("connection", (socket) => {
           try {
             await Battle.deleteOne({ roomId });
           } catch (e) {
-             Sentry.captureException(e);
+            Sentry.captureException(e);
           }
         }, 120000);
       }
     } catch (error) {
-       Sentry.captureException(error);
+      Sentry.captureException(error);
       socket.emit("battle:error", "Submission failed");
     }
   });
@@ -762,7 +765,6 @@ io.on("connection", (socket) => {
     });
   });
 });
-
 
 // ================= ERROR HANDLER =================
 app.use(errorHandler);
@@ -836,7 +838,7 @@ const startServer = async () => {
       // Server started
     });
   } catch (error) {
-     Sentry.captureException(error);
+    Sentry.captureException(error);
     process.exit(1);
   }
 };

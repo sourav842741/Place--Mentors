@@ -30,10 +30,12 @@ import {
 import { generateOTP, sanitizeUser } from "../utils/authValidators.js";
 
 // ================= COOKIE OPTIONS =================
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
   maxAge: 10 * 24 * 60 * 60 * 1000,
 };
@@ -275,7 +277,7 @@ export const signIn = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const token = genToken(user._id);
+  const token = await genToken(user._id);
   res.cookie("token", token, cookieOptions);
 
   const userData = {
@@ -368,14 +370,15 @@ export const updateProfile = asyncHandler(async (req, res) => {
 export const signOut = asyncHandler(async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    path: "/",
   });
 
   res.clearCookie("device_id", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     path: "/",
   });
 
@@ -385,6 +388,15 @@ export const signOut = asyncHandler(async (req, res) => {
 // ================= GOOGLE AUTH =================
 export const googleAuth = asyncHandler(async (req, res) => {
   const { fullName, email, avatar, deviceId } = req.body;
+
+  // Production-safe debug (no sensitive values)
+  console.log("[AUTH GOOGLE] hit", {
+    ip: req.ip,
+    origin: req.headers.origin,
+    hasEmail: Boolean(email),
+    emailHash: email ? String(email).toLowerCase().trim().slice(0, 3) + "..." : null,
+    hasDeviceId: Boolean(deviceId),
+  });
 
   let user = await User.findOne({
     email: email.toLowerCase().trim(),
@@ -472,9 +484,18 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const token = genToken(user._id);
+  const token = await genToken(user._id);
 
   res.cookie("token", token, cookieOptions);
+
+  // Cookie diagnostics (presence only; no token value)
+  console.log("[AUTH GOOGLE] cookie diagnostic", {
+    path: cookieOptions.path,
+    httpOnly: cookieOptions.httpOnly,
+    secure: cookieOptions.secure,
+    sameSite: cookieOptions.sameSite,
+    tokenSet: Boolean(token),
+  });
 
   const twoFactorWarning = isPrivileged && !user.twoFactorEnabled;
 
@@ -797,16 +818,20 @@ export const verifyTwoFactorLogin = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const jwtToken = genToken(user._id);
+  const jwtToken = await genToken(user._id);
 
   res.cookie("token", jwtToken, cookieOptions);
 
   if (deviceId) {
     res.cookie("device_id", deviceId, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+
+      secure: isProduction,
+
+      sameSite: isProduction ? "none" : "lax",
+
       path: "/",
+
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   }

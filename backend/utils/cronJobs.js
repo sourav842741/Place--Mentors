@@ -50,10 +50,7 @@ export const runFullCronCycle = async () => {
 
       let jobsState = await CronState.findOne({ name: "adzuna-cron" });
 
-      if (
-        jobsState &&
-        now - new Date(jobsState.lastRun) < JOBS_INTERVAL
-      ) {
+      if (jobsState && now - new Date(jobsState.lastRun) < JOBS_INTERVAL) {
         console.log(" [CRON-JOBS] Skipped (8h not due)");
       } else {
         console.log("\n [CRON-JOBS] Running Adzuna...");
@@ -87,10 +84,7 @@ export const runFullCronCycle = async () => {
 
       let potdState = await CronState.findOne({ name: "potd-cron" });
 
-      if (
-        potdState &&
-        now - new Date(potdState.lastRun) < POTD_INTERVAL
-      ) {
+      if (potdState && now - new Date(potdState.lastRun) < POTD_INTERVAL) {
         console.log(" [CRON-POTD] Skipped (30d not due)");
       } else {
         console.log(" [CRON-POTD] Generating new POTD...");
@@ -119,10 +113,7 @@ export const runFullCronCycle = async () => {
 
       let cpotdState = await CronState.findOne({ name: "cpotd-cron" });
 
-      if (
-        cpotdState &&
-        now - new Date(cpotdState.lastRun) < POTD_INTERVAL
-      ) {
+      if (cpotdState && now - new Date(cpotdState.lastRun) < POTD_INTERVAL) {
         console.log(" [CRON-CPOTD] Skipped (30d not due)");
       } else {
         console.log(" [CRON-CPOTD] Generating new CPOTD...");
@@ -151,19 +142,14 @@ export const runFullCronCycle = async () => {
 
       let newsState = await CronState.findOne({ name: "news-cron" });
 
-      if (
-        newsState &&
-        now - new Date(newsState.lastRun) < NEWS_INTERVAL
-      ) {
+      if (newsState && now - new Date(newsState.lastRun) < NEWS_INTERVAL) {
         console.log(" [CRON-NEWS] Skipped (4h not due)");
       } else {
         console.log("\n [CRON-NEWS] Fetching + processing news...");
 
         const newsCount = await fetchAndProcessNews();
 
-        console.log(
-          ` [CRON-NEWS] Complete! (${newsCount} articles)`
-        );
+        console.log(` [CRON-NEWS] Complete! (${newsCount} articles)`);
 
         if (!newsState) {
           await CronState.create({
@@ -179,9 +165,7 @@ export const runFullCronCycle = async () => {
       console.error(" [CRON-NEWS] Error:", e.message);
     }
 
-    console.log(
-      ` [CRON] All systems healthy for ${today} (incl. NEWS)`
-    );
+    console.log(` [CRON] All systems healthy for ${today} (incl. NEWS)`);
   } catch (error) {
     console.error(" [CRON] Cycle failed:", error.message);
   }
@@ -196,9 +180,7 @@ export const startCronJobs = () => {
   // ================= EMAIL CRONS =================
   startEmailCronJobs();
 
-  console.log(
-    " [CRON] Self-healing + Email started (10min cycles)"
-  );
+  console.log(" [CRON] Self-healing + Email started (10min cycles)");
 };
 
 export default { startCronJobs };

@@ -44,7 +44,7 @@
 
   //  FONT
   "editor.fontFamily": "Roboto Mono",
-  "editor.fontSize": 14,
+  "editor.fontSize": 13,
   "editor.lineHeight": 28,
   "editor.fontLigatures": true,
 
@@ -66,7 +66,7 @@
   "explorer.compactFolders": false,
 
   //  TERMINAL
-  "terminal.integrated.fontSize": 15,
+  "terminal.integrated.fontSize": 13,
 
   //  BETTER COMMENTS
   "better-comments.tags": [
