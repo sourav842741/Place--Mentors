@@ -90,6 +90,7 @@ import CookieConsent from "./components/CookieConsent";
 import MaintenanceProductivityHub from "./pages/MaintenanceProductivityHub";
 import ProjectDocs from "./pages/ProjectDocs";
 import Payments from "./pages/Payments";
+import { safeSetUser } from "./observability/openreplay/openReplay";
 
 function App() {
   const { getCurrentUser } = useAuth();
@@ -137,6 +138,12 @@ function App() {
       socket.emit("join", user._id);
     }
   }, [user]);
+
+  useEffect(() => {
+  if (!user) return;
+
+  safeSetUser(user);
+}, [user]);
 
   /* POPUPS */
   const [showPopup, setShowPopup] = useState(false);

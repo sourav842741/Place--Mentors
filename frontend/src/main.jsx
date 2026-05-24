@@ -6,6 +6,17 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store.js";
 
+import { getTracker } from "./observability/openreplay/openReplay";
+import { attachRouteTracking } from "./observability/openreplay/routeTracking";
+
+// OpenReplay tracker init (fail silently)
+try {
+  getTracker();
+  attachRouteTracking();
+} catch {
+  // fail silently
+}
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { initializePWA, registerSW } from "./lib/pwa.js";

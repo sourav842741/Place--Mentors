@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FileText, Upload, Sparkles, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
@@ -23,25 +23,52 @@ import {
 import Navbar from "@/components/Navbar";
 import UploadArea from "@/components/ui/UploadArea";
 import Footer from "@/components/Footer";
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+} from "../observability/openreplay/events";
 
 export default function ResumeAnalyzer() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
-  const { loading, analysis, fileName } = useSelector(selectResume);
+  const { loading, analysis, fileName, error } = useSelector(selectResume);
   const [showResult, setShowResult] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    if (!error) return;
+
+    safeTrack("resume_analyzer_upload_failed", {
+      error: typeof error === "string" ? error.slice(0, 120) : "resume_analysis_failed",
+    });
+
+    startCriticalReplay("resume_analyzer_failed", {
+      error: typeof error === "string" ? error.slice(0, 120) : "resume_analysis_failed",
+    });
+  }, [error]);
 
   const handleFileSelect = useCallback(
     (file) => {
       setSelectedFile(file);
       dispatch(setFileName(file.name));
       toast.success("Resume uploaded successfully!");
+      safeTrack("resume_file_selected", {
+        fileName: file?.name,
+      });
     },
     [dispatch]
   );
 
   const handleAnalyze = useCallback(() => {
+    safeTrack("resume_analyzer_started", {
+      hasFile: !!selectedFile,
+    });
+
+    startCriticalReplay("resume_analyzer", {
+      hasFile: !!selectedFile,
+    });
     if (!selectedFile) {
       toast.error("Please select a PDF resume first");
       return;
@@ -56,6 +83,9 @@ export default function ResumeAnalyzer() {
     formData.append("resume", selectedFile);
     dispatch(uploadResumeAndAnalyze(formData));
     setShowResult(true);
+    safeTrack("resume_analysis_requested", {
+      hasFile: !!selectedFile,
+    });
   }, [selectedFile, user, dispatch]);
 
   const handleCloseResult = useCallback(() => {
@@ -63,6 +93,17 @@ export default function ResumeAnalyzer() {
     setSelectedFile(null);
     setShowResult(false);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!analysis) return;
+
+    safeTrack("resume_analyzer_success", {
+      interviewReady: analysis?.interviewReady,
+      score: analysis?.score,
+    });
+
+    stopReplaySuccess("resume_analyzer");
+  }, [analysis]);
 
   return (
     <>
@@ -97,8 +138,9 @@ export default function ResumeAnalyzer() {
                 <CardDescription>Drag & drop or click to select. Max 5MB PDF only.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <UploadArea onFileSelect={handleFileSelect} fileName={fileName} />
-
+                <div data-private>
+                  <UploadArea onFileSelect={handleFileSelect} fileName={fileName} />
+                </div>
                 {user && (
                   <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                     <Badge>Credits: {user.credits}</Badge>
@@ -128,7 +170,8 @@ export default function ResumeAnalyzer() {
             </Card>
 
             <Dialog open={showResult && analysis} onOpenChange={setShowResult}>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogContent data-private className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                {" "}
                 <DialogHeader>
                   <DialogTitle>AI Analysis Complete</DialogTitle>
                 </DialogHeader>

@@ -14,6 +14,12 @@ import { Separator } from "@/components/ui/separator";
 
 import api from "@/services/api";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+} from "../observability/openreplay/events";
+
 const STATUS_META = {
   paid: {
     label: "Success",
@@ -54,6 +60,13 @@ export default function Payments() {
     let mounted = true;
 
     const load = async () => {
+      safeTrack("payments_page_opened", {
+        page,
+      });
+
+      startCriticalReplay("payments", {
+        page,
+      });
       setLoading(true);
       setError("");
       try {
@@ -62,9 +75,21 @@ export default function Payments() {
         if (!mounted) return;
         const payments = res?.data?.data?.payments;
         setPayments(Array.isArray(payments) ? payments : []);
+        safeTrack("payments_loaded", {
+          count: Array.isArray(payments) ? payments.length : 0,
+        });
+
+        stopReplaySuccess("payments");
       } catch (e) {
         if (!mounted) return;
         setError(e?.response?.data?.message || "Failed to load payments");
+        safeTrack("payments_list_load_failed", {
+          error: e?.response?.data?.message || "Failed to load payments",
+        });
+
+        startCriticalReplay("payment_failed", {
+          error: e?.response?.data?.message || "Failed to load payments",
+        });
       } finally {
         if (!mounted) return;
         setLoading(false);
@@ -81,6 +106,14 @@ export default function Payments() {
   const hasPayments = payments.length > 0;
 
   const handleReportIssue = (payment) => {
+    safeTrack("payment_report_issue_clicked", {
+      status: payment?.status,
+      planId: payment?.planId,
+    });
+
+    startCriticalReplay("payment_failed", {
+      status: payment?.status,
+    });
     // Open existing support system. Technical IDs must NOT be shown to user.
     // We embed trace into navigation state for SupportPage to consume.
     navigate("/support", {
@@ -165,6 +198,7 @@ export default function Payments() {
 
                     return (
                       <div
+                        data-private
                         key={p.id || idx}
                         className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden"
                       >
@@ -248,7 +282,10 @@ export default function Payments() {
               )}
 
               {error && (
-                <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4">
+                <div
+                  data-private
+                  className="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4"
+                >
                   <div className="flex items-center gap-2">
                     <AlertCircle className="w-4 h-4" />
                     <p className="font-medium">{error}</p>

@@ -9,6 +9,13 @@ import api from "../services/api";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+  safeSetUserFromState,
+} from "../observability/openreplay/events";
+
 export default function VerifyOtp() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -44,6 +51,7 @@ export default function VerifyOtp() {
 
   useEffect(() => {
     if (!email) {
+      safeTrack("signup_otp_session_expired", {});
       toast.error("Session expired ❌");
       navigate("/signup");
     }
@@ -55,6 +63,9 @@ export default function VerifyOtp() {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
+    safeTrack("signup_otp_input", {
+      digitIndex: index,
+    });
 
     if (value && index < 3) {
       inputsRef.current[index + 1]?.focus();
@@ -73,6 +84,7 @@ export default function VerifyOtp() {
 
     const newOtp = paste.split("");
     setOtp(newOtp);
+    safeTrack("signup_otp_pasted", {});
 
     newOtp.forEach((val, i) => {
       if (inputsRef.current[i]) {
@@ -87,7 +99,11 @@ export default function VerifyOtp() {
     if (finalOtp.length !== 4) {
       return toast.warning("Enter valid OTP ❗");
     }
+    safeTrack("signup_verify_otp_clicked", {});
 
+    startCriticalReplay("auth_2fa", {
+      type: "signup_otp",
+    });
     setLoading(true);
 
     try {
@@ -105,13 +121,32 @@ export default function VerifyOtp() {
       const res = await api.post("/api/auth/signup/verify-otp", formData);
 
       if (res.data.success) {
+        safeTrack("signup_verify_otp_success", {});
+
+        safeSetUserFromState(res.data.data);
+
+        stopReplaySuccess("auth_2fa");
         dispatch(setUserData(res.data.data));
         toast.success("Signup Successful 🎉");
         navigate("/splash");
       } else {
+        safeTrack("signup_verify_otp_failed", {
+          error: res?.data?.message,
+        });
+
+        startCriticalReplay("auth_2fa_failed", {
+          error: res?.data?.message,
+        });
         toast.error(res.data.message || "Invalid OTP");
       }
     } catch {
+      safeTrack("signup_verify_otp_failed", {
+        error: "otp_verify_exception",
+      });
+
+      startCriticalReplay("auth_2fa_failed", {
+        error: "otp_verify_exception",
+      });
       toast.error("Something went wrong ❌");
     } finally {
       setLoading(false);
@@ -161,7 +196,10 @@ export default function VerifyOtp() {
           </div>
 
           {/* EMAIL SHOW */}
-          <div className="text-center text-sm text-blue-600 dark:text-blue-400 font-medium">
+          <div
+            data-private
+            className="text-center text-sm text-blue-600 dark:text-blue-400 font-medium"
+          >
             {email}
           </div>
 
@@ -169,6 +207,7 @@ export default function VerifyOtp() {
           <div className="flex justify-between gap-3" onPaste={handlePaste}>
             {otp.map((digit, index) => (
               <input
+                data-private
                 key={index}
                 maxLength={1}
                 value={digit}

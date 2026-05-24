@@ -10,6 +10,13 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { trackEvent } from "../hooks/useAnalytics";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+  safeSetUserFromState,
+} from "../observability/openreplay/events";
+
 function Pricing() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("free");
@@ -64,6 +71,11 @@ function Pricing() {
   useEffect(() => {
     if (!hasTrackedPremium.current) {
       trackEvent("premium_page_visit");
+      safeTrack("pricing_page_opened", {});
+
+      startCriticalReplay("payments", {
+        page: "pricing",
+      });
       hasTrackedPremium.current = true;
     }
   }, []);
@@ -72,6 +84,15 @@ function Pricing() {
     try {
       setLoadingPlan(plan.id);
       trackEvent("premium_button_click");
+      safeTrack("payment_checkout_opened", {
+        planId: plan.id,
+        amount: plan.price,
+        credits: plan.credits,
+      });
+
+      startCriticalReplay("payments", {
+        planId: plan.id,
+      });
 
       const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 500 : 0;
 
@@ -97,6 +118,14 @@ function Pricing() {
           const res = await api.post("/api/payment/verify", response, { withCredentials: true });
 
           dispatch(setUserData(res.data.user));
+          safeTrack("payment_success", {
+            planId: plan.id,
+            credits: plan.credits,
+          });
+
+          safeSetUserFromState(res.data.user);
+
+          stopReplaySuccess("payments");
           toast.success("Credits added successfully!");
           navigate("/dashboard");
         },
@@ -112,6 +141,15 @@ function Pricing() {
       setLoadingPlan(null);
     } catch (error) {
       console.log(error);
+      safeTrack("payment_failed", {
+        error: error?.message,
+        planId: plan?.id,
+      });
+
+      startCriticalReplay("payment_failed", {
+        error: error?.message,
+        planId: plan?.id,
+      });
       setLoadingPlan(null);
     }
   };
@@ -159,6 +197,7 @@ function Pricing() {
 
             return (
               <motion.div
+                data-private
                 key={plan.id}
                 whileHover={
                   !plan.default && {
@@ -211,10 +250,12 @@ function Pricing() {
                     className="text-4xl font-bold
                     text-blue-600 dark:text-blue-400"
                   >
-                    {plan.price}
+                    <span data-private>{plan.price}</span>
                   </span>
 
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">{plan.credits} Credits</p>
+                  <p className="text-gray-500 dark:text-gray-400 mt-1">
+                    <span data-private>{plan.credits} Credits</span>
+                  </p>
                 </div>
 
                 {/* Desc */}
@@ -242,6 +283,9 @@ function Pricing() {
 
                       if (!isSelected) {
                         setSelectedPlan(plan.id);
+                        safeTrack("pricing_plan_selected", {
+                          planId: plan.id,
+                        });
                       } else {
                         handlePayment(plan);
                       }

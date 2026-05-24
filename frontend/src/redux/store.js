@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import userSlice from "./userSlice";
 import resumeSlice from "./resumeSlice";
 import jobSlice from "./jobSlice";
@@ -21,9 +22,19 @@ import voiceSlice from "./voiceSlice";
 import ticketSlice from "./ticketSlice";
 import maintenanceSlice from "./maintenanceSlice";
 
+// ✅ OPENREPLAY REDUX MIDDLEWARE
+import { createReplayMiddleware } from "../observability/openreplay/reduxBridge";
+
 const store = configureStore({
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(notesApi.middleware, compilerApi.middleware),
+    getDefaultMiddleware().concat(
+      notesApi.middleware,
+      compilerApi.middleware,
+
+      // ✅ OPENREPLAY
+      createReplayMiddleware()
+    ),
+
   reducer: {
     user: userSlice,
     resume: resumeSlice,
@@ -31,8 +42,10 @@ const store = configureStore({
     company: companySlice,
     potd: potdSlice,
     codingPotd: codingPotdSlice,
+
     [notesApi.reducerPath]: notesApi.reducer,
     [compilerApi.reducerPath]: compilerApi.reducer,
+
     youtube: youtubeSlice,
     news: newsSlice,
     streak: streakSlice,
@@ -42,7 +55,10 @@ const store = configureStore({
     emailAdmin: emailAdminSlice,
     battle: battleSlice,
     tasks: tasksSlice,
-    challenges: userSlice, // extend userSlice with challenges
+
+    // extend userSlice with challenges
+    challenges: userSlice,
+
     aiCoach: aiCoachSlice,
     voice: voiceSlice,
     tickets: ticketSlice,

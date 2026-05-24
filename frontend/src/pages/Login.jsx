@@ -22,6 +22,13 @@ import { toast } from "sonner";
 import useAuth from "../hooks/useAuth";
 import AuthLayout from "../components/AuthLayout";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+  safeSetUserFromState,
+} from "../observability/openreplay/events";
+
 export default function Login() {
   const navigate = useNavigate();
   const { login, googleLogin, verify2FA } = useAuth();
@@ -91,6 +98,9 @@ export default function Login() {
       return toast.warning("Please enter email and password");
     }
 
+    safeTrack("login_clicked", { method: "email" });
+    startCriticalReplay("auth_login", { method: "email" });
+
     setLoading(true);
 
     try {
@@ -111,6 +121,14 @@ export default function Login() {
 
         const user = res?.data;
 
+        safeTrack("login_success", {
+          role: user?.role,
+        });
+
+        safeSetUserFromState(user);
+
+        stopReplaySuccess("auth_login");
+
         if (!user) {
           toast.error("Invalid server response");
           return;
@@ -124,6 +142,14 @@ export default function Login() {
       } else {
         const msg = res?.message || "Login failed";
 
+        safeTrack("login_failed", {
+          statusCode: res?.statusCode,
+        });
+
+        startCriticalReplay("auth_login", {
+          statusCode: res?.statusCode,
+        });
+
         if (
           res?.statusCode === 403 ||
           msg.toLowerCase().includes("banned") ||
@@ -135,6 +161,13 @@ export default function Login() {
         }
       }
     } catch (error) {
+      safeTrack("login_failed", {
+        statusCode: error?.response?.status,
+      });
+
+      startCriticalReplay("auth_login", {
+        statusCode: error?.response?.status,
+      });
       const msg = error?.response?.data?.message || "Something went wrong";
 
       if (
@@ -159,6 +192,14 @@ export default function Login() {
       return toast.warning("Please enter the code");
     }
 
+    safeTrack("2fa_verify_clicked", {
+      method: useRecoveryCode ? "recovery" : "totp",
+    });
+
+    startCriticalReplay("auth_2fa", {
+      method: useRecoveryCode ? "recovery" : "totp",
+    });
+
     setLoading(true);
 
     try {
@@ -168,6 +209,13 @@ export default function Login() {
         toast.success("Authentication successful 🎉");
 
         const data = res?.data;
+        safeTrack("2fa_verify_success", {
+          role: data?.role,
+        });
+
+        safeSetUserFromState(data);
+
+        stopReplaySuccess("auth_2fa");
 
         if (data?.usedRecoveryCode) {
           toast.warning("Recovery code used. Please generate new codes in security settings.");
@@ -179,9 +227,24 @@ export default function Login() {
           navigate("/splash");
         }
       } else {
+        safeTrack("2fa_verify_failed", {
+          statusCode: res?.statusCode,
+        });
+
+        startCriticalReplay("auth_2fa_failed", {
+          statusCode: res?.statusCode,
+        });
+
         toast.error(res?.message || "Invalid code");
       }
     } catch (error) {
+      safeTrack("2fa_verify_failed", {
+        statusCode: error?.response?.status,
+      });
+
+      startCriticalReplay("auth_2fa_failed", {
+        statusCode: error?.response?.status,
+      });
       toast.error("Verification failed");
     } finally {
       setLoading(false);
@@ -201,6 +264,9 @@ export default function Login() {
   ================================= */
   const handleGoogleLogin = async () => {
     if (googleLoading || loading) return; // prevent duplicate clicks
+    safeTrack("google_auth_clicked", {});
+
+    startCriticalReplay("auth_google", {});
     setGoogleLoading(true);
 
     try {
@@ -220,6 +286,18 @@ export default function Login() {
 
       //  If 2FA required (Admin / Super Admin)
       if (res?.requiresTwoFactor) {
+        safeTrack("2fa_required", {
+          role: res?.role,
+          isSuperAdmin: !!res?.isSuperAdmin,
+        });
+
+        startCriticalReplay("auth_2fa", {
+          role: res?.role,
+        });
+
+        startCriticalReplay("auth_2fa", {
+          role: res?.role,
+        });
         setTwoFactorMode(true);
         setTempAuthToken(res.tempAuthToken);
         setTwoFactorRole(res.role);
@@ -235,6 +313,14 @@ export default function Login() {
 
         const user = res?.user;
 
+        safeTrack("google_auth_success", {
+          role: user?.role,
+        });
+
+        safeSetUserFromState(user);
+
+        stopReplaySuccess("auth_google");
+
         if (user?.role === "admin" || user?.isSuperAdmin) {
           navigate("/admin/dashboard");
         } else {
@@ -245,6 +331,13 @@ export default function Login() {
       }
 
       //  Other errors
+      safeTrack("google_auth_failed", {
+        statusCode: res?.statusCode,
+      });
+
+      startCriticalReplay("auth_google_failed", {
+        statusCode: res?.statusCode,
+      });
       toast.error(msg);
     } catch (error) {
       const status = error?.response?.status;
@@ -255,11 +348,19 @@ export default function Login() {
       const firebaseMsg = error?.message;
 
       if (firebaseCode === "auth/popup-closed-by-user" || /popup closed/i.test(firebaseMsg || "")) {
+        safeTrack("google_popup_closed", {});
         toast.error("Google sign-in popup closed.");
         return;
       }
 
       if (status) {
+        safeTrack("google_auth_failed", {
+          statusCode: status,
+        });
+
+        startCriticalReplay("auth_google_failed", {
+          statusCode: status,
+        });
         toast.error(backendMsg || `Google sign-in failed (HTTP ${status})`);
         return;
       }
@@ -270,6 +371,13 @@ export default function Login() {
         return;
       }
 
+      safeTrack("google_auth_failed", {
+        error: error?.message,
+      });
+
+      startCriticalReplay("auth_google_failed", {
+        error: error?.message,
+      });
       toast.error(backendMsg || error?.message || "Something went wrong");
     } finally {
       setGoogleLoading(false);
@@ -404,6 +512,7 @@ export default function Login() {
                 </button>
               </div>
               <Input
+                data-private
                 type="text"
                 placeholder={useRecoveryCode ? "8-character recovery code" : "6-digit code"}
                 value={otpToken}
@@ -466,6 +575,7 @@ export default function Login() {
             </div>
 
             <Input
+              data-private
               placeholder="Enter email"
               className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -473,6 +583,7 @@ export default function Login() {
 
             <div className="relative">
               <Input
+                data-private
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
                 className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 pr-10"

@@ -4,6 +4,12 @@ import api from "../services/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+} from "../observability/openreplay/events";
+
 export default function Leaderboard() {
   const [topThree, setTopThree] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
@@ -20,6 +26,9 @@ export default function Leaderboard() {
   const fetchLeaderboard = useCallback(async (targetPage = 1) => {
     try {
       setLoading(true);
+      safeTrack("leaderboard_fetch_started", {
+        page: targetPage,
+      });
       setError(null);
 
       const res = await api.get("/api/leaderboard/daily", {
@@ -34,12 +43,31 @@ export default function Leaderboard() {
       setTotal(data.total || 0);
       setMyRank(data.myRank ?? null);
       setMyTime(data.myTime ?? 0);
+      safeTrack("leaderboard_fetch_success", {
+        page: data.page || targetPage,
+        total: data.total || 0,
+      });
+
+      stopReplaySuccess("leaderboard");
     } catch (err) {
       setError("Failed to load leaderboard");
       console.error("Leaderboard fetch error:", err);
+      safeTrack("leaderboard_fetch_failed", {
+        error: err?.message,
+      });
+
+      startCriticalReplay("leaderboard_failed", {
+        error: err?.message,
+      });
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    safeTrack("leaderboard_opened", {});
+
+    startCriticalReplay("leaderboard", {});
   }, []);
 
   useEffect(() => {
@@ -55,6 +83,9 @@ export default function Leaderboard() {
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > pages || newPage === page) return;
     setPage(newPage);
+    safeTrack("leaderboard_page_changed", {
+      page: newPage,
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -100,7 +131,10 @@ export default function Leaderboard() {
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center mb-8">
               <p className="text-red-600 dark:text-red-400 mb-3">{error}</p>
               <button
-                onClick={() => fetchLeaderboard(1)}
+                onClick={() => {
+                  safeTrack("leaderboard_retry_clicked", {});
+                  fetchLeaderboard(1);
+                }}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
               >
                 Retry
@@ -114,6 +148,7 @@ export default function Leaderboard() {
               <div className="flex flex-col md:flex-row md:items-end md:justify-center gap-6 md:gap-10">
                 {safeTopThree.map((user, i) => (
                   <div
+                    data-private
                     key={user.rank || i}
                     className={`flex flex-col items-center transition-all duration-300 ${
                       i === 0
@@ -207,6 +242,7 @@ export default function Leaderboard() {
 
                   {safeLeaderboard.map((user) => (
                     <tr
+                      data-private
                       key={user.rank || user.userId || user.name}
                       className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
                     >
@@ -258,7 +294,13 @@ export default function Leaderboard() {
 
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handlePageChange(page - 1)}
+                    onClick={() => {
+                      safeTrack("leaderboard_prev_clicked", {
+                        currentPage: page,
+                      });
+
+                      handlePageChange(page - 1);
+                    }}
                     disabled={page === 1 || loading}
                     className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
                   >
@@ -267,7 +309,13 @@ export default function Leaderboard() {
                   </button>
 
                   <button
-                    onClick={() => handlePageChange(page + 1)}
+                    onClick={() => {
+                      safeTrack("leaderboard_next_clicked", {
+                        currentPage: page,
+                      });
+
+                      handlePageChange(page + 1);
+                    }}
                     disabled={page === pages || loading}
                     className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
                   >

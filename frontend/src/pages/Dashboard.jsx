@@ -42,6 +42,12 @@ import AnnouncementBar from "../components/AnnouncementBar";
 import useSettings from "../hooks/useSettings";
 import { useQueryClient } from "@tanstack/react-query";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+} from "../observability/openreplay/events";
+
 export default function Dashboard() {
   const queryClient = useQueryClient();
   const { user } = useSelector((state) => state.user);
@@ -180,6 +186,20 @@ export default function Dashboard() {
     audio.play();
   };
 
+  useEffect(() => {
+    safeTrack("dashboard_opened", {
+      role: user?.role,
+      level: user?.level,
+    });
+
+    startCriticalReplay("dashboard", {
+      role: user?.role,
+    });
+
+    return () => {
+      stopReplaySuccess("dashboard");
+    };
+  }, []);
   // ================= FIXED TIME TRACK =================
   useEffect(() => {
     let interval;
@@ -217,7 +237,20 @@ export default function Dashboard() {
         }));
 
         setWeeklyData(formatted);
-      } catch (err) {}
+        safeTrack("dashboard_weekly_loaded", {
+          count: formatted?.length || 0,
+        });
+
+        stopReplaySuccess("dashboard");
+      } catch (err) {
+        safeTrack("dashboard_weekly_failed", {
+          error: err?.message,
+        });
+
+        startCriticalReplay("dashboard_failed", {
+          error: err?.message,
+        });
+      }
     };
 
     fetchWeekly();
@@ -236,8 +269,12 @@ export default function Dashboard() {
         const message = res.data.message || "Keep pushing forward! 🚀";
 
         setMotivation(message);
+        safeTrack("motivation_loaded", {});
       } catch (err) {
         console.error("Motivation fetch error:", err);
+        safeTrack("motivation_failed", {
+          error: err?.message,
+        });
         setMotivation("Stay consistent, you're doing great! 💪");
       } finally {
         setLoadingMotivation(false);
@@ -329,7 +366,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default  dark:bg-gray-900  dark:border-white/10">
                 <h1 className="text-3xl font-bold  text-gray-900 dark:text-white">
-                  Welcome back, {user?.fullName} 👋
+                  <span data-private>Welcome back, {user?.fullName}</span>
                 </h1>
 
                 <p className="mt-2 text-lg  text-gray-500 dark:text-gray-400 font-medium">
@@ -378,7 +415,10 @@ export default function Dashboard() {
             {/* ACTION */}
             <div className="grid md:grid-cols-2 gap-6">
               <div
-                onClick={() => navigate("/quiz")}
+                onClick={() => {
+                  safeTrack("dashboard_quiz_clicked", {});
+                  navigate("/quiz");
+                }}
                 className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
               >
                 <div className="flex items-center gap-4">
@@ -398,6 +438,7 @@ export default function Dashboard() {
               <div
                 onClick={() => {
                   trackEvent("jobs_page_clicked");
+                  safeTrack("dashboard_jobs_clicked", {});
                   navigate("/jobs");
                 }}
                 className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
@@ -417,7 +458,10 @@ export default function Dashboard() {
             </div>
 
             <div
-              onClick={() => navigate("/ai-voice-coach")}
+              onClick={() => {
+                safeTrack("ai_voice_coach_clicked", {});
+                navigate("/ai-voice-coach");
+              }}
               className="relative overflow-hidden flex items-center justify-between
   bg-white dark:bg-gray-900
   border border-gray-200 dark:border-white/10
@@ -455,7 +499,10 @@ export default function Dashboard() {
 
             {/* NEW PLACEMENT PREDICTOR PREMIUM CARD */}
             <div
-              onClick={() => navigate("/placement-predictor")}
+              onClick={() => {
+                safeTrack("placement_predictor_clicked", {});
+                navigate("/placement-predictor");
+              }}
               className="relative overflow-hidden flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-[1.02] group"
             >
               {/* Hover Glow */}
@@ -499,7 +546,10 @@ export default function Dashboard() {
             </div>
 
             <div
-              onClick={() => navigate("/interview-experience")}
+              onClick={() => {
+                safeTrack("interview_experience_clicked", {});
+                navigate("/interview-experience");
+              }}
               className="relative overflow-hidden flex items-center justify-between
   bg-white dark:bg-gray-900
   border border-gray-200 dark:border-white/10
@@ -743,6 +793,12 @@ export default function Dashboard() {
                       {news?.map((article, index) => (
                         <CarouselItem key={index} className="basis-[320px] md:basis-[380px] pl-2">
                           <a
+                            onClick={() =>
+                              safeTrack("news_article_clicked", {
+                                tag: article.tag,
+                                company: article.company,
+                              })
+                            }
                             href={article.url}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -839,7 +895,13 @@ export default function Dashboard() {
                   {[...companies, ...companies].map((company, index) => (
                     <div
                       key={index}
-                      onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
+                      onClick={() => {
+                        safeTrack("company_clicked", {
+                          company: company.name,
+                        });
+
+                        navigate(`/company/${company.name.toLowerCase()}`);
+                      }}
                       className="min-w-[330px] cursor-pointer"
                     >
                       <Card className="group border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
@@ -896,7 +958,13 @@ export default function Dashboard() {
                   {[...companies, ...companies].map((company, index) => (
                     <div
                       key={index}
-                      onClick={() => navigate(`/company/${company.name.toLowerCase()}`)}
+                      onClick={() => {
+                        safeTrack("company_clicked", {
+                          company: company.name,
+                        });
+
+                        navigate(`/company/${company.name.toLowerCase()}`);
+                      }}
                       className="min-w-[330px] cursor-pointer"
                     >
                       <Card className="group border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">

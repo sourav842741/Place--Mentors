@@ -9,6 +9,12 @@ import { toast } from "sonner";
 
 import useAuth from "../hooks/useAuth";
 
+import {
+  safeTrack,
+  startCriticalReplay,
+  stopReplaySuccess,
+} from "../observability/openreplay/events";
+
 export default function Signup() {
   const navigate = useNavigate();
   const { googleLogin, sendSignupOtp } = useAuth();
@@ -57,9 +63,15 @@ export default function Signup() {
     const file = e.target.files[0];
 
     if (type === "avatar") {
+      safeTrack("signup_avatar_selected", {
+        hasAvatar: true,
+      });
       setAvatar(file);
       setAvatarPreview(URL.createObjectURL(file));
     } else {
+      safeTrack("signup_cover_selected", {
+        hasCover: true,
+      });
       setCoverImage(file);
       setCoverPreview(URL.createObjectURL(file));
     }
@@ -69,6 +81,14 @@ export default function Signup() {
     if (!form.fullName || !form.email || !form.password) {
       return toast.warning("Please fill all required fields");
     }
+
+    safeTrack("signup_clicked", {
+      method: "email",
+    });
+
+    startCriticalReplay("auth_signup", {
+      method: "email",
+    });
 
     setLoading(true);
 
@@ -81,15 +101,35 @@ export default function Signup() {
       });
 
       if (res.success) {
+        safeTrack("signup_otp_sent", {
+          hasAvatar: !!avatar,
+          hasCover: !!coverImage,
+        });
+
+        stopReplaySuccess("auth_signup");
         toast.success("OTP sent 📩");
 
         navigate("/verify-otp", {
           state: { ...form, skills: skillsArray, avatar, coverImage },
         });
       } else {
+        safeTrack("signup_failed", {
+          error: res?.message,
+        });
+
+        startCriticalReplay("auth_signup_failed", {
+          error: res?.message,
+        });
         toast.error(res.message || "Signup failed");
       }
     } catch {
+      safeTrack("signup_failed", {
+        error: "signup_exception",
+      });
+
+      startCriticalReplay("auth_signup_failed", {
+        error: "signup_exception",
+      });
       toast.error("Signup failed ❌");
     } finally {
       setLoading(false);
@@ -137,6 +177,7 @@ export default function Signup() {
 
         {/* INPUTS */}
         <Input
+          data-private
           name="fullName"
           placeholder="Full Name"
           onChange={handleChange}
@@ -144,6 +185,7 @@ export default function Signup() {
         />
 
         <Input
+          data-private
           name="email"
           placeholder="Email Address"
           onChange={handleChange}
@@ -151,6 +193,7 @@ export default function Signup() {
         />
 
         <Input
+          data-private
           type="password"
           name="password"
           placeholder="Password"
@@ -159,6 +202,7 @@ export default function Signup() {
         />
 
         <Input
+          data-private
           name="skills"
           placeholder="Skills (React, Java, DSA...)"
           onChange={handleChange}
@@ -179,7 +223,7 @@ export default function Signup() {
             </div>
           )}
 
-          <input type="file" hidden onChange={(e) => handleFileChange(e, "avatar")} />
+          <input data-private type="file" hidden onChange={(e) => handleFileChange(e, "avatar")} />
         </label>
 
         {/* COVER */}
@@ -211,13 +255,27 @@ export default function Signup() {
         {/* GOOGLE */}
         <button
           onClick={async () => {
+            safeTrack("google_signup_clicked", {});
+
+            startCriticalReplay("auth_google", {});
             const res = await googleLogin();
 
             if (res.success) {
+              safeTrack("google_signup_success", {});
+
+              stopReplaySuccess("auth_google");
               toast.success("Login successful");
 
               navigate("/splash");
             } else if (res.requiresTwoFactor) {
+              safeTrack("2fa_required", {
+                role: res?.role,
+                isSuperAdmin: !!res?.isSuperAdmin,
+              });
+
+              startCriticalReplay("auth_2fa", {
+                role: res?.role,
+              });
               navigate("/verify-2fa", {
                 state: {
                   tempAuthToken: res.tempAuthToken,
@@ -226,6 +284,13 @@ export default function Signup() {
                 },
               });
             } else {
+              safeTrack("google_signup_failed", {
+                error: res?.message,
+              });
+
+              startCriticalReplay("auth_google_failed", {
+                error: res?.message,
+              });
               toast.error(res.message || "Google login failed");
             }
           }}
