@@ -248,8 +248,40 @@ app.use((req, res, next) => {
 });
 
 // ================= HEALTH CHECK =================
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+app.get("/api/health", async (req, res) => {
+
+  try {
+
+    // Check MongoDB connection
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error("MongoDB not connected");
+    }
+
+    const db = mongoose.connection.db;
+
+    if (!db) {
+      throw new Error("Database unavailable");
+    }
+
+    // Ping MongoDB
+    await db.admin().ping();
+
+    res.status(200).json({
+      status: "ok",
+      db: "connected",
+      timestamp: new Date().toISOString(),
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      status: "error",
+      db: "disconnected",
+      error: error.message,
+    });
+
+  }
+
 });
 
 // ================= ROUTES =================
