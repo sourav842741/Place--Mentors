@@ -4,9 +4,11 @@ let initialized = false;
 
 const initSentry = () => {
   if (initialized) return;
+
   initialized = true;
 
   const dsn = process.env.SENTRY_DSN;
+
   if (!dsn) return;
 
   try {
@@ -14,16 +16,28 @@ const initSentry = () => {
 
     Sentry.init({
       dsn,
+
       environment: process.env.NODE_ENV || "production",
 
-      // Production-safe defaults
+      // Performance tracing
       tracesSampleRate: isTest ? 0 : 0.1,
 
-      // Avoid noisy logs.
+      // Disable noisy SDK debug logs
       debug: false,
+
+      // Capture console logs
+      integrations: [
+        Sentry.consoleLoggingIntegration({
+          levels: ["log", "warn", "error"],
+        }),
+      ],
+
+      // Enable logs in Sentry Explore -> Logs
+      enableLogs: true,
     });
   } catch (e) {
-    // Never crash the app if Sentry fails.
+    // Never crash app if Sentry fails
+    console.error("Sentry init failed:", e.message);
   }
 };
 
