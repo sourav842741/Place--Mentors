@@ -274,13 +274,15 @@ app.get("/api/health", async (req, res) => {
 
   } catch (error) {
 
-    res.status(500).json({
-      status: "error",
-      db: "disconnected",
-      error: error.message,
-    });
+  Sentry.captureException(error);
 
-  }
+  res.status(500).json({
+    status: "error",
+    db: "disconnected",
+    error: error.message,
+  });
+
+}
 
 });
 
@@ -321,7 +323,7 @@ app.use("/api/support", supportRouter);
 // ================= SENTRY TEST =================
 app.use("/api", sentryTestRouter);
 
-Sentry.setupExpressErrorHandler(app);
+
 
 // ================= SOCKET EVENTS =================
 
@@ -799,6 +801,7 @@ io.on("connection", (socket) => {
 });
 
 // ================= ERROR HANDLER =================
+Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);
 
 // ================= PROCESS ERROR HANDLING (SENTRY) =================
@@ -845,6 +848,7 @@ const startServer = async () => {
 
       console.log("Email Consumer Started");
     } catch (e) {
+       Sentry.captureException(e);
       console.error("Failed To Start Email Consumer", e);
     }
 
@@ -854,6 +858,7 @@ const startServer = async () => {
         getOrCreateTodayPotd()
       );
     } catch (e) {
+       Sentry.captureException(e);
       // Silently handle
     }
     try {
@@ -861,6 +866,7 @@ const startServer = async () => {
         getOrCreateTodayCpotd()
       );
     } catch (e) {
+       Sentry.captureException(e);
       // Silently handle
     }
 
