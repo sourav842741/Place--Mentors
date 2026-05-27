@@ -16,7 +16,7 @@ Place Mentors is a production-grade full-stack placement preparation platform em
 **Live Demo:** [https://placementor.online](https://placementor.online)  
 **Backend API:** [https://souravkumar-7408410.postman.co/workspace/sourav-kumar's-Workspace~068384b5-c262-4314-8c57-2ad36050edc7/request/44025304-7b499f7b-07a5-4d6c-a473-4123632f6a7f?action=share&creator=44025304&active-environment=44025304-f8d68e60-3ea0-4a2e-8b06-36bc8e6aa3df](https://souravkumar-7408410.postman.co/workspace/sourav-kumar's-Workspace~068384b5-c262-4314-8c57-2ad36050edc7/request/44025304-7b499f7b-07a5-4d6c-a473-4123632f6a7f?action=share&creator=44025304&active-environment=44025304-f8d68e60-3ea0-4a2e-8b06-36bc8e6aa3df)
 
-![Hero Banner](https://github.com/sourav842741/Place--Mentors/blob/42460d3bbd06a8f0eb275d99dd5ddda066087514/Screenshot%202026-04-15%20181718.png)
+![Hero Banner](https://drive.google.com/file/d/17f1sJvUJbfKiZuLxpmw2fYPBGmsBUPzv/view?usp=sharing)
 
 ### 🌟 Why Place Mentors?
 - **Production Ready** - Deployed on Vercel/Render 
@@ -126,22 +126,22 @@ graph TB
 
 | 🖥️ **Dashboard** | ⚔️ **Coding Battle** |
 |---|---|
-| ![Dashboard](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/dashboard.png) | ![Battle](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/battle.png) |
+| ![Dashboard](https://drive.google.com/file/d/17f1sJvUJbfKiZuLxpmw2fYPBGmsBUPzv/view?usp=sharing) | ![Battle](https://drive.google.com/file/d/1OTHzivppMyhWAVvwQSuEBFyt2R8JPkBC/view?usp=sharing) |
 
 | 🤖 **AI Planner** | 🏆 **Leaderboard** |
 |---|---|
-| ![AI Planner](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/ai-planner.png) | ![Leaderboard](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/leaderboard.png) |
+| ![AI Planner](https://drive.google.com/file/d/1NFEKe6Q-7d1-aXtiGsK4h55iYfVkvmJK/view?usp=sharing) | ![Leaderboard](https://drive.google.com/file/d/1Yh_YegLXYdcetuLFHLcg68Huc4XxKFAX/view?usp=sharing) |
 
 </div>
 
 # 📹 Video Demo 
 ### Explore the project in action—click the image below to watch the full demo.
 
-[![Watch Video](https://github.com/sourav842741/Place--Mentors/blob/7a08c705439501743281285d9eb4b8c40d3743de/Screenshot%202026-04-15%20181718.png)](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view)
+[![Watch Video](https://drive.google.com/file/d/1h8EXPbZKDgv10wN9fgnvorpY-ue1a5ck/view?usp=sharing)](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view)
 **🎮 Live Demo Links:**
-- [Dashboard](https://place-mentor-frontend.onrender.com/dashboard)
-- [Coding Battles](https://place-mentor-frontend.onrender.com/coding-potd)
-- [AI Planner](https://place-mentor-frontend.onrender.com/ai-planner)
+- [Dashboard](https://placementor.online/dashboard)
+- [Coding Battles](https://placementor.online/profile)
+- [AI Planner](https://placementor.online/ai-planner)
 
 
 
@@ -494,4 +494,4 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 </div>
 
-![Footer](https://github.com/sourav842741/Place--Mentors/blob/5e8453f2667ea550f4e367a7c492df9cdeb3c0c4/footer.png)
+![Footer](https://drive.google.com/file/d/1PKRe37EqbfSa0hAk8rdmpmlPrxyZMdTC/view?usp=sharing)
