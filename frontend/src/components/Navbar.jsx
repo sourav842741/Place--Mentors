@@ -234,7 +234,6 @@ export default function Navbar() {
                   PM
                 </div>
               </div>
-
               {/* TEXT */}
               <span className="font-bold text-lg tracking-wide text-gray-900 dark:text-white">
                 Place

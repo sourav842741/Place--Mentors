@@ -48,18 +48,24 @@ const sentToday = async (email) => {
 const chooseTemplate = (user) => {
   const day = new Date().getDay(); // 0 Sunday
 
+  const templates = [];
+
   /* -------------------------
      1. STREAK WARNING
   ------------------------- */
 
-  if (user.streakCount > 0 && user.lastLoginDate < oneDayAgo() && user.lastPotdDate !== today()) {
-    return {
+  if (
+    user.streakCount > 0 &&
+    user.lastLoginDate < oneDayAgo() &&
+    user.lastPotdDate !== today()
+  ) {
+    templates.push({
       type: "streak_warning",
       subject: "Don't Lose Your Streak 🔥",
       data: {
         streak: user.streakCount,
       },
-    };
+    });
   }
 
   /* -------------------------
@@ -67,11 +73,11 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (user.lastLoginDate < sevenDaysAgo()) {
-    return {
+    templates.push({
       type: "comeback_email",
       subject: "We Miss You 💙",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -79,19 +85,19 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (user.streakCount === 30) {
-    return {
+    templates.push({
       type: "achievement_30d",
       subject: "30 Day Legend 🔥",
       data: {},
-    };
+    });
   }
 
   if (user.streakCount === 7) {
-    return {
+    templates.push({
       type: "achievement_7d",
       subject: "7 Day Streak Unlocked 🏆",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -99,11 +105,11 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (user.potdCompleted === false) {
-    return {
+    templates.push({
       type: "potd_alert",
       subject: "Today's POTD Is Live 💡",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -111,11 +117,11 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (user.lastLoginDate < threeDaysAgo()) {
-    return {
+    templates.push({
       type: "coding_motivation",
       subject: "Code Something Today 💻",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -123,11 +129,11 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (user.credits < 100) {
-    return {
+    templates.push({
       type: "placement_motivation",
       subject: "Your Dream Job Needs Today 🚀",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -136,11 +142,11 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (day === 0) {
-    return {
+    templates.push({
       type: "resume_reminder",
       subject: "Update Your Resume 📄",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -149,11 +155,11 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (day === 6) {
-    return {
+    templates.push({
       type: "interview_reminder",
       subject: "Interview Prep Time 🎯",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
@@ -162,24 +168,35 @@ const chooseTemplate = (user) => {
   ------------------------- */
 
   if (day === 5) {
-    return {
+    templates.push({
       type: "feature_announcement",
       subject: "New Feature Is Live ✨",
       data: {},
-    };
+    });
   }
 
   /* -------------------------
      10. DAILY FALLBACK
   ------------------------- */
 
-  return {
-    type: "daily_reminder",
-    subject: "Time To Practice 🚀",
-    data: {},
-  };
-};
+  if (!templates.length) {
+    templates.push({
+      type: "daily_reminder",
+      subject: "Time To Practice 🚀",
+      data: {},
+    });
+  }
 
+  /* -------------------------
+     RANDOM TEMPLATE
+  ------------------------- */
+
+  const randomIndex = Math.floor(
+    Math.random() * templates.length
+  );
+
+  return templates[randomIndex];
+};
 /* =====================================================
    MAIN CYCLE
 ===================================================== */

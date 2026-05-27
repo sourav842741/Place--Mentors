@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { BsRobot, BsCoin } from "react-icons/bs";
+import { BsCoin } from "react-icons/bs";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -60,66 +60,80 @@ function QuizNav() {
   };
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-950 flex justify-center px-4 pt-6 transition-colors duration-300">
+    <div className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-white/10 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md transition-colors duration-300">
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-6xl bg-white dark:bg-gray-900 rounded-[24px] shadow-sm border border-gray-200 dark:border-white/10 px-8 py-4 flex justify-between items-center relative transition-colors duration-300"
+        className="w-full px-4 md:px-8 h-[72px] flex items-center justify-between"
       >
         {/* LEFT */}
         <div className="flex items-center gap-3">
           {/* BACK */}
-          <div
+          <button
             onClick={() => navigate("/dashboard")}
-            className="cursor-pointer p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
           >
             <IoArrowBack size={20} className="text-gray-700 dark:text-gray-300" />
-          </div>
+          </button>
 
           {/* LOGO */}
           <div
-            className="flex items-center gap-3 cursor-pointer"
             onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-2 cursor-pointer group"
           >
-            <div className="bg-black dark:bg-white text-white dark:text-black p-2 rounded-lg transition">
-              <BsRobot size={18} />
-            </div>
+            {/* ICON */}
+            <div className="relative w-9 h-9 flex items-center justify-center">
+              {/* Glow */}
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 blur-md opacity-70 animate-pulse"></div>
 
-            <h1 className="font-semibold hidden md:block text-lg text-gray-900 dark:text-white">
-              Place-Mentor
-            </h1>
+              {/* Icon */}
+              <div
+                className="relative bg-gray-900 text-white font-bold rounded-lg w-full h-full flex items-center justify-center 
+    transition-all duration-500 group-hover:scale-110 group-hover:rotate-6"
+              >
+                PM
+              </div>
+            </div>
+            {/* TEXT */}
+            <span className="font-bold text-lg tracking-wide text-gray-900 dark:text-white">
+              Place
+              <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent animate-pulse">
+                Mentor
+              </span>
+            </span>
           </div>
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-6 relative">
-          {/*  DARK MODE */}
-          <Button variant="ghost" size="icon" onClick={toggleDark}>
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        <div className="flex items-center gap-3 md:gap-5 relative">
+          {/* DARK MODE */}
+          <Button variant="ghost" size="icon" onClick={toggleDark} className="rounded-xl">
+            {isDark ? <Sun size={19} /> : <Moon size={19} />}
           </Button>
 
-          {/*  CREDITS */}
+          {/* CREDITS */}
           <div className="relative">
             <button
               onClick={() => {
                 setShowCreditPopup(!showCreditPopup);
                 setShowUserPopup(false);
               }}
-              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white px-4 h-11 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-700 transition"
             >
-              <BsCoin size={20} />
-              {user?.credits || 0}
+              <BsCoin size={18} />
+              <span className="font-medium">{user?.credits || 0}</span>
             </button>
 
             {showCreditPopup && (
-              <div className="absolute -right-12 mt-3 w-64 bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-white/10 rounded-xl p-5 z-50">
+              <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 rounded-2xl p-5 z-50">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Need more credits to continue interviews?
                 </p>
+
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="w-full bg-black dark:bg-white text-white dark:text-black py-2 rounded-lg text-sm"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-medium transition"
                 >
                   Buy more credits
                 </button>
@@ -127,16 +141,16 @@ function QuizNav() {
             )}
           </div>
 
-          {/* 👤 USER */}
+          {/* USER */}
           <div className="relative">
             <button
               onClick={() => {
                 setShowUserPopup(!showUserPopup);
                 setShowCreditPopup(false);
               }}
-              className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
             >
-              <div className="w-9 h-9 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center overflow-hidden font-semibold">
                 {user?.avatar ? (
                   <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -144,23 +158,23 @@ function QuizNav() {
                 )}
               </div>
 
-              <p className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <p className="hidden md:block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 {user?.fullName || "Guest"}
               </p>
             </button>
 
             {showUserPopup && (
-              <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-white/10 rounded-xl p-4 z-50">
+              <div className="absolute right-0 mt-3 w-52 bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 rounded-2xl p-3 z-50">
                 <button
                   onClick={() => navigate("/history")}
-                  className="w-full text-left text-sm py-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                  className="w-full text-left text-sm px-3 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                 >
                   Interview History
                 </button>
 
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left text-sm py-2 flex items-center gap-2 text-red-500"
+                  className="w-full text-left text-sm px-3 py-2.5 rounded-xl flex items-center gap-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
                   <HiOutlineLogout size={16} />
                   Logout
