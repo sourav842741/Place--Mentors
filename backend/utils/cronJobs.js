@@ -79,9 +79,14 @@ export const runFullCronCycle = async () => {
           async () => {
             for (const keyword of KEYWORDS) {
               for (const location of LOCATIONS) {
-                await fetchAndSaveForQuery(keyword, location);
+                try {
+                  await fetchAndSaveForQuery(keyword, location);
+                } catch (error) {
+                  console.error(`Skipped ${keyword}/${location} after retries`);
+                }
 
-                await delay(3000);
+                // Small gap between API requests
+                await delay(10000);
               }
             }
           },
@@ -250,9 +255,7 @@ export const runFullCronCycle = async () => {
           async () => {
             const newsCount = await fetchAndProcessNews();
 
-            console.log(
-              ` [CRON-NEWS] Complete! (${newsCount} articles)`
-            );
+            console.log(` [CRON-NEWS] Complete! (${newsCount} articles)`);
           },
 
           {
@@ -327,9 +330,7 @@ export const startCronJobs = () => {
   // ================= EMAIL CRONS =================
   startEmailCronJobs();
 
-  console.log(
-    " [CRON] Self-healing + Sentry + Email started (10min cycles)"
-  );
+  console.log(" [CRON] Self-healing + Sentry + Email started (10min cycles)");
 };
 
 export default {
