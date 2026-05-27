@@ -16,7 +16,7 @@ Place Mentors is a production-grade full-stack placement preparation platform em
 **Live Demo:** [https://placementor.online](https://placementor.online)  
 **Backend API:** [https://souravkumar-7408410.postman.co/workspace/sourav-kumar's-Workspace~068384b5-c262-4314-8c57-2ad36050edc7/request/44025304-7b499f7b-07a5-4d6c-a473-4123632f6a7f?action=share&creator=44025304&active-environment=44025304-f8d68e60-3ea0-4a2e-8b06-36bc8e6aa3df](https://souravkumar-7408410.postman.co/workspace/sourav-kumar's-Workspace~068384b5-c262-4314-8c57-2ad36050edc7/request/44025304-7b499f7b-07a5-4d6c-a473-4123632f6a7f?action=share&creator=44025304&active-environment=44025304-f8d68e60-3ea0-4a2e-8b06-36bc8e6aa3df)
 
-![Hero Banner](https://drive.google.com/file/d/17f1sJvUJbfKiZuLxpmw2fYPBGmsBUPzv/view?usp=sharing)
+![Hero Banner](./assets/dashboard2.png)
 
 ### 🌟 Why Place Mentors?
 - **Production Ready** - Deployed on Vercel/Render 
@@ -126,22 +126,22 @@ graph TB
 
 | 🖥️ **Dashboard** | ⚔️ **Coding Battle** |
 |---|---|
-| ![Dashboard](https://drive.google.com/file/d/17f1sJvUJbfKiZuLxpmw2fYPBGmsBUPzv/view?usp=sharing) | ![Battle](https://drive.google.com/file/d/1OTHzivppMyhWAVvwQSuEBFyt2R8JPkBC/view?usp=sharing) |
+| ![Dashboard](./assets/dashboard.png) | ![Battle](./assets/battle.png) |
 
 | 🤖 **AI Planner** | 🏆 **Leaderboard** |
 |---|---|
-| ![AI Planner](https://drive.google.com/file/d/1NFEKe6Q-7d1-aXtiGsK4h55iYfVkvmJK/view?usp=sharing) | ![Leaderboard](https://drive.google.com/file/d/1Yh_YegLXYdcetuLFHLcg68Huc4XxKFAX/view?usp=sharing) |
+| ![AI Planner](./assets/ai-planner.png) | ![Leaderboard](./assets/leaderboard.png) |
 
 </div>
 
 # 📹 Video Demo 
 ### Explore the project in action—click the image below to watch the full demo.
 
-[![Watch Video](https://drive.google.com/file/d/1h8EXPbZKDgv10wN9fgnvorpY-ue1a5ck/view?usp=sharing)](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view)
+[![Watch Video](./assets/dashboard.png)](https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/view)
 **🎮 Live Demo Links:**
-- [Dashboard](https://placementor.online/dashboard)
-- [Coding Battles](https://placementor.online/profile)
-- [AI Planner](https://placementor.online/ai-planner)
+- [Dashboard](https://place-mentor-frontend.onrender.com/dashboard)
+- [Coding Battles](https://place-mentor-frontend.onrender.com/coding-potd)
+- [AI Planner](https://place-mentor-frontend.onrender.com/ai-planner)
 
 
 
@@ -494,4 +494,4 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 </div>
 
-![Footer](https://drive.google.com/file/d/1PKRe37EqbfSa0hAk8rdmpmlPrxyZMdTC/view?usp=sharing)
+![Footer](./assets/footer.png)
