@@ -177,11 +177,186 @@ export const getReplies = async (req, res) => {
   }
 };
 
+const getOwnerId = (doc) => doc?.user?._id || doc?.user;
+
+export const updateDoubtController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { question } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return sendResponse(res, 400, false, "Invalid doubt ID");
+    }
+
+    if (!question || typeof question !== "string" || question.trim().length === 0) {
+      return sendResponse(res, 400, false, "Question is required");
+    }
+    if (question.trim().length < 5) {
+      return sendResponse(res, 400, false, "Question too short (min 5 chars)");
+    }
+    if (question.length > 2000) {
+      return sendResponse(res, 400, false, "Question too long (max 2000 chars)");
+    }
+
+    const doubt = await Doubt.findById(id);
+    if (!doubt) {
+      return sendResponse(res, 404, false, "Doubt not found");
+    }
+
+    const ownerId = getOwnerId(doubt);
+    if (ownerId.toString() !== req.user._id.toString()) {
+      return sendResponse(res, 403, false, "You are not allowed to edit this doubt");
+    }
+
+    doubt.question = question.trim();
+    await doubt.save();
+
+    const updatedDoubt = await Doubt.findById(doubt._id)
+      .populate("user", "fullName avatar")
+      .lean();
+
+    if (req.io) {
+      req.io.to(`doubt-${doubt._id}`).emit("doubt_updated", {
+        doubtId: doubt._id,
+        doubt: updatedDoubt,
+      });
+    }
+
+    return sendResponse(res, 200, true, "Doubt updated", updatedDoubt);
+  } catch (err) {
+    return sendResponse(res, 500, false, "Failed to update doubt");
+  }
+};
+
+export const deleteDoubtController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return sendResponse(res, 400, false, "Invalid doubt ID");
+    }
+
+    const doubt = await Doubt.findById(id);
+    if (!doubt) {
+      return sendResponse(res, 404, false, "Doubt not found");
+    }
+
+    const ownerId = getOwnerId(doubt);
+    if (ownerId.toString() !== req.user._id.toString()) {
+      return sendResponse(res, 403, false, "You are not allowed to delete this doubt");
+    }
+
+    // Delete related replies first
+    await Reply.deleteMany({ doubt: id });
+
+    await Doubt.findByIdAndDelete(id);
+
+    if (req.io) {
+      req.io.emit("doubt_deleted", { doubtId: id });
+    }
+
+    return sendResponse(res, 200, true, "Doubt deleted", { doubtId: id });
+  } catch (err) {
+    return sendResponse(res, 500, false, "Failed to delete doubt");
+  }
+};
+
+export const updateReplyController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { answer } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return sendResponse(res, 400, false, "Invalid reply ID");
+    }
+
+    if (!answer || typeof answer !== "string" || answer.trim().length === 0) {
+      return sendResponse(res, 400, false, "Answer is required");
+    }
+    if (answer.trim().length < 2) {
+      return sendResponse(res, 400, false, "Answer too short (min 2 chars)");
+    }
+    if (answer.length > 5000) {
+      return sendResponse(res, 400, false, "Answer too long (max 5000 chars)");
+    }
+
+    const reply = await Reply.findById(id);
+    if (!reply) {
+      return sendResponse(res, 404, false, "Reply not found");
+    }
+
+    const ownerId = getOwnerId(reply);
+    if (ownerId.toString() !== req.user._id.toString()) {
+      return sendResponse(res, 403, false, "You are not allowed to edit this reply");
+    }
+
+    reply.answer = answer.trim();
+    await reply.save();
+
+    const updatedReply = await Reply.findById(reply._id)
+      .populate("user", "fullName avatar")
+      .lean();
+
+    if (req.io) {
+      req.io.to(`doubt-${reply.doubt}`).emit("reply_updated", {
+        doubtId: reply.doubt,
+        replyId: reply._id,
+        reply: updatedReply,
+      });
+    }
+
+    return sendResponse(res, 200, true, "Reply updated", updatedReply);
+  } catch (err) {
+    return sendResponse(res, 500, false, "Failed to update reply");
+  }
+};
+
+export const deleteReplyController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return sendResponse(res, 400, false, "Invalid reply ID");
+    }
+
+    const reply = await Reply.findById(id);
+    if (!reply) {
+      return sendResponse(res, 404, false, "Reply not found");
+    }
+
+    const ownerId = getOwnerId(reply);
+    if (ownerId.toString() !== req.user._id.toString()) {
+      return sendResponse(res, 403, false, "You are not allowed to delete this reply");
+    }
+
+    const doubtId = reply.doubt;
+
+    await Reply.findByIdAndDelete(id);
+
+    // Decrement replyCount on delete (avoid negative)
+    await Doubt.findByIdAndUpdate(doubtId, {
+      $inc: { replyCount: -1 },
+    });
+
+    if (req.io) {
+      req.io.to(`doubt-${doubtId}`).emit("reply_deleted", {
+        doubtId,
+        replyId: id,
+      });
+    }
+
+    return sendResponse(res, 200, true, "Reply deleted", { replyId: id, doubtId });
+  } catch (err) {
+    return sendResponse(res, 500, false, "Failed to delete reply");
+  }
+};
+
 export const toggleUpvote = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return sendResponse(res, 400, false, "Invalid reply ID");
     }
+
 
     const reply = await Reply.findById(req.params.id);
 
