@@ -1,46 +1,33 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Autoplay from "embla-carousel-autoplay";
 import * as React from "react";
-import useAuth from "@/hooks/useAuth";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { trackEvent } from "../hooks/useAnalytics";
 
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import {
-  Play,
-  Briefcase,
-  TrendingUp,
-  Building2,
-  Globe,
-  Cpu,
-  Code,
-  ExternalLink,
-  ArrowRight,
-  Loader2,
-  Mic,
-  Sparkles,
-} from "lucide-react";
+import CpotdCard from "@/components/CpotdCard";
+import DashboardQuoteCard from "@/components/DashboardQuoteCard";
+import Footer from "@/components/Footer";
+import PotdCard from "@/components/PotdCard";
+import SuccessStories from "@/components/SuccessStories";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { ArrowRight, Briefcase, ExternalLink, Loader2, Mic, Play, TrendingUp } from "lucide-react";
 import api from "../services/api";
-import Footer from "@/components/Footer";
-import SuccessStories from "@/components/SuccessStories";
-import PotdCard from "@/components/PotdCard";
-import CpotdCard from "@/components/CpotdCard";
 
-import { fetchNews, fetchNewsStats } from "../redux/newsSlice.js";
-import { Button } from "@/components/ui/button.jsx";
-import { Badge } from "@/components/ui/badge.jsx";
 import ContactUs from "@/components/ContactUs";
 import StreakCalendar from "@/components/StreakCalendar.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { fetchNews, fetchNewsStats } from "../redux/newsSlice.js";
 import { fetchStreak } from "../redux/streakSlice.js";
-
+import WordOfDayCard from "@/components/WordOfDayCard";
+import { useQueryClient } from "@tanstack/react-query";
 import AnnouncementBar from "../components/AnnouncementBar";
 import useSettings from "../hooks/useSettings";
-import { useQueryClient } from "@tanstack/react-query";
 
 import {
   safeTrack,
@@ -363,51 +350,71 @@ export default function Dashboard() {
         <main className="flex-1">
           <div className="p-2 md:p-6 space-y-4 md:space-y-6">
             {/* TOP */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default  dark:bg-gray-900  dark:border-white/10">
-                <h1 className="text-3xl font-bold  text-gray-900 dark:text-white">
-                  <span data-private>Welcome back, {user?.fullName}</span>
-                </h1>
+            <div className="space-y-4 md:space-y-6">
+              {/* Row 1: Welcome (75%) + Daily Motivation (25%) */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="lg:col-span-3">
+                  <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default h-full dark:bg-gray-900 dark:border-white/10">
+                    <h1 className="text-3xl font-bold  text-gray-900 dark:text-white">
+                      <span data-private>Welcome back, {user?.fullName}</span>
+                    </h1>
 
-                <p className="mt-2 text-lg  text-gray-500 dark:text-gray-400 font-medium">
-                  Level {level} 🚀
-                </p>
+                    <p className="mt-2 text-lg  text-gray-500 dark:text-gray-400 font-medium">
+                      Level {level} 🚀
+                    </p>
 
-                <p className="text-lg  text-gray-600 dark:text-gray-400 font-medium mt-1">
-                  ⏱ Today: {todayData?.timeSpent || 0} min
-                </p>
+                    <p className="text-lg  text-gray-600 dark:text-gray-400 font-medium mt-1">
+                      ⏱ Today: {todayData?.timeSpent || 0} min
+                    </p>
 
-                <button className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 font-semibold shadow-sm hover:shadow-md transition-all">
-                  Continue Learning →
-                </button>
-              </div>
-
-              <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all  dark:bg-gray-900  dark:border-white/10">
-                <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
-                  Progress
-                </p>
-
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {currentXP} / {maxXP} XP
-                </h2>
-
-                {/* Progress Bar */}
-                <div className="w-full  bg-gray-100 dark:bg-gray-800 rounded-full h-3 mt-4 overflow-hidden ">
-                  <div
-                    className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${percent}%` }}
-                  ></div>
+                    <button className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 font-semibold shadow-sm hover:shadow-md transition-all">
+                      Continue Learning →
+                    </button>
+                  </div>
                 </div>
 
-                {/*  MOTIVATION INSIDE */}
-                <div className="mt-4">
-                  {loadingMotivation ? (
-                    <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
-                  ) : (
-                    <p className="text-sm md:text-base font-medium text-gray-600 leading-relaxed whitespace-pre-line dark:text-white">
-                      {motivation}
-                    </p>
-                  )}
+                <div className="lg:col-span-1">
+                  <DashboardQuoteCard />
+                </div>
+              </div>
+
+              {/* Row 2: Progress (left) + Word Of The Day (right) */}
+              <div className="lg:col-span-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4 md:gap-6">
+                  <div className="h-full">
+                    <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all h-full items-stretch dark:bg-gray-900 dark:border-white/10 flex flex-col">
+                      <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">Progress</p>
+
+                      <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {currentXP} / {maxXP} XP
+                      </h2>
+
+                      {/* Progress Bar */}
+                      <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-3 mt-4 overflow-hidden">
+                        <div
+                          className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
+                          style={{ width: `${percent}%` }}
+                        ></div>
+                      </div>
+
+                      {/*  MOTIVATION INSIDE */}
+                      <div className="mt-4">
+                        {loadingMotivation ? (
+                          <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
+                        ) : (
+                          <p className="text-sm md:text-base font-medium text-gray-600 leading-relaxed whitespace-pre-line dark:text-white">
+                            {motivation}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="h-full">
+                    <div className="h-full">
+                      <WordOfDayCard />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
