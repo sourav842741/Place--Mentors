@@ -140,10 +140,10 @@ function App() {
   }, [user]);
 
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  safeSetUser(user);
-}, [user]);
+    safeSetUser(user);
+  }, [user]);
 
   /* POPUPS */
   const [showPopup, setShowPopup] = useState(false);

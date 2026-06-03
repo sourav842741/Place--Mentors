@@ -106,9 +106,7 @@ const AICoach = () => {
             {/* SIDEBAR */}
             <aside
               className={`fixed lg:static top-0 left-0 z-50 h-full w-[280px] transform transition-transform duration-300 ${
-                sidebarOpen
-                  ? "translate-x-0"
-                  : "-translate-x-full lg:translate-x-0"
+                sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
               }`}
             >
               <div className="h-full rounded-none lg:rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm p-4 flex flex-col">
@@ -130,9 +128,7 @@ const AICoach = () => {
                   <div>
                     <h2 className="text-lg font-bold">AI Coach</h2>
 
-                    <p className="text-sm text-slate-500">
-                      Your mentor
-                    </p>
+                    <p className="text-sm text-slate-500">Your mentor</p>
                   </div>
                 </div>
 
@@ -168,9 +164,7 @@ const AICoach = () => {
                       >
                         <Icon className="w-4 h-4 text-blue-600" />
 
-                        <span className="text-sm font-medium">
-                          {label}
-                        </span>
+                        <span className="text-sm font-medium">{label}</span>
                       </button>
                     ))}
                   </div>
@@ -190,13 +184,9 @@ const AICoach = () => {
 
                   <div className="flex-1 overflow-y-auto space-y-2 pr-1">
                     {historyLoading ? (
-                      <p className="text-sm text-slate-500">
-                        Loading...
-                      </p>
+                      <p className="text-sm text-slate-500">Loading...</p>
                     ) : history.length === 0 ? (
-                      <p className="text-sm text-slate-500">
-                        No chats yet
-                      </p>
+                      <p className="text-sm text-slate-500">No chats yet</p>
                     ) : (
                       history.map((chat) => (
                         <button
@@ -211,13 +201,9 @@ const AICoach = () => {
                               : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                           }`}
                         >
-                          <p className="font-medium text-sm line-clamp-1">
-                            {chat.title}
-                          </p>
+                          <p className="font-medium text-sm line-clamp-1">{chat.title}</p>
 
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-1">
-                            {chat.preview}
-                          </p>
+                          <p className="text-xs text-slate-500 line-clamp-2 mt-1">{chat.preview}</p>
                         </button>
                       ))
                     )}
@@ -243,14 +229,10 @@ const AICoach = () => {
                   </div>
 
                   <div>
-                    <h1 className="font-bold text-lg">
-                      AI Coach
-                    </h1>
+                    <h1 className="font-bold text-lg">AI Coach</h1>
 
                     <p className="text-sm text-slate-500">
-                      {currentChatId
-                        ? "Ongoing conversation"
-                        : "Ask anything about placements"}
+                      {currentChatId ? "Ongoing conversation" : "Ask anything about placements"}
                     </p>
                   </div>
                 </div>
@@ -274,13 +256,11 @@ const AICoach = () => {
                         <Brain className="w-8 h-8" />
                       </div>
 
-                      <h2 className="text-2xl font-bold mb-2">
-                        Welcome to AI Coach
-                      </h2>
+                      <h2 className="text-2xl font-bold mb-2">Welcome to AI Coach</h2>
 
                       <p className="max-w-lg text-slate-500 mb-5 text-sm md:text-base">
-                        Ask about DSA, resume, interviews,
-                        aptitude, roadmap, coding doubts and more.
+                        Ask about DSA, resume, interviews, aptitude, roadmap, coding doubts and
+                        more.
                       </p>
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -299,11 +279,7 @@ const AICoach = () => {
                     messages.map((msg, i) => (
                       <div
                         key={i}
-                        className={`flex ${
-                          msg.role === "user"
-                            ? "justify-end"
-                            : "justify-start"
-                        }`}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                       >
                         <div
                           className={`max-w-[92%] md:max-w-[74%] px-4 py-3 rounded-3xl shadow-sm ${
@@ -314,23 +290,17 @@ const AICoach = () => {
                         >
                           {msg.role === "ai" ? (
                             <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert prose-pre:rounded-2xl">
-                              <ReactMarkdown
-                                rehypePlugins={[rehypeHighlight]}
-                              >
+                              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
                                 {msg.text}
                               </ReactMarkdown>
                             </div>
                           ) : (
-                            <p className="whitespace-pre-wrap leading-7 text-[15px]">
-                              {msg.text}
-                            </p>
+                            <p className="whitespace-pre-wrap leading-7 text-[15px]">{msg.text}</p>
                           )}
 
                           <div
                             className={`mt-2 flex items-center gap-2 text-xs ${
-                              msg.role === "user"
-                                ? "justify-end text-white/80"
-                                : "text-slate-500"
+                              msg.role === "user" ? "justify-end text-white/80" : "text-slate-500"
                             }`}
                           >
                             <span>{time(msg.timestamp)}</span>
@@ -387,17 +357,11 @@ const AICoach = () => {
                     disabled={!input.trim() || loading}
                     className="w-14 h-14 rounded-3xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center disabled:opacity-50 transition"
                   >
-                    <MessageCircle
-                      className={`w-5 h-5 ${
-                        loading ? "animate-spin" : ""
-                      }`}
-                    />
+                    <MessageCircle className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
                   </button>
                 </div>
 
-                <p className="text-center text-xs text-slate-500 mt-2">
-                  Powered by Gemini + GPT
-                </p>
+                <p className="text-center text-xs text-slate-500 mt-2">Powered by Gemini + GPT</p>
               </div>
             </main>
           </div>

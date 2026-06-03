@@ -82,8 +82,7 @@ function safeTrackerInit() {
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight,
 
-        timezone:
-          Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 
         route: window.location.pathname,
       });
@@ -141,19 +140,14 @@ export function safeSetUser(user) {
 
   try {
     const userId =
-      user?.fullName ||
-      user?.username ||
-      user?.email ||
-      user?.id ||
-      user?._id ||
-      "anonymous-user";
+      user?.fullName || user?.username || user?.email || user?.id || user?._id || "anonymous-user";
 
     // session visible name
-   if (typeof t.setUserID === "function") {
-  t.setUserID(String(userId));
-} else if (typeof t.setUser === "function") {
-  t.setUser(String(userId));
-}
+    if (typeof t.setUserID === "function") {
+      t.setUserID(String(userId));
+    } else if (typeof t.setUser === "function") {
+      t.setUser(String(userId));
+    }
 
     // metadata
     if (typeof t.setMetadata === "function") {
@@ -164,9 +158,7 @@ export function safeSetUser(user) {
         email: user?.email,
         role: user?.role,
 
-        isAdmin:
-          user?.role === "admin" ||
-          user?.role === "superadmin",
+        isAdmin: user?.role === "admin" || user?.role === "superadmin",
       });
     }
 

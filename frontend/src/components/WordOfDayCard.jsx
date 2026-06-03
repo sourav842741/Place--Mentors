@@ -58,17 +58,12 @@ function difficultyToStyles(difficulty) {
   }
 }
 
-
 function WordSavedModalScaffold({ open, onClose }) {
   if (!open) return null;
 
   // Hidden for now (scaffold only). Kept minimal to avoid dashboard clutter.
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 hidden"
-    >
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 hidden">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div className="relative z-10 p-4" />
     </div>
@@ -84,7 +79,11 @@ export default function WordOfDayCard() {
 
   React.useEffect(() => {
     const saved = readSaved();
-    setIsSaved(saved.some((w) => String(w?.word || "").toLowerCase() === String(word?.word || "").toLowerCase()));
+    setIsSaved(
+      saved.some(
+        (w) => String(w?.word || "").toLowerCase() === String(word?.word || "").toLowerCase()
+      )
+    );
   }, [word?.word]);
 
   const styles = difficultyToStyles(word.difficulty);
@@ -112,7 +111,9 @@ export default function WordOfDayCard() {
 
   const onSave = () => {
     const saved = readSaved();
-    const exists = saved.some((w) => String(w?.word || "").toLowerCase() === String(word?.word || "").toLowerCase());
+    const exists = saved.some(
+      (w) => String(w?.word || "").toLowerCase() === String(word?.word || "").toLowerCase()
+    );
 
     if (exists) {
       setToast({ type: "success", message: "Already saved" });
@@ -168,9 +169,7 @@ export default function WordOfDayCard() {
         className="pointer-events-none absolute -bottom-16 -right-16 h-44 w-44 rounded-full bg-gradient-to-r from-indigo-500/20 to-pink-500/20 blur-3xl"
       />
 
-      <div
-        className="relative rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-white/10 bg-white/50 dark:bg-gray-900/40 backdrop-blur-md shadow-sm hover:shadow-xl hover:border-purple-400/40 transition-all duration-300"
-      >
+      <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-white/10 bg-white/50 dark:bg-gray-900/40 backdrop-blur-md shadow-sm hover:shadow-xl hover:border-purple-400/40 transition-all duration-300">
         <div className="p-4 md:p-5">
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
@@ -209,12 +208,14 @@ export default function WordOfDayCard() {
                 </span>
               </div>
               <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                <span className="font-semibold text-gray-800 dark:text-gray-100">Meaning:</span> {word.meaning}
+                <span className="font-semibold text-gray-800 dark:text-gray-100">Meaning:</span>{" "}
+                {word.meaning}
               </p>
             </div>
 
             <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
-              <span className="font-semibold text-gray-800 dark:text-gray-100">Example:</span> “{word.example}”
+              <span className="font-semibold text-gray-800 dark:text-gray-100">Example:</span> “
+              {word.example}”
             </p>
 
             <div className="flex flex-wrap gap-2">
@@ -246,8 +247,14 @@ export default function WordOfDayCard() {
                 onClick={onSave}
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-gray-900/30 hover:bg-white dark:hover:bg-gray-900 transition-all duration-200"
               >
-                {isSaved ? <Check className="w-4 h-4 text-emerald-500" /> : <Bookmark className="w-4 h-4 text-gray-700 dark:text-gray-200" />}
-                <span className="text-xs font-semibold text-gray-800 dark:text-gray-100">{isSaved ? "Saved" : "Save"}</span>
+                {isSaved ? (
+                  <Check className="w-4 h-4 text-emerald-500" />
+                ) : (
+                  <Bookmark className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                )}
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+                  {isSaved ? "Saved" : "Save"}
+                </span>
               </button>
             </div>
 
@@ -277,4 +284,3 @@ export default function WordOfDayCard() {
     </section>
   );
 }
-

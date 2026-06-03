@@ -286,6 +286,68 @@ export default function Dashboard() {
     );
   }, [dispatch, activeFilter]);
 
+  const getBestDay = (data) => {
+    if (!Array.isArray(data) || data.length === 0) return "—";
+
+    const best = [...data].sort((a, b) => {
+      const av = Number(a?.avgScore ?? 0);
+      const bv = Number(b?.avgScore ?? 0);
+      return bv - av;
+    })[0];
+
+    // Input date format appears to already be the chart key (likely Mon/Tue etc.)
+    // Fallback to raw date.
+    return best?.date || "—";
+  };
+
+  const getScoreImprovement = (data) => {
+    if (!Array.isArray(data) || data.length < 2) return null;
+
+    // Compare first half vs second half within weeklyData.
+    const mid = Math.floor(data.length / 2);
+    const prev = data.slice(0, mid);
+    const curr = data.slice(mid);
+
+    const prevAvg = prev.reduce((sum, d) => sum + Number(d?.avgScore ?? 0), 0) / (prev.length || 1);
+    const currAvg = curr.reduce((sum, d) => sum + Number(d?.avgScore ?? 0), 0) / (curr.length || 1);
+
+    if (prevAvg === 0) return null;
+    return Math.round(((currAvg - prevAvg) / prevAvg) * 100);
+  };
+
+  const getTimeImprovement = (data) => {
+    if (!Array.isArray(data) || data.length < 2) return null;
+
+    const mid = Math.floor(data.length / 2);
+    const prev = data.slice(0, mid);
+    const curr = data.slice(mid);
+
+    const prevAvg =
+      prev.reduce((sum, d) => sum + Number(d?.timeSpent ?? 0), 0) / (prev.length || 1);
+    const currAvg =
+      curr.reduce((sum, d) => sum + Number(d?.timeSpent ?? 0), 0) / (curr.length || 1);
+
+    if (prevAvg === 0) return null;
+    return Math.round(((currAvg - prevAvg) / prevAvg) * 100);
+  };
+
+  const getInsightMessage = (scoreImprovementPct) => {
+    if (scoreImprovementPct === null) {
+      return "Your consistency is growing. Keep showing up daily.";
+    }
+
+    if (scoreImprovementPct > 0) {
+      return "Your consistency is improving. Keep practicing daily.";
+    }
+
+    if (scoreImprovementPct < 0) {
+      return "Focus on small daily practice sessions—your streak can bounce back.";
+    }
+
+    return "Steady progress—try adding a short revision session to level up faster.";
+  };
+
+  // Existing KPI used by current Weekly Performance badge
   const calculateWeeklyChange = () => {
     if (!weeklyData || weeklyData.length === 0) return 0;
 
@@ -307,10 +369,53 @@ export default function Dashboard() {
 
   const percentChange = calculateWeeklyChange();
 
+  // Weekly insight card (Feature 1)
+  const bestDay = getBestDay(weeklyData);
+  const scoreImprovementPct = getScoreImprovement(weeklyData);
+  const timeImprovementPct = getTimeImprovement(weeklyData);
+
+  const thisWeekColorClass =
+    scoreImprovementPct === null
+      ? "text-gray-900 dark:text-white"
+      : scoreImprovementPct >= 0
+        ? "text-emerald-600 dark:text-emerald-400"
+        : "text-red-600 dark:text-red-400";
+
+  const timeColorClass =
+    timeImprovementPct === null
+      ? "text-gray-900 dark:text-white"
+      : timeImprovementPct >= 0
+        ? "text-emerald-600 dark:text-emerald-400"
+        : "text-red-600 dark:text-red-400";
+
+  // Convert % change to minutes delta for display, using averages within weeklyData
+  const timeDeltaMinutes = (() => {
+    if (!Array.isArray(weeklyData) || weeklyData.length < 2) return null;
+    const mid = Math.floor(weeklyData.length / 2);
+    const prev = weeklyData.slice(0, mid);
+    const curr = weeklyData.slice(mid);
+
+    const prevAvg =
+      prev.reduce((sum, d) => sum + Number(d?.timeSpent ?? 0), 0) / (prev.length || 1);
+    const currAvg =
+      curr.reduce((sum, d) => sum + Number(d?.timeSpent ?? 0), 0) / (curr.length || 1);
+
+    if (!Number.isFinite(prevAvg) || !Number.isFinite(currAvg)) return null;
+    return Math.round(currAvg - prevAvg);
+  })();
+
+  const insightMessage = getInsightMessage(scoreImprovementPct);
+
   const today = new Date().toISOString().split("T")[0];
 
   const todayData =
     weeklyData.find((d) => d.date === today) || weeklyData[weeklyData.length - 1] || {};
+
+  const hour = new Date().getHours();
+
+  const greeting =
+    hour < 12 ? "Good Morning ☀️" : hour < 18 ? "Good Afternoon 🌤️" : "Good Evening 🌙";
+
   // ======================================================
 
   return (
@@ -352,11 +457,13 @@ export default function Dashboard() {
             {/* TOP */}
             <div className="space-y-4 md:space-y-6">
               {/* Row 1: Welcome (75%) + Daily Motivation (25%) */}
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
-                <div className="lg:col-span-3">
+              <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-4 md:gap-6">
+                <div>
                   <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default h-full dark:bg-gray-900 dark:border-white/10">
-                    <h1 className="text-3xl font-bold  text-gray-900 dark:text-white">
-                      <span data-private>Welcome back, {user?.fullName}</span>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                      <span data-private>
+                        {greeting}, {user?.fullName}
+                      </span>
                     </h1>
 
                     <p className="mt-2 text-lg  text-gray-500 dark:text-gray-400 font-medium">
@@ -367,13 +474,16 @@ export default function Dashboard() {
                       ⏱ Today: {todayData?.timeSpent || 0} min
                     </p>
 
-                    <button className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 font-semibold shadow-sm hover:shadow-md transition-all">
-                      Continue Learning →
-                    </button>
+                    <Button
+                      onClick={() => navigate("/quiz")}
+                      className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:cursor-pointer"
+                    >
+                      Continue Quiz →
+                    </Button>
                   </div>
                 </div>
 
-                <div className="lg:col-span-1">
+                <div>
                   <DashboardQuoteCard />
                 </div>
               </div>
@@ -382,30 +492,122 @@ export default function Dashboard() {
               <div className="lg:col-span-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4 md:gap-6">
                   <div className="h-full">
+                    {/* Progress (upgraded with circular indicator) */}
                     <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all h-full items-stretch dark:bg-gray-900 dark:border-white/10 flex flex-col">
-                      <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">Progress</p>
+                      <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
+                        Progress
+                      </p>
 
-                      <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {currentXP} / {maxXP} XP
-                      </h2>
+                      <div className="flex flex-col md:flex-row md:items-center gap-6 flex-1">
+                        {/* LEFT */}
+                        <div className="flex-1">
+                          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                            {currentXP} / {maxXP} XP
+                          </h2>
 
-                      {/* Progress Bar */}
-                      <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-3 mt-4 overflow-hidden">
-                        <div
-                          className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
-                          style={{ width: `${percent}%` }}
-                        ></div>
-                      </div>
+                          <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-3 mt-4 overflow-hidden">
+                            <div
+                              className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
+                              style={{ width: `${percent}%` }}
+                            ></div>
+                          </div>
 
-                      {/*  MOTIVATION INSIDE */}
-                      <div className="mt-4">
-                        {loadingMotivation ? (
-                          <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
-                        ) : (
-                          <p className="text-sm md:text-base font-medium text-gray-600 leading-relaxed whitespace-pre-line dark:text-white">
-                            {motivation}
-                          </p>
-                        )}
+                          {/*  MOTIVATION INSIDE */}
+                          <div className="mt-4">
+                            {loadingMotivation ? (
+                              <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
+                            ) : (
+                              <p className="text-sm md:text-base font-medium text-gray-600 leading-relaxed whitespace-pre-line dark:text-white">
+                                {motivation}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* RIGHT - Circular Level Progress */}
+                        <div className="w-full md:w-[190px] flex justify-center">
+                          <div className="relative w-[160px] h-[160px] sm:w-[170px] sm:h-[170px]">
+                            {(() => {
+                              const size = 170;
+                              const stroke = 12;
+                              const r = (size - stroke) / 2;
+                              const c = 2 * Math.PI * r;
+                              const pct = Math.min(Math.max(percent, 0), 100);
+                              const dashOffset = c - (pct / 100) * c;
+                              const trackClass = "stroke-gray-200 dark:stroke-white/10";
+                              const progressStrokeClass = "stroke-[url(#levelProgressGradient)]";
+
+                              return (
+                                <svg
+                                  width={size}
+                                  height={size}
+                                  viewBox={`0 0 ${size} ${size}`}
+                                  className="block"
+                                >
+                                  <defs>
+                                    <linearGradient
+                                      id="levelProgressGradient"
+                                      x1="0"
+                                      y1="0"
+                                      x2="170"
+                                      y2="170"
+                                      gradientUnits="userSpaceOnUse"
+                                    >
+                                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="1" />
+                                      <stop offset="100%" stopColor="#7c3aed" stopOpacity="1" />
+                                    </linearGradient>
+                                  </defs>
+
+                                  {/* track */}
+                                  <circle
+                                    cx={size / 2}
+                                    cy={size / 2}
+                                    r={r}
+                                    fill="none"
+                                    strokeWidth={stroke}
+                                    className={trackClass}
+                                  />
+
+                                  {/* progress */}
+                                  <circle
+                                    cx={size / 2}
+                                    cy={size / 2}
+                                    r={r}
+                                    fill="none"
+                                    strokeWidth={stroke}
+                                    strokeLinecap="round"
+                                    className={progressStrokeClass}
+                                    strokeDasharray={c}
+                                    strokeDashoffset={dashOffset}
+                                    style={{
+                                      transition: "stroke-dashoffset 900ms ease-out",
+                                      transformOrigin: "50% 50%",
+                                      transform: "rotate(-90deg)",
+                                    }}
+                                  />
+
+                                  {/* center text */}
+                                  <foreignObject x="0" y="0" width={size} height={size}>
+                                    <div
+                                      xmlns="http://www.w3.org/1999/xhtml"
+                                      className="w-full h-full flex flex-col items-center justify-center"
+                                    >
+                                      <div className="text-sm font-semibold text-gray-500 dark:text-gray-300">
+                                        Level
+                                      </div>
+                                      <div className="text-3xl font-bold text-gray-900 dark:text-white leading-none">
+                                        {level}
+                                      </div>
+                                      <div className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                        {Math.round(percent)}%
+                                      </div>
+                                    </div>
+                                  </foreignObject>
+                                </svg>
+                              );
+                            })()}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -623,6 +825,72 @@ export default function Dashboard() {
               <StreakCalendar />
             </div>
 
+            {/* ======================================================
+                FEATURE 1 — WEEKLY INSIGHT CARD (Premium AI) 
+               ====================================================== */}
+            <div className="bg-white/70 dark:bg-gray-900/50 border border-gray-200/60 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all backdrop-blur">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-sm">
+                      ✨
+                    </span>
+                    Premium AI Insight
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Weekly breakdown (no extra calls)
+                  </p>
+                </div>
+
+                <div className="text-sm font-semibold px-3 py-1 rounded-full bg-gradient-to-r from-blue-600/10 to-purple-600/10 text-blue-700 dark:text-purple-200 border border-blue-600/20 dark:border-white/10">
+                  📊 This Week
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                    • Score improvement
+                  </div>
+                  <div className={`text-2xl font-bold ${thisWeekColorClass} transition-colors`}>
+                    {scoreImprovementPct === null
+                      ? "+0%"
+                      : `${scoreImprovementPct >= 0 ? "+" : ""}${scoreImprovementPct}%`}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                    • Total learning time change
+                  </div>
+                  <div className={`text-2xl font-bold ${timeColorClass} transition-colors`}>
+                    {timeDeltaMinutes === null
+                      ? "+0 minutes"
+                      : `${timeDeltaMinutes >= 0 ? "+" : ""}${timeDeltaMinutes} minutes`}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                    • Best performing day
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{bestDay}</div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                    • Short AI summary
+                  </div>
+                  <div className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
+                    "{insightMessage}"
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ======================================================
+                EXISTING WEEKLY PERFORMANCE CHART (unchanged)
+               ====================================================== */}
             <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all  dark:bg-gray-900  dark:border-white/10">
               {/* HEADER */}
               <div className="flex justify-between items-center mb-6">

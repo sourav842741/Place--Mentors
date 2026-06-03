@@ -2,11 +2,9 @@ import React from "react";
 import axios from "axios";
 import { Loader2, Quote } from "lucide-react";
 
-const QUOTE_API_URL =
-  "https://api.freeapi.app/api/v1/public/quotes/quote/random";
+const QUOTE_API_URL = "https://api.freeapi.app/api/v1/public/quotes/quote/random";
 
-const FALLBACK_QUOTE_TEXT =
-  "Success is the sum of small efforts repeated day in and day out.";
+const FALLBACK_QUOTE_TEXT = "Success is the sum of small efforts repeated day in and day out.";
 const FALLBACK_QUOTE_AUTHOR = "sourav kumar";
 
 const CACHE_KEY = "placementor_daily_motivation_quote_v1";
@@ -59,17 +57,17 @@ function normalizeApiResponse(data) {
   // API shape may vary; attempt robust extraction
   const payload = data?.data ?? data;
   const text =
-  typeof payload?.content === "string"
-    ? payload.content
-    : typeof payload?.quoteText === "string"
-      ? payload.quoteText
-      : typeof payload?.text === "string"
-        ? payload.text
-        : typeof payload?.quote === "string"
-          ? payload.quote
-          : typeof payload?.value === "string"
-            ? payload.value
-            : "";
+    typeof payload?.content === "string"
+      ? payload.content
+      : typeof payload?.quoteText === "string"
+        ? payload.quoteText
+        : typeof payload?.text === "string"
+          ? payload.text
+          : typeof payload?.quote === "string"
+            ? payload.quote
+            : typeof payload?.value === "string"
+              ? payload.value
+              : "";
 
   const author =
     typeof payload?.author === "string"
@@ -111,12 +109,10 @@ export default function DashboardQuoteCard() {
         const res = await axios.get(QUOTE_API_URL, { timeout: 6000 });
         const normalized = normalizeApiResponse(res?.data);
 
-        const nextQuote =
-          normalized ??
-          ({
-            text: FALLBACK_QUOTE_TEXT,
-            author: FALLBACK_QUOTE_AUTHOR,
-          });
+        const nextQuote = normalized ?? {
+          text: FALLBACK_QUOTE_TEXT,
+          author: FALLBACK_QUOTE_AUTHOR,
+        };
 
         if (!isMounted) return;
         setQuote(nextQuote);
@@ -151,9 +147,7 @@ export default function DashboardQuoteCard() {
         className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl"
       />
 
-      <div
-        className="relative rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-white/10 bg-white/50 dark:bg-gray-900/40 backdrop-blur-md shadow-sm hover:shadow-xl hover:border-purple-400/40 transition-all duration-300"
-      >
+      <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-white/10 bg-white/50 dark:bg-gray-900/40 backdrop-blur-md shadow-sm hover:shadow-xl hover:border-purple-400/40 transition-all duration-300">
         <div className="p-5 md:p-6">
           {/* Header Icon */}
           <div className="flex items-center justify-between gap-4">
@@ -205,4 +199,3 @@ export default function DashboardQuoteCard() {
     </section>
   );
 }
-
