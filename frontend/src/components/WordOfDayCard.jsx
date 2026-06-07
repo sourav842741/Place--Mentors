@@ -71,7 +71,56 @@ function WordSavedModalScaffold({ open, onClose }) {
 }
 
 export default function WordOfDayCard() {
-  const word = React.useMemo(() => getWordOfTheDay(new Date()), []);
+  const [word, setWord] = React.useState(() => {
+  const saved = localStorage.getItem("word_of_day_v1");
+
+  if (saved) {
+    const data = JSON.parse(saved);
+
+    const diff = Date.now() - data.timestamp;
+
+    if (diff < 24 * 60 * 60 * 1000) {
+      return data.word;
+    }
+  }
+
+  const newWord = getWordOfTheDay(new Date());
+
+  localStorage.setItem(
+    "word_of_day_v1",
+    JSON.stringify({
+      word: newWord,
+      timestamp: Date.now(),
+    })
+  );
+
+  return newWord;
+});
+
+React.useEffect(() => {
+  const saved = localStorage.getItem("word_of_day_v1");
+
+  if (!saved) return;
+
+  const data = JSON.parse(saved);
+
+  const diff = Date.now() - data.timestamp;
+
+  if (diff >= 24 * 60 * 60 * 1000) {
+    const newWord = getWordOfTheDay(new Date());
+
+    localStorage.setItem(
+      "word_of_day_v1",
+      JSON.stringify({
+        word: newWord,
+        timestamp: Date.now(),
+      })
+    );
+
+    setWord(newWord);
+  }
+}, []);
+
   const { toast, setToast } = useToast();
 
   const [isSaved, setIsSaved] = React.useState(false);
