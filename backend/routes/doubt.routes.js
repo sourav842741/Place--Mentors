@@ -13,7 +13,6 @@ import {
 import isAuth from "../middlewares/isAuth.js";
 import maintenanceCheck from "../middlewares/maintenanceCheck.js";
 
-
 const router = express.Router();
 
 router.post("/ask", maintenanceCheck, isAuth, askDoubt);
@@ -29,6 +28,5 @@ router.put("/reply/:id", maintenanceCheck, isAuth, updateReplyController);
 router.delete("/reply/:id", maintenanceCheck, isAuth, deleteReplyController);
 
 router.post("/reply/:id/upvote", maintenanceCheck, isAuth, toggleUpvote);
-
 
 export default router;

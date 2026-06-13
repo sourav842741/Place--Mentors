@@ -62,6 +62,7 @@ import PlacementPredictor from "./pages/PlacementPredictor";
 import SupportPage from "./pages/SupportPage";
 import TicketDetailPage from "./pages/TicketDetailPage";
 import AdminTickets from "./pages/admin/AdminTickets";
+import SettingsSecurity from "./pages/SettingsSecurity";
 import AdminPayments from "./pages/admin/AdminPayments";
 import InterviewExperienceComingSoon from "./pages/InterviewExperienceComingSoon";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -281,6 +282,7 @@ function App() {
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/certificates" element={<Certificates />} />
+          <Route path="/settingsAction" element={<SettingsSecurity />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/history" element={<InterviewHistory />} />

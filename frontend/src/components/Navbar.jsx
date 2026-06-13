@@ -33,6 +33,8 @@ import {
 import { BsCoin } from "react-icons/bs";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
+import { Shield } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/userSlice";
 import api from "../services/api";
@@ -579,18 +581,26 @@ p-2 rounded"
 
                 <DropdownMenuSeparator />
 
-                {/* Credits Section */}
                 {isAuth && (
                   <>
                     <DropdownMenuLabel className="p-2 flex items-center gap-2 border-2">
                       <BsCoin className="text-yellow-600 h-4 w-4" />
                       <span className="font-semibold">{credits} Credits</span>
                     </DropdownMenuLabel>
+
                     <DropdownMenuItem
                       onClick={() => navigate("/pricing")}
                       className="focus:bg-blue-500 px-2 py-1.5"
                     >
                       Buy More Credits
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onClick={() => navigate("/settingsAction")}
+                      className="focus:bg-blue-500 px-2 py-1.5"
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      Security
                     </DropdownMenuItem>
                   </>
                 )}

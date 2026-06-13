@@ -225,6 +225,85 @@ Explore Now
 };
 
 /* =========================================
+   NEW LOGIN ALERT TEMPLATE
+========================================= */
+
+export const buildNewLoginTemplate = ({
+  userName,
+  browser,
+  os,
+  deviceName,
+  ipAddress,
+  loginTime,
+  location,
+  platformName,
+  loginMethod,
+}) => {
+  const subject = "New Login Detected on Your Placementor Account";
+
+  const safeBrowser = browser || "Unknown";
+  const safeOs = os || "Unknown";
+  const safeDeviceName = deviceName || "Unknown";
+  const safeIp = ipAddress || "—";
+  const safeLoginTime = loginTime ? new Date(loginTime).toLocaleString(undefined) : "—";
+  const safeLocation = location ? location : "Location not available";
+  const safePlatform = platformName || "Placementor";
+  const safeLoginMethod = loginMethod === "google" ? "Google" : "Email";
+
+  const content = `
+  <h2 style="margin:0;color:#111827;">
+    New Login Detected 🚨
+  </h2>
+
+  <p style="color:#374151;font-size:14px;">
+    Hello ${userName || ""},
+  </p>
+
+  <p style="color:#374151;font-size:14px;">
+    A new login was detected on your <strong>${safePlatform}</strong> account.
+  </p>
+
+  <div style="text-align:left;margin:18px auto 0;max-width:480px;">
+    <p style="margin:0 0 8px;color:#111827;font-weight:600;font-size:13px;">Device Information</p>
+
+    <ul style="margin:0;padding-left:18px;color:#374151;font-size:13px;line-height:1.6;">
+      <li><strong>Browser:</strong> ${safeBrowser}</li>
+      <li><strong>Operating System:</strong> ${safeOs}</li>
+      <li><strong>Device:</strong> ${safeDeviceName}</li>
+      <li><strong>IP Address:</strong> ${safeIp}</li>
+      <li><strong>Login Time:</strong> ${safeLoginTime}</li>
+      <li><strong>Login Method:</strong> ${safeLoginMethod}</li>
+      <li><strong>Location:</strong> ${safeLocation}</li>
+    </ul>
+  </div>
+
+  <p style="color:#374151;font-size:14px;margin-top:16px;">
+    If this was you, no action is required.
+  </p>
+
+  <p style="color:#e11d48;font-weight:600;font-size:14px; margin-top:10px;">
+    If you do not recognize this activity:
+  </p>
+
+  <ol style="margin:8px 0 0;padding-left:18px;color:#374151;font-size:13px;line-height:1.6;">
+    <li>Change your password immediately.</li>
+    <li>Review Active Sessions.</li>
+    <li>Logout all other devices.</li>
+  </ol>
+
+  <p style="color:#6b7280;font-size:12px; margin-top:18px;">
+    Security Team<br/>
+    ${safePlatform}
+  </p>
+  `;
+
+  return {
+    subject,
+    html: baseTemplate(content),
+  };
+};
+
+/* =========================================
    CONTACT TEMPLATE
 ========================================= */
 

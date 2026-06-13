@@ -54,11 +54,7 @@ const chooseTemplate = (user) => {
      1. STREAK WARNING
   ------------------------- */
 
-  if (
-    user.streakCount > 0 &&
-    user.lastLoginDate < oneDayAgo() &&
-    user.lastPotdDate !== today()
-  ) {
+  if (user.streakCount > 0 && user.lastLoginDate < oneDayAgo() && user.lastPotdDate !== today()) {
     templates.push({
       type: "streak_warning",
       subject: "Don't Lose Your Streak 🔥",
@@ -191,9 +187,7 @@ const chooseTemplate = (user) => {
      RANDOM TEMPLATE
   ------------------------- */
 
-  const randomIndex = Math.floor(
-    Math.random() * templates.length
-  );
+  const randomIndex = Math.floor(Math.random() * templates.length);
 
   return templates[randomIndex];
 };

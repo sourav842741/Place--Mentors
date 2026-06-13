@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Session from "../models/session.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
 const isAuth = async (req, res, next) => {
@@ -21,13 +22,39 @@ const isAuth = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    let user = await User.findById(decoded.userId).select("-password");
+    const userId = decoded.userId;
+    const sessionId = decoded.sessionId;
+
+    let user = await User.findById(userId).select("-password");
 
     if (!user) {
       throw new ApiError(401, "User not found");
     }
 
+    if (!sessionId) {
+      throw new ApiError(401, "Unauthorized: sessionId missing");
+    }
+
+    const session = await Session.findOne({ userId, sessionId });
+    if (!session) {
+      throw new ApiError(401, "Unauthorized: session not found");
+    }
+
+    // Update session activity (best-effort, throttled)
+    try {
+      const now = new Date();
+      const last = session.lastActive;
+      const shouldUpdate = !last || now.getTime() - new Date(last).getTime() > 60 * 1000; // 60s throttle
+      if (shouldUpdate) {
+        session.lastActive = now;
+        await session.save();
+      }
+    } catch {
+      // never block requests due to session tracking issues
+    }
+
     //  DAILY POTD RESET LOGIC
+
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
     if (user.lastPotdDate !== today) {

@@ -6,9 +6,13 @@ import {
   buildSignupOtpTemplate,
   buildResetOtpTemplate,
   buildWelcomeTemplate,
+  buildNewLoginTemplate,
 } from "../config/mail.js";
 
 import genToken, { genTempToken, verifyTempToken } from "../config/token.js";
+import Session from "../models/session.model.js";
+import crypto from "crypto";
+
 import uploadOnCloudinary from "../config/cloudinary.js";
 import { deleteFromCloudinary } from "../config/cloudinary.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -38,6 +42,42 @@ const cookieOptions = {
   sameSite: isProduction ? "none" : "lax",
   path: "/",
   maxAge: 10 * 24 * 60 * 60 * 1000,
+};
+
+const createSessionAndIssueToken = async ({ user, req, loginMethod = "email" }) => {
+  const sessionId = crypto.randomBytes(32).toString("hex");
+  const loginTime = new Date();
+
+  const ua = req.headers["user-agent"] || "";
+  const browser = ua.includes("Firefox") ? "Firefox" : ua.includes("Chrome") ? "Chrome" : "Unknown";
+
+  const os = ua.includes("Windows")
+    ? "Windows"
+    : ua.includes("Mac")
+      ? "macOS"
+      : ua.includes("Android")
+        ? "Android"
+        : "Unknown";
+
+  const ipAddress = req.ip || req.connection?.remoteAddress || "";
+
+  await Session.updateMany({ userId: user._id }, { $set: { isCurrent: false } });
+
+  await Session.create({
+    userId: user._id,
+    sessionId,
+    browser,
+    os,
+    deviceName: req.body?.deviceName || "Desktop",
+    ipAddress,
+    loginTime,
+    lastActive: loginTime,
+    isCurrent: true,
+    loginMethod,
+  });
+
+  const token = await genToken(user._id, sessionId);
+  return { token, sessionId };
 };
 
 const handleImageUploads = async (req) => {
@@ -91,7 +131,6 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
   );
 
   // Redis OTP write (preferred)
-  // If Redis fails, flow still works via Mongo.
   try {
     const { redisSet, hashKey } = await import("../utils/redisCache.js");
     const key = `otp:signup:${hashKey(emailKey)}`;
@@ -111,7 +150,6 @@ export const sendSignupOtp = asyncHandler(async (req, res) => {
       meta: { jobType: "signup_otp" },
     });
   } catch (error) {
-    // Controller must remain fast; queue failures should not break signup flow.
     console.error("[AUTH] Failed to enqueue signup OTP email job", error?.message || error);
   }
 
@@ -129,7 +167,6 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
   const emailKey = email.toLowerCase().trim();
 
   // Prefer Redis OTP verification
-  // Fallback to Mongo if Redis is down/missing key.
   let redisOtp = null;
   try {
     const { redisGet, redisDel, hashKey } = await import("../utils/redisCache.js");
@@ -141,7 +178,6 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid or expired OTP");
       }
 
-      // Delete on successful verification
       await redisDel(key);
     }
   } catch {
@@ -151,12 +187,10 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
   const tempUser = await TempUser.findOne({ email: emailKey });
 
   if (redisOtp === null) {
-    // Redis miss => validate using Mongo
     if (!tempUser || tempUser.otp !== otp || tempUser.otpExpires < Date.now()) {
       throw new ApiError(400, "Invalid or expired OTP");
     }
   } else {
-    // Redis verified; still ensure temp user exists so signup can proceed safely.
     if (!tempUser || tempUser.otpExpires < Date.now()) {
       throw new ApiError(400, "Invalid or expired OTP");
     }
@@ -208,7 +242,7 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
   user.lastLoginDate = new Date();
   await user.save();
 
-  const token = await genToken(user._id);
+  const { token } = await createSessionAndIssueToken({ user, req });
   res.cookie("token", token, cookieOptions);
 
   const userData = {
@@ -221,6 +255,8 @@ export const verifySignupOtp = asyncHandler(async (req, res) => {
 // ================= SIGNIN =================
 export const signIn = asyncHandler(async (req, res) => {
   const { email, password, deviceId } = req.body;
+
+  // NOTE: Active Sessions + New Login Alert is handled after session creation.
 
   const user = await User.findOne({ email: email.toLowerCase().trim() });
 
@@ -277,7 +313,7 @@ export const signIn = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const token = await genToken(user._id);
+  const { token } = await createSessionAndIssueToken({ user, req });
   res.cookie("token", token, cookieOptions);
 
   const userData = {
@@ -389,7 +425,6 @@ export const signOut = asyncHandler(async (req, res) => {
 export const googleAuth = asyncHandler(async (req, res) => {
   const { fullName, email, avatar, deviceId } = req.body;
 
-  // Production-safe debug (no sensitive values)
   console.log("[AUTH GOOGLE] hit", {
     ip: req.ip,
     origin: req.headers.origin,
@@ -430,7 +465,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
       credits: 100,
     });
 
-    // Async welcome email enqueue (do NOT block google auth)
     try {
       const { subject, html } = buildWelcomeTemplate(user.fullName);
 
@@ -484,18 +518,8 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const token = await genToken(user._id);
-
+  const { token } = await createSessionAndIssueToken({ user, req });
   res.cookie("token", token, cookieOptions);
-
-  // Cookie diagnostics (presence only; no token value)
-  console.log("[AUTH GOOGLE] cookie diagnostic", {
-    path: cookieOptions.path,
-    httpOnly: cookieOptions.httpOnly,
-    secure: cookieOptions.secure,
-    sameSite: cookieOptions.sameSite,
-    tokenSet: Boolean(token),
-  });
 
   const twoFactorWarning = isPrivileged && !user.twoFactorEnabled;
 
@@ -534,13 +558,10 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
 
   const otp = generateOTP();
 
-  // Mongo fallback
-
   user.resetOtp = otp;
   user.resetOtpExpires = Date.now() + 5 * 60 * 1000;
   await user.save();
 
-  // Redis write (preferred)
   try {
     const { redisSet, hashKey } = await import("../utils/redisCache.js");
     const key = `otp:reset:${hashKey(emailKey)}`;
@@ -549,7 +570,6 @@ export const sendResetOtp = asyncHandler(async (req, res) => {
     // ignore redis failure
   }
 
-  // Enqueue reset OTP email asynchronously (do NOT block request)
   try {
     const { subject, html } = buildResetOtpTemplate(otp);
 
@@ -572,7 +592,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   const emailKey = email.toLowerCase().trim();
 
-  // Prefer Redis OTP verification; fallback to Mongo.
   let redisOtp = null;
   try {
     const { redisGet, redisDel, hashKey } = await import("../utils/redisCache.js");
@@ -605,10 +624,8 @@ export const resetPassword = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
   user.password = hashedPassword;
-
   user.resetOtp = undefined;
   user.resetOtpExpires = undefined;
-
   user.isOtpVerified = false;
 
   await user.save();
@@ -633,7 +650,6 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid or expired OTP");
       }
 
-      // Delete on successful verification
       await redisDel(key);
     }
   } catch {
@@ -647,7 +663,6 @@ export const verifyResetOtp = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid or expired OTP");
     }
   } else {
-    // Redis verified; ensure Mongo doc exists and isn't obviously expired.
     if (!user || user.resetOtpExpires < Date.now()) {
       throw new ApiError(400, "Invalid or expired OTP");
     }
@@ -818,20 +833,15 @@ export const verifyTwoFactorLogin = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const jwtToken = await genToken(user._id);
-
+  const { token: jwtToken } = await createSessionAndIssueToken({ user, req });
   res.cookie("token", jwtToken, cookieOptions);
 
   if (deviceId) {
     res.cookie("device_id", deviceId, {
       httpOnly: true,
-
       secure: isProduction,
-
       sameSite: isProduction ? "none" : "lax",
-
       path: "/",
-
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   }

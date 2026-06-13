@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 
-const genToken = (userId) => {
+const genToken = (userId, sessionId) => {
   try {
-    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "10d" });
+    return jwt.sign({ userId, sessionId }, process.env.JWT_SECRET, { expiresIn: "10d" });
   } catch (error) {
     throw new Error(`gen token error: ${error.message}`);
   }
@@ -23,5 +23,7 @@ export const verifyTempToken = (token) => {
     throw new Error("Invalid or expired temp token");
   }
 };
+
+export const generateTokenForSession = (userId, sessionId) => genToken(userId, sessionId);
 
 export default genToken;

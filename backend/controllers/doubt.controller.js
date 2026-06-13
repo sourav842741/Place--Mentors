@@ -211,9 +211,7 @@ export const updateDoubtController = async (req, res) => {
     doubt.question = question.trim();
     await doubt.save();
 
-    const updatedDoubt = await Doubt.findById(doubt._id)
-      .populate("user", "fullName avatar")
-      .lean();
+    const updatedDoubt = await Doubt.findById(doubt._id).populate("user", "fullName avatar").lean();
 
     if (req.io) {
       req.io.to(`doubt-${doubt._id}`).emit("doubt_updated", {
@@ -293,9 +291,7 @@ export const updateReplyController = async (req, res) => {
     reply.answer = answer.trim();
     await reply.save();
 
-    const updatedReply = await Reply.findById(reply._id)
-      .populate("user", "fullName avatar")
-      .lean();
+    const updatedReply = await Reply.findById(reply._id).populate("user", "fullName avatar").lean();
 
     if (req.io) {
       req.io.to(`doubt-${reply.doubt}`).emit("reply_updated", {
@@ -356,7 +352,6 @@ export const toggleUpvote = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return sendResponse(res, 400, false, "Invalid reply ID");
     }
-
 
     const reply = await Reply.findById(req.params.id);
 

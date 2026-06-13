@@ -46,6 +46,7 @@ import ticketRouter from "./routes/ticket.routes.js";
 import supportRouter from "./routes/support.routes.js";
 import setupSecurity from "./middlewares/security.js";
 import { attachSocketAuth } from "./middlewares/socketAuth.js";
+import sessionsRouter from "./routes/sessions.routes.js";
 
 import { initSentry, Sentry } from "./config/sentry.js";
 import sentryTestRouter from "./routes/sentry.routes.js";
@@ -249,9 +250,7 @@ app.use((req, res, next) => {
 
 // ================= HEALTH CHECK =================
 app.get("/api/health", async (req, res) => {
-
   try {
-
     // Check MongoDB connection
     if (mongoose.connection.readyState !== 1) {
       throw new Error("MongoDB not connected");
@@ -271,23 +270,21 @@ app.get("/api/health", async (req, res) => {
       db: "connected",
       timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
+    Sentry.captureException(error);
 
-  Sentry.captureException(error);
-
-  res.status(500).json({
-    status: "error",
-    db: "disconnected",
-    error: error.message,
-  });
-
-}
-
+    res.status(500).json({
+      status: "error",
+      db: "disconnected",
+      error: error.message,
+    });
+  }
 });
 
 // ================= ROUTES =================
 app.use("/api/auth", authRouter);
+app.use("/api", sessionsRouter);
+
 app.use("/api/xp", xpRouter);
 app.use("/api/interview", interviewRouter);
 app.use("/api/payment", paymentRouter);
@@ -322,8 +319,6 @@ app.use("/api/support", supportRouter);
 
 // ================= SENTRY TEST =================
 app.use("/api", sentryTestRouter);
-
-
 
 // ================= SOCKET EVENTS =================
 
@@ -848,7 +843,7 @@ const startServer = async () => {
 
       console.log("Email Consumer Started");
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
       console.error("Failed To Start Email Consumer", e);
     }
 
@@ -858,7 +853,7 @@ const startServer = async () => {
         getOrCreateTodayPotd()
       );
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
       // Silently handle
     }
     try {
@@ -866,7 +861,7 @@ const startServer = async () => {
         getOrCreateTodayCpotd()
       );
     } catch (e) {
-       Sentry.captureException(e);
+      Sentry.captureException(e);
       // Silently handle
     }
 
