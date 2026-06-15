@@ -246,7 +246,10 @@ export const buildNewLoginTemplate = ({
   const safeDeviceName = deviceName || "Unknown";
   const safeIp = ipAddress || "—";
   const safeLoginTime = loginTime ? new Date(loginTime).toLocaleString(undefined) : "—";
-  const safeLocation = location ? location : "Location not available";
+  const safeLocation = location && (location.city || location.region || location.country)
+    ? `${location.city || ""}${location.region ? `, ${location.region}` : ""}${location.country ? `, ${location.country}` : ""}`
+    : "Not Available";
+
   const safePlatform = platformName || "Placementor";
   const safeLoginMethod = loginMethod === "google" ? "Google" : "Email";
 

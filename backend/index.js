@@ -749,24 +749,60 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", async () => {
-    for (const [userId, socketSet] of connectedSockets.entries()) {
-      if (socketSet.has(socket.id)) {
-        socketSet.delete(socket.id);
+    // connectedSockets structure: Map<userId, Map<sessionId, Set<socketId>>>
+    try {
+      const userId = socket.userId?.toString();
+      if (!userId) {
+        io.emit("online_users", connectedSockets.size);
+        return;
+      }
 
-        if (socketSet.size === 0) {
-          connectedSockets.delete(userId);
+      const userMap = connectedSockets.get(userId);
+      if (!userMap) {
+        io.emit("online_users", connectedSockets.size);
+        return;
+      }
 
-          await User.findByIdAndUpdate(userId, {
-            socketId: null,
-            isOnline: false,
-            lastSeen: new Date(),
-          });
+      const sessionId = (socket.sessionId || "").toString();
 
-          const updatedUser = await User.findById(userId).select("isOnline lastSeen");
-          io.emit("admin:user:offline", updatedUser);
+      if (sessionId && userMap.has(sessionId)) {
+        const socketSet = userMap.get(sessionId);
+        if (socketSet?.has(socket.id)) {
+          socketSet.delete(socket.id);
+
+          if (socketSet.size === 0) {
+            userMap.delete(sessionId);
+          }
         }
+      } else {
+        // Fallback: remove socketId from any session bucket
+        for (const [sid, socketSet] of userMap.entries()) {
+          if (socketSet?.has(socket.id)) {
+            socketSet.delete(socket.id);
+            if (socketSet.size === 0) userMap.delete(sid);
+            break;
+          }
+        }
+      }
 
-        break;
+      if (userMap.size === 0) {
+        connectedSockets.delete(userId);
+
+        await User.findByIdAndUpdate(userId, {
+          socketId: null,
+          isOnline: false,
+          lastSeen: new Date(),
+        });
+
+        const updatedUser = await User.findById(userId).select("isOnline lastSeen");
+        io.emit("admin:user:offline", updatedUser);
+      }
+    } catch (e) {
+      // never block disconnect handling
+      try {
+        Sentry.captureException(e);
+      } catch {
+        // ignore
       }
     }
 

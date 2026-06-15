@@ -38,6 +38,7 @@
     "express": "^5.2.1",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.4.1",
+    "geoip-lite": "^2.0.2",
     "googleapis": "^137.1.0",
     "helmet": "^8.1.0",
     "joi": "^18.1.2",

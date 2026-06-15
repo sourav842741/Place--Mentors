@@ -129,8 +129,9 @@ export const startEmailConsumer = async () => {
         return;
       }
 
-      const { to, subject, html } = payload;
+      const { to, subject, html, meta = {} } = payload;
 
+      // meta may contain jobType-specific data (e.g., sessionId)
       try {
         // Defensive validation
         if (!to || !subject || !html) {
@@ -140,7 +141,20 @@ export const startEmailConsumer = async () => {
         // Send the email
         await sendEmailViaResend({ to, subject, html });
 
-        // ACK only after successful send
+        // If this is a new_login email and we have sessionId, mark emailSentAt
+        try {
+          if (meta?.jobType === "new_login" && meta?.sessionId && meta?.userId) {
+            const Session = (await import("../models/session.model.js")).default;
+            await Session.updateOne(
+              { userId: meta.userId, sessionId: meta.sessionId },
+              { $set: { emailSentAt: new Date() } }
+            );
+          }
+        } catch (e) {
+          console.error("[EMAIL CONSUMER] Failed to update Session.emailSentAt", e?.message || e);
+        }
+
+        // ACK only after successful send (and best-effort session update)
         channel.ack(msg);
         console.log("[EMAIL CONSUMER] sent email", { to, subject });
       } catch (error) {

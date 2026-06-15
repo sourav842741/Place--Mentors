@@ -63,22 +63,81 @@ const createSessionAndIssueToken = async ({ user, req, loginMethod = "email" }) 
 
   await Session.updateMany({ userId: user._id }, { $set: { isCurrent: false } });
 
-  await Session.create({
+  const deviceName = req.body?.deviceName || "Desktop";
+
+  // Resolve current location from IP
+  let location = null;
+  try {
+    const { getLocationFromIp } = await import("../config/newLoginLocation.js");
+    location = await getLocationFromIp(ipAddress);
+  } catch {
+    location = null;
+  }
+
+  const newSession = await Session.create({
     userId: user._id,
     sessionId,
     browser,
     os,
-    deviceName: req.body?.deviceName || "Desktop",
+    deviceName,
     ipAddress,
+    location: location || { city: "", region: "", country: "" },
     loginTime,
     lastActive: loginTime,
     isCurrent: true,
     loginMethod,
   });
 
+  // ================= NEW DEVICE LOGIN EMAIL ALERT (location-aware) =================
+  // Fire-and-forget: never block login if email sending fails.
+  try {
+    // Find most recent previous session for location comparison
+    const previousSession = await Session.findOne({
+      userId: user._id,
+      sessionId: { $ne: sessionId },
+    }).sort({ createdAt: -1 });
+
+    const prevLoc = previousSession?.location || null;
+
+    const currentCity = location?.city || "";
+    const currentCountry = location?.country || "";
+
+    const prevCity = prevLoc?.city || "";
+    const prevCountry = prevLoc?.country || "";
+
+    const hasPrevLocation = Boolean(previousSession);
+
+    const shouldSend = !hasPrevLocation || prevCity !== currentCity || prevCountry !== currentCountry;
+
+    if (shouldSend) {
+      const { subject, html } = buildNewLoginTemplate({
+        userName: user.fullName,
+        browser,
+        os,
+        deviceName,
+        ipAddress,
+        loginTime,
+        location,
+        platformName: "Placementor",
+        loginMethod,
+      });
+
+      await enqueueEmailJob({
+        to: user.email,
+        subject,
+        html,
+        meta: { jobType: "new_login", sessionId: newSession.sessionId, userId: String(user._id) },
+      });
+    }
+  } catch (e) {
+    // Do not block login
+    console.error("[AUTH] Failed to enqueue new_login email", e?.message || e);
+  }
+
   const token = await genToken(user._id, sessionId);
   return { token, sessionId };
 };
+
 
 const handleImageUploads = async (req) => {
   let avatarUrl = "";

@@ -23,8 +23,15 @@ const sessionSchema = new mongoose.Schema(
 
     ipAddress: { type: String, default: "" },
 
+    location: {
+      city: { type: String, default: "" },
+      region: { type: String, default: "" },
+      country: { type: String, default: "" },
+    },
+
     loginTime: { type: Date, required: true },
     lastActive: { type: Date, required: true },
+
 
     // Derived from sessionId in practice, but kept for UI + quick filtering.
     isCurrent: { type: Boolean, default: false, index: true },
