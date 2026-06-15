@@ -59,9 +59,27 @@ const createSessionAndIssueToken = async ({ user, req, loginMethod = "email" }) 
         ? "Android"
         : "Unknown";
 
-  const ipAddress = req.ip || req.connection?.remoteAddress || "";
+  // Use real client IP behind proxies (Render / reverse proxies)
+  const forwarded = req.headers["x-forwarded-for"];
+  const forwardedIp = forwarded ? forwarded.split(",")[0].trim() : "";
+  const reqIp = req.ip || req.connection?.remoteAddress || "";
+  const realIp = forwardedIp || reqIp;
+
+  // Non-sensitive debug to verify public IP extraction
+  console.log("[AUTH IP DETECT]", { forwardedIp, reqIp, realIp });
+
+  const ipAddress = realIp;
+
+  // Logging: verify stored IP is the real public IP
+  console.log("[AUTH IP DETECT STORE]", {
+    forwardedIp,
+    reqIp,
+    realIp,
+    storedIp: ipAddress,
+  });
 
   await Session.updateMany({ userId: user._id }, { $set: { isCurrent: false } });
+
 
   const deviceName = req.body?.deviceName || "Desktop";
 
