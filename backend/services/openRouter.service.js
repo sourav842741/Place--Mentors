@@ -27,7 +27,7 @@ export const askAi = async (messages) => {
         model: "openai/gpt-4o-mini",
         messages: safeMessages,
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 6000,
       },
       {
         headers: {

@@ -152,10 +152,50 @@ Each question must contain:
 Return ONLY raw JSON.
 No markdown.
 
+IMPORTANT
+
+category must be exactly one of
+
+aptitude
+reasoning
+verbal
+
+difficulty must be exactly one of
+
+easy
+medium
+hard
+
+Never return
+
+Aptitude
+Reasoning
+Verbal
+Easy
+Medium
+Hard
+
 {
   "questions": [...]
 }
 `;
+
+const normalizeQuestion = (q) => ({
+  ...q,
+  question: String(q.question || "").trim(),
+  options: (q.options || []).map((o) => String(o).trim()),
+  answer: String(q.answer || "").trim(),
+  explanation: String(q.explanation || "").trim(),
+ category: String(q.category || "")
+  .trim()
+  .toLowerCase()
+  .replace(/[^a-z]/g, ""),
+
+difficulty: String(q.difficulty || "")
+  .trim()
+  .toLowerCase()
+  .replace(/[^a-z]/g, ""),
+});
 
 const isValidQuestion = (q) => {
   return (
@@ -165,8 +205,8 @@ const isValidQuestion = (q) => {
     q.options.length === 4 &&
     q.answer &&
     q.explanation &&
-    q.category &&
-    q.difficulty
+    ["aptitude", "reasoning", "verbal"].includes(q.category) &&
+    ["easy", "medium", "hard"].includes(q.difficulty)
   );
 };
 
@@ -210,7 +250,9 @@ export const getOrCreateTodayPotd = async () => {
 
       const data = extractJSON(aiResponse);
 
-      const validQuestions = (data?.questions || []).filter(isValidQuestion);
+     const validQuestions = (data?.questions || [])
+  .map(normalizeQuestion)
+  .filter(isValidQuestion);
 
       if (validQuestions.length >= 8) {
         questions = validQuestions;
@@ -232,7 +274,9 @@ export const getOrCreateTodayPotd = async () => {
 
         const extraData = extractJSON(extraRes);
 
-        const extraQuestions = (extraData?.questions || []).filter(isValidQuestion);
+        const extraQuestions = (extraData?.questions || [])
+  .map(normalizeQuestion)
+  .filter(isValidQuestion);
 
         questions = [...questions, ...extraQuestions];
       } catch {

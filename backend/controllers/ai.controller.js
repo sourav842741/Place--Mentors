@@ -734,42 +734,88 @@ export const generateResumePDF = async (req, res) => {
 
     console.log("PDF Debug:", template, "Skills sample:", skillsHTML.substring(0, 50));
 
-    let html;
-    if (template === "modern") {
-      html = `<!DOCTYPE html>
+let html;
 
-    .contact-item { display: flex; align-items: center; }
-    .contact-icon { margin-right: 6px; font-size: 14px; }
-    .section { margin-bottom: 25px; }
-    .section-title { font-weight: bold; font-size: 15px; border-bottom: 2px solid #000; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; }
-    .section-title-icon { margin-right: 8px; font-size: 18px; }
-    .section-content { font-size: 12px; margin-top: 12px; text-align: left; }
-    .section-content div { margin-bottom: 4px; line-height: 1.4; }
-    .skills-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-    .skills-tag { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
-  </style>
+// 1. Skills ko process karein (Common for both)
+const skillsArray = cleanContent(skills)
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+// 2. skillsTags variable define karein
+const skillsTags = skillsArray
+  .map((s) => `<span class="skills-tag">${s}</span>`)
+  .join("");
+
+// Template selection logic
+if (template === "modern") {
+  html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    body { font-family: Arial, sans-serif; display: flex; padding: 40px; gap: 40px; }
+    .sidebar { width: 300px; flex-shrink: 0; background: #f9f9f9; padding: 20px; border-radius: 10px; }
+    .main-content { flex-grow: 1; }
+    .sidebar h1 { font-size: 24px; margin-bottom: 20px; }
+    .skills-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .skills-tag { background: #e0e0e0; padding: 5px 10px; border-radius: 4px; font-size: 12px; }
+    .section { margin-bottom: 30px; }
+    .section-title { font-weight: bold; font-size: 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+</style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>${name || "Your Name"}</h1>
+        <div class="contact-item">${email || ""}</div>
+        <div class="section-title">${getIcon("skills")} Skills</div>
+        <div class="skills-tags">${skillsTags}</div>
+    </div>
+    <div class="main-content">
+        <div class="section">
+            <div class="section-title">${getIcon("summary")} Summary</div>
+            <div class="section-content">${summaryHTML || ""}</div>
+        </div>
+        <div class="section">
+            <div class="section-title">${getIcon("experience")} Experience</div>
+            <div class="section-content">${experienceHTML || ""}</div>
+        </div>
+        <div class="section">
+            <div class="section-title">${getIcon("projects")} Projects</div>
+            <div class="section-content">${projectsHTML || ""}</div>
+        </div>
+    </div>
+</body>
+</html>`;
+
+} else if (template === "classic") {
+  html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: 'Times New Roman', serif; color:#000; padding:40px; line-height:1.4; }
+  .header { border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
+  .header h1 { font-size: 28px; text-transform: uppercase; }
+  .contact { font-size: 12px; margin-top: 5px; }
+  .section { margin-top: 20px; }
+  .section-title { font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #000; }
+  .section-content { font-size: 14px; margin-bottom: 10px; }
+  .skills-list { font-size: 14px; }
+</style>
 </head>
 <body>
   <div class="header">
     <h1>${name || "Your Name"}</h1>
-    <div class="contact">
-      ${email ? `<div class="contact-item"><span class="contact-icon">${getIcon("email")}</span>${email}</div>` : ""}
-      ${phone ? `<div class="contact-item"><span class="contact-icon">${getIcon("phone")}</span>${phone}</div>` : ""}
-      ${linkedin ? `<div class="contact-item"><span class="contact-icon">${getIcon("linkedin")}</span>${linkedin}</div>` : ""}
-      ${github ? `<div class="contact-item"><span class="contact-icon">${getIcon("github")}</span>${github}</div>` : ""}
-    </div>
+    <div class="contact">${[email, phone, linkedin].filter(Boolean).join(" | ")}</div>
   </div>
-  <div style="max-width: 600px; margin: 0 auto;">
-    ${summaryHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("summary")}</span>Summary</span><div class="section-content">${summaryHTML}</div></div>` : ""}
-    ${skillsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("skills")}</span>Skills</span><div class="section-content skills-tags">${skillsHTML.replace(/ • /g, '</span><span class="skills-tag">')}</div></div>` : ""}
-    ${experienceHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("experience")}</span>Experience</span><div class="section-content">${experienceHTML}</div></div>` : ""}
-    ${projectsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("projects")}</span>Projects</span><div class="section-content">${projectsHTML}</div></div>` : ""}
-    ${educationHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("education")}</span>Education</span><div class="section-content">${educationHTML}</div></div>` : ""}
-    ${achievementsHTML ? `<div class="section"><span class="section-title"><span class="section-title-icon">${getIcon("achievements")}</span>Achievements</span><div class="section-content">${achievementsHTML}</div></div>` : ""}
-  </div>
+  ${summaryHTML ? `<div class="section"><div class="section-title">Professional Profile</div><div class="section-content">${summaryHTML}</div></div>` : ""}
+  ${skillsArray.length > 0 ? `<div class="section"><div class="section-title">Skills</div><div class="skills-list">${skillsArray.join(", ")}</div></div>` : ""}
+  ${experienceHTML ? `<div class="section"><div class="section-title">Work Experience</div><div class="section-content">${experienceHTML}</div></div>` : ""}
 </body>
 </html>`;
-    }
+}
 
     const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();

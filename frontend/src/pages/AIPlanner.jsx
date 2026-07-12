@@ -42,7 +42,7 @@ export default function AIPlanner() {
   const [formData, setFormData] = useState({
     goal: "",
     company: "",
-    daysLeft: 30,
+    daysLeft: 14,
     dailyHours: 4,
     level: "beginner",
   });
@@ -147,7 +147,7 @@ export default function AIPlanner() {
       setFormData({
         goal: "",
         company: "",
-        daysLeft: 30,
+        daysLeft: 14,
         dailyHours: 4,
         level: "beginner",
       });
@@ -311,8 +311,8 @@ export default function AIPlanner() {
                       <Label>Days Left</Label>
                       <Input
                         type="number"
-                        min="7"
-                        max="90"
+                        min="2"
+                        max="30"
                         value={formData.daysLeft}
                         onChange={(e) =>
                           setFormData({
