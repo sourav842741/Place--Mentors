@@ -5,9 +5,7 @@ import { askAi } from "./openRouter.service.js";
 // ================= ENV =================
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
-if (!NEWS_API_KEY) {
-  throw new Error("NEWS_API_KEY missing in .env");
-}
+export const isNewsEnabled = !!NEWS_API_KEY;
 
 // ================= JSON EXTRACTOR =================
 const extractJSON = (text) => {
