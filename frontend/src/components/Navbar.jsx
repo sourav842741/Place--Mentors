@@ -609,9 +609,12 @@ p-2 rounded"
 
                 <DropdownMenuSeparator />
 
-                {user?.role === "admin" && (
-                  <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
-                    Admin Panel
+                {(user?.role === "admin" || user?.role === "superadmin") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/admin/dashboard")}
+                    className="focus:bg-blue-500 hover:cursor-pointer"
+                  >
+                    🛠 Admin Dashboard
                   </DropdownMenuItem>
                 )}
 
