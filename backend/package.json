@@ -19,7 +19,8 @@
     "seed:news": "node scripts/seedNews.js",
     "seed:jobs": "node scripts/seedJobs.js",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
     "@sentry/node": "^10.53.1",
