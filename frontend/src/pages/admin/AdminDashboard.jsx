@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAnalytics } from "../../hooks/useAdminAnalytics";
 import { useAdminTickets } from "../../hooks/useTickets";
@@ -37,7 +37,10 @@ import {
   Ticket,
   AlertCircle,
   ArrowUp,
+  Loader2,
+  Newspaper,
 } from "lucide-react";
+
 
 import {
   LineChart,
@@ -58,9 +61,13 @@ import {
 } from "recharts";
 
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+
+import { fetchAdminLatestNews } from "../../services/api";
 
 const cardStyle =
   "border border-gray-200 bg-white text-gray-900 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-white";
+
 
 const softCard =
   "border border-gray-200 bg-gradient-to-br from-white to-gray-50 text-gray-900 shadow-sm dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900 dark:text-white";
@@ -71,6 +78,9 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { data, loading, error, refetch } = useAdminAnalytics();
   const { stats: ticketStats, loadTicketStats } = useAdminTickets();
+
+  const [newsLoading, setNewsLoading] = useState(false);
+
 
   useEffect(() => {
     loadTicketStats();
@@ -170,6 +180,60 @@ const AdminDashboard = () => {
 
         <p className="text-gray-500 dark:text-zinc-400 mt-2">Real-time platform analytics</p>
       </motion.div>
+
+      {/* 📰 Admin Manual Trigger: Fetch Latest News */}
+      <Card className={softCard}>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between gap-3">
+            <span className="flex items-center gap-2">
+              <Newspaper className="w-5 h-5 text-indigo-500" />
+              📰 Fetch Latest News
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-sm text-gray-600 dark:text-zinc-400 max-w-xl">
+            Fetch the latest NewsData articles immediately.
+          </p>
+
+          <Button
+            onClick={async () => {
+              try {
+                setNewsLoading(true);
+                const res = await fetchAdminLatestNews();
+
+                const processed = res?.data?.processed;
+
+                toast.success(
+                  `Latest news fetched successfully${
+                    typeof processed === "number" ? ` (processed: ${processed})` : ""
+                  }`
+                );
+              } catch (err) {
+                const msg =
+                  err?.response?.data?.message ||
+                  err?.message ||
+                  "Failed to fetch latest news";
+                toast.error(msg);
+              } finally {
+                setNewsLoading(false);
+              }
+            }}
+            disabled={newsLoading}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:bg-gradient-to-r hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6"
+          >
+            {newsLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Fetching...
+              </>
+            ) : (
+              "Fetch News"
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+
 
       {/* TOP STATS */}
       <div>

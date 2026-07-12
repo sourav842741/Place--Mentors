@@ -28,6 +28,10 @@ export const sendSingleEmail = (data) => api.post("/api/admin/email/send-single"
 export const sendBulkEmail = (data) => api.post("/api/admin/email/send-bulk", data);
 export const testTemplate = (data) => api.post("/api/admin/email/test-template", data);
 
+// Admin News Manual Trigger
+export const fetchAdminLatestNews = () => api.post("/api/admin/news/fetch");
+
+
 // ========== BAN/UNBAN USERS ==========
 export const banUser = (userId, banReason) =>
   api.patch(`/api/admin/users/${userId}/ban`, { banReason });

@@ -32,6 +32,8 @@ import {
   getPublicSettings,
 } from "../controllers/settings.controller.js";
 
+import { adminFetchNews } from "../controllers/adminNews.controller.js";
+
 const router = express.Router();
 
 router.get("/public-settings", getPublicSettings);
@@ -310,6 +312,16 @@ router.patch(
   })
 );
 
+// MANUAL NEWS (ADMIN)
+router.post(
+  "/news/fetch",
+  isAuth,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    await adminFetchNews(req, res);
+  })
+);
+
 // AUTO GENERATE POTD
 router.post(
   "/potd",
@@ -319,6 +331,7 @@ router.post(
     await generatePotd(req, res);
   })
 );
+
 
 // MANUAL POTD
 router.post(
