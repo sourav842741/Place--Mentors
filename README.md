@@ -199,47 +199,11 @@ When running with Docker, default fallback credentials are set:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Super Admin | ` owner.placementor@gmail.com` | `owner5173@@` |
-| Admin | `admin.placementor@gmail.com` | `admin@08092004@` |
+| Super Admin | ` owner@gmail.com` | `owner2358@@` |
+| Admin | `admin@gmail.com` | `admin04@` |
 
 > ⚠️ **Security Note**: Change these defaults before deploying to production by setting `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` environment variables.
 
-### Environment Variables (Optional)
-
-Create a `.env` file in the project root to override defaults:
-
-```env
-# Required for full functionality
-JWT_SECRET=your-super-secret-jwt-key
-RAZORPAY_KEY_ID=your_razorpay_key
-RAZORPAY_KEY_SECRET=your_razorpay_secret
-RESEND_API_KEY=your_resend_key
-
-# External integrations (optional)
-OPENROUTER_API_KEY=your_openrouter_key
-GEMINI_API_KEY=your_gemini_key
-GOOGLE_CLIENT_ID=your_google_oauth_id
-GOOGLE_CLIENT_SECRET=your_google_oauth_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_cloud_key
-CLOUDINARY_API_SECRET=your_cloud_secret
-YOUTUBE_API_KEY=your_youtube_key
-NEWS_API_KEY=your_news_api_key
-TWILIO_ACCOUNT_SID=your_twilio_sid
-TWILIO_AUTH_TOKEN=your_twilio_token
-TWILIO_PHONE_NUMBER=your_twilio_phone
-VIDEOSDK_API_KEY=your_videosdk_key
-VIDEOSDK_SECRET_KEY=your_videosdk_secret
-ADZUNA_APP_ID=your_adzuna_id
-ADZUNA_APP_KEY=your_adzuna_key
-REDIS_ENABLED=
-REDIS_HOST=
-REDIS_PORT=
-REDIS_PASSWORD=
-REDIS_DB=0
-REDIS_TLS=
-REDIS_KEY_PREFIX=
-```
 
 ### Useful Docker Commands
 
@@ -308,64 +272,6 @@ cp .env.example .env
 npm run dev
 ```
 
-## 🔑 Environment Variables
-
-### Backend `.env`
-```env
-NODE_ENV=development
-PORT=5000
-MONGOURL=your_mongodb_atlas_uri
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRES_IN=7d
-
-# Frontend URL (for CORS & redirects)
-CLIENT_URL=http://localhost:5173
-BASE_URL=http://localhost:5000
-FRONTEND_URL=http://localhost:5173
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Email
-RESEND_API_KEY=your_resend_key
-EMAIL_AUTH=PlaceMentor Security <security@placementor.online>
-
-# Razorpay (Live/Test)
-RAZORPAY_KEY_ID=your_key_id
-RAZORPAY_KEY_SECRET=your_key_secret
-
-# AI Services
-OPENROUTER_API_KEY=your_openrouter_key
-GEMINI_API_KEY=your_gemini_key
-
-# Admin Accounts
-SUPER_ADMIN_EMAIL=superadmin@placementor.local
-SUPER_ADMIN_PASSWORD=superadmin123
-ADMIN_EMAIL=admin@placementor.local
-ADMIN_PASSWORD=admin123
-
-# External APIs
-YOUTUBE_API_KEY=your_youtube_key
-NEWS_API_KEY=your_news_key
-ADZUNA_APP_ID=your_adzuna_id
-ADZUNA_APP_KEY=your_adzuna_key
-
-# Twilio
-TWILIO_ACCOUNT_SID=your_twilio_sid
-TWILIO_AUTH_TOKEN=your_twilio_token
-TWILIO_PHONE_NUMBER=your_twilio_phone
-
-# Video SDK
-VIDEOSDK_API_KEY=your_videosdk_key
-VIDEOSDK_SECRET_KEY=your_videosdk_secret
-VIDEOSDK_GATEWAY_ID=your_gateway_id
-
-# Google OAuth (Calendar Integration)
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-```
 
 ### Frontend `.env`
 ```env
