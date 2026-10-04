@@ -93,7 +93,7 @@ export default function SupportPage() {
                 <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
                   <Ticket className="w-5 h-5" />
                 </div>
-                Support & Help Desk
+                Support Center & Help Desk
               </h1>
               <p className="text-xs sm:text-sm text-text-muted mt-1">
                 Get assistance from our team or resolve technical questions instantly with AI.

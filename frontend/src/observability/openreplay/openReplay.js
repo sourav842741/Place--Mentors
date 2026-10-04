@@ -41,6 +41,7 @@ function getDeviceType() {
 
 function safeTrackerInit() {
   try {
+    if (import.meta.env.MODE === "test") return null;
     if (initialized) return tracker;
 
     initialized = true;
@@ -62,7 +63,7 @@ function safeTrackerInit() {
     });
 
     // start tracker
-    tracker.start();
+    tracker.start()?.catch?.(() => {});
 
     debugLog("✅ OpenReplay Started");
 
