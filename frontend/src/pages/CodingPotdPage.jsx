@@ -111,11 +111,11 @@ const CodingPotdPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text mb-2">
               Coding Problem of the Day
             </h1>
             <div className="flex items-center justify-center gap-4 mb-4">

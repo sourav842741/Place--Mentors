@@ -25,7 +25,7 @@ export default function UploadArea({ onFileSelect, fileName, className = "" }) {
 
   return (
     <div
-      className={`border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition-all ${className}`}
+      className={`border-2 border-dashed border-border rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-primary-soft/10 transition-colors ${className}`}
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
       onClick={() => document.getElementById("pdf-upload").click()}
@@ -37,15 +37,15 @@ export default function UploadArea({ onFileSelect, fileName, className = "" }) {
         className="hidden"
         onChange={handleChange}
       />
-      <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-      <p className="text-lg font-medium text-gray-900 mb-2">
+      <Upload className="w-10 h-10 mx-auto text-text-subtle mb-3" />
+      <p className="text-sm font-semibold text-text mb-1">
         Drop your PDF resume here or click to browse
       </p>
-      <p className="text-sm text-gray-500 mb-4">PDF only • Max 5MB</p>
+      <p className="text-xs text-text-muted mb-4">PDF format only • Max file size 5MB</p>
       {fileName && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-          <FileText className="w-4 h-4 inline mr-2 text-green-600" />
-          <span className="text-sm font-medium text-green-800">{fileName}</span>
+        <div className="bg-primary-soft border border-primary/20 rounded-lg p-2.5 max-w-sm mx-auto">
+          <FileText className="w-4 h-4 inline mr-2 text-primary" />
+          <span className="text-xs font-semibold text-primary">{fileName}</span>
         </div>
       )}
     </div>

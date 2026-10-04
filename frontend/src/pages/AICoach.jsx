@@ -77,28 +77,29 @@ const AICoach = () => {
     <>
       <QuizNav />
 
-      <div className="min-h-screen bg-[#f6f8fc] dark:bg-slate-950 text-slate-900 dark:text-white md:mt-4 lg:mt-1">
-        <div className="h-[calc(100vh-64px)] p-2 md:p-3">
-          <div className="h-full max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-3">
+      <div className="min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="h-[calc(100vh-64px)] p-2 sm:p-4">
+          <div className="h-full max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
             {/* MOBILE TOPBAR */}
             <div className="lg:hidden flex items-center gap-2">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="w-11 h-11 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center"
+                className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-text hover:bg-surface-2 transition-colors"
+                aria-label="Open sidebar"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
-              <div className="flex-1 h-11 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center px-4 gap-3">
-                <Brain className="w-5 h-5 text-blue-600" />
-                <span className="font-semibold">AI Coach</span>
+              <div className="flex-1 h-10 rounded-lg bg-surface border border-border flex items-center px-3.5 gap-2.5">
+                <Brain className="w-4 h-4 text-primary" />
+                <span className="font-semibold text-sm text-text">AI Coach</span>
               </div>
             </div>
 
             {/* OVERLAY */}
             {sidebarOpen && (
               <div
-                className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-xs"
                 onClick={() => setSidebarOpen(false)}
               />
             )}
@@ -109,26 +110,28 @@ const AICoach = () => {
                 sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
               }`}
             >
-              <div className="h-full rounded-none lg:rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm p-4 flex flex-col">
+              <div className="h-full rounded-xl bg-surface border border-border shadow-subtle p-4 flex flex-col">
                 {/* MOBILE CLOSE */}
-                <div className="lg:hidden flex items-center justify-between mb-4">
-                  <h2 className="font-bold text-lg">Menu</h2>
+                <div className="lg:hidden flex items-center justify-between mb-3">
+                  <h2 className="font-bold text-sm text-text">Coach Menu</h2>
 
-                  <button onClick={() => setSidebarOpen(false)}>
-                    <X className="w-5 h-5" />
+                  <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="p-1 rounded-md text-text-muted hover:text-text hover:bg-surface-2"
+                  >
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
 
                 {/* LOGO */}
-                <div className="hidden lg:flex items-center gap-3 mb-5">
-                  <div className="w-11 h-11 rounded-2xl bg-blue-600 flex items-center justify-center text-white">
+                <div className="hidden lg:flex items-center gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
                     <Brain className="w-5 h-5" />
                   </div>
 
                   <div>
-                    <h2 className="text-lg font-bold">AI Coach</h2>
-
-                    <p className="text-sm text-slate-500">Your mentor</p>
+                    <h2 className="text-sm font-bold text-text">AI Coach</h2>
+                    <p className="text-xs text-text-muted">Placement & Career Mentor</p>
                   </div>
                 </div>
 
@@ -138,17 +141,15 @@ const AICoach = () => {
                     newChatHandler();
                     setSidebarOpen(false);
                   }}
-                  className="w-full rounded-2xl py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+                  className="w-full rounded-lg py-2.5 px-3 bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold shadow-soft transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span className="flex items-center justify-center gap-2">
-                    <Plus className="w-5 h-5" />
-                    New Chat
-                  </span>
+                  <Plus className="w-4 h-4" />
+                  New Conversation
                 </button>
 
                 {/* QUICK PROMPTS */}
-                <div className="mt-5">
-                  <p className="text-xs font-semibold tracking-widest uppercase text-slate-500 mb-2">
+                <div className="mt-4">
+                  <p className="text-[11px] font-semibold tracking-wider uppercase text-text-muted mb-2 px-1">
                     Quick Prompts
                   </p>
 
@@ -160,79 +161,72 @@ const AICoach = () => {
                           quickPromptHandler(id);
                           setSidebarOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left"
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-surface-2 text-text text-left transition-colors cursor-pointer group"
                       >
-                        <Icon className="w-4 h-4 text-blue-600" />
-
-                        <span className="text-sm font-medium">{label}</span>
+                        <Icon className="w-4 h-4 text-text-muted group-hover:text-primary transition-colors" />
+                        <span className="text-xs font-medium">{label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* HISTORY */}
-                <div className="mt-5 flex-1 min-h-0 flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold tracking-widest uppercase text-slate-500">
+                <div className="mt-4 flex-1 min-h-0 flex flex-col pt-3 border-t border-border">
+                  <div className="flex items-center justify-between mb-2 px-1">
+                    <p className="text-[11px] font-semibold tracking-wider uppercase text-text-muted">
                       History
                     </p>
 
-                    <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-surface-2 text-text-muted border border-border">
                       {history.length}
                     </span>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                  <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
                     {historyLoading ? (
-                      <p className="text-sm text-slate-500">Loading...</p>
+                      <p className="text-xs text-text-muted px-1">Loading chats...</p>
                     ) : history.length === 0 ? (
-                      <p className="text-sm text-slate-500">No chats yet</p>
+                      <p className="text-xs text-text-muted px-1">No past chats yet</p>
                     ) : (
-                      history.map((chat) => (
-                        <button
-                          key={chat._id}
-                          onClick={() => {
-                            loadChatHandler(chat._id);
-                            setSidebarOpen(false);
-                          }}
-                          className={`w-full text-left p-3 rounded-2xl border transition ${
-                            currentChatId === chat._id
-                              ? "bg-blue-50 border-blue-500 dark:bg-slate-800"
-                              : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
-                          }`}
-                        >
-                          <p className="font-medium text-sm line-clamp-1">{chat.title}</p>
-
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-1">{chat.preview}</p>
-                        </button>
-                      ))
+                      history.map((chat) => {
+                        const isActive = currentChatId === chat._id;
+                        return (
+                          <button
+                            key={chat._id}
+                            onClick={() => {
+                              loadChatHandler(chat._id);
+                              setSidebarOpen(false);
+                            }}
+                            className={`w-full text-left p-2.5 rounded-lg border transition-colors cursor-pointer ${
+                              isActive
+                                ? "bg-primary-soft/30 border-primary text-text font-medium"
+                                : "bg-surface-2/40 border-border hover:bg-surface-2 text-text"
+                            }`}
+                          >
+                            <p className="font-semibold text-xs line-clamp-1">{chat.title}</p>
+                            <p className="text-[11px] text-text-muted line-clamp-1 mt-0.5">{chat.preview}</p>
+                          </button>
+                        );
+                      })
                     )}
                   </div>
                 </div>
               </div>
             </aside>
 
-            {/* MAIN */}
-            <main className="h-full rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+            {/* MAIN CHAT AREA */}
+            <main className="h-full rounded-xl bg-surface border border-border shadow-subtle overflow-hidden flex flex-col">
               {/* HEADER */}
-              <div className="px-4 md:px-6 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="px-4 md:px-6 py-3 border-b border-border bg-surface flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {/* <button
-                    onClick={() => navigate("/dashboard")}
-                    className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button> */}
-
-                  <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
                     <Bot className="w-5 h-5" />
                   </div>
 
                   <div>
-                    <h1 className="font-bold text-lg">AI Coach</h1>
-
-                    <p className="text-sm text-slate-500">
-                      {currentChatId ? "Ongoing conversation" : "Ask anything about placements"}
+                    <h1 className="font-bold text-sm sm:text-base text-text">AI Coach</h1>
+                    <p className="text-xs text-text-muted">
+                      {currentChatId ? "Ongoing conversation" : "Ask anything about DSA, resume, HR, or preparation"}
                     </p>
                   </div>
                 </div>
@@ -240,35 +234,38 @@ const AICoach = () => {
                 {currentChatId && (
                   <button
                     onClick={clearCurrentChat}
-                    className="p-2.5 rounded-2xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="p-2 rounded-lg text-danger hover:bg-danger-soft transition-colors cursor-pointer"
+                    title="Clear Chat"
                   >
-                    <Trash2 className="w-5 h-5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 )}
               </div>
 
-              {/* CHAT AREA */}
-              <div className="flex-1 overflow-y-auto bg-[#f8fafc] dark:bg-slate-950 px-3 md:px-6 py-4">
-                <div className="max-w-5xl mx-auto space-y-3">
+              {/* CHAT MESSAGES */}
+              <div className="flex-1 overflow-y-auto bg-bg px-3 md:px-6 py-4">
+                <div className="max-w-4xl mx-auto space-y-4">
                   {messages.length === 0 ? (
-                    <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
-                      <div className="w-16 h-16 rounded-3xl bg-blue-600 text-white flex items-center justify-center mb-4">
-                        <Brain className="w-8 h-8" />
+                    <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary-soft text-primary flex items-center justify-center mb-3">
+                        <Brain className="w-6 h-6" />
                       </div>
 
-                      <h2 className="text-2xl font-bold mb-2">Welcome to AI Coach</h2>
+                      <h2 className="text-xl sm:text-2xl font-bold text-text mb-2">
+                        Welcome to AI Coach
+                      </h2>
 
-                      <p className="max-w-lg text-slate-500 mb-5 text-sm md:text-base">
-                        Ask about DSA, resume, interviews, aptitude, roadmap, coding doubts and
-                        more.
+                      <p className="max-w-md text-text-muted mb-6 text-xs sm:text-sm leading-relaxed">
+                        Your personal placement mentor. Ask about coding doubts, resume review,
+                        HR scenarios, aptitude, or 30-day prep roadmaps.
                       </p>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-xl">
                         {quickPrompts.slice(0, 4).map((item) => (
                           <button
                             key={item.id}
                             onClick={() => quickPromptHandler(item.id)}
-                            className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:shadow-sm text-sm font-medium transition"
+                            className="px-3.5 py-3 rounded-xl bg-surface border border-border hover:border-primary/50 hover:bg-surface-2 text-xs font-semibold text-text shadow-subtle transition-all cursor-pointer text-center"
                           >
                             {item.label}
                           </button>
@@ -282,32 +279,33 @@ const AICoach = () => {
                         className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                       >
                         <div
-                          className={`max-w-[92%] md:max-w-[74%] px-4 py-3 rounded-3xl shadow-sm ${
+                          className={`max-w-[92%] sm:max-w-[78%] px-4 py-3 rounded-xl shadow-subtle ${
                             msg.role === "user"
-                              ? "bg-blue-600 text-white"
-                              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+                              ? "bg-primary text-on-primary rounded-br-xs"
+                              : "bg-surface border border-border text-text rounded-bl-xs"
                           }`}
                         >
                           {msg.role === "ai" ? (
-                            <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert prose-pre:rounded-2xl">
+                            <div className="prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:rounded-lg prose-pre:bg-surface-2 prose-pre:border prose-pre:border-border">
                               <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
                                 {msg.text}
                               </ReactMarkdown>
                             </div>
                           ) : (
-                            <p className="whitespace-pre-wrap leading-7 text-[15px]">{msg.text}</p>
+                            <p className="whitespace-pre-wrap leading-relaxed text-sm">{msg.text}</p>
                           )}
 
                           <div
-                            className={`mt-2 flex items-center gap-2 text-xs ${
-                              msg.role === "user" ? "justify-end text-white/80" : "text-slate-500"
+                            className={`mt-2 flex items-center gap-2 text-[11px] ${
+                              msg.role === "user" ? "justify-end text-on-primary/80" : "text-text-muted"
                             }`}
                           >
                             <span>{time(msg.timestamp)}</span>
 
                             <button
                               onClick={() => copyText(msg.text)}
-                              className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
+                              className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                              title="Copy text"
                             >
                               <Copy className="w-3 h-3" />
                             </button>
@@ -319,11 +317,11 @@ const AICoach = () => {
 
                   {loading && (
                     <div className="flex justify-start">
-                      <div className="px-4 py-3 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <div className="flex gap-2">
-                          <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" />
-                          <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce delay-100" />
-                          <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce delay-200" />
+                      <div className="px-4 py-3 rounded-xl bg-surface border border-border shadow-subtle">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" />
+                          <span className="w-2 h-2 rounded-full bg-primary animate-bounce delay-100" />
+                          <span className="w-2 h-2 rounded-full bg-primary animate-bounce delay-200" />
                         </div>
                       </div>
                     </div>
@@ -333,9 +331,9 @@ const AICoach = () => {
                 </div>
               </div>
 
-              {/* INPUT */}
-              <div className="p-3 md:p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                <div className="max-w-5xl mx-auto flex gap-3 items-end">
+              {/* INPUT BAR */}
+              <div className="p-3 md:p-4 border-t border-border bg-surface">
+                <div className="max-w-4xl mx-auto flex gap-2.5 items-end">
                   <textarea
                     ref={inputRef}
                     rows={1}
@@ -343,7 +341,7 @@ const AICoach = () => {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask about DSA, resume, coding interviews..."
                     disabled={loading}
-                    className="flex-1 resize-none px-5 py-4 rounded-3xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 outline-none focus:ring-2 focus:ring-blue-500 min-h-[54px] max-h-36"
+                    className="flex-1 resize-none px-4 py-3 rounded-xl border border-border bg-surface-2 text-text text-sm placeholder:text-text-muted outline-none focus:ring-1 focus:ring-primary focus:border-primary min-h-[46px] max-h-32 leading-normal"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -355,20 +353,21 @@ const AICoach = () => {
                   <button
                     onClick={sendHandler}
                     disabled={!input.trim() || loading}
-                    className="w-14 h-14 rounded-3xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center disabled:opacity-50 transition"
+                    className="w-11 h-11 rounded-lg bg-primary hover:bg-primary-hover text-on-primary flex items-center justify-center disabled:opacity-50 transition-colors shadow-soft cursor-pointer shrink-0"
+                    aria-label="Send message"
                   >
-                    <MessageCircle className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
+                    <MessageCircle className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
                   </button>
                 </div>
 
-                <p className="text-center text-xs text-slate-500 mt-2">Powered by Gemini + GPT</p>
+                <p className="text-center text-[11px] text-text-muted mt-2">
+                  PlaceMentor AI Career Intelligence
+                </p>
               </div>
             </main>
           </div>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 };

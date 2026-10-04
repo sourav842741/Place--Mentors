@@ -75,26 +75,26 @@ const StreakCalendar = () => {
     const isToday = dateStr === todayStr;
     const completed = isCompleted(dateStr);
 
-    // 🟢 COMPLETED FIRST (IMPORTANT)
+    // Completed & Today
     if (completed && isToday) {
-      return "bg-green-500 text-white ring-2 ring-green-300 scale-110";
+      return "bg-primary text-on-primary ring-2 ring-primary/40 scale-105 font-bold border-primary";
     }
 
     if (completed) {
-      return "bg-gradient-to-r from-green-400 to-emerald-500 border-green-400 text-white";
+      return "bg-primary text-on-primary border-primary font-medium";
     }
 
-    // 🔵 TODAY (if not completed)
+    // Today (if not completed)
     if (isToday) {
-      return "ring-2 ring-blue-400 ring-offset-2 bg-blue-100 border-blue-300";
+      return "ring-2 ring-primary ring-offset-2 ring-offset-bg bg-primary-soft text-primary border-primary font-bold";
     }
 
-    return "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-white/10";
+    return "bg-surface-2 text-text-muted border-border";
   };
 
   if (loading) {
     return (
-      <Card className="w-full md:col-span-1">
+      <Card className="w-full bg-surface border border-border rounded-xl">
         <CardHeader className="pb-3">
           <Skeleton className="h-6 w-40" />
         </CardHeader>
@@ -109,39 +109,39 @@ const StreakCalendar = () => {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-surface border border-border shadow-subtle rounded-xl">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-xl font-bold">
-          <Flame className="h-5 w-5 text-orange-500" />
+        <CardTitle className="flex items-center gap-2 text-base font-bold text-text">
+          <Flame className="h-5 w-5 text-accent" />
           Streak Calendar
         </CardTitle>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-xs text-text-muted">
           Solve one problem a day to keep your streak
         </p>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-5">
         {/* Stats */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between">
           <div className="flex items-center gap-2">
-            <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
-              <Flame className="w-3 h-3 mr-1" />
+            <Badge className="bg-accent-soft text-accent border border-accent/20 font-semibold px-2.5 py-1">
+              <Flame className="w-3.5 h-3.5 mr-1" />
               {currentStreak} day{currentStreak !== 1 ? "s" : ""}
             </Badge>
 
             {todaySolved && (
-              <Badge className="border-green-400 text-green-700 bg-green-50">Today ✓</Badge>
+              <Badge className="border-success/20 text-success bg-success-soft font-semibold px-2.5 py-1">Today ✓</Badge>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">
-              <Crown className="w-3 h-3 mr-1" />
+            <Badge variant="secondary" className="bg-surface-2 text-text-muted border border-border px-2.5 py-1">
+              <Crown className="w-3.5 h-3.5 mr-1 text-accent" />
               Best: {bestStreak}
             </Badge>
 
-            <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
-              <Clock className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-xs text-text-subtle font-medium">
+              <Clock className="w-3.5 h-3.5" />
               {remainingTime}
             </div>
           </div>
@@ -149,7 +149,7 @@ const StreakCalendar = () => {
 
         {/* Calendar */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-2 text-sm font-semibold text-text-muted">
             <CalendarDays className="w-4 h-4" />
             {currentMonth}
           </div>
@@ -158,7 +158,7 @@ const StreakCalendar = () => {
             {["S", "M", "T", "W", "Th", "F", "S"].map((day, i) => (
               <div
                 key={i}
-                className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center"
+              className="text-[10px] font-semibold text-text-subtle text-center"
               >
                 {day}
               </div>
@@ -169,7 +169,7 @@ const StreakCalendar = () => {
                 {week.map((dateStr, j) => (
                   <div
                     key={j}
-                    className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all mx-auto ${getDayClass(dateStr)}`}
+                    className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all mx-auto text-[10px] font-medium ${getDayClass(dateStr)}`}
                   >
                     {dateStr && (
                       <span className="text-xs font-medium">{new Date(dateStr).getDate()}</span>

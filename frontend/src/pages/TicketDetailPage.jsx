@@ -110,7 +110,7 @@ export default function TicketDetailPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 lg:pl-64 pt-16 transition-colors duration-300">
+      <div className="min-h-screen bg-bg text-text lg:pl-64 pt-20 transition-colors duration-200">
         <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
           {/* HEADER */}
           <motion.div
@@ -122,7 +122,7 @@ export default function TicketDetailPage() {
               variant="outline"
               size="sm"
               onClick={() => navigate("/support")}
-              className="w-fit rounded-xl"
+              className="w-fit rounded-lg border-border"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
@@ -130,13 +130,13 @@ export default function TicketDetailPage() {
 
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">
+                <span className="text-sm font-mono font-bold text-primary">
                   {ticketDetail.ticketId}
                 </span>
                 <TicketStatusBadge status={ticketDetail.status} />
                 <TicketPriorityBadge priority={ticketDetail.priority} />
               </div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+              <h1 className="text-xl font-bold text-text mt-1">
                 {ticketDetail.subject}
               </h1>
             </div>
@@ -146,7 +146,7 @@ export default function TicketDetailPage() {
                 onClick={handleReopen}
                 disabled={actionLoading}
                 variant="outline"
-                className="rounded-xl border-purple-300 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                className="rounded-lg border-primary/30 text-primary hover:bg-primary-soft"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Reopen
@@ -160,55 +160,55 @@ export default function TicketDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <Card className="border border-border bg-surface text-text">
               <CardContent className="p-4 md:p-5 space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500 dark:text-gray-400">Category</p>
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <p className="text-text-muted">Category</p>
+                    <p className="font-semibold text-text">
                       {ticketDetail.category}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 dark:text-gray-400">Created</p>
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <p className="text-text-muted">Created</p>
+                    <p className="font-semibold text-text">
                       {new Date(ticketDetail.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 dark:text-gray-400">Email</p>
-                    <p className="font-semibold text-gray-900 dark:text-white truncate">
+                    <p className="text-text-muted">Email</p>
+                    <p className="font-semibold text-text truncate">
                       {ticketDetail.email}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 dark:text-gray-400">Replies</p>
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <p className="text-text-muted">Replies</p>
+                    <p className="font-semibold text-text">
                       {ticketDetail.replyCount || 0}
                     </p>
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border" />
 
                 <div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Description</p>
-                  <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                  <p className="text-text-muted text-sm mb-1">Description</p>
+                  <p className="text-text whitespace-pre-wrap">
                     {ticketDetail.description}
                   </p>
                 </div>
 
                 {/* AI Chat Summary */}
                 {ticketDetail.aiEscalated && ticketDetail.aiChatSummary && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                  <div className="bg-primary-soft/40 border border-primary/20 rounded-xl p-4">
                     <Collapsible>
-                      <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium text-blue-800 dark:text-blue-200 w-full text-left">
+                      <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium text-primary w-full text-left">
                         <Bot className="w-4 h-4" />
                         <span>AI Chat Summary (for support team)</span>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <Separator className="my-3 opacity-50" />
-                        <p className="text-sm text-blue-900 dark:text-blue-100 whitespace-pre-wrap leading-relaxed font-mono">
+                        <Separator className="my-3 opacity-50 bg-border" />
+                        <p className="text-sm text-text whitespace-pre-wrap leading-relaxed font-mono">
                           {ticketDetail.aiChatSummary}
                         </p>
                       </CollapsibleContent>
@@ -218,9 +218,9 @@ export default function TicketDetailPage() {
 
                 {ticketDetail.image && (
                   <div>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">Attachment</p>
+                    <p className="text-text-muted text-sm mb-2">Attachment</p>
                     <div
-                      className="relative w-full max-w-sm h-48 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition"
+                      className="relative w-full max-w-sm h-48 rounded-xl overflow-hidden border border-border bg-surface-2 cursor-pointer hover:opacity-90 transition"
                       onClick={() => setShowImage(ticketDetail.image)}
                     >
                       <img
@@ -230,8 +230,7 @@ export default function TicketDetailPage() {
                         onError={(e) => {
                           e.target.style.display = "none";
                           e.target.parentElement.classList.add(
-                            "bg-gray-100",
-                            "dark:bg-gray-800",
+                            "bg-surface-2",
                             "flex",
                             "items-center",
                             "justify-center"
@@ -250,16 +249,16 @@ export default function TicketDetailPage() {
 
           {/* REPLIES */}
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-blue-500" />
+            <h2 className="text-lg font-bold text-text flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-primary" />
               Conversation
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-normal text-text-muted">
                 ({replies.length})
               </span>
             </h2>
 
             {replies.length === 0 ? (
-              <div className="text-center py-10 text-gray-500 dark:text-gray-400">
+              <div className="text-center py-10 text-text-muted">
                 <Clock className="w-10 h-10 mx-auto mb-3 opacity-50" />
                 <p>No replies yet. Our team will respond shortly.</p>
               </div>
@@ -280,18 +279,18 @@ export default function TicketDetailPage() {
                       <div
                         className={`max-w-[85%] sm:max-w-[70%] rounded-2xl p-4 ${
                           isAdmin
-                            ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
-                            : "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                            ? "bg-surface border border-border text-text"
+                            : "bg-primary text-white"
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-2">
                           {isAdmin ? (
-                            <Shield className="w-4 h-4 text-purple-500" />
+                            <Shield className="w-4 h-4 text-primary" />
                           ) : (
                             <User className="w-4 h-4 opacity-80" />
                           )}
                           <span
-                            className={`text-xs font-semibold ${isAdmin ? "text-purple-700 dark:text-purple-300" : "opacity-90"}`}
+                            className={`text-xs font-semibold ${isAdmin ? "text-primary" : "opacity-90"}`}
                           >
                             {isAdmin
                               ? "Support Team"
@@ -300,7 +299,7 @@ export default function TicketDetailPage() {
                                 : reply.sender?.fullName || "User"}
                           </span>
                           <span
-                            className={`text-xs ml-auto ${isAdmin ? "text-gray-400" : "opacity-60"}`}
+                            className={`text-xs ml-auto ${isAdmin ? "text-text-muted" : "opacity-60"}`}
                           >
                             {new Date(reply.createdAt).toLocaleString()}
                           </span>
@@ -321,14 +320,14 @@ export default function TicketDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               onSubmit={handleSendReply}
-              className="sticky bottom-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 shadow-lg z-10"
+              className="sticky bottom-4 bg-surface border border-border rounded-xl p-4 shadow-card z-10"
             >
               <div className="flex gap-3">
                 <Textarea
                   placeholder="Type your reply..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="min-h-[80px] rounded-xl resize-none bg-transparent"
+                  className="min-h-[80px] rounded-lg resize-none bg-surface-2 border-border text-text placeholder:text-text-subtle"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -339,7 +338,7 @@ export default function TicketDetailPage() {
                 <Button
                   type="submit"
                   disabled={actionLoading || !message.trim()}
-                  className="h-auto px-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90"
+                  className="h-auto px-4 rounded-lg bg-primary hover:bg-primary-hover text-white transition-colors"
                 >
                   {actionLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -352,7 +351,7 @@ export default function TicketDetailPage() {
           )}
 
           {isClosed && (
-            <div className="text-center py-6 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <div className="text-center py-6 text-text-muted bg-surface-2 rounded-xl border border-border">
               <p>This ticket is {ticketDetail.status.toLowerCase()}.</p>
               {ticketDetail.status === "Solved" && (
                 <p className="text-sm mt-1">You can reopen it if the issue persists.</p>

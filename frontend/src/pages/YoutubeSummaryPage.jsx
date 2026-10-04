@@ -164,22 +164,13 @@ const YoutubeSummaryPage = () => {
     const currentSummary = summary?.[currentLang] || "";
 
     return (
-      <div
-        className="min-h-screen 
-bg-gradient-to-br from-indigo-50 via-white to-pink-50 
-dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 
-transition-colors duration-300"
-      >
+      <div className="min-h-screen bg-bg text-text transition-colors duration-200">
         <Navbar />
 
         <div className="pt-20 pb-8 px-4 md:px-8 max-w-7xl mx-auto space-y-8">
           {/* VIDEO PLAYER */}
-          <Card
-            className="max-w-4xl mx-auto shadow-2xl 
-    bg-white/90 dark:bg-gray-900/90 
-    backdrop-blur-md border dark:border-white/10"
-          >
-            <CardContent className="p-0 overflow-hidden rounded-3xl">
+          <Card className="max-w-4xl mx-auto shadow-card bg-surface border border-border">
+            <CardContent className="p-0 overflow-hidden rounded-2xl">
               <div className="aspect-video">
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}?rel=0`}
@@ -189,19 +180,19 @@ transition-colors duration-300"
                 />
               </div>
 
-              <div className="p-8 space-y-4">
+              <div className="p-6 space-y-4">
                 <div className="flex items-start justify-between flex-wrap gap-4">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-xl md:text-2xl font-bold text-text">
                     {title}
                   </h2>
 
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="flex items-center gap-1">
+                    <Badge variant="secondary" className="flex items-center gap-1 bg-surface-2 text-text-muted border border-border">
                       <Clock className="w-3 h-3" />
                       {duration}
                     </Badge>
 
-                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <Badge className="bg-primary-soft text-primary border border-primary/20 font-medium">
                       PRO Summary
                     </Badge>
                   </div>
@@ -212,10 +203,7 @@ transition-colors duration-300"
 
           {/* LANGUAGE */}
           <div className="max-w-4xl mx-auto flex justify-center">
-            <div
-              className="inline-flex bg-white/80 dark:bg-gray-900/80 
-      backdrop-blur-sm rounded-2xl p-1 shadow-lg border dark:border-white/10"
-            >
+            <div className="inline-flex bg-surface-2 rounded-xl p-1 shadow-subtle border border-border">
               <Button
                 variant={currentLang === "english" ? "default" : "ghost"}
                 size="sm"
@@ -239,13 +227,11 @@ transition-colors duration-300"
 
           {/* SUMMARY */}
           <Card
-            className="max-w-4xl mx-auto shadow-2xl border-0 
-    bg-white/90 dark:bg-gray-900/90 
-    backdrop-blur-md border dark:border-white/10"
+            className="max-w-4xl mx-auto shadow-card bg-surface border border-border"
           >
             <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white">
-                <FaStar className="w-8 h-8 text-yellow-500" />
+              <CardTitle className="flex items-center gap-3 text-2xl text-text">
+                <FaStar className="w-8 h-8 text-accent" />
                 AI Video Summary
               </CardTitle>
             </CardHeader>
@@ -261,21 +247,16 @@ transition-colors duration-300"
                 />
               </div>
 
-              <div
-                className="pt-6 mt-6 border-t 
-        bg-gradient-to-r from-purple-50 to-pink-50 
-        dark:from-gray-800 dark:to-gray-700 
-        rounded-xl flex flex-wrap items-center gap-3 p-4"
-              >
-                <Button onClick={copySummary} size="sm" variant="outline">
+              <div className="pt-4 mt-6 border-t border-border bg-surface-2 rounded-xl flex flex-wrap items-center gap-3 p-4">
+                <Button onClick={copySummary} size="sm" variant="outline" className="border-border text-text">
                   Copy
                 </Button>
 
-                <Button onClick={() => setExpanded(!expanded)} size="sm" variant="ghost">
+                <Button onClick={() => setExpanded(!expanded)} size="sm" variant="ghost" className="text-text-muted">
                   {expanded ? "Show Less" : "Show More"}
                 </Button>
 
-                <div className="ml-auto text-sm text-gray-600 dark:text-gray-400">
+                <div className="ml-auto text-sm text-text-muted font-medium">
                   ⭐ {creditsLeft} credits left
                 </div>
               </div>
@@ -284,23 +265,22 @@ transition-colors duration-300"
 
           {/* TIMESTAMPS */}
           {timestamps?.length > 0 && (
-            <Card
-              className="max-w-4xl mx-auto shadow-xl 
-      bg-gradient-to-r from-blue-50 to-indigo-50 
-      dark:from-gray-800 dark:to-gray-900"
-            >
+            <Card className="max-w-4xl mx-auto shadow-card bg-surface border border-border">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">⏰ Key Timestamps</CardTitle>
+                <CardTitle className="text-text text-lg font-bold flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-primary" />
+                  Key Timestamps
+                </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-2">
                 {timestamps.map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-3 bg-white dark:bg-gray-900 rounded-lg flex justify-between"
+                    className="p-3 bg-surface-2 border border-border/60 rounded-lg flex justify-between text-sm text-text"
                   >
-                    <span>{item.time}</span>
-                    <span>{item.label}</span>
+                    <span className="font-mono text-primary font-semibold">{item.time}</span>
+                    <span className="text-text-muted">{item.label}</span>
                   </div>
                 ))}
               </CardContent>
@@ -309,18 +289,17 @@ transition-colors duration-300"
 
           {/* HIGHLIGHTS */}
           {highlights?.length > 0 && (
-            <Card
-              className="max-w-4xl mx-auto shadow-xl 
-      bg-gradient-to-r from-orange-50 to-red-50 
-      dark:from-gray-800 dark:to-gray-900"
-            >
+            <Card className="max-w-4xl mx-auto shadow-card bg-surface border border-border">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">🔥 Highlights</CardTitle>
+                <CardTitle className="text-text text-lg font-bold flex items-center gap-2">
+                  <FaStar className="w-4 h-4 text-accent" />
+                  Highlights
+                </CardTitle>
               </CardHeader>
 
               <CardContent className="grid md:grid-cols-2 gap-3">
                 {highlights.map((h, i) => (
-                  <div key={i} className="p-4 bg-white dark:bg-gray-900 rounded-lg">
+                  <div key={i} className="p-3 bg-surface-2 border border-border/60 rounded-lg text-sm text-text-muted">
                     {h}
                   </div>
                 ))}
@@ -329,20 +308,16 @@ transition-colors duration-300"
           )}
 
           {/* CTA */}
-          <Card
-            className="max-w-2xl mx-auto text-center 
-    bg-gradient-to-r from-emerald-50 to-green-50 
-    dark:from-gray-800 dark:to-gray-900"
-          >
-            <CardContent className="p-8">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">New Video?</h3>
+          <Card className="max-w-2xl mx-auto text-center bg-surface border border-border shadow-subtle">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-text">Summarize Another Video?</h3>
 
               <Button
                 onClick={() => {
                   dispatch(clearSummary());
                   setUrl("");
                 }}
-                className="mt-4 bg-gradient-to-r from-emerald-500 to-green-600"
+                className="mt-4 bg-primary hover:bg-primary-hover text-white rounded-lg px-6 font-medium shadow-subtle"
               >
                 New Summary
               </Button>
@@ -353,51 +328,34 @@ transition-colors duration-300"
     );
   }
 
-  // INPUT FORM (pre-analysis state)
   return (
-    <div
-      className="min-h-screen 
-bg-gradient-to-br from-indigo-50 via-white to-pink-50 
-dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 
-transition-colors duration-300"
-    >
+    <div className="min-h-screen bg-bg text-text transition-colors duration-200">
       <Navbar />
       <div className="pt-20 pb-8 px-4 md:px-8 max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div
-            className="inline-flex items-center gap-2 
-    bg-white/80 dark:bg-gray-900/80 
-    backdrop-blur-sm px-6 py-3 rounded-2xl shadow-xl 
-    border border-gray-200 dark:border-white/10"
-          >
-            <FaStar className="w-8 h-8 text-purple-500" />
-
-            <h1
-              className="text-3xl md:text-4xl font-bold 
-      bg-gradient-to-r from-gray-900 to-gray-700 
-      dark:from-white dark:to-gray-300 
-      bg-clip-text text-transparent"
-            >
-              YouTube Pro Summarizer
-            </h1>
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 bg-surface px-5 py-2 rounded-xl shadow-subtle border border-border">
+            <FaStar className="w-5 h-5 text-accent" />
+            <span className="text-sm font-semibold text-text">YouTube Pro Summarizer</span>
           </div>
 
-          <p className="mt-4 text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Instant AI summaries in English + Hindi with timestamps & highlights (1 credit)
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-text mt-4">
+            AI-Powered Video Summaries
+          </h1>
+
+          <p className="mt-3 text-base md:text-lg text-text-muted max-w-xl mx-auto">
+            Instant summaries in English & Hindi with key timestamps and highlights (1 credit)
           </p>
         </div>
 
         {/* Input Section */}
         <Card
           ref={inputRef}
-          className="max-w-2xl mx-auto mb-8 shadow-2xl border-0 
-    bg-white/70 dark:bg-gray-900/70 
-    backdrop-blur-sm border dark:border-white/10"
+          className="max-w-2xl mx-auto mb-8 shadow-card bg-surface border border-border rounded-2xl"
         >
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white">
-              <FaPlayCircle className="w-8 h-8 text-red-500" />
+            <CardTitle className="flex items-center gap-3 text-xl text-text font-bold">
+              <FaPlayCircle className="w-6 h-6 text-danger" />
               Paste YouTube URL
             </CardTitle>
           </CardHeader>
@@ -410,21 +368,15 @@ transition-colors duration-300"
                 onChange={(e) => setUrl(e.target.value)}
                 onPaste={handlePaste}
                 placeholder="https://www.youtube.com/watch?v=..."
-                className="h-14 text-lg 
-          bg-white dark:bg-gray-800 
-          text-gray-900 dark:text-white 
-          border border-gray-200 dark:border-white/10"
+                className="h-12 text-base bg-surface-2 text-text placeholder:text-text-subtle border-border focus-visible:ring-primary rounded-xl"
               />
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 pt-1">
                 <Button
                   onClick={generateSummary}
                   disabled={loading || userCredits < 1 || !isValidUrl}
                   size="lg"
-                  className="flex-1 
-            bg-gradient-to-r from-purple-600 to-pink-600 
-            hover:from-purple-700 hover:to-pink-700 
-            shadow-xl h-12 font-semibold text-lg"
+                  className="flex-1 bg-primary hover:bg-primary-hover text-white rounded-xl shadow-subtle h-11 font-medium text-base transition-colors"
                 >
                   {loading ? (
                     <>
@@ -433,7 +385,7 @@ transition-colors duration-300"
                     </>
                   ) : (
                     <>
-                      <FaStar className="w-5 h-5 mr-2" />
+                      <FaStar className="w-4 h-4 mr-2" />
                       Generate PRO Summary
                     </>
                   )}
@@ -443,7 +395,7 @@ transition-colors duration-300"
                   variant="outline"
                   size="lg"
                   onClick={() => inputRef.current?.select()}
-                  className="h-12 px-6"
+                  className="h-11 px-5 border-border rounded-xl text-text"
                   disabled={loading}
                 >
                   Paste
@@ -451,10 +403,7 @@ transition-colors duration-300"
               </div>
 
               {userCredits < 1 && (
-                <p
-                  className="text-sm text-orange-600 dark:text-orange-400 text-center p-3 
-          bg-orange-50 dark:bg-orange-900/20 rounded-lg"
-                >
+                <p className="text-sm text-warning text-center p-3 bg-warning-soft border border-warning/20 rounded-xl">
                   💰 No credits left.{" "}
                   <button onClick={() => navigate("/pricing")} className="font-semibold underline">
                     Buy Credits
@@ -467,27 +416,16 @@ transition-colors duration-300"
 
         {/* Loading Preview */}
         {isFetchingMeta && (
-          <Card
-            className="max-w-4xl mx-auto mb-8 shadow-xl 
-    bg-white dark:bg-gray-900 border dark:border-white/10"
-          >
+          <Card className="max-w-4xl mx-auto mb-8 shadow-card bg-surface border border-border">
             <CardContent className="p-0">
-              <div
-                className="w-full h-64 md:h-80 
-        bg-gradient-to-br from-gray-200 to-gray-300 
-        dark:from-gray-800 dark:to-gray-700 
-        animate-pulse rounded-t-xl"
-              />
+              <div className="w-full h-64 md:h-80 bg-surface-2 animate-pulse rounded-t-xl" />
             </CardContent>
           </Card>
         )}
 
         {/* Video Preview */}
         {isValidUrl && thumbnail && !isFetchingMeta && !data && (
-          <Card
-            className="max-w-4xl mx-auto mb-8 shadow-xl 
-    bg-white dark:bg-gray-900 border dark:border-white/10"
-          >
+          <Card className="max-w-4xl mx-auto mb-8 shadow-card bg-surface border border-border">
             <CardContent className="p-0 overflow-hidden rounded-xl">
               <div className="relative">
                 <img
@@ -497,18 +435,18 @@ transition-colors duration-300"
                 />
 
                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
-                  <Play className="w-20 h-20 text-white drop-shadow-2xl" />
+                  <Play className="w-16 h-16 text-white drop-shadow-lg" />
                 </div>
               </div>
 
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <div className="p-5">
+                <h3 className="text-lg font-bold mb-2 text-text">
                   {videoTitle}
                 </h3>
 
-                <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center justify-between text-sm text-text-muted">
                   <span>{duration}</span>
-                  <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono text-xs">
+                  <code className="bg-surface-2 px-2 py-1 rounded font-mono text-xs text-text border border-border">
                     {extractVideoId(url)}
                   </code>
                 </div>
@@ -519,15 +457,11 @@ transition-colors duration-300"
 
         {/* Error */}
         {error && !loading && (
-          <Card
-            className="max-w-2xl mx-auto 
-    bg-red-50 dark:bg-red-900/20 
-    border border-red-200 dark:border-red-800"
-          >
-            <CardContent className="p-6 text-red-800 dark:text-red-300 text-center">
-              <FaVideo className="w-12 h-12 mx-auto mb-4 text-red-400" />
-              <h3 className="font-bold text-lg mb-2">Invalid URL</h3>
-              <p className="text-sm mb-4">Use: youtube.com/watch?v=ID or youtu.be/ID</p>
+          <Card className="max-w-2xl mx-auto bg-danger-soft border border-danger/20 rounded-xl">
+            <CardContent className="p-6 text-danger text-center">
+              <FaVideo className="w-10 h-10 mx-auto mb-3 opacity-80" />
+              <h3 className="font-bold text-base mb-1">Invalid URL</h3>
+              <p className="text-xs text-text-muted">Use format: youtube.com/watch?v=ID or youtu.be/ID</p>
             </CardContent>
           </Card>
         )}

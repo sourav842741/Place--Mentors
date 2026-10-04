@@ -96,25 +96,28 @@ export default function Leaderboard() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-950 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300 lg:ml-64">
-        <div className="max-w-6xl mx-auto">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="max-w-6xl mx-auto space-y-8">
           {/* HEADER */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white md:mt-8 sm:mt-8">
-              Leaderboard 🏆
-            </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+                Platform Leaderboard
+              </h1>
+              <p className="text-xs text-text-muted mt-1">Top performers across quizzes, coding problems and practice sessions</p>
+            </div>
 
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-end">
+            <div className="flex items-center gap-3">
               {/* TIME */}
-              <div className="bg-white dark:bg-gray-900 px-5 py-3 rounded-xl shadow-md border dark:border-white/10 flex flex-col items-center hover:scale-105 transition">
-                <span className="text-xs text-gray-500 dark:text-gray-400">TOTAL TIME</span>
-                <span className="text-lg font-bold text-blue-600">⏱ {myTime} min</span>
+              <div className="bg-surface border border-border px-4 py-2 rounded-lg text-center shadow-subtle">
+                <span className="text-[10px] font-semibold text-text-subtle uppercase block">Study Time</span>
+                <span className="text-sm font-bold text-text">{myTime} min</span>
               </div>
 
               {/* RANK */}
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-xl shadow-md text-white flex flex-col items-center hover:scale-105 transition">
-                <span className="text-xs opacity-80">MY RANK</span>
-                <span className="text-xl font-bold">#{myRank || "--"}</span>
+              <div className="bg-primary-soft border border-primary/20 px-4 py-2 rounded-lg text-center">
+                <span className="text-[10px] font-semibold text-primary uppercase block">Your Rank</span>
+                <span className="text-sm font-bold text-primary">#{myRank || "--"}</span>
               </div>
             </div>
           </div>
@@ -122,29 +125,29 @@ export default function Leaderboard() {
           {/* LOADING */}
           {loading && safeTopThree.length === 0 && (
             <div className="flex justify-center py-16">
-              <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
             </div>
           )}
 
           {/* ERROR */}
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center mb-8">
-              <p className="text-red-600 dark:text-red-400 mb-3">{error}</p>
+            <div className="bg-danger-soft border border-danger/20 rounded-xl p-6 text-center mb-8">
+              <p className="text-danger text-xs mb-3">{error}</p>
               <button
                 onClick={() => {
                   safeTrack("leaderboard_retry_clicked", {});
                   fetchLeaderboard(1);
                 }}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                className="px-4 py-2 bg-danger text-white text-xs font-medium rounded-lg hover:bg-danger/90 transition cursor-pointer"
               >
                 Retry
               </button>
             </div>
           )}
 
-          {/* TOP 3 */}
+          {/* TOP 3 PODIUM */}
           {!loading && safeTopThree.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 md:p-8 mb-8 shadow-sm border dark:border-white/10">
+            <div className="bg-surface rounded-xl p-6 sm:p-8 mb-8 shadow-subtle border border-border">
               <div className="flex flex-col md:flex-row md:items-end md:justify-center gap-6 md:gap-10">
                 {safeTopThree.map((user, i) => (
                   <div
@@ -152,7 +155,7 @@ export default function Leaderboard() {
                     key={user.rank || i}
                     className={`flex flex-col items-center transition-all duration-300 ${
                       i === 0
-                        ? "md:scale-110 md:order-2 md:-mt-8"
+                        ? "md:scale-110 md:order-2 md:-mt-6"
                         : i === 1
                           ? "md:order-1"
                           : "md:order-3"
@@ -160,17 +163,17 @@ export default function Leaderboard() {
                   >
                     {/* BADGES */}
                     {i === 0 && (
-                      <span className="mb-2 px-3 py-1 bg-yellow-500 text-white text-xs sm:text-sm rounded-full shadow-md">
+                      <span className="mb-2 px-3 py-1 bg-amber-500/15 text-amber-500 border border-amber-500/30 text-[11px] font-bold rounded-full shadow-sm">
                         🏆 CHAMPION
                       </span>
                     )}
                     {i === 1 && (
-                      <span className="mb-2 px-3 py-1 bg-gray-400 text-white text-xs sm:text-sm rounded-full shadow-md">
+                      <span className="mb-2 px-3 py-1 bg-slate-500/15 text-slate-400 border border-slate-500/30 text-[11px] font-bold rounded-full shadow-sm">
                         ⚡ RUNNER-UP
                       </span>
                     )}
                     {i === 2 && (
-                      <span className="mb-2 px-3 py-1 bg-orange-500 text-white text-xs sm:text-sm rounded-full shadow-md">
+                      <span className="mb-2 px-3 py-1 bg-orange-500/15 text-orange-500 border border-orange-500/30 text-[11px] font-bold rounded-full shadow-sm">
                         🔥 RISING STAR
                       </span>
                     )}
@@ -181,27 +184,28 @@ export default function Leaderboard() {
                         user.avatar ||
                         `https://ui-avatars.com/api/?name=${encodeURIComponent(
                           user.name || "U"
-                        )}&background=6366f1&color=fff`
+                        )}&background=059669&color=fff`
                       }
                       alt={user.name || "User"}
-                      className={`rounded-full object-cover border-4 border-white dark:border-gray-900 shadow-lg ${
+                      className={`rounded-full object-cover border-4 border-surface shadow-md ${
                         i === 0 ? "w-24 h-24 md:w-28 md:h-28" : "w-20 h-20 md:w-24 md:h-24"
                       }`}
                     />
 
                     {/* NAME */}
-                    <h3 className="mt-3 text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white text-center">
+                    <h3 className="mt-3 text-sm sm:text-base font-semibold text-text text-center">
                       {user.name || "Anonymous"}
                     </h3>
 
                     {/* SCORE */}
-                    <p className="text-blue-600 font-bold text-lg sm:text-xl md:text-2xl mt-1">
+                    <p className="text-primary font-bold text-lg sm:text-xl md:text-2xl mt-0.5">
                       {user.score ?? 0} pts
                     </p>
 
                     {/* STATS */}
-                    <div className="flex gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2">
-                      <span>{Number(user.accuracy?.toFixed(2) || 0)}%</span>
+                    <div className="flex gap-3 text-xs text-text-muted mt-1.5">
+                      <span>{Number(user.accuracy?.toFixed(2) || 0)}% acc</span>
+                      <span>•</span>
                       <span>🔥 {user.streak ?? 0}</span>
                     </div>
                   </div>
@@ -211,30 +215,32 @@ export default function Leaderboard() {
           )}
 
           {/* TABLE */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border dark:border-white/10 overflow-hidden">
-            <div className="p-6 border-b bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
-              <h2 className="font-bold text-xl text-gray-800 dark:text-white">Top Performers</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {total} ranked students
-              </p>
+          <div className="bg-surface rounded-xl shadow-subtle border border-border overflow-hidden">
+            <div className="p-5 border-b border-border bg-surface-2/40 flex items-center justify-between">
+              <div>
+                <h2 className="font-bold text-base text-text">Top Performers</h2>
+                <p className="text-xs text-text-muted mt-0.5">
+                  {total} ranked students
+                </p>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+                <thead className="bg-surface-2/70 border-b border-border">
                   <tr>
-                    <th className="p-4 text-left text-gray-700 dark:text-gray-300">Rank</th>
-                    <th className="p-4 text-left text-gray-700 dark:text-gray-300">Student</th>
-                    <th className="p-4 text-left text-gray-700 dark:text-gray-300">Points</th>
-                    <th className="p-4 text-left text-gray-700 dark:text-gray-300">Streak</th>
-                    <th className="p-4 text-left text-gray-700 dark:text-gray-300">Accuracy</th>
-                    <th className="p-4 text-left text-gray-700 dark:text-gray-300">Time</th>
+                    <th className="p-3.5 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Rank</th>
+                    <th className="p-3.5 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Student</th>
+                    <th className="p-3.5 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Points</th>
+                    <th className="p-3.5 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Streak</th>
+                    <th className="p-3.5 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Accuracy</th>
+                    <th className="p-3.5 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {safeLeaderboard.length === 0 && !loading && (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-gray-400">
+                      <td colSpan={6} className="p-8 text-center text-text-muted text-xs">
                         No more entries on this page.
                       </td>
                     </tr>
@@ -244,10 +250,10 @@ export default function Leaderboard() {
                     <tr
                       data-private
                       key={user.rank || user.userId || user.name}
-                      className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="border-b border-border/50 hover:bg-surface-2/40 transition-colors"
                     >
-                      <td className="p-4 font-bold text-gray-900 dark:text-white">#{user.rank}</td>
-                      <td className="p-4 flex items-center gap-3">
+                      <td className="p-3.5 font-bold text-text text-sm">#{user.rank}</td>
+                      <td className="p-3.5 flex items-center gap-3">
                         <img
                           src={
                             user.avatar ||
@@ -255,24 +261,24 @@ export default function Leaderboard() {
                               user.name || "U"
                             )}`
                           }
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-9 h-9 rounded-full object-cover border border-border"
                           alt={user.name || "User"}
                         />
-                        <span className="text-gray-900 dark:text-white">
+                        <span className="text-text font-medium text-sm">
                           {user.name || "Anonymous"}
                         </span>
                       </td>
-                      <td className="p-4 text-blue-600 font-bold">{user.score ?? 0}</td>
-                      <td className="p-4 text-gray-700 dark:text-gray-300">
+                      <td className="p-3.5 text-primary font-bold text-sm">{user.score ?? 0}</td>
+                      <td className="p-3.5 text-text-muted text-xs">
                         <span className="inline-flex items-center gap-1">
-                          <Flame className="w-4 h-4 text-orange-500" />
+                          <Flame className="w-3.5 h-3.5 text-orange-500" />
                           {user.streak ?? 0}
                         </span>
                       </td>
-                      <td className="p-4 text-gray-700 dark:text-gray-300">
+                      <td className="p-3.5 text-text-muted text-xs">
                         {Number(user.accuracy || 0).toFixed(1)}%
                       </td>
-                      <td className="p-4 text-gray-700 dark:text-gray-300">
+                      <td className="p-3.5 text-text-muted text-xs">
                         ⏱ {user.timeSpent || 0} min
                       </td>
                     </tr>
@@ -283,11 +289,11 @@ export default function Leaderboard() {
 
             {/* PAGINATION */}
             {pages > 1 && (
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="p-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface">
+                <p className="text-xs text-text-muted">
                   Page{" "}
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">{page}</span> of{" "}
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">{pages}</span>
+                  <span className="font-semibold text-text">{page}</span> of{" "}
+                  <span className="font-semibold text-text">{pages}</span>
                   {" · "}
                   {total} entries
                 </p>
@@ -302,9 +308,9 @@ export default function Leaderboard() {
                       handlePageChange(page - 1);
                     }}
                     disabled={page === 1 || loading}
-                    className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-text hover:bg-surface-2 disabled:opacity-40 disabled:cursor-not-allowed transition text-xs font-medium cursor-pointer"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-3.5 h-3.5" />
                     Prev
                   </button>
 
@@ -317,10 +323,10 @@ export default function Leaderboard() {
                       handlePageChange(page + 1);
                     }}
                     disabled={page === pages || loading}
-                    className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-text hover:bg-surface-2 disabled:opacity-40 disabled:cursor-not-allowed transition text-xs font-medium cursor-pointer"
                   >
                     Next
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -329,8 +335,8 @@ export default function Leaderboard() {
             {/* LOADING OVERLAY FOR PAGE CHANGE */}
             {loading && safeTopThree.length > 0 && (
               <div className="p-6 text-center">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-600 mx-auto" />
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading...</p>
+                <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
+                <p className="text-xs text-text-muted mt-2">Loading...</p>
               </div>
             )}
           </div>

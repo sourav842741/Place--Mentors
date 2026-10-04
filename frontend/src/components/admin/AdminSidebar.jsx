@@ -14,6 +14,7 @@ import {
   ChevronRight,
   ShieldCheck,
   CreditCard,
+  X,
 } from "lucide-react";
 
 const menuItems = [
@@ -41,7 +42,12 @@ const menuItems = [
   },
 ];
 
-export default function AdminSidebar({ isOpen, setIsOpen, onOpenSystemHub }) {
+export default function AdminSidebar({
+  isOpen,
+  setIsOpen,
+  onOpenSystemHub,
+  headerHeight = 64,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,33 +58,51 @@ export default function AdminSidebar({ isOpen, setIsOpen, onOpenSystemHub }) {
       {/* MOBILE OVERLAY */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* SIDEBAR */}
       <aside
+        style={{
+          top: `${headerHeight}px`,
+          height: `calc(100vh - ${headerHeight}px)`,
+        }}
         className={`
-          fixed top-16 left-0 z-50
-          h-[calc(100vh-4rem)]
+          fixed left-0 z-30
           w-72
-          bg-white/90 dark:bg-gray-950/90
+          bg-surface/95
           backdrop-blur-2xl
-          border-r border-gray-200 dark:border-white/10
-          shadow-2xl
-          transition-transform duration-300 ease-in-out
+          border-r border-border
+          shadow-xl
+          transition-all duration-200 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
         `}
       >
         <div className="flex flex-col h-full">
-          {/* HEADER */}
+          {/* MOBILE CLOSE HEADER */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border lg:hidden">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-sm">
+                <LayoutDashboard className="w-4 h-4" />
+              </div>
+              <span className="font-bold text-sm text-text">Admin Menu</span>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-2 transition"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
           {/* MENU */}
-          <div className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-2">
+          <div className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-1.5">
             {/* SECTION TITLE */}
-            <p className="px-3 text-[11px] uppercase tracking-widest text-gray-400 font-semibold mb-2">
+            <p className="px-3 text-[11px] uppercase tracking-wider text-text-subtle font-bold mb-2">
               Main Menu
             </p>
 
@@ -94,33 +118,33 @@ export default function AdminSidebar({ isOpen, setIsOpen, onOpenSystemHub }) {
                   }}
                   className={`
                     w-full flex items-center justify-between
-                    px-4 py-3 rounded-2xl
+                    px-3.5 py-2.5 rounded-xl
                     text-sm font-medium
-                    transition-all duration-300 group
+                    transition-all duration-200 group
 
                     ${
                       isActive
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "bg-primary text-white shadow-md shadow-primary/20 font-semibold"
+                        : "text-text-muted hover:text-text hover:bg-surface-2"
                     }
                   `}
                 >
                   <div className="flex items-center gap-3">
                     <item.icon
-                      className={`w-5 h-5 ${
+                      className={`w-5 h-5 transition-colors ${
                         isActive
                           ? "text-white"
-                          : "text-gray-500 dark:text-gray-400 group-hover:text-indigo-500"
+                          : "text-text-subtle group-hover:text-primary"
                       }`}
                     />
                     <span>{item.label}</span>
                   </div>
 
                   <ChevronRight
-                    className={`w-4 h-4 transition ${
+                    className={`w-4 h-4 transition-transform ${
                       isActive
                         ? "text-white"
-                        : "text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-1"
+                        : "text-text-subtle group-hover:text-primary group-hover:translate-x-0.5"
                     }`}
                   />
                 </button>
@@ -128,9 +152,9 @@ export default function AdminSidebar({ isOpen, setIsOpen, onOpenSystemHub }) {
             })}
 
             {/* SYSTEM HUB */}
-            <div className="pt-4">
-              <p className="px-3 text-[11px] uppercase tracking-widest text-gray-400 font-semibold mb-2">
-                Tools
+            <div className="pt-4 mt-2 border-t border-border/60">
+              <p className="px-3 text-[11px] uppercase tracking-wider text-text-subtle font-bold mb-2">
+                Tools & Diagnostics
               </p>
 
               <button
@@ -138,23 +162,23 @@ export default function AdminSidebar({ isOpen, setIsOpen, onOpenSystemHub }) {
                   onOpenSystemHub();
                   setIsOpen(false);
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 group"
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-text-muted hover:text-text hover:bg-surface-2 transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3">
-                  <Layers className="w-5 h-5 text-gray-500 group-hover:text-indigo-500" />
+                  <Layers className="w-5 h-5 text-text-subtle group-hover:text-primary transition-colors" />
                   <span>System Hub</span>
                 </div>
 
-                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-1 transition" />
+                <ChevronRight className="w-4 h-4 text-text-subtle group-hover:text-primary group-hover:translate-x-0.5 transition" />
               </button>
             </div>
           </div>
 
           {/* FOOTER */}
-          <div className="px-4 py-4 border-t border-gray-200 dark:border-white/10">
-            <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 text-center shadow-lg">
-              <p className="text-sm font-semibold">PlaceMentor Admin</p>
-              <p className="text-[11px] opacity-80 mt-1">Version 2.0</p>
+          <div className="p-4 border-t border-border">
+            <div className="rounded-xl bg-surface-2 border border-border text-text px-4 py-3 text-center shadow-sm">
+              <p className="text-sm font-bold text-text">PlaceMentor Admin</p>
+              <p className="text-[11px] text-text-subtle mt-0.5">Version 2.0 • Secured</p>
             </div>
           </div>
         </div>

@@ -5,52 +5,51 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t dark:border-gray-800 mt-10 lg:ml-64 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 py-10 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+    <footer className="bg-surface border-t border-border mt-12 lg:ml-64 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
         {/* Logo + About */}
-        <div>
-          <h2 className="text-xl font-bold text-indigo-600">Place Mentor</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-3 transition-colors">
-            AI-powered placement preparation platform.
+        <div className="space-y-3">
+          <h2 className="text-xl font-bold text-primary tracking-tight">Place Mentor</h2>
+          <p className="text-sm text-text-muted leading-relaxed">
+            AI-powered placement preparation platform helping students succeed in tech interviews.
           </p>
         </div>
 
         {/* Quick Links */}
         <div>
-          <h3 className="font-semibold mb-3">Quick Links</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
+          <h3 className="font-semibold text-text mb-3 text-sm">Quick Links</h3>
+          <ul className="space-y-2.5 text-sm text-text-muted">
             <li
               onClick={() => navigate("/dashboard")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               Dashboard
             </li>
 
             <li
               onClick={() => navigate("/companies")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               Companies
             </li>
 
             <li
               onClick={() => navigate("/quiz")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               Practice
             </li>
 
             <li
               onClick={() => navigate("/notes")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               Notes
             </li>
 
-            {/* 🔐 Privacy Policy */}
             <li
               onClick={() => navigate("/privacy-policy")}
-              className="cursor-pointer flex items-center gap-2 hover:text-indigo-600 hover:underline transition"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               Privacy Policy
             </li>
@@ -59,63 +58,72 @@ const Footer = () => {
 
         {/* Resources */}
         <div>
-          <h3 className="font-semibold mb-3">Resources</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
+          <h3 className="font-semibold text-text mb-3 text-sm">Resources</h3>
+          <ul className="space-y-2.5 text-sm text-text-muted">
             <li
               onClick={() => navigate("/resources")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               DSA Sheet
             </li>
 
             <li
               onClick={() => navigate("/potd")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
-              Aptitude
+              Problem of the Day
             </li>
 
             <li
               onClick={() => navigate("/quiz")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
               Interview Prep
             </li>
 
             <li
               onClick={() => navigate("/resume-analyzer")}
-              className="cursor-pointer hover:text-indigo-600 hover:underline"
+              className="cursor-pointer hover:text-primary transition-colors"
             >
-              Resume Tips
+              Resume Tools
             </li>
           </ul>
         </div>
 
         {/* Social Icons */}
         <div>
-          <h3 className="font-semibold mb-3">Connect</h3>
-          <div className="flex gap-4 text-gray-600 text-xl">
-            <FaGithub
+          <h3 className="font-semibold text-text mb-3 text-sm">Connect</h3>
+          <div className="flex gap-4 text-text-subtle text-lg">
+            <button
               onClick={() => window.open("https://github.com", "_blank")}
-              className="cursor-pointer hover:text-indigo-600 transition"
-            />
+              aria-label="GitHub"
+              className="cursor-pointer hover:text-primary transition-colors"
+            >
+              <FaGithub />
+            </button>
 
-            <FaLinkedin
+            <button
               onClick={() => window.open("https://linkedin.com", "_blank")}
-              className="cursor-pointer hover:text-indigo-600 transition"
-            />
+              aria-label="LinkedIn"
+              className="cursor-pointer hover:text-primary transition-colors"
+            >
+              <FaLinkedin />
+            </button>
 
-            <FaTwitter
+            <button
               onClick={() => window.open("https://twitter.com", "_blank")}
-              className="cursor-pointer hover:text-indigo-600 transition"
-            />
+              aria-label="Twitter"
+              className="cursor-pointer hover:text-primary transition-colors"
+            >
+              <FaTwitter />
+            </button>
           </div>
         </div>
       </div>
 
       {/* Bottom */}
-      <div className="border-t py-4 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} Place Mentor. All rights reserved.
+      <div className="border-t border-border py-4 text-center text-xs text-text-subtle">
+        © {new Date().getFullYear()} Place Mentor. All rights reserved. Built for student success.
       </div>
     </footer>
   );

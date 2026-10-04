@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { installApp, canInstall } from "../lib/pwa";
+import { Download, X } from "lucide-react";
 
 export default function InstallPopup() {
   const [show, setShow] = useState(false);
@@ -11,20 +12,18 @@ export default function InstallPopup() {
     const timer = setTimeout(() => {
       if (!canInstall()) return;
 
-      // Cookie popup active hai toh install popup mat dikhao
       const cookieConsent = localStorage.getItem("cookie_consent");
       if (!cookieConsent) return;
 
       const lastClosed = localStorage.getItem(LAST_CLOSED_KEY);
       const now = Date.now();
 
-      // Agar user ne 8 ghante ke andar close kiya tha
       if (lastClosed && now - Number(lastClosed) < EIGHT_HOURS) {
         return;
       }
 
       setShow(true);
-    }, 3000); // page load ke 3 sec baad check
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -36,9 +35,7 @@ export default function InstallPopup() {
 
   const handleInstall = async () => {
     await installApp();
-
     localStorage.setItem("install_popup_last_closed", Date.now());
-
     setShow(false);
   };
 
@@ -46,31 +43,43 @@ export default function InstallPopup() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-5">
-      <div className="w-80 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
-        {/* Title */}
-        <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
-          Install Place Mentor 🚀
-        </h3>
+      <div className="w-84 rounded-2xl border border-border bg-surface p-5 shadow-card text-text transition-colors duration-200">
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0">
+              <Download className="w-4 h-4" />
+            </div>
+            <h3 className="text-base font-bold text-text">
+              Install PlaceMentor 🚀
+            </h3>
+          </div>
 
-        {/* Subtitle */}
-        <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-          Unlock premium tools, faster access & exclusive features.
-        </p>
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-2">
           <button
             onClick={handleClose}
-            className="px-3 py-1.5 text-sm text-gray-500 transition hover:text-black dark:hover:text-white"
+            className="p-1 rounded-lg text-text-subtle hover:text-text hover:bg-surface-2 transition-colors cursor-pointer"
+            aria-label="Close"
           >
-            Later
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <p className="text-xs text-text-muted leading-relaxed mb-4">
+          Install the desktop/mobile app for faster practice, offline revision & instant notifications.
+        </p>
+
+        <div className="flex items-center justify-end gap-2.5">
+          <button
+            onClick={handleClose}
+            className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text rounded-lg hover:bg-surface-2 transition-colors cursor-pointer"
+          >
+            Maybe Later
           </button>
 
           <button
             onClick={handleInstall}
-            className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm text-white transition hover:bg-blue-700"
+            className="rounded-xl bg-primary hover:bg-primary-hover px-4 py-2 text-xs font-semibold text-on-primary shadow-soft transition-all hover:scale-[1.02] cursor-pointer"
           >
-            Install
+            Install App
           </button>
         </div>
       </div>

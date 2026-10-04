@@ -17,10 +17,12 @@ const NoteDiagram = ({ diagramData, className = "" }) => {
         setLoading(true);
         setError(false);
 
+        const isDark = document.documentElement.classList.contains("dark");
+
         // Mermaid config
         mermaid.initialize({
           startOnLoad: false,
-          theme: "default",
+          theme: isDark ? "dark" : "default",
           securityLevel: "loose",
         });
 
@@ -48,24 +50,26 @@ const NoteDiagram = ({ diagramData, className = "" }) => {
   }
 
   return (
-    <div className={`bg-gray-50 rounded-lg p-4 border ${className}`}>
+    <div className={`bg-surface border border-border rounded-xl p-5 shadow-subtle ${className}`}>
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-6 bg-linear-to-b from-blue-500 to-purple-600 rounded" />
-        <span className="font-semibold text-blue-900">Diagram</span>
+        <div className="w-1.5 h-4 bg-primary rounded-full" />
+        <span className="text-sm font-semibold text-text">Concept Diagram</span>
       </div>
 
       {loading && (
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-primary"></div>
         </div>
       )}
 
       {error && (
-        <div className="text-center py-8 text-red-500 text-sm">Failed to render diagram</div>
+        <div className="text-center py-6 text-danger text-xs bg-danger-soft border border-danger/20 rounded-lg">
+          Failed to render diagram
+        </div>
       )}
 
       {!loading && !error && (
-        <div ref={svgRef} className="mermaid w-full h-auto max-h-96 overflow-auto" />
+        <div ref={svgRef} className="mermaid w-full h-auto max-h-96 overflow-auto flex justify-center py-2" />
       )}
     </div>
   );

@@ -13,7 +13,7 @@ import { Trophy, Calendar, Award, Loader2, ArrowLeft, RefreshCw } from "lucide-r
 
 import CertificateHistory from "../components/certificates/CertificateHistory";
 import CertificateCard from "../components/certificates/CertificateCard";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function Certificates() {
   const { user } = useSelector((state) => state.user);
@@ -23,11 +23,8 @@ export default function Certificates() {
   const [certificates, setCertificates] = useState([]);
 
   const [loadingBadges, setLoadingBadges] = useState(true);
-
   const [loadingCerts, setLoadingCerts] = useState(true);
-
   const [refreshing, setRefreshing] = useState(false);
-
   const [activeTab, setActiveTab] = useState("available");
 
   useEffect(() => {
@@ -45,7 +42,6 @@ export default function Certificates() {
       ]);
 
       setBadges(Array.isArray(badgesRes?.data?.badges) ? badgesRes.data.badges : []);
-
       setCertificates(Array.isArray(certsRes?.data?.data) ? certsRes.data.data : []);
     } catch (error) {
       toast.error("Failed to load data");
@@ -71,65 +67,63 @@ export default function Certificates() {
 
   if (loadingBadges || loadingCerts) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
     <>
-      <div className="min-h-screen bg-slate-950 text-white px-4 md:px-8 py-8">
-        {/* TOP BAR */}
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          {/* LEFT SIDE */}
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/profile")}
-              className="rounded-2xl border-slate-700 bg-slate-900 hover:bg-slate-800 text-white"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Profile
-            </Button>
+      <Navbar />
+      <div className="min-h-screen bg-bg text-text pt-24 lg:pl-64 px-4 md:px-8 pb-12 transition-colors duration-200">
+        <div className="max-w-5xl mx-auto space-y-6">
 
-            <Button
-              onClick={refreshData}
-              disabled={refreshing}
-              className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {refreshing ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4 mr-2" />
-              )}
-              Refresh
-            </Button>
+          {/* TOP BAR */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* LEFT */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/profile")}
+                className="rounded-xl border-border bg-surface hover:bg-surface-2 text-text transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Profile
+              </Button>
+
+              <Button
+                onClick={refreshData}
+                disabled={refreshing}
+                className="rounded-xl bg-primary hover:bg-primary-hover text-on-primary shadow-soft transition-colors"
+              >
+                {refreshing ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                )}
+                Refresh
+              </Button>
+            </div>
+
+            {/* RIGHT — Page title */}
+            <div className="bg-surface border border-border px-5 py-3 rounded-2xl shadow-subtle flex items-center gap-3">
+              <Award className="w-6 h-6 text-accent" />
+              <h1 className="text-xl font-bold text-text">Certificates</h1>
+            </div>
           </div>
 
-          {/* RIGHT SIDE */}
-          <div className="bg-slate-900 border border-slate-800 px-6 py-3 rounded-3xl shadow-xl">
-            <h1 className="text-4xl font-black flex items-center gap-3">
-              <Award className="w-8 h-8 text-yellow-400" />
-              Certificates
-            </h1>
-          </div>
-        </div>
-
-        {/* Subtitle */}
-        <div className="max-w-7xl mx-auto mb-8">
-          <p className="text-slate-400 text-lg">
+          {/* Subtitle */}
+          <p className="text-text-muted text-sm">
             Turn your achievements into verified and shareable certificates.
           </p>
-        </div>
 
-        {/* Tabs */}
-        <div className="max-w-7xl mx-auto">
+          {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 bg-slate-900 border border-slate-800 rounded-3xl h-14 mb-8">
+            <TabsList className="grid grid-cols-2 bg-surface-2 border border-border rounded-xl h-12 mb-6">
               <TabsTrigger
                 value="available"
-                className="rounded-3xl data-[state=active]:bg-slate-800 data-[state=active]:text-white"
+                className="rounded-lg text-text-muted data-[state=active]:bg-surface data-[state=active]:text-text data-[state=active]:shadow-subtle font-medium text-sm transition-all"
               >
                 <Trophy className="w-4 h-4 mr-2" />
                 Available ({availableBadges.length})
@@ -137,7 +131,7 @@ export default function Certificates() {
 
               <TabsTrigger
                 value="history"
-                className="rounded-3xl data-[state=active]:bg-slate-800 data-[state=active]:text-white"
+                className="rounded-lg text-text-muted data-[state=active]:bg-surface data-[state=active]:text-text data-[state=active]:shadow-subtle font-medium text-sm transition-all"
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 History ({certificates.length})
@@ -147,12 +141,12 @@ export default function Certificates() {
             {/* Available */}
             <TabsContent value="available">
               {availableBadges.length === 0 ? (
-                <Card className="bg-slate-900 border-slate-800 rounded-3xl p-10 text-center text-white">
-                  <Trophy className="w-14 h-14 mx-auto text-yellow-400 mb-4" />
-
-                  <h3 className="text-2xl font-bold">No Certificates Available</h3>
-
-                  <p className="text-slate-400 mt-2">Earn more badges to unlock certificates.</p>
+                <Card className="bg-surface border border-border rounded-2xl p-10 text-center shadow-subtle">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-accent-soft border border-accent/20 flex items-center justify-center">
+                    <Trophy className="w-8 h-8 text-accent" />
+                  </div>
+                  <h3 className="text-lg font-bold text-text">No Certificates Available</h3>
+                  <p className="text-text-muted mt-2 text-sm">Earn more badges to unlock certificates.</p>
                 </Card>
               ) : (
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -167,9 +161,7 @@ export default function Certificates() {
                           });
 
                           toast.success("Certificate created");
-
                           await fetchData();
-
                           setActiveTab("history");
                         } catch {
                           toast.error("Failed");

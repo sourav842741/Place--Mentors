@@ -558,16 +558,16 @@ export default function DoubtChatPage() {
         open={Boolean(deleteDoubtTarget)}
         onOpenChange={(open) => (!open ? setDeleteDoubtTarget(null) : null)}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-surface border border-border text-text shadow-float">
           <DialogHeader>
-            <DialogTitle>Delete this doubt?</DialogTitle>
-            <DialogDescription>This will remove the doubt and all its replies.</DialogDescription>
+            <DialogTitle className="text-text font-bold">Delete this doubt?</DialogTitle>
+            <DialogDescription className="text-text-muted text-xs">This will permanently remove the doubt and all its replies.</DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setDeleteDoubtTarget(null)}
-              className="dark:border-white/10 dark:text-white"
+              className="border-border text-text hover:bg-surface-2 bg-surface text-xs"
               disabled={deletingDoubtId === deleteDoubtTarget?._id}
             >
               Cancel
@@ -577,7 +577,7 @@ export default function DoubtChatPage() {
                 await handleDeleteDoubt(deleteDoubtTarget?._id);
                 setDeleteDoubtTarget(null);
               }}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-danger hover:bg-danger/90 text-white text-xs font-medium cursor-pointer"
               disabled={!deleteDoubtTarget || deletingDoubtId === deleteDoubtTarget._id}
             >
               {deletingDoubtId === deleteDoubtTarget?._id ? "Deleting..." : "Delete"}
@@ -591,16 +591,16 @@ export default function DoubtChatPage() {
         open={Boolean(deleteReplyTarget)}
         onOpenChange={(open) => (!open ? setDeleteReplyTarget(null) : null)}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-surface border border-border text-text shadow-float">
           <DialogHeader>
-            <DialogTitle>Delete this reply?</DialogTitle>
-            <DialogDescription>This will remove the reply.</DialogDescription>
+            <DialogTitle className="text-text font-bold">Delete this reply?</DialogTitle>
+            <DialogDescription className="text-text-muted text-xs">This will permanently remove your reply from the discussion.</DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setDeleteReplyTarget(null)}
-              className="dark:border-white/10 dark:text-white"
+              className="border-border text-text hover:bg-surface-2 bg-surface text-xs"
               disabled={replyBusyId === deleteReplyTarget?.replyId}
             >
               Cancel
@@ -611,7 +611,7 @@ export default function DoubtChatPage() {
 
                 setDeleteReplyTarget(null);
               }}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-danger hover:bg-danger/90 text-white text-xs font-medium cursor-pointer"
               disabled={!deleteReplyTarget || replyBusyId === deleteReplyTarget.replyId}
             >
               {replyBusyId === deleteReplyTarget?.replyId ? "Deleting..." : "Delete"}
@@ -620,53 +620,59 @@ export default function DoubtChatPage() {
         </DialogContent>
       </Dialog>
 
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-950 overflow-x-hidden transition-colors duration-300 lg:ml-5 mt-5">
+      <div className="min-h-screen bg-bg text-text overflow-x-hidden transition-colors duration-200">
         <Navbar />
 
-        <div className="lg:pl-64 mt-16 px-3 sm:px-4 md:px-6">
+        <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12">
           {/* Header */}
-          <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 shadow-sm mb-6 p-4 md:p-6 transition">
+          <div className="bg-surface border border-border rounded-2xl shadow-subtle mb-6 p-4 md:p-6 transition-colors">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-                Community
-              </h1>
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-text">
+                  Community Q&A
+                </h1>
+                <p className="text-xs text-text-muted mt-0.5">
+                  Ask questions, discuss problems, and get peer + AI assisted explanations
+                </p>
+              </div>
 
-              <div className="flex items-center gap-4 shrink-0">
-                <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                  <Circle className="w-3 h-3 text-green-500 fill-green-500" />
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="flex items-center gap-2 text-xs font-medium text-text-muted bg-surface-2 px-3 py-1 rounded-full border border-border">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   {onlineUsers} online
                 </span>
 
                 <div className="relative">
                   <button
                     onClick={handleBellClick}
-                    className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                    className="relative p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text transition-colors cursor-pointer"
+                    aria-label="Notifications"
                   >
-                    <Bell size={20} className="text-gray-700 dark:text-gray-300" />
+                    <Bell size={18} />
                     {notifications.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                      <span className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                         {notifications.length}
                       </span>
                     )}
                   </button>
 
                   {showNotif && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 shadow-lg rounded-xl p-4 z-50 max-h-64 overflow-y-auto">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    <div className="absolute right-0 mt-2 w-80 bg-surface border border-border shadow-float rounded-xl p-4 z-50 max-h-64 overflow-y-auto">
+                      <h3 className="text-xs font-bold text-text uppercase tracking-wider mb-2">
                         Notifications
                       </h3>
                       {notifications.length === 0 && (
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                        <p className="text-text-muted text-xs py-2">
                           No new notifications
                         </p>
                       )}
                       {notifications.map((n, i) => (
                         <div
                           key={i}
-                          className="border-b border-gray-200 dark:border-gray-700 py-3 text-sm last:border-b-0"
+                          className="border-b border-border py-2.5 text-xs last:border-b-0"
                         >
-                          <p className="font-medium text-gray-900 dark:text-white">{n.message}</p>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">{n.time}</span>
+                          <p className="font-medium text-text">{n.message}</p>
+                          <span className="text-[10px] text-text-subtle">{n.time}</span>
                         </div>
                       ))}
                     </div>
@@ -681,63 +687,72 @@ export default function DoubtChatPage() {
             <div className="mb-4 flex justify-center">
               <Button
                 onClick={handleRefreshNewDoubts}
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 shadow-lg animate-bounce"
+                className="bg-primary hover:bg-primary-hover text-white rounded-full px-5 py-2 shadow-soft animate-bounce text-xs font-semibold cursor-pointer"
               >
-                <RefreshCw className="w-4 h-4 mr-2" />
+                <RefreshCw className="w-3.5 h-3.5 mr-2" />
                 New doubts available — Click to refresh
               </Button>
             </div>
           )}
 
           {/* Main */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
-            {/* CENTER */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            {/* CENTER FEED */}
             <div className="lg:col-span-2 order-1 lg:order-2 space-y-4">
               {/* Ask Box */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-2xl shadow-sm p-4 md:p-6">
+              <div className="bg-surface border border-border rounded-xl shadow-subtle p-5 md:p-6 transition-colors">
                 <Textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Ask your programming doubt or interview question..."
-                  className="w-full resize-none mb-4 min-h-[100px] border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ask a technical doubt, interview question, or DSA problem... (Ctrl + Enter to submit)"
+                  className="w-full resize-none mb-4 min-h-[100px] border border-border bg-surface-2 text-text placeholder:text-text-muted rounded-xl focus:ring-1 focus:ring-primary text-sm"
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.metaKey) {
+                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                       handleAsk();
                     }
                   }}
                 />
 
-                <Button
-                  onClick={handleAsk}
-                  disabled={loading || !question.trim()}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 rounded-xl cursor-pointer disabled:opacity-50"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Asking AI...
-                    </span>
-                  ) : (
-                    "Ask Community + AI"
-                  )}
-                </Button>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[11px] text-text-subtle hidden sm:inline">
+                    Markdown supported • Answered by AI & community members
+                  </span>
+
+                  <Button
+                    onClick={handleAsk}
+                    disabled={loading || !question.trim()}
+                    className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white font-medium px-5 py-2.5 rounded-lg cursor-pointer disabled:opacity-50 transition-colors shadow-sm text-xs"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Asking AI...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <Send className="w-3.5 h-3.5" />
+                        Ask Community + AI
+                      </span>
+                    )}
+                  </Button>
+                </div>
               </div>
 
               {/* Loading */}
               {fetching && safeDoubts.length === 0 && (
                 <div className="flex justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
               )}
 
               {/* Error */}
               {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-                  <p className="text-red-600 dark:text-red-400 mb-3">{error}</p>
+                <div className="bg-danger-soft border border-danger/20 rounded-xl p-6 text-center">
+                  <p className="text-danger text-xs mb-3">{error}</p>
                   <Button
                     onClick={() => fetchDoubts(1, true)}
                     variant="outline"
-                    className="text-red-600 border-red-300"
+                    className="text-danger border-danger/30 hover:bg-danger-soft text-xs"
                   >
                     Retry
                   </Button>
@@ -746,37 +761,39 @@ export default function DoubtChatPage() {
 
               {/* Empty */}
               {!fetching && !error && safeDoubts.length === 0 && (
-                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl p-8 text-center">
-                  <MessageCircle className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                  <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
-                    No doubts yet
+                <div className="bg-surface border border-border rounded-xl p-10 text-center shadow-subtle">
+                  <div className="w-12 h-12 rounded-xl bg-primary-soft flex items-center justify-center text-primary mx-auto mb-3">
+                    <MessageCircle className="w-6 h-6" />
+                  </div>
+                  <p className="text-text text-base font-semibold">
+                    No doubts asked yet
                   </p>
-                  <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">
-                    Be the first to ask a question!
+                  <p className="text-text-muted text-xs mt-1 max-w-sm mx-auto">
+                    Be the first one to ask a question! Our AI and active peers are here to help.
                   </p>
                 </div>
               )}
 
-              {/* Doubts */}
+              {/* Doubts List */}
               {safeDoubts.map((d) => (
                 <div
                   key={d._id}
                   id={`doubt-${d._id}`}
-                  className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm overflow-hidden"
+                  className="bg-surface border border-border rounded-xl shadow-subtle hover:border-primary/40 transition-colors overflow-hidden"
                 >
                   <div
-                    className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                    className="p-4 md:p-5 cursor-pointer hover:bg-surface-2/40 transition-colors"
                     onClick={() => toggleOpen(d._id)}
                   >
                     <div className="flex items-start gap-3 mb-2">
                       <img
                         src={d.user?.avatar || "/default-avatar.png"}
                         alt="avatar"
-                        className="w-8 h-8 rounded-full object-cover shrink-0"
+                        className="w-8 h-8 rounded-full object-cover shrink-0 border border-border"
                       />
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
+                        <p className="text-xs text-text-muted mb-0.5 font-medium">
                           {d.user?.fullName || "Anonymous"}
                         </p>
 
@@ -785,7 +802,7 @@ export default function DoubtChatPage() {
                             <Textarea
                               value={editQuestion}
                               onChange={(e) => setEditQuestion(e.target.value)}
-                              className="w-full resize-none border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500"
+                              className="w-full resize-none border border-border bg-surface-2 text-text rounded-lg focus:ring-1 focus:ring-primary text-sm"
                             />
                             <div className="flex gap-2">
                               <Button
@@ -795,9 +812,9 @@ export default function DoubtChatPage() {
                                   e.stopPropagation();
                                   handleUpdateDoubt(d._id);
                                 }}
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-primary hover:bg-primary-hover text-white text-xs"
                               >
-                                <Check className="w-4 h-4 mr-1" />
+                                <Check className="w-3.5 h-3.5 mr-1" />
                                 Save
                               </Button>
                               <Button
@@ -808,15 +825,15 @@ export default function DoubtChatPage() {
                                   setEditingDoubtId(null);
                                   setEditQuestion("");
                                 }}
-                                className="dark:border-white/10 dark:text-white"
+                                className="border-border text-text hover:bg-surface-2 bg-surface text-xs"
                               >
-                                <X className="w-4 h-4 mr-1" />
+                                <X className="w-3.5 h-3.5 mr-1" />
                                 Cancel
                               </Button>
                             </div>
                           </div>
                         ) : (
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-text text-sm sm:text-base leading-snug">
                             {d.question}
                           </h3>
                         )}
@@ -826,25 +843,25 @@ export default function DoubtChatPage() {
                         <div onClick={(e) => e.stopPropagation()} className="shrink-0">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <button className="p-2 rounded-md hover:bg-gray-200/60 dark:hover:bg-gray-700 transition">
-                                <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-200" />
+                              <button className="p-1.5 rounded-md hover:bg-surface-2 text-text-muted hover:text-text transition-colors">
+                                <MoreVertical className="w-4 h-4" />
                               </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuContent align="end" className="w-36 bg-surface border border-border text-text">
                               <DropdownMenuItem
                                 onClick={() => {
                                   setEditingDoubtId(d._id);
                                   setEditQuestion(d.question || "");
                                 }}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-2 text-xs cursor-pointer"
                               >
-                                <Pencil className="w-4 h-4" /> Edit
+                                <Pencil className="w-3.5 h-3.5" /> Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => setDeleteDoubtTarget(d)}
-                                className="flex items-center gap-2 text-red-600 focus:text-red-600"
+                                className="flex items-center gap-2 text-xs text-danger focus:text-danger cursor-pointer"
                               >
-                                <Trash2 className="w-4 h-4" /> Delete
+                                <Trash2 className="w-3.5 h-3.5" /> Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -852,69 +869,72 @@ export default function DoubtChatPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-2">
-                      <span className="flex items-center gap-1">
-                        <MessageCircle size={16} />
+                    <div className="flex items-center gap-4 text-xs text-text-muted mt-3 pt-2 border-t border-border/50">
+                      <span className="flex items-center gap-1.5 hover:text-text transition-colors">
+                        <MessageCircle size={14} className="text-primary" />
                         {d.replyCount || repliesMap[d._id]?.length || 0} replies
                       </span>
-                      <span className="flex items-center gap-1">
-                        <ThumbsUp size={16} />
+                      <span className="flex items-center gap-1.5 hover:text-text transition-colors">
+                        <ThumbsUp size={14} />
                         {d.upvotes?.length || 0} upvotes
                       </span>
-                      <span className="text-xs">
+                      <span className="text-[11px] text-text-subtle ml-auto">
                         {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : ""}
                       </span>
                     </div>
                   </div>
 
                   {openId === d._id && (
-                    <div className="border-t border-gray-200 dark:border-gray-700 p-4 md:p-6 space-y-4">
+                    <div className="border-t border-border p-4 md:p-6 space-y-4 bg-surface-2/20">
                       {/* AI Answer */}
-                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                        <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-2">
-                          🤖 AI Answer
+                      <div className="bg-primary-soft border border-primary/25 rounded-xl p-4">
+                        <p className="text-xs font-semibold text-primary mb-2 flex items-center gap-1.5">
+                          <span>🤖</span> AI Assistant Explanation
                         </p>
 
                         {d.aiAnswer ? (
-                          <div className="prose prose-sm max-w-none dark:prose-invert">
+                          <div className="prose prose-sm dark:prose-invert max-w-none text-text prose-p:text-text prose-pre:bg-surface prose-pre:border prose-pre:border-border text-xs leading-relaxed">
                             <ReactMarkdown>{d.aiAnswer}</ReactMarkdown>
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            AI answer not available yet. Community members can still help solve this
-                            doubt 💬
+                          <p className="text-xs text-text-muted">
+                            AI answer not available yet. Community members can help answer below 💬
                           </p>
                         )}
                       </div>
 
                       {/* Replies */}
-                      <div className="space-y-3">
+                      <div className="space-y-3 pt-2">
+                        <h4 className="text-xs font-semibold text-text uppercase tracking-wider">
+                          Community Replies ({repliesMap[d._id]?.length || 0})
+                        </h4>
+
                         {repliesMap[d._id]?.length === 0 && (
-                          <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
-                            No replies yet. Be the first!
+                          <p className="text-text-muted text-xs text-center py-4 bg-surface border border-border rounded-xl">
+                            No community replies yet. Be the first to answer!
                           </p>
                         )}
 
                         {repliesMap[d._id]?.map((r) => (
                           <div
                             key={r._id}
-                            className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-white/10 rounded-lg p-3 md:p-4 transition"
+                            className="bg-surface border border-border rounded-xl p-3.5 md:p-4 hover:border-border/80 transition shadow-subtle"
                           >
                             <div className="flex items-start gap-3">
                               <img
                                 src={r.user?.avatar || "/default-avatar.png"}
                                 alt="avatar"
-                                className="w-8 h-8 rounded-full object-cover shrink-0"
+                                className="w-7 h-7 rounded-full object-cover shrink-0 border border-border"
                               />
 
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                                  <p className="text-xs font-semibold text-text">
                                     {r.user?.fullName || "User"}
                                   </p>
 
-                                  <span className="text-[10px] text-gray-400">
-                                    {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
+                                  <span className="text-[10px] text-text-subtle">
+                                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}
                                   </span>
                                 </div>
 
@@ -923,7 +943,7 @@ export default function DoubtChatPage() {
                                     <Textarea
                                       value={editReplyText}
                                       onChange={(e) => setEditReplyText(e.target.value)}
-                                      className="w-full resize-none border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500"
+                                      className="w-full resize-none border border-border bg-surface-2 text-text rounded-lg focus:ring-1 focus:ring-primary text-xs"
                                     />
                                     <div className="flex gap-2">
                                       <Button
@@ -933,9 +953,9 @@ export default function DoubtChatPage() {
                                           e.stopPropagation();
                                           handleUpdateReply(d._id, r._id);
                                         }}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                                        className="bg-primary hover:bg-primary-hover text-white text-xs"
                                       >
-                                        <Check className="w-4 h-4 mr-1" />
+                                        <Check className="w-3.5 h-3.5 mr-1" />
                                         Save
                                       </Button>
                                       <Button
@@ -946,27 +966,27 @@ export default function DoubtChatPage() {
                                           setEditingReplyId(null);
                                           setEditReplyText("");
                                         }}
-                                        className="dark:border-white/10 dark:text-white"
+                                        className="border-border text-text hover:bg-surface-2 bg-surface text-xs"
                                       >
-                                        <X className="w-4 h-4 mr-1" />
+                                        <X className="w-3.5 h-3.5 mr-1" />
                                         Cancel
                                       </Button>
                                     </div>
                                   </div>
                                 ) : (
-                                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                  <p className="text-xs sm:text-sm text-text-muted mt-1 leading-relaxed">
                                     {r.answer}
                                   </p>
                                 )}
                               </div>
 
-                              <div className="flex items-center gap-2 shrink-0">
+                              <div className="flex items-center gap-1 shrink-0">
                                 {user?._id === r.user?._id && (
                                   <div className="flex items-center gap-1">
                                     <Button
                                       size="icon"
                                       variant="ghost"
-                                      className="h-8 w-8 p-0 text-gray-500 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                                      className="h-7 w-7 p-0 text-text-muted hover:text-text hover:bg-surface-2"
                                       onClick={(e) => {
                                         e.stopPropagation();
 
@@ -975,13 +995,13 @@ export default function DoubtChatPage() {
                                       }}
                                       disabled={replyBusyId === r._id}
                                     >
-                                      <Pencil className="w-4 h-4" />
+                                      <Pencil className="w-3 h-3" />
                                     </Button>
 
                                     <Button
                                       size="icon"
                                       variant="ghost"
-                                      className="h-8 w-8 p-0 text-gray-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30"
+                                      className="h-7 w-7 p-0 text-text-muted hover:text-danger hover:bg-danger-soft"
                                       onClick={(e) => {
                                         e.stopPropagation();
 
@@ -992,7 +1012,7 @@ export default function DoubtChatPage() {
                                       }}
                                       disabled={replyBusyId === r._id}
                                     >
-                                      <Trash2 className="w-4 h-4" />
+                                      <Trash2 className="w-3 h-3" />
                                     </Button>
                                   </div>
                                 )}
@@ -1001,9 +1021,9 @@ export default function DoubtChatPage() {
                                     e.stopPropagation();
                                     handleUpvote(r._id, d._id);
                                   }}
-                                  className="flex items-center gap-1 px-2 py-1 rounded-md text-gray-500 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200 text-sm font-medium cursor-pointer shrink-0"
+                                  className="flex items-center gap-1 px-2 py-1 rounded-md text-text-muted hover:text-primary hover:bg-primary-soft transition-colors text-xs font-medium cursor-pointer"
                                 >
-                                  <ThumbsUp className="w-4 h-4" />
+                                  <ThumbsUp className="w-3.5 h-3.5" />
                                   <span>{r.upvotesCount ?? r.upvotes?.length ?? 0}</span>
                                 </button>
                               </div>
@@ -1013,7 +1033,7 @@ export default function DoubtChatPage() {
                       </div>
 
                       {/* Reply Input */}
-                      <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div className="flex gap-2 pt-3 border-t border-border">
                         <Input
                           value={replyInputs[d._id] || ""}
                           onChange={(e) =>
@@ -1022,8 +1042,8 @@ export default function DoubtChatPage() {
                               [d._id]: e.target.value,
                             }))
                           }
-                          placeholder="Write your reply..."
-                          className="flex-1 bg-white dark:bg-gray-800 border dark:border-white/10 text-gray-900 dark:text-white"
+                          placeholder="Write a helpful reply or code solution..."
+                          className="flex-1 bg-surface border border-border text-text placeholder:text-text-muted focus:ring-1 focus:ring-primary rounded-xl text-xs"
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault();
@@ -1035,9 +1055,9 @@ export default function DoubtChatPage() {
                         <Button
                           onClick={() => handleReply(d._id)}
                           disabled={!(replyInputs[d._id] || "").trim()}
-                          className="bg-gray-800 hover:bg-gray-900 text-white disabled:opacity-50"
+                          className="bg-primary hover:bg-primary-hover text-white rounded-xl disabled:opacity-50 text-xs px-3.5"
                         >
-                          <Send className="h-4 w-4" />
+                          <Send className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </div>
@@ -1047,18 +1067,18 @@ export default function DoubtChatPage() {
 
               {/* Pagination */}
               {safeDoubts.length > 0 && pages > 1 && (
-                <div className="flex justify-center items-center gap-3 mt-6">
+                <div className="flex justify-center items-center gap-3 mt-6 pt-2">
                   <Button
                     variant="outline"
                     disabled={page === 1 || fetching}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="dark:border-white/10 dark:text-white"
+                    className="border-border text-text hover:bg-surface-2 bg-surface text-xs"
                   >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
+                    <ChevronLeft className="w-3.5 h-3.5 mr-1" />
                     Prev
                   </Button>
 
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-text-muted">
                     Page {page} of {pages}
                   </span>
 
@@ -1066,48 +1086,49 @@ export default function DoubtChatPage() {
                     variant="outline"
                     disabled={page === pages || fetching}
                     onClick={() => setPage((p) => Math.min(pages, p + 1))}
-                    className="dark:border-white/10 dark:text-white"
+                    className="border-border text-text hover:bg-surface-2 bg-surface text-xs"
                   >
                     Next
-                    <ChevronRight className="w-4 h-4 ml-1" />
+                    <ChevronRight className="w-3.5 h-3.5 ml-1" />
                   </Button>
                 </div>
               )}
             </div>
 
             {/* SIDEBAR */}
-            <div className="space-y-4 order-2 lg:order-1">
+            <div className="space-y-5 order-2 lg:order-1">
               {/* Trending */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm p-4">
-                <h2 className="font-semibold text-gray-900 dark:text-white mb-3">🔥 Trending</h2>
+              <div className="bg-surface border border-border rounded-xl shadow-subtle p-5">
+                <h2 className="text-sm font-bold text-text mb-3 flex items-center gap-1.5">
+                  🔥 Trending Questions
+                </h2>
 
                 {trending.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">No trending doubts yet</p>
+                  <p className="text-text-muted text-xs">No trending doubts yet</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {trending.map((d, idx) => (
                       <div
                         key={d._id}
-                        className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition"
+                        className="cursor-pointer hover:bg-surface-2 p-2.5 rounded-lg transition-colors"
                         onClick={() => {
                           setPage(1);
                           toggleOpen(d._id);
-                          // Scroll to the doubt if needed
                           setTimeout(() => {
                             const el = document.getElementById(`doubt-${d._id}`);
                             el?.scrollIntoView({ behavior: "smooth", block: "center" });
                           }, 100);
                         }}
                       >
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg font-bold text-gray-300 dark:text-gray-600 shrink-0">
+                        <div className="flex items-start gap-2.5">
+                          <span className="text-sm font-bold text-text-subtle shrink-0 w-4">
                             {idx + 1}
                           </span>
                           <div>
-                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2">
+                            <p className="text-xs font-medium text-text line-clamp-2 leading-snug">
                               {d.question}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            <p className="text-[10px] text-text-muted mt-1">
                               {d.upvotes?.length || 0} upvotes
                             </p>
                           </div>
@@ -1119,17 +1140,18 @@ export default function DoubtChatPage() {
               </div>
 
               {/* Topics */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm p-4">
-                <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Topics</h2>
+              <div className="bg-surface border border-border rounded-xl shadow-subtle p-5">
+                <h2 className="text-sm font-bold text-text mb-3">Popular Topics</h2>
 
                 {topics.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">No topics yet</p>
+                  <p className="text-text-muted text-xs">No topics tagged yet</p>
                 ) : (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {topics.map((topic) => (
                       <Badge
                         key={topic}
-                        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 capitalize"
+                        variant="secondary"
+                        className="bg-surface-2 hover:bg-primary-soft hover:text-primary hover:border-primary/30 text-text-muted border border-border capitalize text-[11px] font-normal transition-colors cursor-pointer"
                       >
                         {topic}
                       </Badge>
@@ -1139,16 +1161,16 @@ export default function DoubtChatPage() {
               </div>
 
               {/* Stats */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-sm p-4">
-                <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Stats</h2>
-                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                  <div className="flex justify-between">
-                    <span>Total doubts</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{total}</span>
+              <div className="bg-surface border border-border rounded-xl shadow-subtle p-5">
+                <h2 className="text-sm font-bold text-text mb-3">Community Activity</h2>
+                <div className="space-y-2.5 text-xs text-text-muted">
+                  <div className="flex justify-between items-center py-1 border-b border-border/50">
+                    <span>Total doubts asked</span>
+                    <span className="font-semibold text-text">{total}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Online now</span>
-                    <span className="font-medium text-green-600">{onlineUsers}</span>
+                  <div className="flex justify-between items-center py-1">
+                    <span>Active developers</span>
+                    <span className="font-semibold text-primary">{onlineUsers} online</span>
                   </div>
                 </div>
               </div>

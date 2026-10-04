@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Briefcase, Sparkles, Clock3, ArrowRight, MessageSquare, ChevronLeft } from "lucide-react";
+import { Briefcase, Sparkles, Clock3, ArrowRight, MessageSquare, ChevronLeft, Bell } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -9,133 +9,98 @@ export default function InterviewExperienceComingSoon() {
   const navigate = useNavigate();
 
   const handleNotify = () => {
-    toast.success("Notification enabled successfully 🔔", {
-      description: "We’ll inform you when Interview Experience launches.",
+    toast.success("Notification enabled successfully", {
+      description: "We'll notify you as soon as Interview Experience archives launch.",
     });
   };
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300 lg:ml-64 mt-8">
-        <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="max-w-4xl mx-auto space-y-6">
           {/* Back Button */}
           <button
             onClick={() => navigate("/dashboard")}
-            className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md hover:scale-105 transition-all duration-300 text-slate-700 dark:text-white"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-border hover:bg-surface-2 text-xs font-medium text-text transition-colors cursor-pointer"
           >
             <ChevronLeft className="h-4 w-4" />
             Back to Dashboard
           </button>
 
           {/* Main Card */}
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
-            <div className="absolute -top-20 -left-20 h-52 w-52 rounded-full bg-indigo-500/20 blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 h-56 w-56 rounded-full bg-purple-500/20 blur-3xl"></div>
-
-            <div className="relative z-10 grid lg:grid-cols-2 gap-10 items-center p-6 sm:p-10">
-              {/* Left */}
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/20">
-                  <Sparkles className="h-4 w-4" />
-                  New Feature Launching Soon
-                </div>
-
-                <h1 className="mt-5 text-4xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                  Interview Experience
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
-                    Coming Soon 🚀
-                  </span>
-                </h1>
-
-                <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
-                  Real interview stories, company-wise questions, candidate tips, HR rounds,
-                  technical rounds, and honest insights to help you prepare smarter.
-                </p>
-
-                {/* Features */}
-                <div className="mt-8 grid sm:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white/70 dark:bg-slate-800/50">
-                    <div className="flex items-center gap-3">
-                      <Briefcase className="h-5 w-5 text-indigo-500" />
-                      <span className="font-semibold text-slate-800 dark:text-white">
-                        Company Wise Stories
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white/70 dark:bg-slate-800/50">
-                    <div className="flex items-center gap-3">
-                      <MessageSquare className="h-5 w-5 text-purple-500" />
-                      <span className="font-semibold text-slate-800 dark:text-white">
-                        Real Candidate Feedback
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white/70 dark:bg-slate-800/50">
-                    <div className="flex items-center gap-3">
-                      <Clock3 className="h-5 w-5 text-pink-500" />
-                      <span className="font-semibold text-slate-800 dark:text-white">
-                        Latest 2026 Trends
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 bg-white/70 dark:bg-slate-800/50">
-                    <div className="flex items-center gap-3">
-                      <ArrowRight className="h-5 w-5 text-emerald-500" />
-                      <span className="font-semibold text-slate-800 dark:text-white">
-                        Placement Guidance
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notify Button */}
-                <button
-                  onClick={handleNotify}
-                  className="mt-8 inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition-all duration-300 shadow-lg"
-                >
-                  Notify Me
-                  <ArrowRight className="h-4 w-4" />
-                </button>
+          <div className="bg-surface rounded-xl border border-border p-8 md:p-10 shadow-subtle space-y-8">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-soft text-primary text-xs font-semibold mb-4">
+                <Sparkles className="h-3.5 w-3.5" />
+                Community Driven Knowledge
               </div>
 
-              {/* Right */}
-              <div className="relative flex justify-center">
-                <div className="w-full max-w-md rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-6">
-                  <div className="space-y-4">
-                    <div className="rounded-2xl p-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
-                      <p className="text-sm opacity-90">Upcoming Experience</p>
-                      <h3 className="text-xl font-bold mt-1">TCS Ninja Interview</h3>
-                    </div>
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text leading-tight mb-3">
+                Interview Experiences & Archives
+              </h1>
 
-                    <div className="rounded-2xl p-4 bg-slate-100 dark:bg-slate-800">
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Company</p>
-                      <p className="font-semibold text-slate-800 dark:text-white">Infosys</p>
-                    </div>
+              <p className="text-sm text-text-muted leading-relaxed">
+                Real student interview reports, round-by-round coding questions, HR behavioral experiences, and insider placement tips from top tier tech companies.
+              </p>
+            </div>
 
-                    <div className="rounded-2xl p-4 bg-slate-100 dark:bg-slate-800">
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Round Covered</p>
-                      <p className="font-semibold text-slate-800 dark:text-white">
-                        HR + Technical + Coding
-                      </p>
-                    </div>
+            {/* Feature Cards Grid */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="rounded-xl border border-border p-4 bg-surface-2/50 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0 mt-0.5">
+                  <Briefcase className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xs text-text">Company-Specific Breakdowns</h3>
+                  <p className="text-[11px] text-text-muted mt-0.5">TCS, Infosys, Wipro, Amazon, Google & startups</p>
+                </div>
+              </div>
 
-                    <div className="rounded-2xl p-4 bg-slate-100 dark:bg-slate-800">
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Status</p>
-                      <p className="font-semibold text-emerald-500">Launching Soon</p>
-                    </div>
-                  </div>
+              <div className="rounded-xl border border-border p-4 bg-surface-2/50 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0 mt-0.5">
+                  <MessageSquare className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xs text-text">Verified Candidate Questions</h3>
+                  <p className="text-[11px] text-text-muted mt-0.5">Actual questions asked in recent 2025-2026 drives</p>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-border p-4 bg-surface-2/50 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0 mt-0.5">
+                  <Clock3 className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xs text-text">Round Duration & Timelines</h3>
+                  <p className="text-[11px] text-text-muted mt-0.5">OA rounds, technical interviews, managerial & HR</p>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-border p-4 bg-surface-2/50 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0 mt-0.5">
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xs text-text">Salary & Offer Insights</h3>
+                  <p className="text-[11px] text-text-muted mt-0.5">CTC ranges, band levels & negotiation pointers</p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-8">
-            Stay ready. Great opportunities are on the way ✨
-          </p>
+            {/* Notify CTA */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+              <button
+                onClick={handleNotify}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold shadow-soft transition-colors cursor-pointer"
+              >
+                <Bell className="w-4 h-4" />
+                <span>Notify Me When Launched</span>
+              </button>
+
+              <span className="text-xs text-text-subtle">Releasing in our next platform update</span>
+            </div>
+          </div>
         </div>
       </div>
       <Footer />

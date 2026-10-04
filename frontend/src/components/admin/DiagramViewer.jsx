@@ -283,32 +283,32 @@ export default function DiagramViewer({ isOpen, onClose }) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className={`fixed top-0 right-0 h-full z-[70] bg-white/95 dark:bg-[#0c0c0c]/95 backdrop-blur-2xl border-l border-gray-200 dark:border-gray-800 shadow-2xl flex flex-col ${isFullscreen ? "w-full" : "w-full sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[75vw]"}`}
+            className={`fixed top-0 right-0 h-full z-[70] bg-surface/95 backdrop-blur-2xl border-l border-border shadow-2xl flex flex-col text-text ${isFullscreen ? "w-full" : "w-full sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[75vw]"}`}
           >
             {/* HEADER */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Layers className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg text-white">
+                  <Layers className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">System Hub</h2>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <h2 className="text-lg font-bold text-text">System Hub</h2>
+                  <p className="text-xs text-text-subtle">
                     Admin only resources &amp; diagrams
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mr-2">
+                <div className="hidden sm:flex items-center bg-surface-2 border border-border rounded-lg p-1 mr-2">
                   <button
                     onClick={() => setActiveSection("diagrams")}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${activeSection === "diagrams" ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"}`}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${activeSection === "diagrams" ? "bg-surface text-text shadow-sm" : "text-text-muted hover:text-text"}`}
                   >
                     Diagrams
                   </button>
                   <button
                     onClick={() => setActiveSection("links")}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${activeSection === "links" ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"}`}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${activeSection === "links" ? "bg-surface text-text shadow-sm" : "text-text-muted hover:text-text"}`}
                   >
                     Quick Links
                   </button>
@@ -317,7 +317,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                   <select
                     value={activeSection}
                     onChange={(e) => setActiveSection(e.target.value)}
-                    className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white text-xs rounded-lg px-2 py-1.5 border-none outline-none"
+                    className="bg-surface-2 text-text text-xs rounded-lg px-2 py-1.5 border border-border outline-none"
                   >
                     <option value="diagrams">Diagrams</option>
                     <option value="links">Quick Links</option>
@@ -325,7 +325,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                 </div>
                 <button
                   onClick={toggleFullscreen}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400"
+                  className="p-2 rounded-lg hover:bg-surface-2 transition text-text-muted hover:text-text"
                   title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
                 >
                   {isFullscreen ? (
@@ -336,7 +336,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 transition text-gray-500 dark:text-gray-400 hover:text-red-500"
+                  className="p-2 rounded-lg hover:bg-red-500/10 transition text-text-muted hover:text-red-500"
                   title="Close (Esc)"
                 >
                   <X className="w-5 h-5" />
@@ -357,7 +357,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                     className="h-full flex flex-col"
                   >
                     {/* Diagram Tabs */}
-                    <div className="flex items-center gap-2 px-5 py-3 border-b border-gray-200 dark:border-gray-800 overflow-x-auto shrink-0">
+                    <div className="flex items-center gap-2 px-5 py-3 border-b border-border overflow-x-auto shrink-0">
                       {diagrams.map((d, i) => {
                         const Icon = d.icon;
                         const isActive = i === activeTab;
@@ -365,23 +365,23 @@ export default function DiagramViewer({ isOpen, onClose }) {
                           <button
                             key={d.id}
                             onClick={() => setActiveTab(i)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${isActive ? `bg-gradient-to-r ${d.accent} text-white shadow-lg` : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"}`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${isActive ? `bg-gradient-to-r ${d.accent} text-white shadow-lg` : "bg-surface-2 text-text-muted hover:text-text hover:bg-surface border border-border"}`}
                           >
                             <Icon className="w-4 h-4" />
                             {d.title}
                           </button>
                         );
                       })}
-                      <div className="ml-auto flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                      <div className="ml-auto flex items-center bg-surface-2 border border-border rounded-lg p-1">
                         <button
                           onClick={() => setUseSvg(true)}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${useSvg ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400"}`}
+                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${useSvg ? "bg-surface text-text shadow-sm" : "text-text-muted"}`}
                         >
                           SVG
                         </button>
                         <button
                           onClick={() => setUseSvg(false)}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${!useSvg ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400"}`}
+                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${!useSvg ? "bg-surface text-text shadow-sm" : "text-text-muted"}`}
                         >
                           PNG
                         </button>
@@ -389,60 +389,60 @@ export default function DiagramViewer({ isOpen, onClose }) {
                     </div>
 
                     {/* Toolbar */}
-                    <div className="flex items-center gap-1 px-5 py-2 border-b border-gray-200 dark:border-gray-800 shrink-0 flex-wrap">
+                    <div className="flex items-center gap-1 px-5 py-2 border-b border-border shrink-0 flex-wrap">
                       <button
                         onClick={handleZoomOut}
-                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-400"
+                        className="p-2 rounded-lg hover:bg-surface-2 transition text-text-muted hover:text-text"
                         title="Zoom Out (-)"
                       >
                         <ZoomOut className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleZoomIn}
-                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-400"
+                        className="p-2 rounded-lg hover:bg-surface-2 transition text-text-muted hover:text-text"
                         title="Zoom In (+)"
                       >
                         <ZoomIn className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleResetZoom}
-                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-400"
+                        className="p-2 rounded-lg hover:bg-surface-2 transition text-text-muted hover:text-text"
                         title="Reset"
                       >
                         <RotateCcw className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleFitWidth}
-                        className="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-xs font-medium text-gray-600 dark:text-gray-400"
+                        className="px-3 py-1.5 rounded-lg hover:bg-surface-2 transition text-xs font-medium text-text-muted hover:text-text"
                       >
                         Fit Width
                       </button>
                       <button
                         onClick={handleFitScreen}
-                        className="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-xs font-medium text-gray-600 dark:text-gray-400"
+                        className="px-3 py-1.5 rounded-lg hover:bg-surface-2 transition text-xs font-medium text-text-muted hover:text-text"
                       >
                         Fit Screen
                       </button>
                       <button
                         onClick={handleOriginalSize}
-                        className="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-xs font-medium text-gray-600 dark:text-gray-400"
+                        className="px-3 py-1.5 rounded-lg hover:bg-surface-2 transition text-xs font-medium text-text-muted hover:text-text"
                       >
                         Original
                       </button>
                       <div className="ml-auto flex items-center gap-1">
-                        <span className="text-xs text-gray-400 px-2">
+                        <span className="text-xs text-text-subtle px-2">
                           {Math.round(zoom * 100)}%
                         </span>
                         <button
                           onClick={handleDownload}
-                          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-400"
+                          className="p-2 rounded-lg hover:bg-surface-2 transition text-text-muted hover:text-text"
                           title="Download"
                         >
                           <Download className="w-4 h-4" />
                         </button>
                         <button
                           onClick={handleOpenNewTab}
-                          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-600 dark:text-gray-400"
+                          className="p-2 rounded-lg hover:bg-surface-2 transition text-text-muted hover:text-text"
                           title="Open in New Tab"
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -451,11 +451,11 @@ export default function DiagramViewer({ isOpen, onClose }) {
                     </div>
 
                     {/* Image Viewer */}
-                    <div className="flex-1 overflow-auto relative bg-gray-50 dark:bg-gray-950/50">
+                    <div className="flex-1 overflow-auto relative bg-bg">
                       {/* Prev Button */}
                       <button
                         onClick={handlePrev}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-surface/90 text-text border border-border shadow-lg hover:bg-surface"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
@@ -524,11 +524,11 @@ export default function DiagramViewer({ isOpen, onClose }) {
                   >
                     <div className="max-w-4xl mx-auto">
                       <div className="mb-6">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                          <Globe className="w-5 h-5 text-indigo-500" />
+                        <h3 className="text-xl font-bold text-text flex items-center gap-2">
+                          <Globe className="w-5 h-5 text-primary" />
                           Project Resources
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-sm text-text-muted mt-1">
                           Quick access to external project documentation and tools
                         </p>
                       </div>
@@ -540,7 +540,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                             <motion.div
                               key={link.id}
                               whileHover={{ y: -2 }}
-                              className={`group relative p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm ${link.hoverBorder} hover:shadow-lg transition-all duration-300`}
+                              className={`group relative p-5 rounded-2xl bg-surface border border-border text-text shadow-sm ${link.hoverBorder} hover:shadow-lg transition-all duration-300`}
                             >
                               <div className="flex items-start gap-4">
                                 <div
@@ -550,7 +550,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
+                                    <h4 className="font-semibold text-text text-sm">
                                       {link.title}
                                     </h4>
                                     <span
@@ -559,7 +559,7 @@ export default function DiagramViewer({ isOpen, onClose }) {
                                       {link.source}
                                     </span>
                                   </div>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                  <p className="text-xs text-text-muted mb-3">
                                     {link.description}
                                   </p>
                                   <div className="flex items-center gap-2">
@@ -567,19 +567,19 @@ export default function DiagramViewer({ isOpen, onClose }) {
                                       href={link.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-medium hover:opacity-90 transition"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-medium transition"
                                     >
                                       <ExternalLink className="w-3 h-3" />
                                       Open
                                     </a>
                                     <button
                                       onClick={() => handleCopyLink(link.url, link.id)}
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 text-text text-xs font-medium hover:bg-surface border border-border transition"
                                     >
                                       {isCopied ? (
                                         <Check className="w-3 h-3 text-green-500" />
                                       ) : (
-                                        <Copy className="w-3 h-3" />
+                                        <Copy className="w-3 h-3 text-text-subtle" />
                                       )}
                                       {isCopied ? "Copied" : "Copy Link"}
                                     </button>

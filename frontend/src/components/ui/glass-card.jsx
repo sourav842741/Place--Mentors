@@ -2,11 +2,14 @@ import React from "react";
 import { cn } from "../../lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card";
 
+/**
+ * Modern Clean Card (Replaced AI-glow glassmorphism with professional EdTech surface)
+ */
 const GlassCard = React.forwardRef(({ className, children, ...props }, ref) => (
   <Card
     ref={ref}
     className={cn(
-      "group relative overflow-hidden bg-white/70 backdrop-blur-xl border border-white/20 shadow-2xl hover:shadow-3xl hover:shadow-indigo-500/25 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] ring-0 hover:ring-2 hover:ring-indigo-500/30 rounded-3xl border-opacity-50",
+      "group relative overflow-hidden bg-surface border border-border shadow-soft hover:shadow-subtle hover:border-primary/40 rounded-xl transition-all duration-200",
       className
     )}
     {...props}

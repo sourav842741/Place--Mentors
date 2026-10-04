@@ -1,17 +1,15 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FileText, Upload, Sparkles, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { FileText, Upload, Sparkles, AlertCircle, CheckCircle, Loader2, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
@@ -108,160 +106,166 @@ export default function ResumeAnalyzer() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 lg:pl-64 p-4  bg-gray-100 dark:bg-gray-950 min-h-screen transition-colors duration-300 lg:mt-14 md:mt-14">
-        <div className="flex-1">
-          <div className="max-w-2xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-4xl font-bold bg-linear-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  AI Resume Analyzer <Sparkles className="inline ml-2" />
-                </h1>
-                <p className="text-gray-600 mt-2">
-                  Upload your PDF resume for FAANG-level feedback (20 credits)
-                </p>
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
+        <main className="max-w-2xl mx-auto space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-2 border-b border-border">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-soft text-primary text-xs font-semibold mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                ATS & Recruiter Review
               </div>
-              <Button
-                onClick={() => navigate("/dashboard")}
-                variant="outline"
-                className="bg-yellow-200 dark:bg-gray-950 cursor-pointer"
-              >
-                Dashboard
-              </Button>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+                AI Resume Analyzer
+              </h1>
+              <p className="text-xs text-text-muted mt-1">
+                Upload your resume PDF for comprehensive scoring, keyword matching & feedback.
+              </p>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-6 h-6" />
-                  Upload PDF Resume
-                </CardTitle>
-                <CardDescription>Drag & drop or click to select. Max 5MB PDF only.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div data-private>
-                  <UploadArea onFileSelect={handleFileSelect} fileName={fileName} />
-                </div>
-                {user && (
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                    <Badge>Credits: {user.credits}</Badge>
-                    <span className="text-sm text-gray-600">Cost: 20 credits</span>
-                  </div>
-                )}
-
-                <Button
-                  onClick={handleAnalyze}
-                  disabled={loading || !selectedFile || !user?.credits || user.credits < 20}
-                  className="w-full"
-                  size="lg"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Analyzing Resume...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Analyze Resume (20 credits)
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Dialog open={showResult && analysis} onOpenChange={setShowResult}>
-              <DialogContent data-private className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                {" "}
-                <DialogHeader>
-                  <DialogTitle>AI Analysis Complete</DialogTitle>
-                </DialogHeader>
-                {analysis && (
-                  <div className="space-y-6 pt-4">
-                    <div className="text-center">
-                      <div className="text-5xl font-bold text-gray-900 mb-2">
-                        {analysis.score}/100
-                      </div>
-                      <Badge
-                        className={`text-lg px-4 py-2 ${analysis.interviewReady ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}`}
-                      >
-                        {analysis.interviewReady ? "Interview Ready" : "Needs Work"}
-                      </Badge>
-                      <p className="text-sm text-gray-500 mt-2">{analysis.recommendedRole}</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-green-700">
-                            <CheckCircle className="w-5 h-5" />
-                            Strengths
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {analysis.strengths.map((strength, i) => (
-                              <li key={i} className="flex items-center gap-2 text-sm">
-                                <CheckCircle className="w-4 h-4 text-green-500" />
-                                {strength}
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-red-700">
-                            <AlertCircle className="w-5 h-5" />
-                            Weaknesses
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {analysis.weaknesses.map((weakness, i) => (
-                              <li key={i} className="flex items-center gap-2 text-sm">
-                                <AlertCircle className="w-4 h-4 text-red-500" />
-                                {weakness}
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Suggestions</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-2">
-                          {analysis.suggestions.map((suggestion, i) => (
-                            <li key={i} className="text-sm">
-                              {"• " + suggestion}
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-
-                    <div className="flex gap-3 pt-4">
-                      <Button className="flex-1 " onClick={() => setShowResult(false)}>
-                        Analyze Again
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => navigate("/planner-history")}
-                      >
-                        View Planners
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </DialogContent>
-            </Dialog>
+            <Button
+              onClick={() => navigate("/dashboard")}
+              variant="outline"
+              className="bg-surface border-border text-text hover:bg-surface-2 text-xs rounded-lg cursor-pointer h-9"
+            >
+              Dashboard
+            </Button>
           </div>
-        </div>
+
+          <div className="bg-surface border border-border rounded-xl shadow-subtle p-6 space-y-5">
+            <div>
+              <h3 className="text-sm font-bold text-text flex items-center gap-2">
+                <FileText className="w-4 h-4 text-primary" />
+                Upload Resume Document
+              </h3>
+              <p className="text-xs text-text-muted mt-1">
+                Drag & drop or browse your local file. Maximum size 5MB in PDF format.
+              </p>
+            </div>
+
+            <div data-private>
+              <UploadArea onFileSelect={handleFileSelect} fileName={fileName} />
+            </div>
+
+            {user && (
+              <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg border border-border text-xs">
+                <span className="font-medium text-text">Available Credits: {user.credits}</span>
+                <span className="text-text-muted">Cost: 20 credits per analysis</span>
+              </div>
+            )}
+
+            <button
+              onClick={handleAnalyze}
+              disabled={loading || !selectedFile || !user?.credits || user.credits < 20}
+              className="w-full bg-primary hover:bg-primary-hover text-on-primary py-2.5 rounded-lg text-xs font-semibold transition-colors shadow-soft disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Evaluating Resume with AI...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  <span>Analyze Resume (20 credits)</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <Dialog open={showResult && !!analysis} onOpenChange={setShowResult}>
+            <DialogContent data-private className="max-w-3xl max-h-[90vh] overflow-y-auto bg-surface border-border text-text">
+              <DialogHeader>
+                <DialogTitle className="text-lg font-bold text-text">
+                  Resume Evaluation Report
+                </DialogTitle>
+              </DialogHeader>
+
+              {analysis && (
+                <div className="space-y-6 pt-2">
+                  <div className="text-center p-6 bg-surface-2 rounded-xl border border-border">
+                    <span className="text-4xl sm:text-5xl font-extrabold text-primary block mb-2">
+                      {analysis.score} / 100
+                    </span>
+                    <span
+                      className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${
+                        analysis.interviewReady
+                          ? "bg-success-soft text-success border border-success/20"
+                          : "bg-accent-soft text-accent border border-accent/20"
+                      }`}
+                    >
+                      {analysis.interviewReady ? "Interview Ready" : "Revisions Recommended"}
+                    </span>
+                    <p className="text-xs text-text-muted mt-2">
+                      Recommended Role Alignment: <strong className="text-text">{analysis.recommendedRole || "Software Engineering"}</strong>
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-surface-2/60 border border-border p-4 rounded-xl space-y-3">
+                      <h4 className="text-xs font-bold text-success flex items-center gap-1.5 uppercase tracking-wider">
+                        <CheckCircle className="w-4 h-4" />
+                        Identified Strengths
+                      </h4>
+                      <ul className="space-y-2">
+                        {analysis.strengths?.map((strength, i) => (
+                          <li key={i} className="text-xs text-text flex items-start gap-2">
+                            <span className="text-success font-bold">•</span>
+                            <span>{strength}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="bg-surface-2/60 border border-border p-4 rounded-xl space-y-3">
+                      <h4 className="text-xs font-bold text-danger flex items-center gap-1.5 uppercase tracking-wider">
+                        <AlertCircle className="w-4 h-4" />
+                        Areas for Improvement
+                      </h4>
+                      <ul className="space-y-2">
+                        {analysis.weaknesses?.map((weakness, i) => (
+                          <li key={i} className="text-xs text-text flex items-start gap-2">
+                            <span className="text-danger font-bold">•</span>
+                            <span>{weakness}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {analysis.suggestions?.length > 0 && (
+                    <div className="bg-surface-2/60 border border-border p-4 rounded-xl space-y-2">
+                      <h4 className="text-xs font-bold text-text uppercase tracking-wider">
+                        Actionable Recommendations
+                      </h4>
+                      <ul className="space-y-1.5">
+                        {analysis.suggestions.map((suggestion, i) => (
+                          <li key={i} className="text-xs text-text-muted">
+                            • {suggestion}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-2">
+                    <Button
+                      className="flex-1 bg-surface-2 hover:bg-surface border border-border text-text text-xs rounded-lg cursor-pointer"
+                      onClick={() => setShowResult(false)}
+                    >
+                      Analyze Another Resume
+                    </Button>
+                    <Button
+                      className="flex-1 bg-primary hover:bg-primary-hover text-on-primary text-xs rounded-lg cursor-pointer"
+                      onClick={() => navigate("/ai-planner")}
+                    >
+                      Create Study Roadmap
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </main>
       </div>
       <Footer />
     </>

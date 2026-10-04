@@ -15,7 +15,18 @@ import PotdCard from "@/components/PotdCard";
 import SuccessStories from "@/components/SuccessStories";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { ArrowRight, Briefcase, ExternalLink, Loader2, Mic, Play, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Briefcase,
+  ExternalLink,
+  Loader2,
+  Mic,
+  Play,
+  TrendingUp,
+  Sparkles,
+  Zap,
+  FileText,
+} from "lucide-react";
 import api from "../services/api";
 
 import ContactUs from "@/components/ContactUs";
@@ -414,442 +425,565 @@ export default function Dashboard() {
   const hour = new Date().getHours();
 
   const greeting =
-    hour < 12 ? "Good Morning ☀️" : hour < 18 ? "Good Afternoon 🌤️" : "Good Evening 🌙";
+    hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
   // ======================================================
 
   return (
     <>
       <Navbar />
-      {settings?.data && (
-        <div className="mt-16 lg:ml-64">
+      {settings?.data?.announcementEnabled && settings?.data?.announcementText && (
+        <div className="pt-16 lg:pl-64">
           <AnnouncementBar settings={settings.data} />
         </div>
       )}
 
-      <div className="lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen dark:bg-gray-950 transition-colors duration-300">
-        {/* 🔥 BADGE POPUP */}
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
+        {/* BADGE POPUP */}
         {unlockedBadges.length > 0 && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-            <div className="bg-white rounded-3xl p-8 text-center animate-scaleUp shadow-2xl max-w-md mx-4  dark:bg-gray-900 ">
-              <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                🎉 New Badge Unlocked!
+            <div className="bg-surface border border-border rounded-2xl p-8 text-center animate-scaleUp shadow-subtle max-w-md mx-4">
+              <h2 className="text-xl font-bold mb-3 text-text">
+                New Badge Unlocked
               </h2>
               {unlockedBadges.map((badge, i) => (
-                <div key={i} className="text-lg font-semibold mb-2">
+                <div key={i} className="text-base font-semibold mb-2 text-primary">
                   {badge.name}
                 </div>
               ))}
-              <button
+              <Button
                 onClick={() => setUnlockedBadges([])}
-                className="mt-4 bg-green-500 text-white px-6 py-2 rounded-xl"
+                className="mt-4 bg-primary hover:bg-primary-hover text-on-primary px-6 py-2 rounded-lg font-medium"
               >
                 Continue
-              </button>
+              </Button>
             </div>
           </div>
         )}
 
-        {/* Main Content */}
+        {/* Main Content (Max ~1200px, 24px consistent gap) */}
+        <main className="max-w-[1200px] mx-auto space-y-6">
+          {/* Row 1: Welcome + Daily Motivation */}
+          <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6 items-stretch">
+            <div className="h-full">
+              <div className="relative overflow-hidden bg-gradient-to-br from-surface via-surface to-primary/5 border border-border rounded-2xl p-6 sm:p-7 shadow-subtle hover:shadow-card transition-all duration-300 flex flex-col justify-between h-full group">
+                {/* Decorative background glows */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/15 transition-colors" />
+                <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
 
-        <main className="flex-1">
-          <div className="p-2 md:p-6 space-y-4 md:space-y-6">
-            {/* TOP */}
-            <div className="space-y-4 md:space-y-6">
-              {/* Row 1: Welcome (75%) + Daily Motivation (25%) */}
-              <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-4 md:gap-6">
-                <div>
-                  <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all cursor-default h-full dark:bg-gray-900 dark:border-white/10">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                      <span data-private>
-                        {greeting}, {user?.fullName}
-                      </span>
-                    </h1>
-
-                    <p className="mt-2 text-lg  text-gray-500 dark:text-gray-400 font-medium">
-                      Level {level} 🚀
-                    </p>
-
-                    <p className="text-lg  text-gray-600 dark:text-gray-400 font-medium mt-1">
-                      ⏱ Today: {todayData?.timeSpent || 0} min
-                    </p>
-
-                    <Button
-                      onClick={() => navigate("/quiz")}
-                      className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:cursor-pointer"
-                    >
-                      Continue Quiz →
-                    </Button>
+                <div className="relative z-10">
+                  {/* Top Status Badges */}
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary">
+                      <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
+                      Placement Ready
+                    </span>
+                    <span className="px-2.5 py-1 rounded-md bg-surface-2 text-text-muted text-xs font-semibold border border-border">
+                      Level {level}
+                    </span>
+                    <span className="px-2.5 py-1 rounded-md bg-surface-2 text-text-muted text-xs font-medium border border-border">
+                      ⏱️ Today: {todayData?.timeSpent || 0} min
+                    </span>
                   </div>
-                </div>
 
-                <div>
-                  <DashboardQuoteCard />
-                </div>
-              </div>
+                  {/* Greeting & Headline */}
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text leading-tight">
+                    <span data-private>
+                      {greeting},{" "}
+                      <span className="bg-gradient-to-r from-primary via-teal-500 to-emerald-400 bg-clip-text text-transparent">
+                        {user?.fullName?.split(" ")[0] || user?.fullName || "Candidate"}
+                      </span>
+                    </span>
+                    <span className="inline-block ml-1">👋</span>
+                  </h1>
 
-              {/* Row 2: Progress (left) + Word Of The Day (right) */}
-              <div className="lg:col-span-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4 md:gap-6">
-                  <div className="h-full">
-                    {/* Progress (upgraded with circular indicator) */}
-                    <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all h-full items-stretch dark:bg-gray-900 dark:border-white/10 flex flex-col">
-                      <p className="text-sm text-gray-500 font-medium uppercase tracking-wide">
-                        Progress
-                      </p>
+                  <p className="text-xs sm:text-sm text-text-muted mt-2 max-w-lg leading-relaxed">
+                    You have a{" "}
+                    <span className="font-semibold text-accent">
+                      {streak}-day streak
+                    </span>{" "}
+                    going! Complete today's daily challenges to boost your placement score.
+                  </p>
 
-                      <div className="flex flex-col md:flex-row md:items-center gap-6 flex-1">
-                        {/* LEFT */}
-                        <div className="flex-1">
-                          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                            {currentXP} / {maxXP} XP
-                          </h2>
-
-                          <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-3 mt-4 overflow-hidden">
-                            <div
-                              className="bg-linear-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
-                              style={{ width: `${percent}%` }}
-                            ></div>
-                          </div>
-
-                          {/*  MOTIVATION INSIDE */}
-                          <div className="mt-4">
-                            {loadingMotivation ? (
-                              <div className="h-10 bg-gray-200 rounded-lg animate-pulse" />
-                            ) : (
-                              <p className="text-sm md:text-base font-medium text-gray-600 leading-relaxed whitespace-pre-line dark:text-white">
-                                {motivation}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* RIGHT - Circular Level Progress */}
-                        <div className="w-full md:w-[190px] flex justify-center">
-                          <div className="relative w-[160px] h-[160px] sm:w-[170px] sm:h-[170px]">
-                            {(() => {
-                              const size = 170;
-                              const stroke = 12;
-                              const r = (size - stroke) / 2;
-                              const c = 2 * Math.PI * r;
-                              const pct = Math.min(Math.max(percent, 0), 100);
-                              const dashOffset = c - (pct / 100) * c;
-                              const trackClass = "stroke-gray-200 dark:stroke-white/10";
-                              const progressStrokeClass = "stroke-[url(#levelProgressGradient)]";
-
-                              return (
-                                <svg
-                                  width={size}
-                                  height={size}
-                                  viewBox={`0 0 ${size} ${size}`}
-                                  className="block"
-                                >
-                                  <defs>
-                                    <linearGradient
-                                      id="levelProgressGradient"
-                                      x1="0"
-                                      y1="0"
-                                      x2="170"
-                                      y2="170"
-                                      gradientUnits="userSpaceOnUse"
-                                    >
-                                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="1" />
-                                      <stop offset="100%" stopColor="#7c3aed" stopOpacity="1" />
-                                    </linearGradient>
-                                  </defs>
-
-                                  {/* track */}
-                                  <circle
-                                    cx={size / 2}
-                                    cy={size / 2}
-                                    r={r}
-                                    fill="none"
-                                    strokeWidth={stroke}
-                                    className={trackClass}
-                                  />
-
-                                  {/* progress */}
-                                  <circle
-                                    cx={size / 2}
-                                    cy={size / 2}
-                                    r={r}
-                                    fill="none"
-                                    strokeWidth={stroke}
-                                    strokeLinecap="round"
-                                    className={progressStrokeClass}
-                                    strokeDasharray={c}
-                                    strokeDashoffset={dashOffset}
-                                    style={{
-                                      transition: "stroke-dashoffset 900ms ease-out",
-                                      transformOrigin: "50% 50%",
-                                      transform: "rotate(-90deg)",
-                                    }}
-                                  />
-
-                                  {/* center text */}
-                                  <foreignObject x="0" y="0" width={size} height={size}>
-                                    <div
-                                      xmlns="http://www.w3.org/1999/xhtml"
-                                      className="w-full h-full flex flex-col items-center justify-center"
-                                    >
-                                      <div className="text-sm font-semibold text-gray-500 dark:text-gray-300">
-                                        Level
-                                      </div>
-                                      <div className="text-3xl font-bold text-gray-900 dark:text-white leading-none">
-                                        {level}
-                                      </div>
-                                      <div className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                        {Math.round(percent)}%
-                                      </div>
-                                    </div>
-                                  </foreignObject>
-                                </svg>
-                              );
-                            })()}
-                          </div>
-                        </div>
+                  {/* Quick stats mini-bar */}
+                  <div className="grid grid-cols-3 gap-3 my-4 py-3 px-4 rounded-xl bg-surface-2/60 border border-border/80 backdrop-blur-xs">
+                    <div>
+                      <div className="text-[11px] font-medium text-text-subtle">Streak</div>
+                      <div className="text-base sm:text-lg font-bold text-text flex items-center gap-1">
+                        🔥 {streak} <span className="text-[11px] font-normal text-text-muted hidden sm:inline">days</span>
+                      </div>
+                    </div>
+                    <div className="border-x border-border/60 px-3">
+                      <div className="text-[11px] font-medium text-text-subtle">Total XP</div>
+                      <div className="text-base sm:text-lg font-bold text-primary flex items-center gap-1">
+                        ⭐ {totalXP}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-medium text-text-subtle">Progress</div>
+                      <div className="text-base sm:text-lg font-bold text-text">
+                        {Math.round(percent)}%
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="h-full">
-                    <div className="h-full">
-                      <WordOfDayCard />
+                {/* Primary CTA Row */}
+                <div className="relative z-10 flex flex-wrap items-center gap-3 pt-1">
+                  <Button
+                    onClick={() => {
+                      safeTrack("dashboard_quiz_clicked", {});
+                      navigate("/quiz");
+                    }}
+                    className="bg-primary hover:bg-primary-hover text-on-primary font-semibold rounded-xl shadow-soft h-10 px-5 text-sm inline-flex items-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    Continue Quiz
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      safeTrack("placement_predictor_clicked", {});
+                      navigate("/placement-predictor");
+                    }}
+                    className="rounded-xl border-border bg-surface/80 hover:bg-surface-2 text-text font-medium h-10 px-4 text-sm inline-flex items-center gap-2 cursor-pointer transition-all"
+                  >
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    Predict Placement
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <DashboardQuoteCard />
+            </div>
+          </div>
+
+          {/* Row 2: Progress (left) + Word Of The Day (right) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-6">
+            <div className="h-full">
+              {/* Progress (Circular level indicator) */}
+              <div className="bg-surface border border-border p-6 rounded-xl shadow-subtle hover:shadow-card transition-all h-full flex flex-col justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-4">
+                    Learning Progress
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    {/* LEFT XP DETAILS */}
+                    <div className="flex-1 space-y-3">
+                      <div className="text-2xl sm:text-3xl font-bold text-text">
+                        {currentXP} <span className="text-lg font-medium text-text-subtle">/ {maxXP} XP</span>
+                      </div>
+
+                      {/* XP Progress Bar */}
+                      <div className="w-full bg-surface-2 rounded-full h-2.5 border border-border overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all duration-700"
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+
+                      {/* Stat pills */}
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-2 border border-border text-xs font-semibold text-text-muted">
+                          🔥 {streak} day streak
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-soft border border-primary/20 text-xs font-semibold text-primary">
+                          ⭐ {totalXP} total XP
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-text-muted leading-relaxed">
+                        {loadingMotivation ? (
+                          "Loading today's study goal..."
+                        ) : (
+                          motivation || "Complete today's challenges to maintain your momentum."
+                        )}
+                      </p>
+                    </div>
+
+                    {/* RIGHT - Circular Level Progress Ring */}
+                    <div className="w-[130px] h-[130px] shrink-0 mx-auto sm:mx-0 flex items-center justify-center">
+                      <div className="relative w-[120px] h-[120px]">
+                        {(() => {
+                          const size = 120;
+                          const stroke = 10;
+                          const r = (size - stroke) / 2;
+                          const c = 2 * Math.PI * r;
+                          const pct = Math.min(Math.max(percent, 0), 100);
+                          const dashOffset = c - (pct / 100) * c;
+
+                          return (
+                            <svg
+                              width={size}
+                              height={size}
+                              viewBox={`0 0 ${size} ${size}`}
+                              className="block"
+                            >
+                              {/* track */}
+                              <circle
+                                cx={size / 2}
+                                cy={size / 2}
+                                r={r}
+                                fill="none"
+                                strokeWidth={stroke}
+                                className="stroke-surface-2"
+                              />
+
+                              {/* progress */}
+                              <circle
+                                cx={size / 2}
+                                cy={size / 2}
+                                r={r}
+                                fill="none"
+                                strokeWidth={stroke}
+                                strokeLinecap="round"
+                                className="stroke-primary"
+                                strokeDasharray={c}
+                                strokeDashoffset={dashOffset}
+                                style={{
+                                  transition: "stroke-dashoffset 900ms ease-out",
+                                  transformOrigin: "50% 50%",
+                                  transform: "rotate(-90deg)",
+                                }}
+                              />
+
+                              {/* center text */}
+                              <foreignObject x="0" y="0" width={size} height={size}>
+                                <div
+                                  xmlns="http://www.w3.org/1999/xhtml"
+                                  className="w-full h-full flex flex-col items-center justify-center"
+                                >
+                                  <div className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider">
+                                    Level
+                                  </div>
+                                  <div className="text-2xl font-bold text-text leading-none my-0.5">
+                                    {level}
+                                  </div>
+                                  <div className="text-xs font-semibold text-primary">
+                                    {Math.round(percent)}%
+                                  </div>
+                                </div>
+                              </foreignObject>
+                            </svg>
+                          );
+                        })()}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ACTION */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="h-full">
+              <WordOfDayCard />
+            </div>
+          </div>
+
+          {/* ======================================================
+              AI PLACEMENT TOOLKIT — MODERN BENTO GRID
+             ====================================================== */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold text-text flex items-center gap-2">
+                  <span className="p-1 rounded-md bg-primary-soft text-primary">
+                    <Zap className="w-4 h-4" />
+                  </span>
+                  AI Placement Toolkit
+                </h2>
+                <p className="text-xs text-text-muted mt-0.5">
+                  Accelerate your interview preparation with intelligent tools
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+              {/* BENTO 1: AI VOICE INTERVIEW COACH (Col Span 7 on md/lg) */}
               <div
                 onClick={() => {
-                  safeTrack("dashboard_quiz_clicked", {});
-                  navigate("/quiz");
+                  safeTrack("ai_voice_coach_clicked", {});
+                  navigate("/ai-voice-coach");
                 }}
-                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
+                className="md:col-span-7 relative overflow-hidden bg-gradient-to-br from-surface via-surface to-primary/10 border border-border hover:border-primary/50 p-6 rounded-2xl shadow-subtle hover:shadow-card cursor-pointer transition-all duration-300 group flex flex-col justify-between"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3  bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm">
-                    <Play className="w-6 h-6 text-gray-900 dark:text-white" />
+                {/* Background radial glow */}
+                <div className="absolute top-0 right-0 w-44 h-44 bg-primary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-primary/20 transition-colors" />
+
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform">
+                        <Mic className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+                            AI Simulation
+                          </span>
+                          <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-accent-soft text-accent border border-accent/20">
+                            POPULAR
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold text-text group-hover:text-primary transition-colors">
+                          AI Voice Interview Coach
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="h-8 w-8 rounded-lg bg-surface-2 text-text-muted flex items-center justify-center group-hover:bg-primary-soft group-hover:text-primary transition-colors">
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Practice</h3>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">
-                      Daily quiz challenges
-                    </p>
+
+                  <p className="text-xs sm:text-sm text-text-muted leading-relaxed mb-4">
+                    Speak live with an AI interviewer trained on FAANG & Tier-1 tech rounds. Receive instant speech analytics & question feedback.
+                  </p>
+
+                  {/* Live Audio Waves Mockup + Feature Tags */}
+                  <div className="p-3 rounded-xl bg-surface-2/70 border border-border/80 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-1.5 h-6">
+                      <span className="w-1 h-3 bg-primary rounded-full animate-pulse" />
+                      <span className="w-1 h-5 bg-teal-500 rounded-full animate-pulse delay-75" />
+                      <span className="w-1 h-6 bg-emerald-400 rounded-full animate-pulse delay-150" />
+                      <span className="w-1 h-4 bg-primary rounded-full animate-pulse delay-100" />
+                      <span className="w-1 h-2 bg-teal-400 rounded-full animate-pulse" />
+                      <span className="text-[11px] font-semibold text-text ml-2">Voice AI Active</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
+                      <span className="px-2 py-0.5 rounded-md bg-surface border border-border font-medium">Realtime Feedback</span>
+                      <span className="px-2 py-0.5 rounded-md bg-surface border border-border font-medium hidden sm:inline">HR & Tech</span>
+                    </div>
                   </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+
+                <div className="mt-5 pt-3 border-t border-border/60 flex items-center justify-between text-xs">
+                  <span className="text-text-subtle font-medium">Ready in 10 seconds • No setup</span>
+                  <span className="font-semibold text-primary flex items-center gap-1 group-hover:underline">
+                    Start Voice Mock <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
               </div>
 
+              {/* BENTO 2: PLACEMENT PREDICTOR AI (Col Span 5 on md/lg) */}
+              <div
+                onClick={() => {
+                  safeTrack("placement_predictor_clicked", {});
+                  navigate("/placement-predictor");
+                }}
+                className="md:col-span-5 relative overflow-hidden bg-gradient-to-br from-surface via-surface to-accent/5 border border-border hover:border-accent/50 p-6 rounded-2xl shadow-subtle hover:shadow-card cursor-pointer transition-all duration-300 group flex flex-col justify-between"
+              >
+                <div className="absolute top-0 right-0 w-36 h-36 bg-accent/10 rounded-full blur-2xl pointer-events-none group-hover:bg-accent/20 transition-colors" />
+
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-accent-soft text-accent border border-accent/25 flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform">
+                        <TrendingUp className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-semibold text-accent uppercase tracking-wider">
+                          Salary & Odds
+                        </span>
+                        <h3 className="text-lg font-bold text-text group-hover:text-accent transition-colors">
+                          Placement Predictor
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="h-8 w-8 rounded-lg bg-surface-2 text-text-muted flex items-center justify-center group-hover:bg-accent-soft group-hover:text-accent transition-colors">
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-text-muted leading-relaxed mb-4">
+                    Calculate your placement chances across Product & Service companies based on your current CGPA, skills & projects.
+                  </p>
+
+                  {/* Prediction mini-preview chip */}
+                  <div className="p-3 rounded-xl bg-surface-2/70 border border-border/80 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-text-muted">Target Compensation</span>
+                      <span className="font-bold text-success">₹6 - 18 LPA</span>
+                    </div>
+                    <div className="w-full bg-surface rounded-full h-2 border border-border overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-accent to-success rounded-full w-[78%]" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-3 border-t border-border/60 flex items-center justify-between text-xs">
+                  <span className="text-text-subtle font-medium">30-second AI assessment</span>
+                  <span className="font-semibold text-accent flex items-center gap-1 group-hover:underline">
+                    Predict Odds <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+
+              {/* BENTO 3: REAL INTERVIEW EXPERIENCES (Col Span 4) */}
+              <div
+                onClick={() => {
+                  safeTrack("interview_experience_clicked", {});
+                  navigate("/interview-experience");
+                }}
+                className="md:col-span-4 relative overflow-hidden bg-surface border border-border hover:border-primary/50 p-5 rounded-2xl shadow-subtle hover:shadow-card cursor-pointer transition-all duration-300 group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary-soft text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Briefcase className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-success-soft text-success border border-success/20">
+                      NEW ARCHIVE
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-text group-hover:text-primary transition-colors">
+                    Interview Archive
+                  </h3>
+                  <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                    Real campus rounds, coding questions & HR transcripts from placed seniors.
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {["TCS", "Infosys", "Wipro", "Amazon"].map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-2 text-text-muted border border-border"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs text-primary font-semibold">
+                  <span>Read Experiences</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+
+              {/* BENTO 4: AI RESUME ATS ANALYZER (Col Span 4) */}
+              <div
+                onClick={() => {
+                  safeTrack("dashboard_resume_clicked", {});
+                  navigate("/resume-analyzer");
+                }}
+                className="md:col-span-4 relative overflow-hidden bg-surface border border-border hover:border-primary/50 p-5 rounded-2xl shadow-subtle hover:shadow-card cursor-pointer transition-all duration-300 group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary-soft text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <FileText className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-primary-soft text-primary border border-primary/20">
+                      ATS SCANNER
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-text group-hover:text-primary transition-colors">
+                    AI Resume Analyzer
+                  </h3>
+                  <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                    Check your resume against top ATS screeners, missing keywords & fix formatting errors.
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-2 text-text-muted border border-border">
+                      ATS Score
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-2 text-text-muted border border-border">
+                      Keyword Match
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs text-primary font-semibold">
+                  <span>Scan Resume</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+
+              {/* BENTO 5: ACTIVE JOB DRIVES (Col Span 4) */}
               <div
                 onClick={() => {
                   trackEvent("jobs_page_clicked");
                   safeTrack("dashboard_jobs_clicked", {});
                   navigate("/jobs");
                 }}
-                className="flex items-center justify-between bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md hover:border-black/50 cursor-pointer transition-all duration-200  dark:bg-gray-900  dark:border-white/10"
+                className="md:col-span-4 relative overflow-hidden bg-surface border border-border hover:border-primary/50 p-5 rounded-2xl shadow-subtle hover:shadow-card cursor-pointer transition-all duration-300 group flex flex-col justify-between"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3  bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm">
-                    <Briefcase className="w-6 h-6 text-gray-900 dark:text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Jobs</h3>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">Latest openings</p>
-                  </div>
-                </div>
-
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-
-            <div
-              onClick={() => {
-                safeTrack("ai_voice_coach_clicked", {});
-                navigate("/ai-voice-coach");
-              }}
-              className="relative overflow-hidden flex items-center justify-between
-  bg-white dark:bg-gray-900
-  border border-gray-200 dark:border-white/10
-  p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-500
-  cursor-pointer transition-all duration-300 hover:scale-[1.02] group"
-            >
-              {/* Hover Glow */}
-              <div className="absolute inset-0 bg-blue-50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-
-              <div className="flex items-center gap-5 relative z-10">
-                {/* Icon */}
-                <div className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-2xl shadow-sm">
-                  <Mic className="w-7 h-7 text-blue-600 dark:text-blue-400 animate-pulse" />
-                </div>
-
-                {/* Text */}
-                <div className="ml-2">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    🎤 AI Voice Interview
-                  </h3>
-
-                  <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
-                    Speak live with AI & boost confidence instantly
-                  </p>
-
-                  <span className="inline-block mt-3 px-3 py-1 text-xs font-semibold bg-yellow-400 text-black rounded-full shadow">
-                    🔥 Most Popular Feature
-                  </span>
-                </div>
-              </div>
-
-              {/* Arrow */}
-              <ArrowRight className="w-6 h-6 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all relative z-10" />
-            </div>
-
-            {/* NEW PLACEMENT PREDICTOR PREMIUM CARD */}
-            <div
-              onClick={() => {
-                safeTrack("placement_predictor_clicked", {});
-                navigate("/placement-predictor");
-              }}
-              className="relative overflow-hidden flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-[1.02] group"
-            >
-              {/* Hover Glow */}
-              <div className="absolute inset-0 bg-purple-50 dark:bg-purple-900/10 opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl"></div>
-
-              <div className="flex items-center gap-5 relative z-10">
-                {/* Icon */}
-                <div className="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-2xl shadow-sm group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-all">
-                  <TrendingUp className="w-7 h-7 text-purple-600 dark:text-purple-400" />
-                </div>
-
-                {/* Text */}
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                    Placement Predictor AI
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary-soft text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Briefcase className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-accent-soft text-accent border border-accent/20">
+                      HIRING NOW
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-text group-hover:text-primary transition-colors">
+                    Active Job Openings
                   </h3>
-                  <p className="text-gray-500 dark:text-gray-400 font-medium text-lg mb-3">
-                    Check your placement chances in 30 seconds
+                  <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                    Curated tech hiring drives, off-campus opportunities & internships for students.
                   </p>
 
-                  {/* Badges */}
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-gradient-to-r from-purple-500 to-indigo-500 text-xs px-3 py-1 font-semibold shadow-sm">
-                      AI Powered
-                    </Badge>
-                    <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-xs px-4 py-1 font-semibold shadow-sm">
-                      Salary Prediction
-                    </Badge>
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-2 text-text-muted border border-border">
+                      Freshers
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-surface-2 text-text-muted border border-border">
+                      0-2 Yrs Exp
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* CTA Arrow */}
-              <div className="hidden sm:block text-right relative z-10">
-                <div className="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-1">
-                  Predict Now
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs text-primary font-semibold">
+                  <span>View Openings</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
-
-                <ArrowRight className="w-7 h-7 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-2 transition-all ml-auto" />
               </div>
             </div>
-
-            <div
-              onClick={() => {
-                safeTrack("interview_experience_clicked", {});
-                navigate("/interview-experience");
-              }}
-              className="relative overflow-hidden flex items-center justify-between
-  bg-white dark:bg-gray-900
-  border border-gray-200 dark:border-white/10
-  p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-500
-  cursor-pointer transition-all duration-300 hover:scale-[1.02] group min-h-[170px]"
-            >
-              {/* Hover Glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-blue-50 dark:bg-blue-900/10"></div>
-
-              {/* Left */}
-              <div className="relative z-10 flex items-center gap-5 flex-1">
-                {/* Icon */}
-                <div className="p-4 rounded-2xl bg-blue-100 dark:bg-blue-900/30 shadow-sm shrink-0">
-                  <Briefcase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-
-                {/* Text */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                      Interview Experience
-                    </h3>
-
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-600 text-white shadow">
-                      NEW
-                    </span>
-                  </div>
-
-                  <p className="text-gray-500 dark:text-gray-400 font-medium mt-2 text-base md:text-lg">
-                    Real company rounds, HR questions & student success stories
-                  </p>
-
-                  {/* Tags */}
-                  <div className="flex gap-2 mt-4 flex-wrap">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                      TCS
-                    </span>
-
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                      Infosys
-                    </span>
-
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
-                      Wipro
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right */}
-              <div className="hidden md:flex flex-col items-end justify-center relative z-10 ml-6">
-                <span className="text-purple-600 dark:text-purple-400 font-bold text-2xl">
-                  Explore Now
-                </span>
-
-                <ArrowRight className="w-8 h-8 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-2 transition-all mt-3" />
-              </div>
-            </div>
+          </div>
 
             {/*  POTD SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              <CpotdCard onClick={() => navigate("/coding-potd")} />
-              <PotdCard onClick={() => navigate("/potd")} />
-              <StreakCalendar />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
+              <div className="h-full"><CpotdCard onClick={() => navigate("/coding-potd")} /></div>
+              <div className="h-full"><PotdCard onClick={() => navigate("/potd")} /></div>
+              <div className="h-full"><StreakCalendar /></div>
             </div>
 
             {/* ======================================================
                 FEATURE 1 — WEEKLY INSIGHT CARD (Premium AI) 
                ====================================================== */}
-            <div className="bg-white/70 dark:bg-gray-900/50 border border-gray-200/60 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all backdrop-blur">
+            <div className="bg-surface border border-border p-6 rounded-xl shadow-soft">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-sm">
+                  <h3 className="text-lg font-bold text-text flex items-center gap-2">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-primary font-bold text-sm">
                       ✨
                     </span>
-                    Premium AI Insight
+                    AI Learning Insight
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Weekly breakdown (no extra calls)
+                  <p className="text-xs text-text-muted mt-1">
+                    Weekly progress breakdown
                   </p>
                 </div>
 
-                <div className="text-sm font-semibold px-3 py-1 rounded-full bg-gradient-to-r from-blue-600/10 to-purple-600/10 text-blue-700 dark:text-purple-200 border border-blue-600/20 dark:border-white/10">
+                <div className="text-xs font-semibold px-3 py-1 rounded-full bg-primary-soft text-primary border border-primary/20">
                   📊 This Week
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                  <div className="text-sm font-medium text-text-muted">
                     • Score improvement
                   </div>
                   <div className={`text-2xl font-bold ${thisWeekColorClass} transition-colors`}>
@@ -860,7 +994,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                  <div className="text-sm font-medium text-text-muted">
                     • Total learning time change
                   </div>
                   <div className={`text-2xl font-bold ${timeColorClass} transition-colors`}>
@@ -871,17 +1005,17 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                  <div className="text-sm font-medium text-text-muted">
                     • Best performing day
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{bestDay}</div>
+                  <div className="text-2xl font-bold text-text">{bestDay}</div>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <div className={`text-sm font-medium text-gray-600 dark:text-gray-300`}>
+                  <div className="text-sm font-medium text-text-muted">
                     • Short AI summary
                   </div>
-                  <div className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
+                  <div className="text-sm text-text leading-relaxed">
                     "{insightMessage}"
                   </div>
                 </div>
@@ -889,23 +1023,29 @@ export default function Dashboard() {
             </div>
 
             {/* ======================================================
-                EXISTING WEEKLY PERFORMANCE CHART (unchanged)
+                WEEKLY PERFORMANCE CHART
                ====================================================== */}
-            <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all  dark:bg-gray-900  dark:border-white/10">
+            <div className="bg-surface border border-border p-6 rounded-xl shadow-subtle hover:border-primary/40 transition-colors">
               {/* HEADER */}
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <TrendingUp size={20} className="text-gray-900" /> Weekly Performance
+                  <h3 className="text-lg font-bold text-text flex items-center gap-2">
+                    <TrendingUp size={18} className="text-primary" /> Weekly Performance
                   </h3>
-                  <p className="text-sm text-gray-500 mt-1">Score & Time (last 7 days)</p>
+                  <p className="text-xs text-text-muted mt-0.5">Score & Time (last 7 days)</p>
                 </div>
 
                 <div
-                  className={`font-semibold text-sm px-3 py-1 rounded-full ${percentChange === null ? "bg-green-100 text-green-700" : percentChange >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                  className={`font-semibold text-xs px-2.5 py-1 rounded-full ${
+                    percentChange === null
+                      ? "bg-primary-soft text-primary"
+                      : percentChange >= 0
+                        ? "bg-primary-soft text-primary"
+                        : "bg-danger-soft text-danger"
+                  }`}
                 >
                   {percentChange === null
-                    ? "New Activity "
+                    ? "New Activity"
                     : `${percentChange >= 0 ? "+" : ""}${percentChange}%`}
                 </div>
               </div>
@@ -915,23 +1055,31 @@ export default function Dashboard() {
                 <ResponsiveContainer
                   width="100%"
                   height="100%"
-                  className="bg-white dark:bg-gray-900 rounded-xl"
+                  className="bg-transparent rounded-xl"
                 >
                   <LineChart data={weeklyData}>
-                    <XAxis dataKey="date" />
+                    <XAxis dataKey="date" stroke="var(--color-text-subtle, #98A2B3)" />
 
                     {/*  IMPORTANT: separate scales */}
-                    <YAxis yAxisId="left" domain={[0, 10]} />
-                    <YAxis yAxisId="right" orientation="right" />
+                    <YAxis yAxisId="left" domain={[0, 10]} stroke="var(--color-text-subtle, #98A2B3)" />
+                    <YAxis yAxisId="right" orientation="right" stroke="var(--color-text-subtle, #98A2B3)" />
 
-                    <Tooltip formatter={(value) => Number(value).toFixed(2)} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "var(--color-surface, #101A17)",
+                        borderColor: "var(--color-border, #24342E)",
+                        borderRadius: "8px",
+                        color: "var(--color-text, #F2F4F7)",
+                      }}
+                      formatter={(value) => Number(value).toFixed(2)}
+                    />
 
                     {/*  AVG SCORE */}
                     <Line
                       yAxisId="left"
                       type="monotone"
                       dataKey="avgScore"
-                      stroke="#3b82f6"
+                      stroke="#059669"
                       strokeWidth={3}
                       dot={{ r: 4 }}
                       name="Avg Score"
@@ -942,7 +1090,7 @@ export default function Dashboard() {
                       yAxisId="right"
                       type="monotone"
                       dataKey="timeSpent"
-                      stroke="#22c55e"
+                      stroke="#F59E0B"
                       strokeWidth={3}
                       dot={{ r: 4 }}
                       name="Time (min)"
@@ -953,21 +1101,21 @@ export default function Dashboard() {
             </div>
 
             {/* 📰 TECH INTELLIGENCE FEED */}
-            <div className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 shadow-sm p-6 md:p-8 transition-all duration-300">
+            <div className="rounded-xl border border-border bg-surface shadow-subtle p-6 transition-colors">
               {/* HEADER */}
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-7">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="h-11 w-11 rounded-2xl  flex items-center justify-center text-white shadow-md">
+                    <div className="h-10 w-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center font-bold text-lg shrink-0">
                       📰
                     </div>
 
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      <h3 className="text-xl font-bold text-text">
                         Tech Intelligence Feed
                       </h3>
 
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <p className="text-xs text-text-muted mt-0.5">
                         Latest news • Auto-refreshed every 4h
                       </p>
                     </div>
@@ -977,16 +1125,16 @@ export default function Dashboard() {
                 {/* BADGES */}
                 {statsLoading ? (
                   <div className="flex gap-2">
-                    <div className="w-20 h-8 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse" />
-                    <div className="w-24 h-8 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse" />
+                    <div className="w-20 h-7 rounded-md bg-surface-2 animate-pulse" />
+                    <div className="w-24 h-7 rounded-md bg-surface-2 animate-pulse" />
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 px-3 py-1">
+                    <Badge className="bg-primary-soft text-primary font-medium text-xs border-0 px-2.5 py-1 rounded-md">
                       AI: {stats?.AI || 0}
                     </Badge>
 
-                    <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white border-0 px-3 py-1">
+                    <Badge className="bg-danger-soft text-danger font-medium text-xs border-0 px-2.5 py-1 rounded-md">
                       Layoffs: {stats?.Layoff?.weeklyLayoffs || 0}W
                     </Badge>
                   </div>
@@ -994,22 +1142,22 @@ export default function Dashboard() {
               </div>
 
               {/* FILTERS */}
-              <div className="flex flex-wrap gap-2 mb-7">
+              <div className="flex flex-wrap gap-2 mb-6">
                 {["all", "AI", "Layoff", "Hiring"].map((t) => (
                   <Button
                     key={t}
                     size="sm"
                     onClick={() => setActiveFilter(t)}
-                    className={`rounded-full px-4 text-xs font-semibold transition-all duration-300 ${
+                    className={`rounded-lg px-3.5 text-xs font-medium transition-colors ${
                       activeFilter === t
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        ? "bg-primary text-on-primary shadow-soft"
+                        : "bg-surface-2 text-text-muted hover:text-text border border-border"
                     }`}
                   >
                     {t === "all" ? "All" : t}
 
                     {newsLoading && activeFilter === t && (
-                      <Loader2 className="w-4 h-4 ml-1 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 ml-1 animate-spin" />
                     )}
                   </Button>
                 ))}
@@ -1021,20 +1169,20 @@ export default function Dashboard() {
                   {[1, 2, 3].map((i) => (
                     <Card
                       key={i}
-                      className="basis-80 h-64 rounded-3xl bg-gray-200 dark:bg-gray-800 border-0"
+                      className="basis-80 h-56 rounded-xl bg-surface-2 border border-border"
                     />
                   ))}
                 </div>
               ) : news?.length === 0 ? (
                 /* EMPTY */
-                <div className="text-center py-14">
-                  <TrendingUp className="mx-auto h-14 w-14 text-gray-400 mb-4" />
+                <div className="text-center py-12">
+                  <TrendingUp className="mx-auto h-10 w-10 text-text-muted mb-3" />
 
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h4 className="text-base font-semibold text-text">
                     No news available
                   </h4>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-5">
+                  <p className="text-xs text-text-muted mt-1 mb-4">
                     Try refreshing to fetch latest updates
                   </p>
 
@@ -1047,7 +1195,7 @@ export default function Dashboard() {
                         })
                       )
                     }
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full px-5"
+                    className="bg-primary hover:bg-primary-hover text-on-primary rounded-lg text-xs font-semibold px-4 h-9 shadow-soft"
                   >
                     Refresh
                   </Button>
@@ -1066,7 +1214,7 @@ export default function Dashboard() {
                   >
                     <CarouselContent className="-ml-2">
                       {news?.map((article, index) => (
-                        <CarouselItem key={index} className="basis-[320px] md:basis-[380px] pl-2">
+                        <CarouselItem key={index} className="basis-[300px] md:basis-[360px] pl-2">
                           <a
                             onClick={() =>
                               safeTrack("news_article_clicked", {
@@ -1079,39 +1227,36 @@ export default function Dashboard() {
                             rel="noopener noreferrer"
                             className="block group h-full"
                           >
-                            <Card className="relative h-full rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-950 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                              {/* TOP GLOW */}
-                              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-blue-50 dark:bg-blue-500/5" />
-
+                            <Card className="relative h-full rounded-xl border border-border bg-surface hover:border-primary/40 p-5 shadow-subtle transition-colors overflow-hidden">
                               {/* TAG */}
-                              <Badge
-                                className={`absolute top-4 right-4 text-white border-0 text-xs px-3 py-1 ${
+                              <span
+                                className={`absolute top-4 right-4 text-xs font-semibold px-2 py-0.5 rounded-md ${
                                   article.tag === "AI"
-                                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                                    ? "bg-primary-soft text-primary"
                                     : article.tag === "Layoff"
-                                      ? "bg-gradient-to-r from-red-500 to-orange-500"
+                                      ? "bg-danger-soft text-danger"
                                       : article.tag === "Hiring"
-                                        ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                                        : "bg-gradient-to-r from-blue-500 to-indigo-500"
+                                        ? "bg-success-soft text-success"
+                                        : "bg-surface-2 text-text-muted"
                                 }`}
                               >
                                 {article.tag}
-                              </Badge>
+                              </span>
 
                               {/* CONTENT */}
-                              <div className="relative space-y-4">
-                                <h4 className="font-bold text-lg leading-tight line-clamp-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                              <div className="relative space-y-3">
+                                <h4 className="font-bold text-base leading-snug line-clamp-2 text-text group-hover:text-primary transition-colors">
                                   {article.title}
                                 </h4>
 
-                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
+                                <p className="text-xs text-text-muted line-clamp-3 leading-relaxed">
                                   {article.summary}
                                 </p>
 
-                                <div className="pt-4 border-t border-gray-100 dark:border-white/10 flex items-center justify-between">
-                                  <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                                <div className="pt-3 border-t border-border flex items-center justify-between">
+                                  <div className="text-[11px] text-text-muted space-y-0.5">
                                     {article.company !== "Various" && (
-                                      <p className="font-semibold text-gray-900 dark:text-white">
+                                      <p className="font-semibold text-text">
                                         {article.company}
                                       </p>
                                     )}
@@ -1125,8 +1270,8 @@ export default function Dashboard() {
                                     </p>
                                   </div>
 
-                                  <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-500/10 transition">
-                                    <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition" />
+                                  <div className="h-8 w-8 rounded-lg bg-surface-2 text-text-muted flex items-center justify-center group-hover:text-primary group-hover:bg-primary-soft transition-colors">
+                                    <ExternalLink className="h-3.5 w-3.5" />
                                   </div>
                                 </div>
                               </div>
@@ -1140,33 +1285,33 @@ export default function Dashboard() {
               )}
 
               {/* ERROR */}
-              {newsError && <p className="text-center text-sm text-red-500 mt-5">{newsError}</p>}
+              {newsError && <p className="text-center text-xs text-danger mt-4">{newsError}</p>}
             </div>
 
             <div>
               {/* COMPANIES */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h3 className="text-xl font-bold text-text">
                     Recommended{" "}
-                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <span className="text-primary ml-1">
                       Companies
                     </span>
                   </h3>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-text-muted mt-0.5">
                     Explore top companies & prepare for your dream job
                   </p>
                 </div>
 
-                <Badge className="w-fit bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 px-4 py-1 rounded-full shadow-sm">
+                <Badge className="w-fit bg-primary text-on-primary border-0 px-2.5 py-1 rounded-md text-xs font-semibold shadow-soft">
                   Top Hiring
                 </Badge>
               </div>
 
-              <div className="space-y-5 overflow-hidden">
+              <div className="space-y-4 overflow-hidden">
                 {/* 🔵 ROW 1 (Left → Right) */}
-                <div className="flex gap-5 animate-scroll-left">
+                <div className="flex gap-4 animate-scroll-left">
                   {[...companies, ...companies].map((company, index) => (
                     <div
                       key={index}
@@ -1177,16 +1322,14 @@ export default function Dashboard() {
 
                         navigate(`/company/${company.name.toLowerCase()}`);
                       }}
-                      className="min-w-[330px] cursor-pointer"
+                      className="min-w-[300px] cursor-pointer"
                     >
-                      <Card className="group border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                        <div className="absolute inset-0 bg-blue-50 dark:bg-blue-500/5 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-
-                        <CardContent className="relative p-5 flex items-center justify-between">
+                      <Card className="group border border-border bg-surface rounded-xl shadow-soft hover:shadow-subtle hover:border-primary/40 transition-colors overflow-hidden">
+                        <CardContent className="relative p-4 flex items-center justify-between">
                           {/* LEFT */}
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-3.5">
                             {/* LOGO */}
-                            <div className="h-14 w-14 rounded-2xl bg-gray-100 dark:bg-gray-800 p-3 flex items-center justify-center shadow-sm">
+                            <div className="h-12 w-12 rounded-xl bg-surface-2 border border-border p-2 flex items-center justify-center shadow-subtle shrink-0">
                               <img
                                 src={company.logo}
                                 alt={company.name}
@@ -1196,22 +1339,22 @@ export default function Dashboard() {
 
                             {/* TEXT */}
                             <div>
-                              <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                              <h3 className="font-bold text-sm text-text">
                                 {company.name}
                               </h3>
 
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <p className="text-xs text-text-muted">
                                 {company.role}
                               </p>
 
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className="text-yellow-500">⭐</span>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-accent text-xs">⭐</span>
 
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <span className="text-xs font-semibold text-text">
                                   {company.rating}
                                 </span>
 
-                                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400">
+                                <span className="text-[11px] px-2 py-0.5 rounded-md bg-primary-soft text-primary font-medium">
                                   Hiring
                                 </span>
                               </div>
@@ -1219,8 +1362,8 @@ export default function Dashboard() {
                           </div>
 
                           {/* RIGHT */}
-                          <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-500/10 transition">
-                            <ExternalLink className="h-5 w-5 text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition" />
+                          <div className="h-8 w-8 rounded-lg bg-surface-2 text-text-muted flex items-center justify-center group-hover:text-primary group-hover:bg-primary-soft transition-colors shrink-0">
+                            <ExternalLink className="h-4 w-4" />
                           </div>
                         </CardContent>
                       </Card>
@@ -1242,13 +1385,11 @@ export default function Dashboard() {
                       }}
                       className="min-w-[330px] cursor-pointer"
                     >
-                      <Card className="group border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                        <div className="absolute inset-0 bg-purple-50 dark:bg-purple-500/5 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-
+                      <Card className="group border border-border bg-surface rounded-xl shadow-soft hover:shadow-subtle hover:border-primary/40 transition-all duration-200 overflow-hidden">
                         <CardContent className="relative p-5 flex items-center justify-between">
                           {/* LEFT */}
                           <div className="flex items-center gap-4">
-                            <div className="h-14 w-14 rounded-2xl bg-gray-100 dark:bg-gray-800 p-3 flex items-center justify-center shadow-sm">
+                            <div className="h-12 w-12 rounded-xl bg-surface-2 border border-border p-2.5 flex items-center justify-center">
                               <img
                                 src={company.logo}
                                 alt={company.name}
@@ -1257,22 +1398,22 @@ export default function Dashboard() {
                             </div>
 
                             <div>
-                              <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                              <h3 className="font-semibold text-base text-text">
                                 {company.name}
                               </h3>
 
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <p className="text-xs text-text-muted">
                                 {company.role}
                               </p>
 
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className="text-yellow-500">⭐</span>
+                              <div className="flex items-center gap-2 mt-1.5">
+                                <span className="text-accent text-xs">⭐</span>
 
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <span className="text-xs font-medium text-text-muted">
                                   {company.rating}
                                 </span>
 
-                                <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400">
+                                <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent-soft text-accent font-medium">
                                   Popular
                                 </span>
                               </div>
@@ -1280,8 +1421,8 @@ export default function Dashboard() {
                           </div>
 
                           {/* RIGHT */}
-                          <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-purple-100 dark:group-hover:bg-purple-500/10 transition">
-                            <ExternalLink className="h-5 w-5 text-gray-500 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition" />
+                          <div className="h-9 w-9 rounded-lg bg-surface-2 flex items-center justify-center group-hover:bg-primary-soft transition-colors">
+                            <ExternalLink className="h-4 w-4 text-text-subtle group-hover:text-primary transition-colors" />
                           </div>
                         </CardContent>
                       </Card>
@@ -1290,7 +1431,6 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
         </main>
         <ContactUs />
         <SuccessStories />

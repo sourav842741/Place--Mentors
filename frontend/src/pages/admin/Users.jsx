@@ -81,11 +81,11 @@ const Users = () => {
     const statusIcon = getStatusIcon(user);
     const roleLabel = user.isSuperAdmin ? "OWNER" : user.role === "admin" ? "ADMIN" : "USER";
     return (
-      <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      <div className="bg-surface border border-border rounded-2xl p-5 hover:shadow-md transition-all duration-200 text-text">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
           <div className="flex items-center gap-4 flex-shrink-0">
             <div className="relative">
-              <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg ring-2 ring-white dark:ring-gray-800">
+              <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md ring-2 ring-border text-white">
                 {user.avatar || user.profilePic || user.photoURL ? (
                   <img
                     src={user.avatar || user.profilePic || user.photoURL}
@@ -106,10 +106,10 @@ const Users = () => {
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate">
+            <h3 className="font-bold text-lg text-text truncate">
               {user.fullName || user.name}
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{user.email}</p>
+            <p className="text-sm text-text-muted truncate">{user.email}</p>
             <div className="flex flex-wrap gap-2 mt-2">
               <Badge
                 className={`${user.isSuperAdmin ? "bg-gradient-to-r from-purple-600 to-pink-600" : user.role === "admin" ? "bg-gradient-to-r from-orange-500 to-red-500" : "bg-gradient-to-r from-emerald-500 to-teal-600"} text-white px-3 py-1 shadow-md`}
@@ -397,132 +397,131 @@ const Users = () => {
   }
 
   return (
-    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-slate-50/80 via-white/80 to-indigo-50/80 dark:from-slate-950/80 dark:via-slate-900/80 dark:to-slate-800/80">
-      <div className="max-w-7xl mx-auto space-y-8 lg:ml-64 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(var(--tw-gradient-stops))] from-indigo-200/30 to-transparent dark:from-indigo-900/20 pointer-events-none rounded-3xl blur-xl -z-10"></div>
+    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-8 bg-bg text-text transition-colors duration-200">
+      <div className="max-w-7xl mx-auto space-y-8 lg:ml-72 relative">
         {/* HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent dark:from-white dark:to-gray-200 mb-2 drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-text mb-2">
               User Management
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
+            <p className="text-lg sm:text-xl text-text-muted">
               Advanced controls and real-time monitoring ({filteredUsers.length} shown)
             </p>
           </div>
-          <Badge className="text-lg px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-emerald-500/25 transition-all duration-300 border-0">
+          <Badge className="text-base px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl shadow-md border-0">
             {allUsers?.length || 0} <span className="ml-1 font-mono">Total Users</span>
           </Badge>
         </div>
 
         {/* STATS CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="group border-0 shadow-xl hover:shadow-2xl rounded-3xl bg-gradient-to-br from-indigo-500/10 to-purple-600/10 dark:from-indigo-500/20 dark:to-purple-600/20 backdrop-blur-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:border-indigo-200">
-            <CardContent className="p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <Card className="border border-border shadow-sm rounded-2xl bg-surface text-text hover:shadow-md transition-all duration-200">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <UsersIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                <div className="w-12 h-12 bg-primary-soft text-primary rounded-xl flex items-center justify-center">
+                  <UsersIcon className="w-6 h-6" />
                 </div>
                 {loading ? (
                   <Skeleton className="w-20 h-8 rounded-xl" />
                 ) : (
-                  <div className="text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-700 bg-clip-text text-transparent">
+                  <div className="text-3xl font-black text-text">
                     {totalUsers}
                   </div>
                 )}
               </div>
-              <CardTitle className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+              <CardTitle className="text-lg font-bold text-text mb-1">
                 Total Users
               </CardTitle>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">All registered accounts</p>
+              <p className="text-text-muted text-sm">All registered accounts</p>
             </CardContent>
           </Card>
 
-          <Card className="group border-0 shadow-xl hover:shadow-2xl rounded-3xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 backdrop-blur-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:border-emerald-200">
-            <CardContent className="p-8">
+          <Card className="border border-border shadow-sm rounded-2xl bg-surface text-text hover:shadow-md transition-all duration-200">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <UserCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                <div className="w-12 h-12 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center">
+                  <UserCheck className="w-6 h-6" />
                 </div>
                 {loading ? (
                   <Skeleton className="w-20 h-8 rounded-xl" />
                 ) : (
-                  <div className="text-3xl font-black bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
+                  <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
                     {onlineUsers}
                   </div>
                 )}
               </div>
-              <CardTitle className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+              <CardTitle className="text-lg font-bold text-text mb-1">
                 Online Now
               </CardTitle>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Active sessions</p>
+              <p className="text-text-muted text-sm">Active sessions</p>
             </CardContent>
           </Card>
 
-          <Card className="group border-0 shadow-xl hover:shadow-2xl rounded-3xl bg-gradient-to-br from-orange-500/10 to-red-500/10 dark:from-orange-500/20 dark:to-red-500/20 backdrop-blur-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:border-orange-200">
-            <CardContent className="p-8">
+          <Card className="border border-border shadow-sm rounded-2xl bg-surface text-text hover:shadow-md transition-all duration-200">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Shield className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                <div className="w-12 h-12 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center">
+                  <Shield className="w-6 h-6" />
                 </div>
                 {loading ? (
                   <Skeleton className="w-20 h-8 rounded-xl" />
                 ) : (
-                  <div className="text-3xl font-black bg-gradient-to-r from-orange-600 to-red-700 bg-clip-text text-transparent">
+                  <div className="text-3xl font-black text-amber-600 dark:text-amber-400">
                     {adminUsers}
                   </div>
                 )}
               </div>
-              <CardTitle className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+              <CardTitle className="text-lg font-bold text-text mb-1">
                 Admin Users
               </CardTitle>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Administrators & owners</p>
+              <p className="text-text-muted text-sm">Administrators & owners</p>
             </CardContent>
           </Card>
 
-          <Card className="group border-0 shadow-xl hover:shadow-2xl rounded-3xl bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/20 dark:to-rose-500/20 backdrop-blur-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:border-red-200">
-            <CardContent className="p-8">
+          <Card className="border border-border shadow-sm rounded-2xl bg-surface text-text hover:shadow-md transition-all duration-200">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <UserX className="w-6 h-6 text-red-600 dark:text-red-400" />
+                <div className="w-12 h-12 bg-red-500/10 text-red-600 dark:text-red-400 rounded-xl flex items-center justify-center">
+                  <UserX className="w-6 h-6" />
                 </div>
                 {loading ? (
                   <Skeleton className="w-20 h-8 rounded-xl" />
                 ) : (
-                  <div className="text-3xl font-black bg-gradient-to-r from-red-600 to-rose-700 bg-clip-text text-transparent">
+                  <div className="text-3xl font-black text-red-600 dark:text-red-400">
                     {bannedUsers}
                   </div>
                 )}
               </div>
-              <CardTitle className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+              <CardTitle className="text-lg font-bold text-text mb-1">
                 Banned Users
               </CardTitle>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Restricted accounts</p>
+              <p className="text-text-muted text-sm">Restricted accounts</p>
             </CardContent>
           </Card>
         </div>
 
         {/* CONTROLS BAR */}
-        <Card className="border-0 shadow-2xl rounded-3xl bg-gradient-to-br from-white/80 to-indigo-50/80 dark:from-slate-900/80 dark:to-slate-800/80 backdrop-blur-xl">
-          <CardContent className="p-6">
+        <Card className="border border-border shadow-sm rounded-2xl bg-surface text-text">
+          <CardContent className="p-5">
             <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-subtle" />
                 <Input
                   placeholder="Search by name or email..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-11 pr-4 h-12 rounded-2xl bg-white/50 dark:bg-slate-800/50 border-0 shadow-lg ring-2 ring-transparent focus-visible:ring-indigo-500/50 focus-visible:shadow-xl transition-all"
+                  className="pl-10 pr-4 h-11 rounded-xl bg-surface-2 border border-border text-text placeholder:text-text-subtle focus-visible:ring-primary"
                 />
               </div>
 
               {/* Filters */}
               <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-48 h-12 rounded-2xl bg-white/50 dark:bg-slate-800/50 border-0 shadow-lg">
+                <SelectTrigger className="w-48 h-11 rounded-xl bg-surface-2 border border-border text-text">
                   <SelectValue placeholder="Filter users" />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl">
+                <SelectContent className="rounded-xl bg-surface border border-border text-text shadow-xl">
                   <SelectItem value="all">All Users</SelectItem>
                   <SelectItem value="admin">Admins</SelectItem>
                   <SelectItem value="user">Users</SelectItem>
@@ -536,13 +535,14 @@ const Users = () => {
               <div className="flex gap-3">
                 <Button
                   onClick={handleExport}
-                  className="gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg h-12 px-6 rounded-2xl"
+                  variant="outline"
+                  className="gap-2 border-border text-text hover:bg-surface-2 h-11 px-5 rounded-xl font-medium"
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 h-4" />
                   Export CSV
                 </Button>
-                <Button className="h-12 px-6 rounded-2xl shadow-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700">
-                  <UserPlus className="w-5 h-5 mr-2" />
+                <Button className="h-11 px-5 rounded-xl shadow-md bg-primary hover:bg-primary-hover text-white font-medium">
+                  <UserPlus className="w-4 h-4 mr-2" />
                   Invite User
                 </Button>
               </div>
@@ -551,14 +551,14 @@ const Users = () => {
         </Card>
 
         {/* MAIN TABLE */}
-        <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden">
-          <CardHeader className="px-8 py-6 border-b bg-gradient-to-r from-slate-50 to-indigo-50 dark:from-slate-900/50 dark:to-slate-800/50">
+        <Card className="border border-border shadow-sm rounded-2xl overflow-hidden bg-surface text-text">
+          <CardHeader className="px-6 py-5 border-b border-border bg-surface-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl font-bold flex items-center gap-3">
-                <UsersIcon className="w-8 h-8" />
+              <CardTitle className="text-xl font-bold flex items-center gap-3 text-text">
+                <UsersIcon className="w-6 h-6 text-primary" />
                 {filteredUsers.length} Users • Page {page} of {totalPages}
               </CardTitle>
-              {loading && <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />}
+              {loading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
             </div>
           </CardHeader>
           <CardContent className="p-0">
@@ -619,27 +619,27 @@ const Users = () => {
             ) : (
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader className="sticky top-0 bg-gradient-to-r from-slate-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 backdrop-blur-sm z-10">
-                    <TableRow className="border-b-2 border-gray-200 dark:border-gray-800">
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-64">
+                  <TableHeader className="sticky top-0 bg-surface-2 border-b border-border z-10">
+                    <TableRow className="border-b border-border">
+                      <TableHead className="font-bold text-text w-64">
                         User
                       </TableHead>
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-28">
+                      <TableHead className="font-bold text-text w-28">
                         Role
                       </TableHead>
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-20 text-center">
+                      <TableHead className="font-bold text-text w-20 text-center">
                         Level
                       </TableHead>
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-24 text-right">
+                      <TableHead className="font-bold text-text w-24 text-right">
                         Credits
                       </TableHead>
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-28">
+                      <TableHead className="font-bold text-text w-28">
                         Status
                       </TableHead>
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-32">
+                      <TableHead className="font-bold text-text w-32">
                         Last Seen
                       </TableHead>
-                      <TableHead className="font-bold text-gray-900 dark:text-white w-48 text-center">
+                      <TableHead className="font-bold text-text w-48 text-center">
                         Actions
                       </TableHead>
                     </TableRow>
@@ -656,12 +656,12 @@ const Users = () => {
                       return (
                         <TableRow
                           key={user._id}
-                          className="group hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-all duration-200 border-b hover:border-indigo-200 dark:hover:border-indigo-800"
+                          className="group hover:bg-surface-2 transition-colors duration-150 border-b border-border"
                         >
                           <TableCell>
                             <div className="flex items-center gap-4">
                               <div className="relative">
-                                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg ring-2 ring-white dark:ring-gray-800">
+                                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md ring-2 ring-border text-white">
                                   {user.avatar || user.profilePic || user.photoURL ? (
                                     <img
                                       src={user.avatar || user.profilePic || user.photoURL}
@@ -681,10 +681,10 @@ const Users = () => {
                                 <div className="absolute -top-1 -right-1">{statusIcon}</div>
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className="font-semibold text-sm group-hover:text-indigo-700 dark:group-hover:text-indigo-400 truncate">
+                                <p className="font-semibold text-sm text-text group-hover:text-primary truncate transition-colors">
                                   {user.fullName || user.name}
                                 </p>
-                                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                <p className="text-xs text-text-muted truncate">{user.email}</p>
                               </div>
                             </div>
                           </TableCell>
@@ -844,8 +844,8 @@ const Users = () => {
 
           {/* PAGINATION */}
           {totalPages > 1 && (
-            <div className="px-8 py-6 bg-gradient-to-r from-slate-50 to-indigo-50 dark:from-slate-900/50 dark:to-slate-800/50 border-t flex items-center justify-between">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="px-6 py-4 bg-surface-2 border-t border-border flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+              <div className="text-sm text-text-muted">
                 Showing {(page - 1) * PER_PAGE + 1} to{" "}
                 {Math.min(page * PER_PAGE, filteredUsers.length)} of {filteredUsers.length} users
               </div>
@@ -855,9 +855,9 @@ const Users = () => {
                   size="sm"
                   onClick={() => setPage((p) => Math.max(p - 1, 1))}
                   disabled={page === 1}
-                  className="h-10 w-10 p-0 rounded-xl"
+                  className="h-9 w-9 p-0 rounded-xl border-border text-text hover:bg-surface"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <div className="flex gap-1">
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -868,7 +868,11 @@ const Users = () => {
                         variant={pageNum === page ? "default" : "outline"}
                         size="sm"
                         onClick={() => setPage(pageNum)}
-                        className={`h-10 px-4 rounded-xl font-mono min-w-[2.5rem] ${pageNum === page ? "bg-indigo-600 hover:bg-indigo-700 shadow-lg" : ""}`}
+                        className={`h-9 px-3 rounded-xl font-mono min-w-[2.25rem] text-xs ${
+                          pageNum === page
+                            ? "bg-primary hover:bg-primary-hover text-white shadow-sm font-bold"
+                            : "border-border text-text hover:bg-surface"
+                        }`}
                       >
                         {pageNum}
                       </Button>
@@ -880,9 +884,9 @@ const Users = () => {
                   size="sm"
                   onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                   disabled={page === totalPages}
-                  className="h-10 w-10 p-0 rounded-xl"
+                  className="h-9 w-9 p-0 rounded-xl border-border text-text hover:bg-surface"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -902,24 +906,25 @@ const Users = () => {
         open={banModal.open}
         onOpenChange={(open) => !open && setBanModal({ open: false, userId: null, userName: "" })}
       >
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md rounded-2xl bg-surface border border-border text-text shadow-2xl">
           <DialogHeader>
-            <DialogTitle>Ban {banModal.userName}</DialogTitle>
-            <DialogDescription>Enter reason for banning this user.</DialogDescription>
+            <DialogTitle className="text-text">Ban {banModal.userName}</DialogTitle>
+            <DialogDescription className="text-text-muted">Enter reason for banning this user.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-3">
-            <Label htmlFor="banReason">Ban Reason</Label>
+            <Label htmlFor="banReason" className="text-text">Ban Reason</Label>
             <Textarea
               id="banReason"
               value={banReason}
               onChange={(e) => setBanReason(e.target.value)}
               placeholder="Spam / Abuse / Policy violation..."
-              className="min-h-[120px]"
+              className="min-h-[120px] bg-surface-2 border-border text-text"
             />
           </div>
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
+              className="border-border text-text hover:bg-surface-2"
               onClick={() => {
                 setBanReason("");
                 setBanModal({ open: false, userId: null, userName: "" });
@@ -957,20 +962,21 @@ const Users = () => {
         open={unbanModal.open}
         onOpenChange={(open) => !open && setUnbanModal({ open: false, userId: null, userName: "" })}
       >
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md rounded-2xl bg-surface border border-border text-text shadow-2xl">
           <DialogHeader>
-            <DialogTitle>Unban {unbanModal.userName}</DialogTitle>
-            <DialogDescription>Restore account access.</DialogDescription>
+            <DialogTitle className="text-text">Unban {unbanModal.userName}</DialogTitle>
+            <DialogDescription className="text-text-muted">Restore account access.</DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
+              className="border-border text-text hover:bg-surface-2"
               onClick={() => setUnbanModal({ open: false, userId: null, userName: "" })}
             >
               Cancel
             </Button>
             <Button
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
               onClick={async () => {
                 try {
                   await dispatch(unbanUser(unbanModal.userId)).unwrap();

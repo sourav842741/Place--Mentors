@@ -60,10 +60,10 @@ const FruitboxFlex = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen pt-16 lg:pl-64 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
-        <div className="text-center p-10 bg-white/70 dark:bg-slate-900/70 rounded-3xl shadow-2xl backdrop-blur-xl">
-          <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6" />
-          <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">
+      <div className="min-h-screen pt-20 lg:pl-64 bg-bg flex items-center justify-center">
+        <div className="text-center p-8 bg-surface rounded-xl border border-border shadow-subtle">
+          <div className="w-12 h-12 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm font-medium text-text-muted">
             Loading Fruitbox...
           </p>
         </div>
@@ -75,37 +75,42 @@ const FruitboxFlex = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen pt-20 lg:pl-64 bg-gradient-to-br from-slate-50/30 via-blue-50/20 to-indigo-100/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-all duration-500">
+      <div className="min-h-screen pt-20 lg:pl-64 bg-bg text-text transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-6">
           {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-300 bg-clip-text text-transparent">
+              <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-text">
                 Fruitbox Flex
               </h1>
 
-              <p className="text-lg mt-2 text-slate-700 dark:text-slate-300">
-                Master CSS Flexbox through interactive fruit puzzles
+              <p className="text-xs sm:text-sm mt-1 text-text-muted">
+                Master CSS Flexbox through interactive visual puzzles
               </p>
             </div>
 
             {/* Stats */}
-            <div className="flex items-center gap-4 bg-white/80 dark:bg-slate-900/80 rounded-2xl p-4 shadow-xl backdrop-blur border border-slate-200/50 dark:border-slate-700/50 flex-wrap">
-              <div className="font-bold text-lg">
-                {currentLevelId}/{levels.length}
+            <div className="flex items-center gap-3 bg-surface rounded-xl p-3 shadow-subtle border border-border flex-wrap">
+              <div className="font-bold text-sm text-text">
+                Level {currentLevelId}/{levels.length}
               </div>
 
-              <div className="w-28 h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+              <div className="w-24 sm:w-28 h-2 rounded-full bg-surface-2 overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-500 to-green-600 transition-all duration-500"
+                  className="h-full bg-primary transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
 
-              <div className="font-semibold text-sm">{progress?.totalXP || 0} XP</div>
+              <div className="font-semibold text-xs text-accent">{progress?.totalXP || 0} XP</div>
 
-              <Button variant="destructive" size="sm" onClick={resetProgress} className="h-10 px-4">
-                <RefreshCw className="w-4 h-4 mr-2" />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetProgress}
+                className="h-8 px-2.5 rounded-lg border-danger/30 text-danger hover:bg-danger-soft text-xs font-medium cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5 mr-1" />
                 Reset
               </Button>
             </div>

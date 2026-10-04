@@ -21,6 +21,7 @@ import { toast } from "sonner";
 
 import useAuth from "../hooks/useAuth";
 import AuthLayout from "../components/AuthLayout";
+import useTheme from "../hooks/useTheme";
 
 import {
   safeTrack,
@@ -33,11 +34,11 @@ export default function Login() {
   const navigate = useNavigate();
   const { login, googleLogin, verify2FA } = useAuth();
   const user = useSelector((state) => state.user.user);
+  const { isDark, toggleTheme } = useTheme();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const [banPopup, setBanPopup] = useState("");
 
   const [form, setForm] = useState({
@@ -54,29 +55,7 @@ export default function Login() {
   const [rememberDevice, setRememberDevice] = useState(false);
   const [useRecoveryCode, setUseRecoveryCode] = useState(false);
 
-  /* ===============================
-     LOAD THEME
-  ================================= */
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
-  }, []);
-
-  /* ===============================
-     TOGGLE THEME
-  ================================= */
-  const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
-    setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
-  };
 
   /* ===============================
      CONTACT ADMIN CLICK HANDLER
@@ -387,126 +366,106 @@ export default function Login() {
   return (
     <AuthLayout>
       {banPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-          {" "}
-          <div className="relative w-full max-w-lg overflow-hidden rounded-[28px] border border-white/20 dark:border-white/10 bg-white dark:bg-gray-900 shadow-2xl animate-in zoom-in-95 duration-300">
-            {" "}
-            {/* TOP GLOW */}{" "}
-            <div className="h-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500" />{" "}
-            {/* CLOSE */}{" "}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="relative w-full max-w-lg overflow-hidden rounded-xl border border-border bg-surface shadow-subtle animate-in zoom-in-95 duration-200">
+            <div className="h-1.5 w-full bg-danger" />
             <button
               onClick={() => setBanPopup("")}
-              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-surface-2 transition text-text-subtle hover:text-text cursor-pointer"
             >
-              {" "}
-              <X className="w-5 h-5 text-gray-500 dark:text-gray-300" />{" "}
-            </button>{" "}
+              <X className="w-5 h-5" />
+            </button>
             <div className="p-8 text-center">
-              {" "}
-              {/* ICON */}{" "}
-              <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-red-100 dark:bg-red-900/20">
-                {" "}
-                <ShieldAlert className="h-10 w-10 text-red-500" />{" "}
-              </div>{" "}
-              {/* TITLE */}{" "}
-              <h2 className="text-3xl font-black text-gray-900 dark:text-white">
-                {" "}
-                Account Suspended{" "}
-              </h2>{" "}
-              <p className="mt-2 text-gray-500 dark:text-gray-400">
-                {" "}
-                Access has been restricted temporarily.{" "}
-              </p>{" "}
-              {/* REASON */}{" "}
-              <div className="mt-6 rounded-2xl bg-gray-100 dark:bg-gray-800 p-5 text-left">
-                {" "}
-                <p className="text-sm leading-7 text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
-                  {" "}
-                  {banPopup}{" "}
-                </p>{" "}
-              </div>{" "}
-              {/* BUTTONS */}{" "}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-                {" "}
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-danger-soft">
+                <ShieldAlert className="h-8 w-8 text-danger" />
+              </div>
+              <h2 className="text-2xl font-bold text-text">
+                Account Suspended
+              </h2>
+              <p className="mt-1.5 text-sm text-text-muted">
+                Access has been restricted temporarily.
+              </p>
+              <div className="mt-5 rounded-lg bg-surface-2 border border-border p-4 text-left">
+                <p className="text-sm leading-relaxed text-text whitespace-pre-wrap">
+                  {banPopup}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-5">
                 <Button
                   onClick={handleContactAdmin}
-                  className="h-12 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
+                  className="h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-sm shadow-soft"
                 >
-                  {" "}
-                  <Mail className="w-4 h-4 mr-2" /> Contact Admin{" "}
-                </Button>{" "}
+                  <Mail className="w-4 h-4 mr-2" /> Contact Admin
+                </Button>
                 <Button
                   onClick={() => setBanPopup("")}
                   variant="outline"
-                  className="h-12 rounded-2xl"
+                  className="h-10 rounded-lg border-border text-text hover:bg-surface-2 text-sm"
                 >
-                  {" "}
-                  Close{" "}
-                </Button>{" "}
-              </div>{" "}
-            </div>{" "}
-          </div>{" "}
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}{" "}
-      {/* ===============================        THEME TOGGLE    ================================= */}{" "}
+      {/* THEME TOGGLE */}
       <div className="absolute top-5 right-5 z-20">
-        {" "}
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="rounded-xl hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="h-9 w-9 rounded-lg border border-border bg-surface text-text hover:bg-surface-2 transition-colors cursor-pointer"
+          aria-label="Toggle theme"
         >
-          {" "}
-          {isDark ? <Sun /> : <Moon />}{" "}
-        </Button>{" "}
-      </div>{" "}
-      {/* ===============================        LOGIN CARD / 2FA CHALLENGE    ================================= */}{" "}
-      <div className="w-full max-w-md rounded-[28px] border border-white/20 dark:border-white/10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl p-7 space-y-5">
-        {" "}
+          {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-text-muted" />}
+        </Button>
+      </div>
+
+      <div className="w-full space-y-4">
         {twoFactorMode ? (
           <>
             {/* 2FA CHALLENGE UI */}
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center shadow-lg">
-                <Shield className="w-10 h-10 text-amber-600 dark:text-amber-400" />
+              <div className="w-14 h-14 rounded-xl bg-accent-soft text-accent flex items-center justify-center">
+                <Shield className="w-7 h-7 text-accent" />
               </div>
-              <h2 className="mt-4 text-2xl font-black text-gray-900 dark:text-white">
+              <h2 className="mt-3 text-2xl font-bold text-text">
                 Two-Factor Authentication
               </h2>
               <div className="mt-2 flex items-center gap-2">
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold text-white ${
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                     isSuperAdmin2FA
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600"
+                      ? "bg-accent-soft text-accent"
                       : twoFactorRole === "admin"
-                        ? "bg-gradient-to-r from-orange-500 to-red-500"
-                        : "bg-gradient-to-r from-emerald-500 to-teal-600"
+                        ? "bg-primary-soft text-primary"
+                        : "bg-success-soft text-success"
                   }`}
                 >
                   {isSuperAdmin2FA ? "SUPER ADMIN" : twoFactorRole?.toUpperCase()}
                 </span>
               </div>
               {isSuperAdmin2FA && (
-                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400 font-medium text-center">
+                <p className="mt-2 text-xs text-accent font-medium text-center">
                   High privilege account security verification required.
                 </p>
               )}
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <label className="text-xs font-medium text-text-muted flex items-center gap-1.5">
                   {useRecoveryCode ? (
-                    <KeyRound className="w-4 h-4" />
+                    <KeyRound className="w-3.5 h-3.5" />
                   ) : (
-                    <Smartphone className="w-4 h-4" />
+                    <Smartphone className="w-3.5 h-3.5" />
                   )}
                   {useRecoveryCode ? "Recovery Code" : "Authenticator Code"}
                 </label>
                 <button
                   onClick={() => setUseRecoveryCode(!useRecoveryCode)}
-                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+                  className="text-xs text-primary hover:text-primary-hover hover:underline"
                 >
                   {useRecoveryCode ? "Use authenticator instead" : "Use recovery code"}
                 </button>
@@ -523,10 +482,10 @@ export default function Login() {
                       : e.target.value.replace(/\D/g, "")
                   )
                 }
-                className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 text-center text-lg tracking-widest font-mono"
+                className="h-10 rounded-lg bg-surface border border-border text-center text-lg tracking-widest font-mono text-text"
                 maxLength={useRecoveryCode ? 8 : 6}
               />
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 pt-1">
                 <Checkbox
                   id="remember"
                   checked={rememberDevice}
@@ -534,7 +493,7 @@ export default function Login() {
                 />
                 <label
                   htmlFor="remember"
-                  className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer"
+                  className="text-xs text-text-muted cursor-pointer"
                 >
                   Remember this browser for 7 days
                 </label>
@@ -544,14 +503,14 @@ export default function Login() {
             <Button
               onClick={handleVerify2FA}
               disabled={loading}
-              className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-90 text-white font-semibold"
+              className="w-full h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-sm shadow-soft cursor-pointer"
             >
               {loading ? "Verifying..." : "Verify & Sign In"}
             </Button>
 
             <button
               onClick={handleBackToLogin}
-              className="w-full text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition"
+              className="w-full text-xs text-text-muted hover:text-text transition-colors text-center cursor-pointer"
             >
               ← Back to login
             </button>
@@ -560,47 +519,47 @@ export default function Login() {
           <>
             {/* NORMAL LOGIN UI */}
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center shadow-lg">
-                <img
-                  src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
-                  className="w-12 h-12"
-                />
+              <div className="w-12 h-12 rounded-xl bg-primary-soft text-primary flex items-center justify-center font-bold text-sm tracking-wider">
+                PM
               </div>
-              <h2 className="mt-4 text-3xl font-black text-gray-900 dark:text-white">
-                Welcome Back 👋
+              <h2 className="mt-3 text-2xl font-bold text-text">
+                Welcome Back
               </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Sign in to continue your journey
+              <p className="mt-1 text-xs text-text-muted">
+                Sign in to continue your placement preparation
               </p>
             </div>
 
-            <Input
-              data-private
-              placeholder="Enter email"
-              className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0"
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-
-            <div className="relative">
+            <div className="space-y-3 pt-2">
               <Input
                 data-private
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter password"
-                className="h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 pr-10"
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                type="email"
+                placeholder="Enter email"
+                className="h-10 rounded-lg bg-surface border border-border text-text text-sm"
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-3.5 cursor-pointer text-gray-500"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </span>
+
+              <div className="relative">
+                <Input
+                  data-private
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter password"
+                  className="h-10 rounded-lg bg-surface border border-border text-text text-sm pr-10"
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 cursor-pointer text-text-subtle hover:text-text"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </span>
+              </div>
             </div>
 
             <div className="text-right">
               <Link
                 to="/forgot-password"
-                className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="text-xs text-primary hover:text-primary-hover hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -609,16 +568,16 @@ export default function Login() {
             <Button
               onClick={handleLogin}
               disabled={loading}
-              className="w-full h-12 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:opacity-90 text-white font-semibold"
+              className="w-full h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-sm shadow-soft cursor-pointer"
             >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
 
-            <div className="relative text-center">
+            <div className="relative text-center py-1">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t dark:border-gray-700"></div>
+                <div className="w-full border-t border-border"></div>
               </div>
-              <span className="relative px-3 text-sm bg-white dark:bg-gray-900 text-gray-400">
+              <span className="relative px-3 text-xs bg-surface text-text-subtle">
                 OR
               </span>
             </div>
@@ -626,18 +585,17 @@ export default function Login() {
             <button
               onClick={handleGoogleLogin}
               disabled={googleLoading || loading}
-              className="w-full h-12 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-10 rounded-lg border border-border bg-surface hover:bg-surface-2 text-text flex items-center justify-center gap-2.5 text-xs font-medium transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" />
-
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
               {googleLoading ? "Connecting..." : "Continue with Google"}
             </button>
 
-            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-center text-text-muted pt-2">
               Don’t have an account?{" "}
               <Link
                 to="/signup"
-                className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="font-semibold text-primary hover:text-primary-hover hover:underline"
               >
                 Sign Up
               </Link>

@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -14,14 +13,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-
-import { ArrowLeft, TrendingUp, Brain, Award, History, RotateCcw, Target } from "lucide-react";
-
+import {
+  ArrowLeft,
+  TrendingUp,
+  Brain,
+  Award,
+  History,
+  RotateCcw,
+  Target,
+  Sparkles,
+  Loader2,
+  CheckCircle2,
+  FileCheck2,
+} from "lucide-react";
 import { toast } from "sonner";
 import predictionApi from "../services/predictionApi";
 import { trackEvent } from "../hooks/useAnalytics";
 
-const PlacementPredictor = () => {
+export default function PlacementPredictor() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -54,9 +63,7 @@ const PlacementPredictor = () => {
   const fetchHistory = async () => {
     try {
       setHistoryLoading(true);
-
       const res = await predictionApi.getHistory();
-
       setHistory(res.data || []);
     } catch (error) {
       console.log(error);
@@ -75,299 +82,440 @@ const PlacementPredictor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.collegeTier || !formData.cgpa || !formData.skillsLevel) {
+      toast.error("Please fill in the required fields (College Tier, CGPA, Skills)");
+      return;
+    }
+
     try {
       setLoading(true);
       trackEvent("placement_predictor_used");
 
       const res = await predictionApi.predictPlacement(formData);
-
-      setResult(res.data.prediction);
-
-      toast.success("Prediction generated successfully");
-
+      setResult(res.data?.prediction);
+      toast.success("Placement prediction generated!");
       fetchHistory();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Prediction failed");
+      toast.error(error?.response?.data?.message || "Prediction calculation failed");
     } finally {
       setLoading(false);
     }
   };
 
   const useOldPrediction = (item) => {
-    setFormData(item.inputs);
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (item.inputs) {
+      setFormData(item.inputs);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.info("Loaded previous assessment inputs");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-bg text-text transition-colors duration-200">
       <Navbar />
 
-      <div className="lg:pl-64 px-4 py-8 max-w-7xl mx-auto">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-16 max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              className="mb-2 text-xs border border-border bg-surface hover:bg-surface-2 text-text rounded-lg cursor-pointer h-8 px-3"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Back
+            </Button>
 
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-            Placement Predictor AI
-          </h1>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
+                Placement Predictor AI
+              </h1>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-soft text-primary border border-primary/20">
+                <Sparkles className="w-3 h-3 animate-pulse" /> ML Engine
+              </span>
+            </div>
 
-          <p className="text-gray-500 mt-2">Check your placement chances in seconds</p>
+            <p className="text-xs sm:text-sm text-text-muted mt-1">
+              Estimate your placement probability, salary potential & target readiness score
+            </p>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* FORM */}
-          <Card className="lg:col-span-2 border-0 shadow-2xl rounded-3xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle>Fill Your Profile</CardTitle>
+        {/* Top Grid: Form + History */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* PROFILE FORM */}
+          <Card className="lg:col-span-2 border border-border bg-surface rounded-2xl shadow-subtle overflow-hidden">
+            <CardHeader className="border-b border-border/80 pb-4">
+              <CardTitle className="text-lg font-bold text-text flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-primary-soft text-primary">
+                  <TrendingUp className="w-4 h-4" />
+                </span>
+                Fill Candidate Profile
+              </CardTitle>
+              <p className="text-xs text-text-muted">
+                Input your academic & technical background for the most accurate ML forecast
+              </p>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="pt-6">
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Select
-                    value={formData.collegeTier}
-                    onValueChange={(v) => handleInput("collegeTier", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="College Tier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {tiers.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {/* Row 1: College Tier & CGPA */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-text-muted">
+                      College Tier <span className="text-danger">*</span>
+                    </label>
+                    <Select
+                      value={formData.collegeTier}
+                      onValueChange={(v) => handleInput("collegeTier", v)}
+                    >
+                      <SelectTrigger className="h-11 rounded-xl bg-surface-2/60 border-border text-text hover:bg-surface-2 focus:ring-primary focus:border-primary">
+                        <SelectValue placeholder="Select College Tier" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface border-border text-text">
+                        {tiers.map((item) => (
+                          <SelectItem key={item} value={item} className="cursor-pointer">
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                  <Input
-                    placeholder="CGPA"
-                    type="number"
-                    value={formData.cgpa}
-                    onChange={(e) => handleInput("cgpa", e.target.value)}
-                  />
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-text-muted">
+                      CGPA (Out of 10) <span className="text-danger">*</span>
+                    </label>
+                    <Input
+                      placeholder="e.g. 8.4"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="10"
+                      value={formData.cgpa}
+                      onChange={(e) => handleInput("cgpa", e.target.value)}
+                      className="h-11 rounded-xl bg-surface-2/60 border-border text-text placeholder:text-text-subtle focus-visible:ring-primary focus-visible:border-primary"
+                    />
+                  </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Select
-                    value={formData.skillsLevel}
-                    onValueChange={(v) => handleInput("skillsLevel", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Skills Level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {skills.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {/* Row 2: Skills Level & DSA Level */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-text-muted">
+                      Technical Skills Level <span className="text-danger">*</span>
+                    </label>
+                    <Select
+                      value={formData.skillsLevel}
+                      onValueChange={(v) => handleInput("skillsLevel", v)}
+                    >
+                      <SelectTrigger className="h-11 rounded-xl bg-surface-2/60 border-border text-text hover:bg-surface-2 focus:ring-primary focus:border-primary">
+                        <SelectValue placeholder="Select Skills Level" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface border-border text-text">
+                        {skills.map((item) => (
+                          <SelectItem key={item} value={item} className="cursor-pointer">
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-text-muted">
+                      DSA Proficiency
+                    </label>
+                    <Select
+                      value={formData.dsaLevel}
+                      onValueChange={(v) => handleInput("dsaLevel", v)}
+                    >
+                      <SelectTrigger className="h-11 rounded-xl bg-surface-2/60 border-border text-text hover:bg-surface-2 focus:ring-primary focus:border-primary">
+                        <SelectValue placeholder="Select DSA Level" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface border-border text-text">
+                        {dsa.map((item) => (
+                          <SelectItem key={item} value={item} className="cursor-pointer">
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Row 3: Projects & Communication */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-text-muted">
+                      Completed Projects
+                    </label>
+                    <Select
+                      value={formData.projectsCount}
+                      onValueChange={(v) => handleInput("projectsCount", v)}
+                    >
+                      <SelectTrigger className="h-11 rounded-xl bg-surface-2/60 border-border text-text hover:bg-surface-2 focus:ring-primary focus:border-primary">
+                        <SelectValue placeholder="Projects Count" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface border-border text-text">
+                        {projects.map((item) => (
+                          <SelectItem key={item} value={item} className="cursor-pointer">
+                            {item} Projects
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-text-muted">
+                      Communication Skills
+                    </label>
+                    <Select
+                      value={formData.communicationLevel}
+                      onValueChange={(v) => handleInput("communicationLevel", v)}
+                    >
+                      <SelectTrigger className="h-11 rounded-xl bg-surface-2/60 border-border text-text hover:bg-surface-2 focus:ring-primary focus:border-primary">
+                        <SelectValue placeholder="Communication Level" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-surface border-border text-text">
+                        {comm.map((item) => (
+                          <SelectItem key={item} value={item} className="cursor-pointer">
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Row 4: Internship */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-text-muted">
+                    Prior Internship Experience
+                  </label>
                   <Select
-                    value={formData.dsaLevel}
-                    onValueChange={(v) => handleInput("dsaLevel", v)}
+                    value={formData.internshipExperience}
+                    onValueChange={(v) => handleInput("internshipExperience", v)}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="DSA Level" />
+                    <SelectTrigger className="h-11 rounded-xl bg-surface-2/60 border-border text-text hover:bg-surface-2 focus:ring-primary focus:border-primary">
+                      <SelectValue placeholder="Have you completed an internship?" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {dsa.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
+                    <SelectContent className="bg-surface border-border text-text">
+                      {internship.map((item) => (
+                        <SelectItem key={item} value={item} className="cursor-pointer">
+                          {item === "Yes" ? "Yes (Has Internship Experience)" : "No (Fresher)"}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Select
-                    value={formData.projectsCount}
-                    onValueChange={(v) => handleInput("projectsCount", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Projects" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {projects.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={formData.communicationLevel}
-                    onValueChange={(v) => handleInput("communicationLevel", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Communication" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {comm.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Select
-                  value={formData.internshipExperience}
-                  onValueChange={(v) => handleInput("internshipExperience", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Internship Experience" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {internship.map((item) => (
-                      <SelectItem key={item} value={item}>
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
+                {/* SUBMIT BUTTON */}
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600"
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold shadow-soft transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 text-sm mt-2"
                 >
-                  {loading ? "Analyzing..." : "Predict Now"}
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Analyzing Career Probability...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      Generate Prediction Report
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* HISTORY */}
-          <Card className="border-0 shadow-2xl rounded-3xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+          {/* RECENT HISTORY SIDEBAR */}
+          <Card className="border border-border bg-surface rounded-2xl shadow-subtle overflow-hidden">
+            <CardHeader className="border-b border-border/80 pb-4">
+              <CardTitle className="flex items-center justify-between text-base font-bold text-text">
                 <div className="flex items-center gap-2">
-                  <History className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <History className="w-4 h-4 text-primary" />
                   Recent History
                 </div>
-
-                <Badge variant="secondary" className="rounded-xl px-3">
+                <Badge className="bg-primary-soft text-primary font-bold border border-primary/20 rounded-lg px-2.5 py-0.5 text-xs">
                   {history.length}
                 </Badge>
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-3">
+            <CardContent className="pt-4 space-y-3">
               {historyLoading ? (
-                <div className="py-8 text-center text-sm text-gray-500">Loading...</div>
+                <div className="py-12 text-center text-xs text-text-muted flex flex-col items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                  Loading past predictions...
+                </div>
               ) : history.length === 0 ? (
-                <div className="py-8 text-center text-sm text-gray-500">No history found</div>
+                <div className="py-12 text-center text-xs text-text-muted flex flex-col items-center justify-center gap-2">
+                  <FileCheck2 className="w-8 h-8 text-text-subtle opacity-50" />
+                  <p className="font-medium text-text">No history found</p>
+                  <p className="text-[11px] text-text-subtle">
+                    Submit the form to generate your first forecast
+                  </p>
+                </div>
               ) : (
-                history.slice(0, 3).map((item) => (
+                history.slice(0, 4).map((item) => (
                   <div
                     key={item._id}
-                    className="p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300"
+                    className="p-3.5 rounded-xl border border-border bg-surface-2/60 hover:bg-surface-2 hover:border-primary/40 transition-all duration-200"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl">
-                        {item.manualScore.placementChance}%
-                      </Badge>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-primary-soft text-primary border border-primary/20">
+                        {item.manualScore?.placementChance || 0}% Chance
+                      </span>
 
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8 rounded-xl hover:bg-purple-100 dark:hover:bg-gray-700"
+                        className="h-7 w-7 rounded-lg hover:bg-primary-soft hover:text-primary transition-colors cursor-pointer text-text-muted"
+                        title="Load this prediction"
                         onClick={() => useOldPrediction(item)}
                       >
-                        <RotateCcw className="w-4 h-4" />
+                        <RotateCcw className="w-3.5 h-3.5" />
                       </Button>
                     </div>
 
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                      {item.manualScore.expectedSalaryRange}
+                    <p className="text-xs font-semibold text-text mb-2">
+                      {item.manualScore?.expectedSalaryRange || "₹5-10 LPA"}
                     </p>
 
-                    <Progress value={item.manualScore.placementChance} className="h-2 mb-2" />
+                    {/* Progress Bar */}
+                    <div className="w-full bg-surface rounded-full h-1.5 border border-border overflow-hidden mb-2">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(item.manualScore?.placementChance || 0, 100)}%`,
+                        }}
+                      />
+                    </div>
 
-                    <p className="text-xs text-gray-500">
-                      {new Date(item.createdAt).toLocaleDateString()}
+                    <p className="text-[10px] text-text-subtle">
+                      {new Date(item.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </p>
                   </div>
                 ))
-              )}
-
-              {history.length > 3 && (
-                <Button variant="outline" className="w-full rounded-2xl mt-2">
-                  View All History ({history.length})
-                </Button>
               )}
             </CardContent>
           </Card>
         </div>
 
-        {/* RESULT */}
+        {/* RESULT SECTION */}
         {result && (
-          <div className="mt-8 grid md:grid-cols-3 gap-6">
-            <Card className="rounded-3xl shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Placement Chance
-                </CardTitle>
-              </CardHeader>
+          <div className="space-y-6 pt-4 animate-in fade-in duration-300">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-md bg-success-soft text-success">
+                <CheckCircle2 className="w-4 h-4" />
+              </span>
+              <h2 className="text-xl font-bold text-text">Prediction Insights Report</h2>
+            </div>
 
-              <CardContent>
-                <div className="text-5xl font-bold mb-4">{result.manualScore.placementChance}%</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Chance Metric */}
+              <Card className="rounded-2xl border border-border bg-surface p-6 shadow-subtle">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    Placement Chance
+                  </span>
+                  <div className="p-2 rounded-xl bg-primary-soft text-primary">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                </div>
+                <div className="text-4xl font-black text-text mb-3">
+                  {result.manualScore?.placementChance}%
+                </div>
+                <div className="w-full bg-surface-2 rounded-full h-2.5 border border-border overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-700"
+                    style={{
+                      width: `${Math.min(result.manualScore?.placementChance || 0, 100)}%`,
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-text-muted mt-2">
+                  Based on current hiring statistics across tech companies
+                </p>
+              </Card>
 
-                <Progress value={result.manualScore.placementChance} />
-              </CardContent>
-            </Card>
+              {/* Salary Metric */}
+              <Card className="rounded-2xl border border-border bg-surface p-6 shadow-subtle">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    Expected Package
+                  </span>
+                  <div className="p-2 rounded-xl bg-accent-soft text-accent">
+                    <Award className="w-5 h-5" />
+                  </div>
+                </div>
+                <div className="text-3xl font-black text-accent mb-2">
+                  {result.manualScore?.expectedSalaryRange || "₹6 - 12 LPA"}
+                </div>
+                <span className="inline-block text-[11px] font-semibold px-2 py-0.5 rounded-md bg-accent-soft text-accent border border-accent/20">
+                  Estimated CTC Range
+                </span>
+                <p className="text-xs text-text-muted mt-2">
+                  Anticipated offer range for freshers with your profile
+                </p>
+              </Card>
 
-            <Card className="rounded-3xl shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  Salary Range
-                </CardTitle>
-              </CardHeader>
+              {/* Readiness Metric */}
+              <Card className="rounded-2xl border border-border bg-surface p-6 shadow-subtle">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    Readiness Score
+                  </span>
+                  <div className="p-2 rounded-xl bg-primary-soft text-primary">
+                    <Target className="w-5 h-5" />
+                  </div>
+                </div>
+                <div className="text-4xl font-black text-text mb-3">
+                  {result.manualScore?.readinessScore}%
+                </div>
+                <div className="w-full bg-surface-2 rounded-full h-2.5 border border-border overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full transition-all duration-700"
+                    style={{
+                      width: `${Math.min(result.manualScore?.readinessScore || 0, 100)}%`,
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-text-muted mt-2">
+                  Overall interview preparedness metric
+                </p>
+              </Card>
 
-              <CardContent className="text-2xl font-bold">
-                {result.manualScore.expectedSalaryRange}
-              </CardContent>
-            </Card>
+              {/* AI Recommendations */}
+              <Card className="md:col-span-3 rounded-2xl border border-border bg-surface p-6 shadow-subtle">
+                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border">
+                  <div className="p-2 rounded-xl bg-primary-soft text-primary">
+                    <Brain className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text">AI Actionable Recommendations</h3>
+                    <p className="text-xs text-text-muted">
+                      Personalized next steps to scale into top-tier recruitment brackets
+                    </p>
+                  </div>
+                </div>
 
-            <Card className="rounded-3xl shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Readiness
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="text-5xl font-bold">
-                {result.manualScore.readinessScore}%
-              </CardContent>
-            </Card>
-
-            <Card className="md:col-span-3 rounded-3xl shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5" />
-                  AI Suggestions
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="whitespace-pre-wrap">
-                {result.aiAnalysis.personalizedSuggestions}
-              </CardContent>
-            </Card>
+                <div className="text-sm text-text leading-relaxed bg-surface-2/60 p-4 rounded-xl border border-border whitespace-pre-wrap font-sans">
+                  {result.aiAnalysis?.personalizedSuggestions ||
+                    "Keep solving daily DSA problems and build 1 full-stack production project to upgrade your chances to Tier-1 salary brackets."}
+                </div>
+              </Card>
+            </div>
           </div>
         )}
       </div>
@@ -375,6 +523,4 @@ const PlacementPredictor = () => {
       <Footer />
     </div>
   );
-};
-
-export default PlacementPredictor;
+}

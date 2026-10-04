@@ -60,85 +60,78 @@ export default function CpotdCard() {
   const locked = status.locked;
 
   if (isLoading) {
-    return <div className="h-[400px] rounded-2xl bg-gray-100 dark:bg-gray-900 animate-pulse" />;
+    return <div className="min-h-[260px] h-full rounded-xl bg-surface-2 border border-border animate-pulse" />;
   }
 
   return (
-    <Card
+    <div
       onClick={() => navigate("/coding-potd")}
-      className={`relative flex flex-col justify-between h-[400px] p-6 bg-white dark:bg-gray-900 dark:border-white/10 border-2 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 cursor-pointer transition-all duration-300 ${
+      className={`relative flex flex-col justify-between h-full min-h-[260px] p-5 rounded-xl border transition-all duration-200 cursor-pointer shadow-subtle hover:shadow-card bg-surface ${
         locked
           ? status.solved
-            ? "border-green-200 bg-green-50/50"
-            : "border-orange-200 bg-orange-50/50"
-          : "border-gray-200 hover:border-blue-300"
+            ? "border-success/30 bg-success-soft/20"
+            : "border-accent/30 bg-accent-soft/20"
+          : "border-border hover:border-primary/40"
       }`}
     >
-      <CardContent className="flex flex-col justify-between flex-1 p-0 h-full">
+      <div className="flex flex-col justify-between flex-1">
         {/* TOP */}
-        <div className="flex items-start gap-4 mb-6">
-          <div className="p-3 bg-blue-100 rounded-2xl">
-            <Code className="w-7 h-7 text-blue-600" />
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary-soft flex items-center justify-center text-primary">
+            <Code className="w-5 h-5" />
           </div>
 
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Coding POTD</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Daily DSA Challenge</p>
+          <div className="flex-1 pr-6">
+            <h3 className="text-base font-bold text-text">Coding POTD</h3>
+            <p className="text-xs text-text-muted">Daily DSA Challenge</p>
           </div>
         </div>
 
         {/* DESCRIPTION */}
-        <p className="text-gray-600 dark:text-gray-400 flex-1 mb-6">
-          Solve today's hand-picked coding problem and earn XP + badges!
+        <p className="text-xs text-text-muted leading-relaxed my-3">
+          Solve today's hand-picked coding problem and earn verified XP and badges!
         </p>
 
         {/* STATUS ICON */}
-        <div className="absolute top-6 right-6">
+        <div className="absolute top-5 right-5">
           {locked ? (
             status.solved ? (
-              <div className="p-2 bg-green-100 rounded-xl">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+              <div className="p-1.5 bg-success-soft rounded-lg text-success">
+                <CheckCircle className="w-4 h-4" />
               </div>
             ) : (
-              <div className="p-2 bg-orange-100 rounded-xl">
-                <Clock className="w-5 h-5 text-orange-600" />
+              <div className="p-1.5 bg-accent-soft rounded-lg text-accent">
+                <Clock className="w-4 h-4" />
               </div>
             )
           ) : null}
         </div>
 
         {/* BUTTON */}
-        <div className="flex items-center justify-between">
-          <span className="text-2xl">💻</span>
+        <div className="flex items-center justify-between pt-3 border-t border-border">
+          <span className="text-xs font-medium text-text-subtle">Daily DSA</span>
 
           {locked ? (
             status.solved ? (
-              <button
-                onClick={(e) => e.stopPropagation()}
-                className="px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold cursor-default"
-              >
-                ✅ Completed
-              </button>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-success-soft text-success text-xs font-semibold border border-success/20">
+                <CheckCircle className="w-3.5 h-3.5" /> Completed
+              </span>
             ) : (
-              <button
-                disabled
-                onClick={(e) => e.stopPropagation()}
-                className="px-4 py-2 rounded-full bg-gray-100 text-gray-500 cursor-not-allowed"
-              >
-                ⏳ {formattedTime}
-              </button>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-surface-2 text-text-subtle text-xs font-medium border border-border">
+                <Clock className="w-3.5 h-3.5" /> Next in {formattedTime}
+              </span>
             )
           ) : (
             <button
               onClick={handleStart}
-              className="flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:scale-105 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold shadow-soft transition-colors cursor-pointer"
             >
               Start
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

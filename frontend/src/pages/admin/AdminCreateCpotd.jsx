@@ -100,13 +100,13 @@ const AdminCreateCpotd = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 p-6 lg:ml-64">
-      <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-bg text-text lg:ml-72 p-4 md:p-6 space-y-8 transition-colors duration-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black bg-gradient-to-r from-gray-900 to-black bg-clip-text text-transparent dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-black text-text">
             Create Manual CPOTD
           </h1>
-          <p className="text-xl text-gray-600 mt-2 dark:text-white">
+          <p className="text-text-muted mt-2">
             Create custom Coding Problem of the Day
           </p>
         </div>
@@ -115,61 +115,61 @@ const AdminCreateCpotd = () => {
           onClick={async () => {
             try {
               await api.post("/api/cpotd/generate");
-              toast.success(" CPOTD Generated!");
+              toast.success("CPOTD Generated!");
             } catch {
               toast.error("Failed to generate");
             }
           }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl"
+          className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl shadow-md shadow-primary/20 font-medium"
         >
-          ⚡ Quick Trigger Cpotd Question
+          ⚡ Quick Trigger CPOTD
         </Button>
       </div>
 
-      <Card className="border-0 shadow-2xl">
+      <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
+          <CardTitle className="text-text font-bold">Basic Information</CardTitle>
         </CardHeader>
-        <CardContent className="p-8 space-y-6">
+        <CardContent className="p-6 space-y-5">
           <div>
-            <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">
+            <label className="text-sm font-semibold text-text block mb-2">
               Title
             </label>
             <Input
               value={formData.title}
               onChange={(e) => updateFormField("title", e.target.value)}
               placeholder="Enter problem title..."
-              className="h-16 text-xl"
+              className="h-11 text-base rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
             />
           </div>
           <div>
-            <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">
+            <label className="text-sm font-semibold text-text block mb-2">
               Description
             </label>
             <Textarea
               value={formData.description}
               onChange={(e) => updateFormField("description", e.target.value)}
               placeholder="Enter problem description..."
-              className="h-32 text-lg resize-none"
-              rows={6}
+              className="text-base rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
+              rows={5}
             />
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-1">
-              <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-3">
+            <div className="flex-1 max-w-xs">
+              <label className="text-sm font-semibold text-text block mb-2">
                 Difficulty
               </label>
               <Select
                 value={formData.difficulty}
                 onValueChange={(v) => updateFormField("difficulty", v)}
               >
-                <SelectTrigger className="h-14">
+                <SelectTrigger className="h-11 rounded-xl border-border bg-surface-2 text-text">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="easy">Easy</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="hard">Hard</SelectItem>
+                <SelectContent className="bg-surface border-border text-text">
+                  <SelectItem value="easy" className="text-text hover:bg-surface-2">Easy</SelectItem>
+                  <SelectItem value="medium" className="text-text hover:bg-surface-2">Medium</SelectItem>
+                  <SelectItem value="hard" className="text-text hover:bg-surface-2">Hard</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -178,23 +178,23 @@ const AdminCreateCpotd = () => {
       </Card>
 
       {/* Sample Test Cases */}
-      <Card className="border-0 shadow-2xl">
+      <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl text-white font-bold">
+          <CardTitle className="flex items-center gap-3 text-text font-bold">
+            <div className="px-3 py-1.5 bg-primary-soft text-primary border border-primary/20 rounded-xl font-bold text-sm">
               📋 Sample Test Cases
             </div>
-            <Badge variant="secondary">Visible to users</Badge>
+            <Badge className="bg-primary-soft text-primary border border-primary/20 rounded-full font-medium">Visible to users</Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8 space-y-4">
+        <CardContent className="p-6 space-y-4">
           {formData.sampleTestCases.map((tc) => (
             <div
               key={tc.id}
-              className="flex gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20"
+              className="flex flex-col md:flex-row gap-4 p-4 border border-border rounded-xl bg-surface-2/40"
             >
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                <label className="text-xs font-semibold text-text mb-1.5 block">
                   Input
                 </label>
                 <Input
@@ -203,11 +203,11 @@ const AdminCreateCpotd = () => {
                     updateTestCase("sampleTestCases", tc.id, "input", e.target.value)
                   }
                   placeholder="Enter input..."
-                  className="font-mono"
+                  className="font-mono rounded-xl border-border bg-surface text-text focus:border-primary h-10"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                <label className="text-xs font-semibold text-text mb-1.5 block">
                   Expected Output
                 </label>
                 <Input
@@ -216,17 +216,17 @@ const AdminCreateCpotd = () => {
                     updateTestCase("sampleTestCases", tc.id, "expected", e.target.value)
                   }
                   placeholder="Enter expected output..."
-                  className="font-mono"
+                  className="font-mono rounded-xl border-border bg-surface text-text focus:border-primary h-10"
                 />
               </div>
               {formData.sampleTestCases.length > 1 && (
                 <Button
                   type="button"
                   variant="destructive"
-                  className="self-end mt-10 p-3 rounded-2xl h-fit"
+                  className="self-end p-2.5 rounded-xl h-10 bg-red-600/10 text-red-500 hover:bg-red-600/20 border border-red-500/20"
                   onClick={() => removeTestCase("sampleTestCases", tc.id)}
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4" />
                 </Button>
               )}
             </div>
@@ -234,33 +234,33 @@ const AdminCreateCpotd = () => {
           <Button
             type="button"
             variant="outline"
-            className="border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-400 w-full h-16 text-lg font-semibold rounded-3xl"
+            className="border-2 border-dashed border-border hover:border-primary/50 text-text w-full h-11 text-sm font-semibold rounded-xl bg-surface-2/20 hover:bg-surface-2/50 transition-colors"
             onClick={() => addTestCase("sampleTestCases")}
           >
-            <Plus className="w-6 h-6 mr-3" />
+            <Plus className="w-4 h-4 mr-2" />
             Add Sample Test Case
           </Button>
         </CardContent>
       </Card>
 
       {/* Hidden Test Cases */}
-      <Card className="border-0 shadow-2xl">
+      <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl text-white font-bold">
+          <CardTitle className="flex items-center gap-3 text-text font-bold">
+            <div className="px-3 py-1.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl font-bold text-sm">
               🔒 Hidden Test Cases
             </div>
-            <Badge variant="destructive">Secret tests</Badge>
+            <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 rounded-full font-medium">Secret tests</Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8 space-y-4">
+        <CardContent className="p-6 space-y-4">
           {formData.hiddenTestCases.map((tc) => (
             <div
               key={tc.id}
-              className="flex gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/20"
+              className="flex flex-col md:flex-row gap-4 p-4 border border-border rounded-xl bg-surface-2/40"
             >
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                <label className="text-xs font-semibold text-text mb-1.5 block">
                   Input
                 </label>
                 <Input
@@ -269,11 +269,11 @@ const AdminCreateCpotd = () => {
                     updateTestCase("hiddenTestCases", tc.id, "input", e.target.value)
                   }
                   placeholder="Enter input..."
-                  className="font-mono"
+                  className="font-mono rounded-xl border-border bg-surface text-text focus:border-primary h-10"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
+                <label className="text-xs font-semibold text-text mb-1.5 block">
                   Expected Output
                 </label>
                 <Input
@@ -282,17 +282,17 @@ const AdminCreateCpotd = () => {
                     updateTestCase("hiddenTestCases", tc.id, "expected", e.target.value)
                   }
                   placeholder="Enter expected output..."
-                  className="font-mono"
+                  className="font-mono rounded-xl border-border bg-surface text-text focus:border-primary h-10"
                 />
               </div>
               {formData.hiddenTestCases.length > 1 && (
                 <Button
                   type="button"
                   variant="destructive"
-                  className="self-end mt-10 p-3 rounded-2xl h-fit"
+                  className="self-end p-2.5 rounded-xl h-10 bg-red-600/10 text-red-500 hover:bg-red-600/20 border border-red-500/20"
                   onClick={() => removeTestCase("hiddenTestCases", tc.id)}
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4" />
                 </Button>
               )}
             </div>
@@ -300,52 +300,51 @@ const AdminCreateCpotd = () => {
           <Button
             type="button"
             variant="outline"
-            className="border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-emerald-400 w-full h-16 text-lg font-semibold rounded-3xl"
+            className="border-2 border-dashed border-border hover:border-primary/50 text-text w-full h-11 text-sm font-semibold rounded-xl bg-surface-2/20 hover:bg-surface-2/50 transition-colors"
             onClick={() => addTestCase("hiddenTestCases")}
           >
-            <Plus className="w-6 h-6 mr-3" />
+            <Plus className="w-4 h-4 mr-2" />
             Add Hidden Test Case
           </Button>
         </CardContent>
       </Card>
 
       {/* Solution Explanation */}
-      <Card className="border-0 shadow-2xl">
+      <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle>Solution Explanation</CardTitle>
+          <CardTitle className="text-text font-bold">Solution Explanation</CardTitle>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-6">
           <Textarea
             value={formData.solutionExplanation}
             onChange={(e) => updateFormField("solutionExplanation", e.target.value)}
             placeholder="Detailed solution explanation..."
-            className="h-48 text-lg resize-none font-mono"
-            rows={8}
+            className="text-base rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary font-mono"
+            rows={6}
           />
         </CardContent>
       </Card>
 
       {/* Submit Section */}
-      <Card className="border-0 shadow-2xl">
-        <CardContent className="p-12 pt-8">
-          <div className="flex gap-4 justify-end">
+      <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
+        <CardContent className="p-6">
+          <div className="flex gap-3 justify-end">
             <Button
               variant="outline"
-              size="lg"
+              type="button"
               onClick={() => navigate("/admin/cpotd")}
-              className="px-12 py-8 rounded-3xl font-bold text-lg"
+              className="px-6 py-2.5 rounded-xl border-border bg-surface text-text hover:bg-surface-2 font-medium"
             >
               Cancel
             </Button>
             <Button
               onClick={submitForm}
               disabled={loading}
-              size="lg"
-              className="px-16 py-8 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-2xl text-xl rounded-3xl font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-2.5 bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
-                  <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
                   Creating CPOTD...
                 </>
               ) : (

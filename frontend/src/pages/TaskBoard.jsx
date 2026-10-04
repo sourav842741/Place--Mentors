@@ -156,7 +156,7 @@ const TaskBoard = () => {
     return (
       <>
         <Navbar />
-        <div className="pt-16 lg:pl-64 p-6 bg-gray-50 dark:bg-gray-950 min-h-screen ">
+        <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex items-center gap-4">
               <Skeleton className="h-12 w-12 rounded-xl" />
@@ -180,21 +180,21 @@ const TaskBoard = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-24 lg:pl-64 px-4 md:px-8 pb-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-900 min-h-screen">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-12 p-2 rounded-2xl bg-background/50 backdrop-blur-sm -mx-4 md:-mx-0 md:p-0">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-primary/10 rounded-xl">
-                  <ListTodo className="w-6 h-6 text-primary" />
+              <div className="flex items-center gap-3 mb-1">
+                <div className="w-9 h-9 bg-primary-soft text-primary rounded-lg flex items-center justify-center border border-primary/20">
+                  <ListTodo className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent dark:from-white dark:to-gray-300">
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
                     Task Board
                   </h1>
-                  <p className="text-lg text-muted-foreground">
-                    Manage your Study, Job, and Personal tasks
+                  <p className="text-xs text-text-muted">
+                    Organize your placement prep, daily goals & revision schedule
                   </p>
                 </div>
               </div>

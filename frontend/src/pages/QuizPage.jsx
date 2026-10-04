@@ -11,7 +11,7 @@ function QuizPage() {
   return (
     <>
       <QuizNav />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-bg text-text transition-colors duration-200">
         {step === 1 && (
           <Step1QuizSetup
             onStart={(data) => {

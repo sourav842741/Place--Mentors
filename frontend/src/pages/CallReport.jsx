@@ -33,11 +33,11 @@ const CallReport = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 py-20 flex items-center justify-center ">
-          <Card className="w-full max-w-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl">
-            <CardContent className="p-12 text-center">
-              <div className="w-12 h-12 border-2 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-6" />
-              <p className="text-xl text-gray-600 dark:text-gray-300">Loading report...</p>
+        <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text flex items-center justify-center">
+          <Card className="w-full max-w-md bg-surface border border-border rounded-xl shadow-subtle">
+            <CardContent className="p-8 text-center">
+              <div className="w-8 h-8 border-2 border-primary-soft border-t-primary rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-sm font-medium text-text-muted">Loading voice report...</p>
             </CardContent>
           </Card>
         </div>
@@ -49,16 +49,17 @@ const CallReport = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 py-20 flex items-center justify-center g:mt-16 lg:ml-64">
-          <Card className="w-full max-w-2xl bg-white/70 dark:bg-slate-800/70">
-            <CardContent className="p-12 text-center">
-              <MicOff className="w-16 h-16 text-gray-400 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold mb-2">Report not found</h3>
+        <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text flex items-center justify-center">
+          <Card className="w-full max-w-md bg-surface border border-border rounded-xl shadow-subtle">
+            <CardContent className="p-8 text-center">
+              <MicOff className="w-10 h-10 text-text-muted/50 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-text mb-1">Report not found</h3>
+              <p className="text-xs text-text-muted mb-5">We couldn't locate this call session.</p>
               <Link
                 to="/ai-voice-coach"
-                className="inline-flex items-center gap-2 mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-on-primary px-4 py-2.5 rounded-lg text-xs font-semibold shadow-soft transition-colors"
               >
-                <Mic className="w-5 h-5" />
+                <Mic className="w-4 h-4" />
                 New Practice Call
               </Link>
             </CardContent>
@@ -77,97 +78,80 @@ const CallReport = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 py-8 px-4 lg:mt-16 lg:ml-64">
-        <div className="max-w-4xl mx-auto space-y-8">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="max-w-4xl mx-auto space-y-6">
           {/* HEADER */}
-          <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-2xl border-0 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
-                    <Mic className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-black">
-                      {report.mode?.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                    </h1>
-                    <div className="flex items-center gap-4 text-blue-100 mt-2">
+          <div className="bg-surface border border-border rounded-xl shadow-subtle p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                  <Mic className="w-6 h-6" />
+                </div>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold text-text">
+                    {report.mode?.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                  </h1>
+                  <div className="flex items-center gap-4 text-xs text-text-muted mt-1">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{formatDuration(report.duration || 0)}</span>
+                    </div>
+                    {report.phone && (
                       <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{formatDuration(report.duration)}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Phone className="w-4 h-4" />
+                        <Phone className="w-3.5 h-3.5" />
                         <span>{report.phone}</span>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 ml-auto">
-                  <Badge className="text-lg px-4 py-2 bg-white/20 backdrop-blur-sm border-white/30">
-                    {report.status?.toUpperCase()}
-                  </Badge>
-                  {report.score > 0 && (
-                    <div className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-2xl font-bold text-lg">
-                      {report.score}/100
-                    </div>
-                  )}
-                </div>
               </div>
-            </CardHeader>
-          </Card>
+
+              <div className="flex items-center gap-2.5">
+                <Badge variant="outline" className="text-xs px-3 py-1 bg-accent-soft text-accent border border-accent/20 font-semibold rounded-full">
+                  {report.status?.toUpperCase() || "COMPLETED"}
+                </Badge>
+                {report.score > 0 && (
+                  <div className="bg-primary-soft text-primary border border-primary/20 px-3.5 py-1 rounded-lg font-bold text-sm">
+                    {report.score}/100
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* SCORE CARD */}
           {report.score > 0 && (
-            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl shadow-xl border-0 overflow-hidden">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="w-6 h-6 text-yellow-500" />
+            <Card className="bg-surface border border-border rounded-xl shadow-subtle">
+              <CardHeader className="pb-2 pt-6 px-6">
+                <CardTitle className="flex items-center gap-2 text-base font-bold text-text">
+                  <Award className="w-5 h-5 text-accent" />
                   Performance Score
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center gap-4 p-8">
-                  <div className="text-5xl font-black text-gray-900 dark:text-white">
+              <CardContent className="px-6 pb-6 pt-2">
+                <div className="flex flex-col items-center gap-3 py-4">
+                  <div className="text-4xl sm:text-5xl font-black text-text">
                     {report.score}
+                    <span className="text-sm font-medium text-text-muted ml-1">/ 100</span>
                   </div>
-                  <div className="w-64 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                  <div className="w-full max-w-sm bg-surface-2 rounded-full h-2.5 overflow-hidden border border-border">
                     <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full shadow-lg transition-all"
+                      className="bg-primary h-full rounded-full transition-all"
                       style={{ width: `${Math.min(report.score, 100)}%` }}
                     />
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <div className="text-center mt-1">
+                    <p className="text-base font-bold text-text">
                       {report.score >= 80
-                        ? "Excellent!"
+                        ? "Excellent Performance!"
                         : report.score >= 60
-                          ? "Good!"
-                          : "Keep Practicing!"}
+                          ? "Good Effort!"
+                          : "Needs Practice"}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      You're {report.score >= 80 ? "interview ready" : "improving fast"}
+                    <p className="text-xs text-text-muted mt-0.5">
+                      {report.score >= 80 ? "You're interview ready" : "Keep practicing to improve confidence"}
                     </p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* TRANSCRIPT */}
-          {report.transcript && (
-            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-6 h-6" />
-                  Call Transcript & Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="p-8 border-t border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap text-sm leading-relaxed bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl font-mono text-gray-800 dark:text-gray-200">
-                    {report.transcript}
-                  </pre>
                 </div>
               </CardContent>
             </Card>
@@ -175,40 +159,62 @@ const CallReport = () => {
 
           {/* FEEDBACK */}
           {report.feedback && (
-            <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-emerald-200/50 dark:border-emerald-800/50 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-emerald-800 dark:text-emerald-200">
-                  <Target className="w-7 h-7" />
+            <Card className="bg-surface border border-border rounded-xl shadow-subtle">
+              <CardHeader className="pb-2 pt-6 px-6">
+                <CardTitle className="flex items-center gap-2 text-base font-bold text-text">
+                  <Target className="w-5 h-5 text-primary" />
                   AI Coach Feedback
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="prose prose-lg max-w-none dark:prose-invert">
-                  <p className="text-2xl font-bold mb-6 leading-tight text-gray-900 dark:text-white">
+              <CardContent className="px-6 pb-6 pt-2">
+                <div className="bg-surface-2/60 border border-border rounded-xl p-4 sm:p-5">
+                  <p className="text-sm font-semibold text-text mb-2 leading-snug">
                     "{report.feedback.split(".")[0]}"
                   </p>
-                  <div className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                  <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
                     {report.feedback}
-                  </div>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* TRANSCRIPT */}
+          {report.transcript && (
+            <Card className="bg-surface border border-border rounded-xl shadow-subtle">
+              <CardHeader className="pb-2 pt-6 px-6">
+                <CardTitle className="flex items-center gap-2 text-base font-bold text-text">
+                  <BarChart3 className="w-5 h-5 text-text-muted" />
+                  Call Transcript
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-6 pb-6 pt-2">
+                <div className="max-h-80 overflow-y-auto rounded-lg border border-border bg-surface-2 p-4">
+                  <pre className="whitespace-pre-wrap text-xs font-mono text-text leading-relaxed">
+                    {report.transcript}
+                  </pre>
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* ACTIONS */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Link to="/ai-voice-coach" className="flex-1">
-              <Button variant="outline" size="lg" className="w-full h-14 font-semibold text-lg">
-                <Mic className="w-5 h-5 mr-2" />
+              <Button
+                variant="outline"
+                className="w-full h-11 text-xs font-semibold rounded-lg border-border text-text hover:bg-surface-2 cursor-pointer"
+              >
+                <Mic className="w-4 h-4 mr-2" />
                 Practice Again
               </Button>
             </Link>
             <Button
-              size="lg"
-              className="flex-1 h-14 bg-gradient-to-r from-blue-600 to-purple-600 font-semibold text-lg shadow-xl hover:shadow-2xl"
+              className="flex-1 h-11 text-xs font-semibold rounded-lg bg-primary hover:bg-primary-hover text-on-primary shadow-soft cursor-pointer"
+              onClick={() => window.print()}
             >
-              <Download className="w-5 h-5 mr-2" />
-              Download Report
+              <Download className="w-4 h-4 mr-2" />
+              Download / Print Summary
             </Button>
           </div>
         </div>

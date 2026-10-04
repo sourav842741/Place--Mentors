@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "../hooks/useTheme";
+import BrandLogo from "../components/BrandLogo";
 import {
   Brain,
   Mic,
@@ -114,7 +116,7 @@ const SectionTitle = ({ children, subtitle, align = "center" }) => (
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6 }}
-      className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-blue-400"
+      className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-text"
     >
       {children}
     </motion.h2>
@@ -124,7 +126,7 @@ const SectionTitle = ({ children, subtitle, align = "center" }) => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="mt-4 text-base sm:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
+        className="mt-4 text-base sm:text-lg text-text-muted max-w-2xl mx-auto leading-relaxed"
       >
         {subtitle}
       </motion.p>
@@ -134,8 +136,8 @@ const SectionTitle = ({ children, subtitle, align = "center" }) => (
 
 const SectionHeading = ({ children }) => (
   <div className="flex items-center gap-3 mb-8">
-    <div className="h-6 w-1.5 rounded-full bg-gradient-to-b from-indigo-500 to-purple-600" />
-    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{children}</h3>
+    <div className="h-6 w-1.5 rounded-full bg-primary" />
+    <h3 className="text-xl sm:text-2xl font-bold text-text">{children}</h3>
   </div>
 );
 
@@ -145,10 +147,9 @@ const GlassCard = ({ children, className = "" }) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-60px" }}
     transition={{ duration: 0.5 }}
-    whileHover={{ y: -6, scale: 1.015 }}
-    className={`relative overflow-hidden rounded-3xl border border-white/20 bg-white/70 backdrop-blur-xl shadow-xl dark:border-white/10 dark:bg-gray-900/60 transition-all duration-500 ${className}`}
+    whileHover={{ y: -4 }}
+    className={`relative overflow-hidden rounded-2xl border border-border bg-surface shadow-subtle hover:shadow-card transition-all duration-200 ${className}`}
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-blue-500/5 opacity-0 hover:opacity-100 transition-opacity duration-700" />
     <div className="relative z-10">{children}</div>
   </motion.div>
 );
@@ -156,17 +157,17 @@ const GlassCard = ({ children, className = "" }) => (
 const FeatureCard = ({ icon: Icon, title, description, tags = [] }) => (
   <GlassCard className="group h-full">
     <div className="p-6 sm:p-7">
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow duration-500">
-        <Icon className="w-6 h-6 text-white" />
+      <div className="w-11 h-11 rounded-xl bg-primary-soft text-primary border border-primary/20 flex items-center justify-center mb-5">
+        <Icon className="w-5 h-5" />
       </div>
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
-      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">{description}</p>
+      <h3 className="text-lg font-bold text-text mb-2">{title}</h3>
+      <p className="text-sm text-text-muted leading-relaxed mb-4">{description}</p>
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {tags.map((tag, i) => (
             <span
               key={i}
-              className="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300"
+              className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-surface-2 text-text-muted border border-border"
             >
               {tag}
             </span>
@@ -180,15 +181,15 @@ const FeatureCard = ({ icon: Icon, title, description, tags = [] }) => (
 const TechCard = ({ icon: Icon, title, description, points = [] }) => (
   <GlassCard className="group">
     <div className="p-6">
-      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20">
-        <Icon className="w-5 h-5 text-white" />
+      <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary border border-primary/20 flex items-center justify-center mb-4">
+        <Icon className="w-5 h-5" />
       </div>
-      <h4 className="font-bold text-gray-900 dark:text-white mb-2">{title}</h4>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{description}</p>
+      <h4 className="font-bold text-text mb-2">{title}</h4>
+      <p className="text-sm text-text-muted mb-3">{description}</p>
       <ul className="space-y-1.5">
         {points.map((p, i) => (
-          <li key={i} className="text-xs text-gray-500 dark:text-gray-400 flex items-start gap-2">
-            <ChevronRight className="w-3.5 h-3.5 text-blue-500 mt-0.5 shrink-0" />
+          <li key={i} className="text-xs text-text-muted flex items-start gap-2">
+            <ChevronRight className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
             {p}
           </li>
         ))}
@@ -201,17 +202,17 @@ const SecurityCard = ({ icon: Icon, title, description, badge }) => (
   <GlassCard className="group">
     <div className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-          <Icon className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center">
+          <Icon className="w-5 h-5" />
         </div>
         {badge && (
-          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400">
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
             {badge}
           </span>
         )}
       </div>
-      <h4 className="font-bold text-gray-900 dark:text-white mb-2">{title}</h4>
-      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{description}</p>
+      <h4 className="font-bold text-text mb-2">{title}</h4>
+      <p className="text-sm text-text-muted leading-relaxed">{description}</p>
     </div>
   </GlassCard>
 );
@@ -224,23 +225,23 @@ const TimelineItem = ({ phase, title, desc, status }) => (
     transition={{ duration: 0.5 }}
     className="relative pl-10 pb-10 last:pb-0"
   >
-    <div className="absolute left-0 top-1 w-5 h-5 rounded-full border-2 border-indigo-500 bg-white dark:bg-gray-900" />
-    <div className="absolute left-[9px] top-6 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 to-transparent last:from-transparent last:to-transparent" />
+    <div className="absolute left-0 top-1 w-5 h-5 rounded-full border-2 border-primary bg-surface" />
+    <div className="absolute left-[9px] top-6 bottom-0 w-0.5 bg-border last:bg-transparent" />
     <div>
       <span
         className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2 ${
           status === "done"
-            ? "bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400"
+            ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
             : status === "active"
-              ? "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
-              : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+              ? "bg-primary-soft text-primary border border-primary/20"
+              : "bg-surface-2 text-text-muted border border-border"
         }`}
       >
         {status === "done" ? "Completed" : status === "active" ? "In Progress" : "Planned"}
       </span>
-      <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-1">{phase}</h4>
-      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{title}</p>
-      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{desc}</p>
+      <h4 className="font-bold text-text text-lg mb-1">{phase}</h4>
+      <p className="text-sm font-semibold text-text mb-1.5">{title}</p>
+      <p className="text-sm text-text-muted leading-relaxed">{desc}</p>
     </div>
   </motion.div>
 );
@@ -263,25 +264,10 @@ const navItems = [
 /* ─── Main Page Component ─── */
 export default function ProjectDocs() {
   const navigate = useNavigate();
-  const [dark, setDark] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
   const [tocOpen, setTocOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [heroVisible, setHeroVisible] = useState(true);
-
-  useEffect(() => {
-    // Initialize theme based on localStorage or system preference
-    const storedTheme = localStorage.getItem("theme");
-    const prefersDark =
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = storedTheme === "dark" || (storedTheme === null && prefersDark);
-
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    setDark(isDark);
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -290,7 +276,7 @@ export default function ProjectDocs() {
           if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { rootMargin: "-40% 0px -55% 0px" } // Adjust these values for optimal active section detection
+      { rootMargin: "-40% 0px -55% 0px" }
     );
     navItems.forEach(({ id }) => {
       const el = document.getElementById(id);
@@ -308,58 +294,40 @@ export default function ProjectDocs() {
     return () => observer.disconnect();
   }, []);
 
-  const toggleTheme = () => {
-    const isNowDark = !dark; // Toggle the current state
-    setDark(isNowDark);
-    if (isNowDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  };
-
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setTocOpen(false); // Close mobile TOC after navigating
+    setTocOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen bg-bg text-text transition-colors duration-200">
       {/* ═════ STICKY NAV ═════ */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           heroVisible
             ? "bg-transparent"
-            : "bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-sm"
+            : "bg-surface/85 backdrop-blur-xl border-b border-border shadow-sm"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-2 flex items-start gap-6">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-2.5 flex items-center gap-6">
           {/* LOGO TOP LEFT */}
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-3 group cursor-pointer shrink-0 mt-1"
+            className="flex items-center gap-3 cursor-pointer shrink-0"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg group-hover:shadow-indigo-500/30 transition">
-              PM
-            </div>
-
-            <span className="font-bold text-lg tracking-tight whitespace-nowrap">
-              Place<span className="text-indigo-500">Mentor</span>
-            </span>
+            <BrandLogo size="sm" showSubtitle={false} showBadge={false} />
           </button>
 
           {/* NAV ITEMS */}
-          <nav className="hidden lg:flex flex-wrap items-center gap-x-2 gap-y-1 pt-0.5">
+          <nav className="hidden lg:flex flex-wrap items-center gap-1">
             {navItems.map((n) => (
               <button
                 key={n.id}
                 onClick={() => scrollTo(n.id)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   activeSection === n.id
-                    ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    ? "text-primary bg-primary-soft font-semibold"
+                    : "text-text-muted hover:text-text hover:bg-surface-2 font-medium"
                 }`}
               >
                 {n.label}
@@ -368,21 +336,22 @@ export default function ProjectDocs() {
           </nav>
 
           {/* RIGHT BUTTONS */}
-          <div className="ml-auto flex items-start gap-2 mt-1">
+          <div className="ml-auto flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="p-2 rounded-xl text-text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer"
+              title="Toggle Theme"
             >
-              {dark ? (
+              {isDark ? (
                 <Sun className="w-5 h-5 text-amber-500" />
               ) : (
-                <Moon className="w-5 h-5 text-slate-500" />
+                <Moon className="w-5 h-5 text-text-muted" />
               )}
             </button>
 
             <button
               onClick={() => setTocOpen(true)}
-              className="lg:hidden p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="lg:hidden p-2 rounded-xl text-text-muted hover:text-text hover:bg-surface-2 transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -398,7 +367,7 @@ export default function ProjectDocs() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-50"
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50"
               onClick={() => setTocOpen(false)}
             />
             <motion.div
@@ -406,13 +375,13 @@ export default function ProjectDocs() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-gray-900 z-50 shadow-2xl border-r border-gray-200 dark:border-white/10 overflow-y-auto"
+              className="fixed top-0 left-0 bottom-0 w-72 bg-surface text-text z-50 shadow-2xl border-r border-border overflow-y-auto"
             >
-              <div className="p-6 flex items-center justify-between border-b border-gray-200 dark:border-white/10">
-                <span className="font-bold text-lg">Contents</span>
+              <div className="p-6 flex items-center justify-between border-b border-border">
+                <span className="font-bold text-lg text-text">Contents</span>
                 <button
                   onClick={() => setTocOpen(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+                  className="p-2 hover:bg-surface-2 rounded-lg text-text-muted hover:text-text transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -422,10 +391,10 @@ export default function ProjectDocs() {
                   <button
                     key={n.id}
                     onClick={() => scrollTo(n.id)}
-                    className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                    className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       activeSection === n.id
-                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        ? "bg-primary-soft text-primary font-semibold"
+                        : "text-text-muted hover:bg-surface-2 hover:text-text"
                     }`}
                   >
                     {n.label}
@@ -438,8 +407,8 @@ export default function ProjectDocs() {
       </AnimatePresence>
 
       {/* ═════ DESKTOP SIDEBAR TOC ═════ */}
-      <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-56 overflow-y-auto border-r border-gray-200/50 dark:border-white/5 px-4 py-6 z-40">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-4 px-3">
+      <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-56 overflow-y-auto border-r border-border bg-surface/40 backdrop-blur-sm px-4 py-6 z-40">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-text-subtle mb-4 px-3">
           On this page
         </p>
         <div className="space-y-0.5">
@@ -447,14 +416,14 @@ export default function ProjectDocs() {
             <button
               key={n.id}
               onClick={() => scrollTo(n.id)}
-              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition relative ${
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors relative ${
                 activeSection === n.id
-                  ? "text-indigo-600 dark:text-indigo-400 font-semibold"
-                  : "text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-200"
+                  ? "text-primary font-semibold bg-primary-soft"
+                  : "text-text-muted hover:text-text hover:bg-surface-2"
               }`}
             >
               {activeSection === n.id && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-indigo-500" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-primary" />
               )}
               {n.label}
             </button>
@@ -467,24 +436,22 @@ export default function ProjectDocs() {
         {/* ─── HERO ─── */}
         <section
           id="hero"
-          className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 px-6 lg:px-8"
+          className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 px-6 lg:px-8 bg-bg"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 dark:from-indigo-900/10 dark:to-purple-900/10 opacity-60" />
-          <div className="absolute inset-0 pattern-dots dark:pattern-dots-dark pattern-indigo-200/20 pattern-size-4 opacity-50" />
           <div className="relative max-w-4xl text-center z-10 py-20 lg:py-32">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-400 dark:to-blue-400 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-text leading-tight"
             >
-              PlaceMentor: Your AI-Powered Placement Prep Assistant
+              PlaceMentor: Your <span className="text-primary">AI-Powered</span> Placement Prep Assistant
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-10"
+              className="text-lg sm:text-xl text-text-muted max-w-2xl mx-auto leading-relaxed mb-10"
             >
               Revolutionizing campus placements with intelligent practice, personalized guidance,
               and comprehensive resources for students.
@@ -497,14 +464,14 @@ export default function ProjectDocs() {
             >
               <button
                 onClick={() => navigate("/dashboard")}
-                className="inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full text-lg shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95 group"
+                className="inline-flex items-center px-8 py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded-full text-lg shadow-lg shadow-primary/25 transition transform hover:scale-105 active:scale-95 group"
               >
                 Get Started{" "}
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => scrollTo("features")}
-                className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 font-bold rounded-full text-lg border border-gray-300 dark:border-gray-700 shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition transform hover:scale-105 active:scale-95 group"
+                className="inline-flex items-center px-8 py-3 bg-surface hover:bg-surface-2 text-text font-bold rounded-full text-lg border border-border shadow-sm transition transform hover:scale-105 active:scale-95 group"
               >
                 Learn More{" "}
                 <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -529,7 +496,7 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 sm:p-10">
                   <SectionHeading>Our Vision</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                  <p className="text-base text-text-muted leading-relaxed mb-6">
                     Our vision at PlaceMentor is to democratize access to high-quality placement
                     preparation, making it accessible and effective for every student, regardless of
                     their background or institution. We believe that technology can bridge the gap
@@ -537,7 +504,7 @@ export default function ProjectDocs() {
                     confident and capable professionals.
                   </p>
                   <SectionHeading>The Problem We Solve</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <p className="text-base text-text-muted leading-relaxed">
                     Campus placements are a critical but often daunting phase for students.
                     Traditional preparation methods lack personalization, are often generic, and
                     fail to adapt to individual learning paces and company-specific requirements.
@@ -545,16 +512,16 @@ export default function ProjectDocs() {
                     PlaceMentor addresses these challenges head-on.
                   </p>
                   <div className="mt-8 flex gap-4">
-                    <button className="flex items-center px-5 py-2 rounded-full bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition">
+                    <button className="flex items-center px-5 py-2 rounded-full bg-primary hover:bg-primary-hover text-white text-sm font-medium transition shadow-md shadow-primary/20">
                       Learn More <ExternalLink className="ml-2 w-4 h-4" />
                     </button>
-                    <button className="flex items-center px-5 py-2 rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                    <button className="flex items-center px-5 py-2 rounded-full border border-border bg-surface text-text hover:bg-surface-2 text-sm font-medium transition">
                       Contact Us <Mail className="ml-2 w-4 h-4" />
                     </button>
                   </div>
                 </GlassCard>
-                <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-purple-500/20 dark:bg-purple-800/20 blur-3xl z-0" />
-                <div className="absolute -bottom-10 -left-10 w-20 h-20 rounded-full bg-blue-500/20 dark:bg-blue-800/20 blur-3xl z-0" />
+                <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-primary/10 blur-3xl z-0" />
+                <div className="absolute -bottom-10 -left-10 w-20 h-20 rounded-full bg-primary/10 blur-3xl z-0" />
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
@@ -565,12 +532,14 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-6">
                   <div className="flex items-center gap-4 mb-4">
-                    <Brain className="w-7 h-7 text-indigo-500" />
-                    <h4 className="font-bold text-gray-900 dark:text-white text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+                      <Brain className="w-5 h-5 text-primary" />
+                    </div>
+                    <h4 className="font-bold text-text text-lg">
                       AI-Powered Personalization
                     </h4>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-text-muted leading-relaxed">
                     Our platform leverages advanced AI to provide adaptive learning paths, tailored
                     practice problems, and real-time feedback, ensuring every student's preparation
                     is optimized for their unique needs.
@@ -578,24 +547,28 @@ export default function ProjectDocs() {
                 </GlassCard>
                 <GlassCard className="p-6">
                   <div className="flex items-center gap-4 mb-4">
-                    <Briefcase className="w-7 h-7 text-purple-500" />
-                    <h4 className="font-bold text-gray-900 dark:text-white text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+                      <Briefcase className="w-5 h-5 text-primary" />
+                    </div>
+                    <h4 className="font-bold text-text text-lg">
                       Company-Specific Preparation
                     </h4>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-text-muted leading-relaxed">
                     We offer curated content and mock interviews based on specific company patterns
                     and recent interview questions, giving students a competitive edge.
                   </p>
                 </GlassCard>
                 <GlassCard className="p-6">
                   <div className="flex items-center gap-4 mb-4">
-                    <Trophy className="w-7 h-7 text-blue-500" />
-                    <h4 className="font-bold text-gray-900 dark:text-white text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+                      <Trophy className="w-5 h-5 text-primary" />
+                    </div>
+                    <h4 className="font-bold text-text text-lg">
                       Holistic Skill Development
                     </h4>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-text-muted leading-relaxed">
                     Beyond coding, PlaceMentor helps students develop crucial soft skills,
                     communication abilities, and problem-solving strategies essential for success in
                     interviews and careers.
@@ -824,13 +797,13 @@ export default function ProjectDocs() {
                     Holistic Career Readiness
                   </h4>
                 </div>
-                <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p className="text-base text-text-muted leading-relaxed mb-4">
                   We go beyond just technical skills. PlaceMentor focuses on developing critical
                   soft skills, behavioral aspects, and interview etiquette through realistic
                   simulations and expert-designed modules, preparing students for the entire hiring
                   process.
                 </p>
-                <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                   <li>Soft skill training (communication, leadership, teamwork).</li>
                   <li>Behavioral interview preparation and feedback.</li>
                   <li>Resume and portfolio optimization workshops.</li>
@@ -838,19 +811,19 @@ export default function ProjectDocs() {
               </GlassCard>
               <GlassCard className="p-8 group">
                 <div className="flex items-start gap-4 mb-4">
-                  <span className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
+                  <span className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
                     <Target className="w-5 h-5" />
                   </span>
-                  <h4 className="font-bold text-gray-900 dark:text-white text-xl">
+                  <h4 className="font-bold text-text text-xl">
                     Company-Driven Insights
                   </h4>
                 </div>
-                <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p className="text-base text-text-muted leading-relaxed mb-4">
                   Our platform aggregates and analyzes placement data from hundreds of companies,
                   providing unparalleled insights into specific hiring patterns, frequently asked
                   questions, and interview formats for each recruiter.
                 </p>
-                <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                   <li>Real-time updates on company-specific hiring trends.</li>
                   <li>Access to verified previous year interview questions.</li>
                   <li>Tailored mock interviews simulating company environments.</li>
@@ -858,19 +831,19 @@ export default function ProjectDocs() {
               </GlassCard>
               <GlassCard className="p-8 group">
                 <div className="flex items-start gap-4 mb-4">
-                  <span className="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 shrink-0">
+                  <span className="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
                     <Activity className="w-5 h-5" />
                   </span>
-                  <h4 className="font-bold text-gray-900 dark:text-white text-xl">
+                  <h4 className="font-bold text-text text-xl">
                     Engaging & Gamified Experience
                   </h4>
                 </div>
-                <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p className="text-base text-text-muted leading-relaxed mb-4">
                   Motivation is key for long-term preparation. PlaceMentor integrates gamification
                   elements like points, badges, leaderboards, and progress tracking to make learning
                   addictive and fun, driving consistent engagement.
                 </p>
-                <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                   <li>Progress milestones and achievement badges.</li>
                   <li>Competitive challenges and coding contests.</li>
                   <li>Interactive visualizations of performance.</li>
@@ -889,10 +862,10 @@ export default function ProjectDocs() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center mb-5 shadow-lg shadow-green-500/20">
                   <DollarSign className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                <h4 className="font-bold text-text text-lg mb-2">
                   Freemium Model
                 </h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   Offer a free tier with basic features (e.g., limited practice problems,
                   introductory mock interviews) to attract a large user base and demonstrate value.
                 </p>
@@ -901,10 +874,10 @@ export default function ProjectDocs() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center mb-5 shadow-lg shadow-yellow-500/20">
                   <Award className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                <h4 className="font-bold text-text text-lg mb-2">
                   Premium Subscriptions
                 </h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   Paid tiers unlock advanced features like unlimited AI mock interviews,
                   company-specific modules, in-depth analytics, and priority doubt solving.
                 </p>
@@ -913,10 +886,10 @@ export default function ProjectDocs() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center mb-5 shadow-lg shadow-sky-500/20">
                   <GraduationCap className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                <h4 className="font-bold text-text text-lg mb-2">
                   Institutional Partnerships
                 </h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   Collaborate with colleges and universities to provide bulk licenses for their
                   students, integrating PlaceMentor into their curriculum.
                 </p>
@@ -925,10 +898,10 @@ export default function ProjectDocs() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-red-600 flex items-center justify-center mb-5 shadow-lg shadow-pink-500/20">
                   <ShoppingCart className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                <h4 className="font-bold text-text text-lg mb-2">
                   Add-on Services
                 </h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   Offer premium add-ons like one-on-one sessions with career coaches, personalized
                   resume reviews, or advanced workshops.
                 </p>
@@ -937,10 +910,10 @@ export default function ProjectDocs() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/20">
                   <HeartHandshake className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                <h4 className="font-bold text-text text-lg mb-2">
                   Recruiter Partnerships
                 </h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   (Future) Partner with companies seeking talent, offering access to verified,
                   placement-ready student profiles and analytics.
                 </p>
@@ -949,10 +922,10 @@ export default function ProjectDocs() {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-600 flex items-center justify-center mb-5 shadow-lg shadow-cyan-500/20">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                <h4 className="font-bold text-text text-lg mb-2">
                   Data & Insights Sales
                 </h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   (Future) Anonymized and aggregated data insights on student performance trends to
                   educational institutions and industry for improving curricula.
                 </p>
@@ -974,19 +947,19 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 h-full">
                   <SectionHeading>Market Opportunity</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-base text-text-muted leading-relaxed mb-4">
                     The EdTech market, especially for career readiness and skill development, is
                     experiencing exponential growth globally. With millions of students seeking
                     employment annually, the demand for effective placement preparation tools is
                     immense and underserved by truly intelligent solutions.
                   </p>
-                  <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                  <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                     <li>Large and growing student demographic.</li>
                     <li>Increasing demand for specialized tech skills.</li>
                     <li>Digital transformation in education.</li>
                   </ul>
                   <div className="mt-6">
-                    <button className="flex items-center px-5 py-2 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900 transition">
+                    <button className="flex items-center px-5 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition">
                       Market Research <LineChart className="ml-2 w-4 h-4" />
                     </button>
                   </div>
@@ -1000,19 +973,19 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 h-full">
                   <SectionHeading>Scalability & Innovation</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-base text-text-muted leading-relaxed mb-4">
                     Built on modern cloud-native architecture, PlaceMentor is inherently scalable to
                     accommodate millions of users. Our continuous integration of advanced AI/ML
                     models ensures we stay at the forefront of educational technology and offer
                     innovative solutions.
                   </p>
-                  <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                  <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                     <li>Cloud-native, microservices architecture.</li>
                     <li>AI-first approach for product development.</li>
                     <li>Agile methodology for rapid iteration.</li>
                   </ul>
                   <div className="mt-6">
-                    <button className="flex items-center px-5 py-2 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 text-sm font-medium hover:bg-purple-100 dark:hover:bg-purple-900 transition">
+                    <button className="flex items-center px-5 py-2 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-sm font-medium hover:bg-purple-500/20 transition">
                       Innovation Roadmap <Zap className="ml-2 w-4 h-4" />
                     </button>
                   </div>
@@ -1026,19 +999,19 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 h-full">
                   <SectionHeading>Monetization Streams</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-base text-text-muted leading-relaxed mb-4">
                     With a robust freemium model, premium subscriptions, institutional partnerships,
                     and future potential for recruiter services and data insights, PlaceMentor has
                     multiple, diversified revenue streams to ensure long-term financial stability
                     and growth.
                   </p>
-                  <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                  <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                     <li>Proven freemium to premium conversion.</li>
                     <li>High-value institutional contracts.</li>
                     <li>Strategic B2B partnerships.</li>
                   </ul>
                   <div className="mt-6">
-                    <button className="flex items-center px-5 py-2 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900 transition">
+                    <button className="flex items-center px-5 py-2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition">
                       Revenue Projections <DollarSign className="ml-2 w-4 h-4" />
                     </button>
                   </div>
@@ -1052,18 +1025,18 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 h-full">
                   <SectionHeading>Experienced Team & Advisors</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-base text-text-muted leading-relaxed mb-4">
                     Our team comprises experienced professionals in AI, software development,
                     education, and career counseling. Supported by a strong advisory board from
                     industry and academia, we have the expertise to execute our vision effectively.
                   </p>
-                  <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                  <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                     <li>Founders with EdTech and AI background.</li>
                     <li>Advisory board from top tech companies and universities.</li>
                     <li>Dedicated team for content and student support.</li>
                   </ul>
                   <div className="mt-6">
-                    <button className="flex items-center px-5 py-2 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
+                    <button className="flex items-center px-5 py-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium hover:bg-emerald-500/20 transition">
                       Meet the Team <Users className="ml-2 w-4 h-4" />
                     </button>
                   </div>
@@ -1081,7 +1054,7 @@ export default function ProjectDocs() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
                   <SectionHeading>Content Management</SectionHeading>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+                  <p className="text-sm text-text-muted leading-relaxed mb-4">
                     The admin panel provides robust tools for managing all types of content on the
                     platform, ensuring accuracy and relevance.
                   </p>
@@ -1089,10 +1062,10 @@ export default function ProjectDocs() {
                     <li className="flex items-start gap-3">
                       <FileCheck className="w-5 h-5 text-indigo-500 mt-1 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <h4 className="font-semibold text-text">
                           Problem & Question Editor
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-text-muted">
                           Create, edit, and categorize coding problems, MCQs, and interview
                           questions with solutions and difficulty levels.
                         </p>
@@ -1101,10 +1074,10 @@ export default function ProjectDocs() {
                     <li className="flex items-start gap-3">
                       <ClipboardCheck className="w-5 h-5 text-purple-500 mt-1 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <h4 className="font-semibold text-text">
                           Mock Interview Creator
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-text-muted">
                           Design custom AI mock interview flows, defining question types,
                           difficulty, and feedback parameters.
                         </p>
@@ -1113,10 +1086,10 @@ export default function ProjectDocs() {
                     <li className="flex items-start gap-3">
                       <BookOpen className="w-5 h-5 text-blue-500 mt-1 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <h4 className="font-semibold text-text">
                           Learning Path Editor
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-text-muted">
                           Configure adaptive learning modules and assign specific content to
                           different student segments.
                         </p>
@@ -1126,7 +1099,7 @@ export default function ProjectDocs() {
                 </div>
                 <div>
                   <SectionHeading>User & Platform Management</SectionHeading>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+                  <p className="text-sm text-text-muted leading-relaxed mb-4">
                     Centralized control over user accounts, subscriptions, system settings, and
                     performance monitoring.
                   </p>
@@ -1134,10 +1107,10 @@ export default function ProjectDocs() {
                     <li className="flex items-start gap-3">
                       <UserCog className="w-5 h-5 text-green-500 mt-1 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <h4 className="font-semibold text-text">
                           User & Role Management
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-text-muted">
                           Manage student and admin accounts, assign roles, and track user activity
                           and progress.
                         </p>
@@ -1146,10 +1119,10 @@ export default function ProjectDocs() {
                     <li className="flex items-start gap-3">
                       <LayoutDashboard className="w-5 h-5 text-red-500 mt-1 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <h4 className="font-semibold text-text">
                           Analytics Dashboard
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-text-muted">
                           Real-time insights into platform usage, student performance trends, and AI
                           model effectiveness.
                         </p>
@@ -1158,10 +1131,10 @@ export default function ProjectDocs() {
                     <li className="flex items-start gap-3">
                       <Cog className="w-5 h-5 text-yellow-500 mt-1 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <h4 className="font-semibold text-text">
                           System Configuration
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-text-muted">
                           Control global settings, manage subscriptions, announcements, and push
                           notifications.
                         </p>
@@ -1187,25 +1160,25 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 h-full">
                   <SectionHeading>Automated Testing</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-base text-text-muted leading-relaxed mb-4">
                     We employ a multi-layered automated testing strategy to cover all aspects of the
                     application, ensuring code quality and preventing regressions.
                   </p>
-                  <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                  <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                     <li>
-                      <span className="font-semibold">Unit Tests:</span> Jest, React Testing Library
+                      <span className="font-semibold text-text">Unit Tests:</span> Jest, React Testing Library
                       for isolated component and function testing.
                     </li>
                     <li>
-                      <span className="font-semibold">Integration Tests:</span> Ensuring seamless
+                      <span className="font-semibold text-text">Integration Tests:</span> Ensuring seamless
                       interaction between modules and services.
                     </li>
                     <li>
-                      <span className="font-semibold">End-to-End (E2E) Tests:</span> Cypress,
+                      <span className="font-semibold text-text">End-to-End (E2E) Tests:</span> Cypress,
                       Playwright for user journey testing across the UI.
                     </li>
                     <li>
-                      <span className="font-semibold">API Tests:</span> Postman/Newman for verifying
+                      <span className="font-semibold text-text">API Tests:</span> Postman/Newman for verifying
                       backend API functionality and performance.
                     </li>
                   </ul>
@@ -1219,25 +1192,25 @@ export default function ProjectDocs() {
               >
                 <GlassCard className="p-8 h-full">
                   <SectionHeading>Manual & Performance Testing</SectionHeading>
-                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-base text-text-muted leading-relaxed mb-4">
                     Beyond automation, human-centric and performance-focused testing ensures a
                     smooth user experience and high system responsiveness under various loads.
                   </p>
-                  <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1.5">
+                  <ul className="list-disc list-inside text-sm text-text-subtle space-y-1.5">
                     <li>
-                      <span className="font-semibold">Usability Testing:</span> Real user testing to
+                      <span className="font-semibold text-text">Usability Testing:</span> Real user testing to
                       gather feedback on UX/UI and discover pain points.
                     </li>
                     <li>
-                      <span className="font-semibold">Exploratory Testing:</span> Experienced QA
+                      <span className="font-semibold text-text">Exploratory Testing:</span> Experienced QA
                       engineers freely explore the application to find unexpected bugs.
                     </li>
                     <li>
-                      <span className="font-semibold">Load & Stress Testing:</span> Apache JMeter,
+                      <span className="font-semibold text-text">Load & Stress Testing:</span> Apache JMeter,
                       LoadRunner to simulate high traffic and evaluate system stability.
                     </li>
                     <li>
-                      <span className="font-semibold">Security Testing:</span> Penetration testing
+                      <span className="font-semibold text-text">Security Testing:</span> Penetration testing
                       and vulnerability scanning (mentioned in Security section).
                     </li>
                   </ul>
@@ -1292,14 +1265,14 @@ export default function ProjectDocs() {
               Conclusion
             </SectionTitle>
             <GlassCard className="p-8 sm:p-10 text-center max-w-3xl mx-auto relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-blue-500/10 opacity-50 z-0" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary-soft/10 to-teal-500/10 opacity-50 z-0" />
               <div className="relative z-10">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.6 }}
-                  className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-3xl font-extrabold mx-auto mb-6 shadow-xl"
+                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-2xl font-extrabold mx-auto mb-6 shadow-xl shadow-primary/20"
                 >
                   PM
                 </motion.div>
@@ -1308,7 +1281,7 @@ export default function ProjectDocs() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.7, delay: 0.2 }}
-                  className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 leading-relaxed"
+                  className="text-2xl sm:text-3xl font-bold text-text mb-4 leading-relaxed"
                 >
                   PlaceMentor: Empowering Every Student for Success
                 </motion.h3>
@@ -1317,7 +1290,7 @@ export default function ProjectDocs() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.7, delay: 0.4 }}
-                  className="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto"
+                  className="text-base sm:text-lg text-text-muted leading-relaxed mb-8 max-w-2xl mx-auto"
                 >
                   PlaceMentor is more than just a preparation tool; it's a comprehensive ecosystem
                   built to bridge the gap between academic learning and career readiness. With our
@@ -1333,14 +1306,14 @@ export default function ProjectDocs() {
                 >
                   <button
                     onClick={() => navigate("/signup")}
-                    className="inline-flex items-center px-7 py-3 bg-indigo-600 text-white font-bold rounded-full text-md shadow-lg hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95 group"
+                    className="inline-flex items-center px-7 py-3 bg-primary text-white font-bold rounded-xl text-md shadow-lg shadow-primary/25 hover:bg-primary-hover transition transform hover:scale-105 active:scale-95 group"
                   >
                     Start Your Journey{" "}
                     <Rocket className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                   <button
                     onClick={() => navigate("/contact")}
-                    className="inline-flex items-center px-7 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 font-bold rounded-full text-md border border-gray-300 dark:border-gray-700 shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition transform hover:scale-105 active:scale-95 group"
+                    className="inline-flex items-center px-7 py-3 bg-surface text-primary font-bold rounded-xl text-md border border-border shadow-sm hover:bg-surface-2 transition transform hover:scale-105 active:scale-95 group"
                   >
                     Contact Sales <Mail className="ml-2 w-5 h-5" />
                   </button>
@@ -1351,35 +1324,24 @@ export default function ProjectDocs() {
         </div>
 
         {/* ═════ FOOTER ═════ */}
-        <footer className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200/50 dark:border-white/5 py-10">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center text-sm text-gray-500 dark:text-gray-400">
+        <footer className="bg-surface border-t border-border py-10 transition-colors duration-200">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center text-sm text-text-subtle">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="font-bold text-gray-900 dark:text-white text-lg">
-                Place<span className="text-indigo-500">Mentor</span>
+              <span className="font-bold text-text text-lg">
+                Place<span className="text-primary">Mentor</span>
               </span>
             </div>
             <p>&copy; {new Date().getFullYear()} PlaceMentor. All rights reserved.</p>
             <div className="flex justify-center space-x-4 mt-4">
-              <a href="#" className="hover:text-indigo-600">
+              <a href="#" className="hover:text-primary transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-indigo-600">
+              <a href="#" className="hover:text-primary transition-colors">
                 Terms of Service
               </a>
-              <a href="#" className="hover:text-indigo-600">
+              <a href="#" className="hover:text-primary transition-colors">
                 Sitemap
               </a>
-            </div>
-            <div className="mt-6 flex justify-center space-x-4">
-              <a
-                href="[github.com](https://github.com/your-org/placementor)"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-              >
-                {/* <Github className="w-5 h-5 text-gray-600 dark:text-gray-300" /> */}
-              </a>
-              {/* Add more social links if desired */}
             </div>
           </div>
         </footer>

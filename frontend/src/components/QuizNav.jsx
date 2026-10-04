@@ -1,52 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { BsCoin } from "react-icons/bs";
-import { HiOutlineLogout } from "react-icons/hi";
+import { Coins, LogOut, ArrowLeft, Sun, Moon, History } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { setUserData } from "../redux/userSlice";
-import { IoArrowBack } from "react-icons/io5";
-
-// ✅ NEW IMPORTS
 import { Button } from "@/components/ui/button";
-import { Sun, Moon } from "lucide-react";
+import { useTheme } from "../hooks/useTheme";
+import BrandLogo from "./BrandLogo";
 
 function QuizNav() {
   const { user } = useSelector((state) => state.user);
-
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [showUserPopup, setShowUserPopup] = useState(false);
-
-  // ✅ DARK MODE STATE
-  const [isDark, setIsDark] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // ✅ LOAD DARK MODE FROM LOCALSTORAGE
-  useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    }
-  }, []);
-
-  // TOGGLE DARK MODE
-  const toggleDark = () => {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-      setIsDark(true);
-    }
-  };
-
-  //  LOGOUT
   const handleLogout = async () => {
     try {
       await api.get("/api/auth/logout");
@@ -60,57 +31,37 @@ function QuizNav() {
   };
 
   return (
-    <div className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-white/10 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md transition-colors duration-300">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="w-full px-4 md:px-8 h-[72px] flex items-center justify-between"
-      >
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-surface/95 backdrop-blur-sm transition-colors duration-200">
+      <div className="w-full px-4 md:px-8 h-16 flex items-center justify-between">
         {/* LEFT */}
         <div className="flex items-center gap-3">
-          {/* BACK */}
           <button
             onClick={() => navigate("/dashboard")}
-            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer"
+            aria-label="Back to dashboard"
           >
-            <IoArrowBack size={20} className="text-gray-700 dark:text-gray-300" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
 
           {/* LOGO */}
           <div
             onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-2 cursor-pointer group"
+            className="cursor-pointer"
           >
-            {/* ICON */}
-            <div className="relative w-9 h-9 flex items-center justify-center">
-              {/* Glow */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 blur-md opacity-70 animate-pulse"></div>
-
-              {/* Icon */}
-              <div
-                className="relative bg-gray-900 text-white font-bold rounded-lg w-full h-full flex items-center justify-center 
-    transition-all duration-500 group-hover:scale-110 group-hover:rotate-6"
-              >
-                PM
-              </div>
-            </div>
-            {/* TEXT */}
-            <span className="font-bold text-lg tracking-wide text-gray-900 dark:text-white">
-              Place
-              <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent animate-pulse">
-                Mentor
-              </span>
-            </span>
+            <BrandLogo size="sm" showSubtitle={false} />
           </div>
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-3 md:gap-5 relative">
+        <div className="flex items-center gap-3 relative">
           {/* DARK MODE */}
-          <Button variant="ghost" size="icon" onClick={toggleDark} className="rounded-xl">
-            {isDark ? <Sun size={19} /> : <Moon size={19} />}
-          </Button>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
 
           {/* CREDITS */}
           <div className="relative">
@@ -119,21 +70,20 @@ function QuizNav() {
                 setShowCreditPopup(!showCreditPopup);
                 setShowUserPopup(false);
               }}
-              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white px-4 h-11 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              className="flex items-center gap-2 bg-surface-2 border border-border text-text px-3 h-9 rounded-lg hover:border-primary/40 transition-colors cursor-pointer text-xs font-semibold"
             >
-              <BsCoin size={18} />
-              <span className="font-medium">{user?.credits || 0}</span>
+              <Coins className="w-4 h-4 text-accent" />
+              <span>{user?.credits ?? 0}</span>
             </button>
 
             {showCreditPopup && (
-              <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 rounded-2xl p-5 z-50">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  Need more credits to continue interviews?
+              <div className="absolute right-0 mt-2 w-64 bg-surface border border-border shadow-card rounded-xl p-4 z-50 animate-in fade-in zoom-in-95">
+                <p className="text-xs text-text-muted mb-3">
+                  Need more credits to continue AI practice interviews?
                 </p>
-
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-medium transition"
+                  className="w-full bg-primary hover:bg-primary-hover text-on-primary py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer"
                 >
                   Buy more credits
                 </button>
@@ -148,43 +98,42 @@ function QuizNav() {
                 setShowUserPopup(!showUserPopup);
                 setShowCreditPopup(false);
               }}
-              className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-lg hover:bg-surface-2 transition-colors cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center overflow-hidden font-semibold">
+              <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center font-semibold text-xs border border-primary/20 overflow-hidden">
                 {user?.avatar ? (
                   <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
-                  user?.fullName?.slice(0, 1).toUpperCase()
+                  user?.fullName?.slice(0, 1).toUpperCase() || "U"
                 )}
               </div>
-
-              <p className="hidden md:block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <span className="hidden md:block text-xs font-medium text-text">
                 {user?.fullName || "Guest"}
-              </p>
+              </span>
             </button>
 
             {showUserPopup && (
-              <div className="absolute right-0 mt-3 w-52 bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 rounded-2xl p-3 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-surface border border-border shadow-card rounded-xl p-2 z-50 animate-in fade-in zoom-in-95">
                 <button
                   onClick={() => navigate("/history")}
-                  className="w-full text-left text-sm px-3 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                  className="w-full text-left text-xs px-3 py-2 rounded-lg hover:bg-surface-2 text-text flex items-center gap-2 transition-colors cursor-pointer"
                 >
+                  <History className="w-3.5 h-3.5 text-text-subtle" />
                   Interview History
                 </button>
-
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left text-sm px-3 py-2.5 rounded-xl flex items-center gap-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  className="w-full text-left text-xs px-3 py-2 rounded-lg flex items-center gap-2 text-danger hover:bg-danger-soft transition-colors cursor-pointer mt-1"
                 >
-                  <HiOutlineLogout size={16} />
+                  <LogOut className="w-3.5 h-3.5" />
                   Logout
                 </button>
               </div>
             )}
           </div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </header>
   );
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { ArrowLeft, Download, Award, TrendingUp, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
@@ -17,18 +17,14 @@ import {
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import Footer from "./Footer";
 
 function Step3Report({ result }) {
   const navigate = useNavigate();
 
   if (!result) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center
-        bg-gray-50 dark:bg-gray-950"
-      >
-        <p className="text-gray-500 dark:text-gray-400 text-lg">Loading Report...</p>
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-bg text-text">
+        <p className="text-text-muted text-sm font-medium">Loading Interview Report...</p>
       </div>
     );
   }
@@ -47,32 +43,23 @@ function Step3Report({ result }) {
   }));
 
   const skills = [
-    {
-      label: "Confidence",
-      value: confidence,
-    },
-    {
-      label: "Communication",
-      value: communication,
-    },
-    {
-      label: "Correctness",
-      value: correctness,
-    },
+    { label: "Confidence", value: confidence },
+    { label: "Communication", value: communication },
+    { label: "Correctness", value: correctness },
   ];
 
   let performanceText = "";
   let shortTagline = "";
 
   if (finalScore >= 8) {
-    performanceText = "Ready for job opportunities.";
-    shortTagline = "Excellent clarity and structured responses.";
+    performanceText = "Ready for Job Opportunities";
+    shortTagline = "Excellent clarity and structured technical responses.";
   } else if (finalScore >= 5) {
-    performanceText = "Needs minor improvement before interviews.";
-    shortTagline = "Good foundation, refine articulation.";
+    performanceText = "Needs Minor Improvements";
+    shortTagline = "Good foundation, focus on sharper articulation.";
   } else {
-    performanceText = "Significant improvement required.";
-    shortTagline = "Work on clarity and confidence.";
+    performanceText = "Targeted Practice Required";
+    shortTagline = "Work on foundational clarity, depth, and pacing.";
   }
 
   const score = finalScore;
@@ -80,7 +67,6 @@ function Step3Report({ result }) {
 
   const downloadPDF = () => {
     const doc = new jsPDF("p", "mm", "a4");
-
     const pageWidth = doc.internal.pageSize.getWidth();
 
     doc.setFontSize(18);
@@ -96,217 +82,182 @@ function Step3Report({ result }) {
   };
 
   return (
-    <>
-      <div
-        className="min-h-screen
-      bg-gray-50 dark:bg-gray-950
-      px-4 sm:px-6 lg:px-10 py-8
-      transition-colors duration-300"
-      >
+    <div className="min-h-[calc(100vh-64px)] bg-bg text-text px-4 sm:px-6 lg:px-8 py-8 transition-colors duration-200">
+      <div className="max-w-[1200px] mx-auto space-y-6">
         {/* HEADER */}
-        <div
-          className="mb-8 flex flex-col sm:flex-row
-        sm:items-center sm:justify-between gap-4"
-        >
-          <div className="w-full flex items-start gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/history")}
-              className="mt-1 p-3 rounded-full
-            bg-white dark:bg-gray-900
-            shadow-sm hover:shadow-md
-            border border-gray-200 dark:border-white/10
-            transition-all duration-300 hover:scale-105"
+              className="p-2 rounded-lg bg-surface hover:bg-surface-2 border border-border text-text transition-colors cursor-pointer"
+              aria-label="Back to History"
             >
-              <FaArrowLeft className="text-gray-600 dark:text-gray-300" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
 
             <div>
-              <h1
-                className="text-3xl font-bold
-              text-gray-900 dark:text-white"
-              >
-                Interview Analytics Dashboard
+              <h1 className="text-xl sm:text-2xl font-bold text-text tracking-tight">
+                Interview Performance Analytics
               </h1>
-
-              <p className="text-gray-500 dark:text-gray-400 mt-2">
-                AI-powered performance insights
+              <p className="text-xs text-text-muted mt-0.5">
+                AI evaluation, metric breakdown & question feedback
               </p>
             </div>
           </div>
 
           <button
             onClick={downloadPDF}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600
-          hover:from-blue-700 hover:to-indigo-700
-          text-white px-6 py-3 rounded-xl
-          shadow-md hover:shadow-xl
-          transition-all duration-300 font-semibold"
+            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-on-primary px-4 py-2 rounded-lg text-xs font-semibold transition-colors shadow-soft cursor-pointer self-start sm:self-auto"
           >
-            Download PDF
+            <Download className="w-4 h-4" />
+            <span>Download PDF Report</span>
           </button>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* LEFT */}
+        {/* METRICS & DETAILS GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* LEFT COLUMN: OVERALL + SKILLS */}
           <div className="space-y-6">
-            {/* SCORE */}
-            <motion.div
-              className="bg-white dark:bg-gray-900
-            rounded-3xl shadow-lg p-6 sm:p-8 text-center
-            border border-gray-200 dark:border-white/10"
-            >
-              <h3 className="text-gray-500 dark:text-gray-400 mb-6">Overall Performance</h3>
+            {/* OVERALL SCORE */}
+            <div className="bg-surface border border-border rounded-xl shadow-subtle p-6 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-text-subtle uppercase tracking-wider mb-6">
+                <Award className="w-4 h-4 text-primary" />
+                Overall Score
+              </div>
 
               <div className="relative w-28 h-28 mx-auto">
                 <CircularProgressbar
                   value={percentage}
                   text={`${score}/10`}
                   styles={buildStyles({
-                    pathColor: "#2563eb",
-                    textColor: "#2563eb",
-                    trailColor: "#e5e7eb",
+                    pathColor: "#059669",
+                    textColor: "currentColor",
+                    trailColor: "var(--surface-2)",
+                    textSize: "18px",
                   })}
                 />
               </div>
 
-              <p className="text-gray-400 dark:text-gray-500 mt-3 text-sm">Out of 10</p>
-
-              <div className="mt-4">
-                <p className="font-semibold text-gray-900 dark:text-white">{performanceText}</p>
-
-                <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{shortTagline}</p>
+              <div className="mt-5">
+                <h3 className="text-sm font-bold text-text">{performanceText}</h3>
+                <p className="text-xs text-text-muted mt-1 leading-relaxed">{shortTagline}</p>
               </div>
-            </motion.div>
+            </div>
 
             {/* SKILLS */}
-            <motion.div
-              className="bg-white dark:bg-gray-900
-            rounded-3xl shadow-lg p-6 sm:p-8
-            border border-gray-200 dark:border-white/10"
-            >
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-6">
-                Skill Evaluation
+            <div className="bg-surface border border-border rounded-xl shadow-subtle p-6 space-y-4">
+              <h3 className="text-xs font-semibold text-text-subtle uppercase tracking-wider">
+                Skill Breakdown
               </h3>
 
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {skills.map((s, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-gray-700 dark:text-gray-300">{s.label}</span>
-
-                      <span className="font-semibold text-blue-600 dark:text-blue-400">
-                        {s.value}
-                      </span>
+                  <div key={i} className="space-y-1.5">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-medium text-text">{s.label}</span>
+                      <span className="font-bold text-primary">{s.value} / 10</span>
                     </div>
 
-                    <div className="bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
+                    <div className="bg-surface-2 h-2 rounded-full overflow-hidden border border-border">
                       <div
-                        className="bg-blue-500 h-full rounded-full"
-                        style={{
-                          width: `${s.value * 10}%`,
-                        }}
+                        className="bg-primary h-full rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(s.value * 10, 100)}%` }}
                       />
                     </div>
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT COLUMN: CHART + QUESTIONS */}
           <div className="lg:col-span-2 space-y-6">
-            {/* CHART */}
-            <motion.div
-              className="bg-white dark:bg-gray-900
-            rounded-3xl shadow-lg p-5 sm:p-8
-            border border-gray-200 dark:border-white/10"
-            >
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-6">
-                Performance Trend
-              </h3>
+            {/* SCORE TIMELINE CHART */}
+            <div className="bg-surface border border-border rounded-xl shadow-subtle p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-primary" />
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-text-subtle">
+                    Question-by-Question Progression
+                  </h3>
+                </div>
+              </div>
 
-              <div className="h-64 sm:h-72">
+              <div className="h-56 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={questionScoreData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-
-                    <XAxis dataKey="name" stroke="#9CA3AF" />
-
-                    <YAxis domain={[0, 10]} stroke="#9CA3AF" />
-
-                    <Tooltip />
-
+                    <defs>
+                      <linearGradient id="scoreEmeraldGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#059669" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#059669" stopOpacity={0.0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.6} />
+                    <XAxis dataKey="name" stroke="var(--text-subtle)" tick={{ fontSize: 11 }} />
+                    <YAxis domain={[0, 10]} stroke="var(--text-subtle)" tick={{ fontSize: 11 }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "var(--surface)",
+                        borderColor: "var(--border)",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        color: "var(--text)",
+                      }}
+                    />
                     <Area
                       type="monotone"
                       dataKey="score"
-                      stroke="#2563eb"
-                      fill="#bfdbfe"
-                      strokeWidth={3}
+                      stroke="#059669"
+                      strokeWidth={2}
+                      fill="url(#scoreEmeraldGrad)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </motion.div>
+            </div>
 
-            {/* QUESTIONS */}
-            <motion.div
-              className="bg-white dark:bg-gray-900
-            rounded-3xl shadow-lg p-5 sm:p-8
-            border border-gray-200 dark:border-white/10"
-            >
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-6">
-                Question Breakdown
-              </h3>
+            {/* QUESTION FEEDBACK LIST */}
+            <div className="bg-surface border border-border rounded-xl shadow-subtle p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-primary" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-text-subtle">
+                  Detailed Question Feedback
+                </h3>
+              </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {questionWiseScore.map((q, i) => (
                   <div
                     key={i}
-                    className="bg-gray-50 dark:bg-gray-800
-                    p-4 sm:p-6 rounded-2xl
-                    border border-gray-200 dark:border-white/10"
+                    className="bg-surface-2/60 border border-border p-4 rounded-xl space-y-3"
                   >
-                    <div className="flex flex-col sm:flex-row justify-between gap-3 mb-4">
+                    <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-xs text-gray-400">Question {i + 1}</p>
-
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {q.question || "Question not available"}
+                        <span className="text-[11px] font-semibold text-text-subtle uppercase">
+                          Question {i + 1}
+                        </span>
+                        <p className="text-sm font-semibold text-text mt-0.5">
+                          {q.question || "Question prompt"}
                         </p>
                       </div>
 
-                      <div
-                        className="bg-blue-100 dark:bg-blue-900/30
-                        text-blue-700 dark:text-blue-400
-                        px-3 py-1 rounded-full font-bold text-sm"
-                      >
-                        {q.score ?? 0}
-                        /10
-                      </div>
+                      <span className="bg-primary-soft text-primary font-bold text-xs px-2.5 py-1 rounded-md shrink-0 border border-primary/20">
+                        {q.score ?? 0} / 10
+                      </span>
                     </div>
 
-                    <div
-                      className="bg-blue-50 dark:bg-gray-800
-                      border border-blue-200 dark:border-white/10
-                      p-4 rounded-lg"
-                    >
-                      <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-1">
-                        AI Feedback
-                      </p>
-
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        {q.feedback?.trim() || "No feedback available"}
-                      </p>
+                    <div className="bg-surface border border-border p-3 rounded-lg text-xs leading-relaxed text-text-muted">
+                      <span className="font-semibold text-text block mb-1">Feedback:</span>
+                      {q.feedback?.trim() || "No feedback recorded"}
                     </div>
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

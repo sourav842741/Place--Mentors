@@ -74,38 +74,34 @@ const PotdPage = () => {
   return (
     <>
       <Navbar />
-      <div
-        className="min-h-screen 
-bg-gray-50 dark:bg-gray-950 
-lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
-      >
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Target className="h-8 w-8 text-indigo-600" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-indigo-600">Problem of the Day</h1>
+          <div className="text-center mb-6">
+            <div className="flex justify-center items-center gap-2 mb-1">
+              <Target className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">Problem of the Day</h1>
             </div>
 
             {user && (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Welcome {user.fullName}</p>
+              <p className="text-text-muted text-xs">Aptitude, Core CS & Reasoning Daily Practice</p>
             )}
           </div>
 
           {!submitted ? (
             <>
               {/* Progress */}
-              <Card className="mb-6 p-4 shadow-sm bg-white dark:bg-gray-900 border dark:border-white/10">
-                <div className="flex justify-between text-sm sm:text-base">
-                  <p className="font-semibold text-gray-800 dark:text-white">
+              <Card className="mb-6 p-4 shadow-subtle bg-surface border border-border rounded-xl">
+                <div className="flex justify-between text-xs sm:text-sm">
+                  <p className="font-semibold text-text">
                     {Object.keys(userAnswers).length}/15 answered
                   </p>
-                  <p className="text-gray-500 dark:text-gray-400">Max XP: 150</p>
+                  <p className="text-text-muted">Max XP: 150</p>
                 </div>
 
-                <div className="mt-3 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                <div className="mt-3 h-2 bg-surface-2 rounded-full overflow-hidden">
                   <div
-                    className="h-2 bg-indigo-500 rounded-full transition-all"
+                    className="h-2 bg-primary rounded-full transition-all"
                     style={{
                       width: `${(Object.keys(userAnswers).length / 15) * 100}%`,
                     }}
@@ -118,15 +114,12 @@ lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
                 {questions.map((q, index) => (
                   <Card
                     key={index}
-                    className="bg-white dark:bg-gray-900 
-              border border-gray-200 dark:border-white/10 
-              rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition"
+                    className="bg-surface border border-border rounded-xl p-4 sm:p-6 shadow-subtle transition"
                   >
                     <CardHeader className="flex flex-row justify-between items-center pb-3 flex-wrap gap-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
-                          className="bg-gray-100 dark:bg-gray-800 
-                  px-2 py-1 rounded text-xs sm:text-sm text-gray-700 dark:text-gray-300"
+                          className="bg-surface-2 border border-border px-2 py-0.5 rounded text-xs text-text-muted font-medium"
                         >
                           Q{index + 1}
                         </span>
@@ -134,35 +127,35 @@ lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
                         <Badge
                           className={`text-xs px-2.5 py-0.5 rounded-full ${
                             q.difficulty === "Easy"
-                              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                              ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                               : q.difficulty === "Medium"
-                                ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                : "bg-danger-soft text-danger border border-danger/20"
                           }`}
                         >
                           {q.difficulty}
                         </Badge>
 
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs border-border text-text-muted">
                           {q.category}
                         </Badge>
                       </div>
                     </CardHeader>
 
                     <CardContent>
-                      <p className="mb-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">
+                      <p className="mb-4 text-text font-medium text-sm sm:text-base">
                         {q.question}
                       </p>
 
-                      <div className="grid gap-3">
+                      <div className="grid gap-2.5">
                         {q.options.map((option, i) => (
                           <label
                             key={i}
-                            className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition
+                            className={`flex items-start gap-3 p-3 border rounded-xl cursor-pointer transition text-xs sm:text-sm
                       ${
                         userAnswers[index] === option
-                          ? "bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500"
-                          : "hover:bg-gray-50 dark:hover:bg-gray-800 border-gray-200 dark:border-white/10"
+                          ? "bg-primary-soft border-primary text-text font-medium"
+                          : "hover:bg-surface-2 border-border text-text-muted"
                       }`}
                           >
                             <input
@@ -171,9 +164,9 @@ lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
                               value={option}
                               checked={userAnswers[index] === option}
                               onChange={() => handleAnswerSelect(index, option)}
-                              className="mt-1"
+                              className="mt-0.5 accent-primary"
                             />
-                            <span className="text-sm sm:text-base text-gray-800 dark:text-gray-300">
+                            <span className="leading-relaxed">
                               {option}
                             </span>
                           </label>
@@ -188,28 +181,28 @@ lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
               <Button
                 onClick={handleSubmit}
                 disabled={!allAnswered || loading}
-                className="w-full mt-8 h-12 text-lg"
+                className="w-full mt-8 h-11 text-sm font-semibold bg-primary hover:bg-primary-hover text-white rounded-xl shadow-sm transition-colors cursor-pointer"
               >
-                {loading ? "Submitting..." : `Submit (${Object.keys(userAnswers).length}/15)`}
+                {loading ? "Submitting..." : `Submit Daily Problem Set (${Object.keys(userAnswers).length}/15)`}
               </Button>
             </>
           ) : (
             <>
               {/* Results */}
-              <Card className="p-6 mb-6 shadow-sm text-center bg-white dark:bg-gray-900 border dark:border-white/10">
-                <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">🎉 Results</h2>
-                <p className="text-lg text-gray-800 dark:text-white">Score: {result.score}/15</p>
-                <p className="text-green-600 font-semibold">XP Earned: {result.xpEarned}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  Weak Area: {result.weakArea}
+              <Card className="p-6 mb-6 shadow-subtle text-center bg-surface border border-border rounded-xl">
+                <h2 className="text-xl font-bold mb-3 text-text">🎉 Practice Completed</h2>
+                <p className="text-base text-text">Score: <span className="font-bold text-primary">{result.score}/15</span></p>
+                <p className="text-primary font-semibold text-sm mt-1">XP Earned: +{result.xpEarned}</p>
+                <p className="text-xs text-text-muted mt-2">
+                  Identified Weak Area: <span className="text-text font-medium">{result.weakArea}</span>
                 </p>
               </Card>
 
               {/* Detailed Results */}
-              <Card className="max-w-4xl mx-auto bg-white dark:bg-gray-900 border dark:border-white/10">
+              <Card className="max-w-4xl mx-auto bg-surface border border-border rounded-xl shadow-subtle">
                 <CardHeader>
-                  <h3 className="text-xl font-bold flex items-center gap-2 text-gray-800 dark:text-white">
-                    📋 Detailed Results
+                  <h3 className="text-base font-bold flex items-center gap-2 text-text">
+                    📋 Question Breakdown & Review
                   </h3>
                 </CardHeader>
 
@@ -217,21 +210,21 @@ lg:ml-64 pt-16 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
                   {result.results?.map((r, idx) => (
                     <div
                       key={idx}
-                      className={`p-6 rounded-2xl border-2 shadow-sm transition-all ${
+                      className={`p-5 rounded-xl border shadow-subtle transition-all ${
                         r.isCorrect
-                          ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800"
-                          : "bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border-red-200 dark:border-red-800"
+                          ? "bg-emerald-500/5 border-emerald-500/25"
+                          : "bg-danger-soft/40 border-danger/25"
                       }`}
                     >
-                      <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                        <span className="text-2xl font-bold text-gray-800 dark:text-white">
+                      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border/60">
+                        <span className="text-lg font-bold text-text">
                           Q{idx + 1}
                         </span>
 
                         {r.isCorrect ? (
-                          <CheckCircle className="h-8 w-8 text-green-600" />
+                          <CheckCircle className="h-6 w-6 text-emerald-500" />
                         ) : (
-                          <XCircle className="h-8 w-8 text-red-600" />
+                          <XCircle className="h-6 w-6 text-danger" />
                         )}
 
                         <Badge className={`${r.isCorrect ? "bg-green-500" : "bg-red-500"}`}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Moon, Sun, Upload, ImageIcon, User } from "lucide-react";
 
@@ -6,6 +6,7 @@ import AuthLayout from "../components/AuthLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useTheme } from "../hooks/useTheme";
 
 import useAuth from "../hooks/useAuth";
 
@@ -18,9 +19,9 @@ import {
 export default function Signup() {
   const navigate = useNavigate();
   const { googleLogin, sendSignupOtp } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const [loading, setLoading] = useState(false);
-  const [isDark, setIsDark] = useState(false);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -35,32 +36,13 @@ export default function Signup() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
 
-  /* THEME LOAD */
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
-  }, []);
-
-  /* THEME TOGGLE */
-  const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
-    setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
-  };
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
+    if (!file) return;
 
     if (type === "avatar") {
       safeTrack("signup_avatar_selected", {
@@ -138,141 +120,150 @@ export default function Signup() {
 
   return (
     <AuthLayout>
-      {/* THEME BUTTON */}
-      <div className="absolute top-5 right-5">
+      {/* THEME TOGGLE BUTTON */}
+      <div className="absolute top-5 right-5 z-20">
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className="rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="h-9 w-9 rounded-lg border border-border bg-surface text-text hover:bg-surface-2 transition-colors cursor-pointer"
+          aria-label="Toggle theme"
         >
-          {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-text-muted" />}
         </Button>
       </div>
 
       {/* CARD */}
-      <div
-        className="w-full max-w-md mx-auto space-y-5
-        bg-white dark:bg-gray-900
-        p-6 rounded-2xl shadow-xl border
-        border-gray-200 dark:border-white/10"
-      >
+      <div className="w-full max-w-md mx-auto space-y-4 bg-surface border border-border p-6 sm:p-7 rounded-xl shadow-subtle">
         {/* LOGO */}
         <div className="flex justify-center">
           <img
             src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
             alt="PlaceMentor"
-            className="w-18 h-18 rounded-2xl shadow-lg"
+            className="w-14 h-14 rounded-xl border border-border shadow-subtle"
           />
         </div>
 
         {/* TITLE */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Create Account</h2>
-
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Start your placement journey today 🚀
+          <h2 className="text-2xl font-bold tracking-tight text-text">Create Account</h2>
+          <p className="text-xs text-text-muted mt-1">
+            Start your placement journey today with smart mentorship
           </p>
         </div>
 
-        {/* INPUTS */}
-        <Input
-          data-private
-          name="fullName"
-          placeholder="Full Name"
-          onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-        />
+        {/* FORM INPUTS */}
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs font-medium text-text mb-1 block">Full Name</label>
+            <Input
+              data-private
+              name="fullName"
+              placeholder="e.g. Rahul Sharma"
+              value={form.fullName}
+              onChange={handleChange}
+              className="bg-surface-2 border-border text-text placeholder:text-text-subtle h-10 rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+            />
+          </div>
 
-        <Input
-          data-private
-          name="email"
-          placeholder="Email Address"
-          onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-        />
+          <div>
+            <label className="text-xs font-medium text-text mb-1 block">Email Address</label>
+            <Input
+              data-private
+              type="email"
+              name="email"
+              placeholder="e.g. rahul@example.com"
+              value={form.email}
+              onChange={handleChange}
+              className="bg-surface-2 border-border text-text placeholder:text-text-subtle h-10 rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+            />
+          </div>
 
-        <Input
-          data-private
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-        />
+          <div>
+            <label className="text-xs font-medium text-text mb-1 block">Password</label>
+            <Input
+              data-private
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={handleChange}
+              className="bg-surface-2 border-border text-text placeholder:text-text-subtle h-10 rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+            />
+          </div>
 
-        <Input
-          data-private
-          name="skills"
-          placeholder="Skills (React, Java, DSA...)"
-          onChange={handleChange}
-          className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-        />
+          <div>
+            <label className="text-xs font-medium text-text mb-1 block">Skills (Comma separated)</label>
+            <Input
+              data-private
+              name="skills"
+              placeholder="React, Java, DSA, Node.js"
+              value={form.skills}
+              onChange={handleChange}
+              className="bg-surface-2 border-border text-text placeholder:text-text-subtle h-10 rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+            />
+          </div>
 
-        {/* AVATAR */}
-        <label
-          className="cursor-pointer block border-2 border-dashed border-blue-300 dark:border-blue-700
-          rounded-xl p-4 text-center hover:bg-blue-50 dark:hover:bg-blue-950/30 transition"
-        >
-          {avatarPreview ? (
-            <img src={avatarPreview} className="w-20 h-20 mx-auto rounded-full object-cover" />
-          ) : (
-            <div className="space-y-2">
-              <User className="mx-auto w-6 h-6 text-blue-500" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">Upload Avatar</p>
-            </div>
-          )}
+          {/* AVATAR & COVER UPLOAD */}
+          <div className="grid grid-cols-2 gap-2.5 pt-1">
+            <label className="cursor-pointer block border border-dashed border-border hover:border-primary/50 hover:bg-surface-2 rounded-lg p-3 text-center transition">
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Avatar" className="w-12 h-12 mx-auto rounded-full object-cover" />
+              ) : (
+                <div className="space-y-1">
+                  <User className="mx-auto w-5 h-5 text-primary" />
+                  <p className="text-[11px] font-medium text-text-muted">Avatar</p>
+                </div>
+              )}
+              <input data-private type="file" hidden accept="image/*" onChange={(e) => handleFileChange(e, "avatar")} />
+            </label>
 
-          <input data-private type="file" hidden onChange={(e) => handleFileChange(e, "avatar")} />
-        </label>
-
-        {/* COVER */}
-        <label
-          className="cursor-pointer block border-2 border-dashed border-purple-300 dark:border-purple-700
-          rounded-xl p-4 text-center hover:bg-purple-50 dark:hover:bg-purple-950/30 transition"
-        >
-          {coverPreview ? (
-            <img src={coverPreview} className="w-full h-24 object-cover rounded-lg" />
-          ) : (
-            <div className="space-y-2">
-              <ImageIcon className="mx-auto w-6 h-6 text-purple-500" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">Upload Cover Image</p>
-            </div>
-          )}
-
-          <input type="file" hidden onChange={(e) => handleFileChange(e, "cover")} />
-        </label>
+            <label className="cursor-pointer block border border-dashed border-border hover:border-primary/50 hover:bg-surface-2 rounded-lg p-3 text-center transition">
+              {coverPreview ? (
+                <img src={coverPreview} alt="Cover" className="w-full h-12 object-cover rounded" />
+              ) : (
+                <div className="space-y-1">
+                  <ImageIcon className="mx-auto w-5 h-5 text-accent" />
+                  <p className="text-[11px] font-medium text-text-muted">Cover</p>
+                </div>
+              )}
+              <input type="file" hidden accept="image/*" onChange={(e) => handleFileChange(e, "cover")} />
+            </label>
+          </div>
+        </div>
 
         {/* SIGNUP BUTTON */}
         <Button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
+          className="w-full h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-sm shadow-soft transition cursor-pointer"
         >
           {loading ? "Creating..." : "Sign Up"}
         </Button>
 
-        {/* GOOGLE */}
+        {/* OR DIVIDER */}
+        <div className="relative flex items-center justify-center">
+          <div className="w-full border-t border-border" />
+          <span className="absolute px-3 text-xs bg-surface text-text-subtle">OR</span>
+        </div>
+
+        {/* GOOGLE SIGNUP */}
         <button
           onClick={async () => {
             safeTrack("google_signup_clicked", {});
-
             startCriticalReplay("auth_google", {});
             const res = await googleLogin();
 
             if (res.success) {
               safeTrack("google_signup_success", {});
-
               stopReplaySuccess("auth_google");
               toast.success("Login successful");
-
               navigate("/splash");
             } else if (res.requiresTwoFactor) {
               safeTrack("2fa_required", {
                 role: res?.role,
                 isSuperAdmin: !!res?.isSuperAdmin,
               });
-
               startCriticalReplay("auth_2fa", {
                 role: res?.role,
               });
@@ -287,28 +278,24 @@ export default function Signup() {
               safeTrack("google_signup_failed", {
                 error: res?.message,
               });
-
               startCriticalReplay("auth_google_failed", {
                 error: res?.message,
               });
               toast.error(res.message || "Google login failed");
             }
           }}
-          className="w-full flex items-center justify-center gap-3
-          bg-white dark:bg-gray-800
-          border border-gray-300 dark:border-gray-700
-          py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+          className="w-full h-10 rounded-lg border border-border bg-surface hover:bg-surface-2 text-text flex items-center justify-center gap-2.5 text-xs font-medium transition cursor-pointer"
         >
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" />
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
           Sign up with Google
         </button>
 
-        {/* LOGIN */}
-        <p className="text-sm text-center text-gray-600 dark:text-gray-400">
+        {/* LOGIN LINK */}
+        <p className="text-xs text-center text-text-muted pt-1">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+            className="font-semibold text-primary hover:text-primary-hover hover:underline"
           >
             Sign in
           </Link>

@@ -119,7 +119,7 @@ const GameBoard = ({ level, userCSS, isWon = false, className = "" }) => {
         className={`
           relative w-full h-full rounded-2xl flex items-stretch justify-start p-8 box-border
           transition-all duration-700 ease-out
-          ${isWon ? "bg-gradient-to-br from-emerald-500/10 to-green-500/20 ring-8 ring-emerald-400/50 shadow-2xl shadow-emerald-500/25 animate-celebrate" : "bg-white/60 dark:bg-slate-900/70 backdrop-blur-xl"}
+          ${isWon ? "bg-success-soft/30 ring-4 ring-success/40 shadow-card" : "bg-surface border border-border shadow-subtle"}
         `}
         style={containerStyle}
       >

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Play,
@@ -12,6 +11,10 @@ import {
   RefreshCw,
   Sparkles,
   AlertCircle,
+  ArrowRight,
+  ExternalLink,
+  Clock,
+  ChevronRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,13 +23,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import api from "../services/api";
-import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -69,7 +71,6 @@ export default function AIPlanner() {
   const fetchPlanner = useCallback(async (plannerId = null) => {
     try {
       const url = plannerId ? `/api/planner/${plannerId}` : "/api/planner/my";
-
       const res = await api.get(url, { withCredentials: true });
 
       if (!res.data) {
@@ -80,15 +81,14 @@ export default function AIPlanner() {
       setPlanner(res.data);
     } catch (err) {
       console.error("Fetch error:", err.response?.data || err.message);
-      setPlanner(null); // 🔥 important
+      setPlanner(null);
     }
   }, []);
 
   useEffect(() => {
-    // Check for Google Calendar success param
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("calendar") === "connected") {
-      setSuccessMsg(" Google Calendar connected successfully!");
+      setSuccessMsg("Google Calendar connected successfully!");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
@@ -100,419 +100,406 @@ export default function AIPlanner() {
       setIsLoading(true);
       setError("");
       try {
-        if (id) {
-          await fetchPlanner(id);
-        } else {
-          await fetchPlanner();
-        }
+        await fetchPlanner(id);
       } catch (err) {
-        setError(id ? "Plan not found" : "No active plan");
+        setError("Failed to load planner data");
       } finally {
         setIsLoading(false);
       }
-
-      // Load calendar status
-      try {
-        const res = await api.get("/api/planner/calendar/status", {
-          withCredentials: true,
-        });
-        setCalendarStatus({ ...res.data, loading: false });
-      } catch (err) {
-        setCalendarStatus({ authorized: false, loading: false });
-      }
     };
-    loadData();
-  }, [user?._id, id, fetchPlanner]);
 
-  const handleGoogleOAuth = async () => {
-    try {
-      const res = await api.get("/api/planner/calendar/auth", {
-        withCredentials: true,
-      });
-      window.location.href = res.data.authUrl;
-    } catch (err) {
-      alert("Failed to get auth URL");
-    }
-  };
+    loadData();
+  }, [user, id, fetchPlanner]);
 
   const handleCreatePlanner = async (e) => {
     e.preventDefault();
     setCreating(true);
+    setError("");
+
     try {
       const res = await api.post("/api/planner/create", formData, {
         withCredentials: true,
       });
-      navigate(`/ai-planner/${res.data.plannerId}`);
+      setPlanner(res.data);
       setShowForm(false);
-      setFormData({
-        goal: "",
-        company: "",
-        daysLeft: 14,
-        dailyHours: 4,
-        level: "beginner",
-      });
+      setSuccessMsg("Roadmap generated successfully!");
+      navigate(`/ai-planner/${res.data._id}`);
     } catch (err) {
-      alert(err.response?.data?.message || "Error creating planner");
+      console.error("Create error:", err.response?.data);
+      setError(err.response?.data?.message || "Failed to create planner");
+    } finally {
+      setCreating(false);
     }
-    setCreating(false);
   };
 
   const handleCompleteTask = async (dayIdx, taskIdx) => {
-    if (updatingTask?.dayIdx === dayIdx && updatingTask?.taskIdx === taskIdx) return;
-
-    setUpdatingTask({ dayIdx, taskIdx });
-
-    // Optimistic update
-    setPlanner((prev) => {
-      if (!prev) return prev;
-      const newPlanner = JSON.parse(JSON.stringify(prev));
-      newPlanner.plan[dayIdx].tasks[taskIdx].completed = true;
-      const totalTasks = newPlanner.plan.reduce((acc, d) => acc + d.tasks.length, 0);
-      const completedTasks = newPlanner.plan.reduce(
-        (acc, d) => acc + d.tasks.filter((t) => t.completed).length,
-        0
-      );
-      newPlanner.progress = Math.round((completedTasks / totalTasks) * 100);
-      return newPlanner;
-    });
+    if (!planner) return;
+    setUpdatingTask(`${dayIdx}-${taskIdx}`);
 
     try {
-      await api.post(
+      const res = await api.post(
         "/api/planner/complete",
         {
+          plannerId: planner._id,
           dayIndex: dayIdx,
           taskIndex: taskIdx,
         },
         { withCredentials: true }
       );
-      await fetchPlanner(planner._id);
-      setSuccessMsg(" Task completed!");
+      const updatedPlanner = res.data?.planner || res.data;
+      setPlanner(updatedPlanner);
+      toast.success("Task completed! XP added 🎉");
     } catch (err) {
-      await fetchPlanner(planner._id);
-      console.error("Complete error:", err.response?.data || err.message);
-      setSuccessMsg(" Completion failed");
+      console.error("Update task error:", err.response?.data);
+      toast.error(err.response?.data?.message || "Failed to update task status");
     } finally {
       setUpdatingTask(null);
     }
   };
 
-  const syncToCalendar = async () => {
-    if (!planner || !user) {
-      alert("Please create a planner and connect Google Calendar first");
-      setSyncModal(false);
-      return;
-    }
-    try {
-      const res = await api.post(
-        "/api/planner/calendar",
-        { plannerId: planner._id },
-        { withCredentials: true }
-      );
-      alert(` Synced ${res.data.syncedCount} new events to Google Calendar!`);
-      setSyncModal(false);
-    } catch (err) {
-      console.error("Sync error:", err.response?.data);
-      alert(err.response?.data?.message || "Sync failed. Check console for details.");
-    }
-  };
-
-  if (!user) return <div className="flex items-center justify-center h-screen ">Loading...</div>;
-
-  if (isLoading)
+  if (!user) {
     return (
-      <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center  dark:bg-gray-950">
+      <div className="flex items-center justify-center min-h-screen bg-bg text-text text-sm">
+        Loading...
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="pt-20 lg:pl-64 p-6 bg-bg min-h-screen flex items-center justify-center text-text">
         <div className="text-center">
-          <RefreshCw className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-500" />
-          <p className="text-lg">Loading your plan...</p>
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-primary" />
+          <p className="text-sm text-text-muted">Loading your personalized roadmap...</p>
         </div>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen flex items-center justify-center">
-        <Card className="max-w-md bg-white dark:bg-gray-900 border dark:border-white/10">
-          <CardContent className="p-8 text-center">
-            <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-2">Error</h3>
-            <p>{error}</p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="pt-20 lg:pl-64 p-6 bg-bg min-h-screen flex items-center justify-center text-text">
+        <div className="max-w-md w-full bg-surface border border-border p-6 rounded-xl text-center shadow-subtle">
+          <AlertCircle className="w-12 h-12 text-danger mx-auto mb-3" />
+          <h3 className="text-base font-bold text-text mb-1">Notice</h3>
+          <p className="text-xs text-text-muted mb-4">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-primary hover:bg-primary-hover text-on-primary text-xs rounded-lg"
+          >
+            Retry
+          </Button>
+        </div>
       </div>
     );
+  }
 
   return (
     <>
       <Navbar />
 
-      <div className="pt-16 lg:pl-64 p-4 md:p-6 bg-gray-100 min-h-screen mt-17  dark:bg-gray-950">
-        <main className="flex-1">
-          <div className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4 lg:gap-0">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  AI Mentor Planner <Sparkles className="inline ml-2" />
-                </h1>
-                <p className="text-gray-600 mt-2">Your personalized daily roadmap</p>
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
+        <main className="max-w-[1200px] mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-2 border-b border-border">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-soft text-primary text-xs font-semibold mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                AI Career Roadmap
               </div>
-              {/* <Button
-                onClick={() => setShowForm(true)}
-                size="lg"
-                variant={planner ? "outline" : "default"}
-                className={`
-                  ${
-                    planner
-                      ? "border-gray-300 hover:bg-gray-50"
-                      : "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                  }
-                `}
-              >
-                <Play className="mr-2" />{" "}
-                {planner ? "Create New Plan" : "Create Plan"}
-              </Button> */}
-              {planner && (
-                <div className="text-sm text-gray-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" />
-                  Creating new plan keeps old plans in History ✓
-                </div>
-              )}
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+                Personalized Placement Roadmap
+              </h1>
+              <p className="text-xs text-text-muted mt-1">
+                Structured day-by-day plan tailored to your target company & preparation timeline.
+              </p>
             </div>
 
-            {/* Create Form Modal */}
-            <Dialog open={showForm} onOpenChange={setShowForm}>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Create Your Study Plan</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleCreatePlanner} className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => navigate("/planner-history")}
+                variant="outline"
+                className="bg-surface border-border text-text hover:bg-surface-2 text-xs rounded-lg cursor-pointer h-9"
+              >
+                Plan History
+              </Button>
+              <Button
+                onClick={() => setShowForm(true)}
+                className="bg-primary hover:bg-primary-hover text-on-primary text-xs font-medium rounded-lg shadow-soft cursor-pointer h-9 flex items-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                {planner ? "New Plan" : "Create Plan"}
+              </Button>
+            </div>
+          </div>
+
+          {successMsg && (
+            <div className="p-3 rounded-lg bg-success-soft text-success text-xs font-medium border border-success/20 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 shrink-0" />
+              <span>{successMsg}</span>
+            </div>
+          )}
+
+          {/* Create Form Modal */}
+          <Dialog open={showForm} onOpenChange={setShowForm}>
+            <DialogContent className="max-w-xl bg-surface border-border text-text">
+              <DialogHeader>
+                <DialogTitle className="text-lg font-bold text-text">
+                  Generate Your Placement Roadmap
+                </DialogTitle>
+              </DialogHeader>
+
+              <form onSubmit={handleCreatePlanner} className="space-y-4 pt-2">
+                <div>
+                  <Label className="text-xs font-medium text-text">Target Goal / Role</Label>
+                  <Input
+                    placeholder="e.g. SDE 1, Frontend Specialist, Data Analyst"
+                    value={formData.goal}
+                    onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                    required
+                    className="mt-1 text-xs bg-surface border-border rounded-lg"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Goal</Label>
+                    <Label className="text-xs font-medium text-text">Target Company</Label>
                     <Input
-                      placeholder="Crack FAANG interviews"
-                      value={formData.goal}
-                      onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-                      required
+                      placeholder="e.g. Google, Amazon, TCS"
+                      value={formData.company}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      className="mt-1 text-xs bg-surface border-border rounded-lg"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>Target Company</Label>
-                      <Input
-                        placeholder="Google"
-                        value={formData.company}
-                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label>Days Left</Label>
-                      <Input
-                        type="number"
-                        min="2"
-                        max="30"
-                        value={formData.daysLeft}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            daysLeft: Number(e.target.value),
-                          })
-                        }
-                        required
-                      />
+                  <div>
+                    <Label className="text-xs font-medium text-text">Days Left</Label>
+                    <Input
+                      type="number"
+                      min="2"
+                      max="60"
+                      value={formData.daysLeft}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          daysLeft: Number(e.target.value),
+                        })
+                      }
+                      required
+                      className="mt-1 text-xs bg-surface border-border rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-text">Daily Study Hours</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="12"
+                      value={formData.dailyHours}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dailyHours: Number(e.target.value),
+                        })
+                      }
+                      required
+                      className="mt-1 text-xs bg-surface border-border rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-text">Preparation Level</Label>
+                    <select
+                      value={formData.level}
+                      onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                      className="w-full mt-1 px-3 py-2 text-xs bg-surface border border-border rounded-lg text-text focus:outline-none focus:border-primary"
+                    >
+                      <option value="beginner">Beginner (Foundations first)</option>
+                      <option value="intermediate">Intermediate (Problem solving & System design)</option>
+                      <option value="advanced">Advanced (Mock interviews & Hard DSA)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary-hover text-on-primary rounded-lg text-xs font-semibold py-2.5 mt-2 cursor-pointer"
+                  disabled={creating}
+                >
+                  {creating ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin mr-2" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5 mr-2" />
+                  )}
+                  Generate Plan (30 credits)
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Planner Display */}
+          {planner ? (
+            id ? (
+              /* DETAIL VIEW */
+              <div className="space-y-6">
+                <div className="bg-surface border border-border rounded-xl p-5 shadow-subtle flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                  <div>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-text-subtle">
+                      Active Roadmap
+                    </span>
+                    <h2 className="text-xl font-bold text-text mt-0.5">
+                      {planner.goal} {planner.company && `• ${planner.company}`}
+                    </h2>
+                    <div className="flex items-center gap-3 text-xs text-text-muted mt-2">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {planner.daysLeft} days schedule
+                      </span>
+                      <span>•</span>
+                      <span>{planner.dailyHours || 4} hrs/day</span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>Daily Hours</Label>
-                      <Input
-                        type="number"
-                        min="1"
-                        max="12"
-                        value={formData.dailyHours}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            dailyHours: Number(e.target.value),
-                          })
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>Level</Label>
-                      <select
-                        value={formData.level}
-                        onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                        className="p-3 border rounded-lg"
-                      >
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={creating}>
-                    {creating ? (
-                      <RefreshCw className="animate-spin mr-2" />
-                    ) : (
-                      <Sparkles className="mr-2" />
-                    )}{" "}
-                    Generate Mentor Plan (30 credits)
+
+                  <Button
+                    onClick={() => setShowForm(true)}
+                    variant="outline"
+                    className="text-xs border-border bg-surface-2 text-text hover:bg-surface rounded-lg cursor-pointer h-9"
+                  >
+                    Generate Another Plan
                   </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
+                </div>
 
-            {/* Planner Display */}
-            {planner ? (
-              id ? (
-                //  DETAIL VIEW
-                <div className="space-y-10">
-                  {planner.plan.map((day, dayIdx) => {
-                    const isCurrent = planner.currentDay === day.day;
+                {planner.plan?.map((day, dayIdx) => {
+                  const isCurrent = planner.currentDay === day.day;
 
-                    return (
-                      <div key={dayIdx} className="space-y-4">
-                        {/* DAY TITLE */}
-                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                          Day {day.day}: {day.title}
-                        </h2>
+                  return (
+                    <div
+                      key={dayIdx}
+                      className="bg-surface border border-border rounded-xl shadow-subtle overflow-hidden"
+                    >
+                      <div className="p-4 bg-surface-2/60 border-b border-border flex items-center justify-between">
+                        <h3 className="font-bold text-sm text-text flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-md bg-primary-soft text-primary font-bold flex items-center justify-center text-xs">
+                            {day.day}
+                          </span>
+                          <span>Day {day.day}: {day.title}</span>
+                        </h3>
+                        {isCurrent && (
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-accent-soft text-accent border border-accent/20">
+                            Current Focus
+                          </span>
+                        )}
+                      </div>
 
-                        {/* TASKS */}
-                        <div className="space-y-4">
-                          {day.tasks.map((task, taskIdx) => (
-                            <div
-                              key={taskIdx}
-                              className={`p-4 rounded-xl border transition ${
-                                isCurrent
-                                  ? "bg-white dark:bg-gray-900 shadow-md border-gray-200 dark:border-white/10"
-                                  : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-white/10"
-                              }`}
-                            >
-                              {/* TITLE */}
-                              <h4 className="font-semibold text-lg text-gray-800 dark:text-white">
-                                {task.title}
-                              </h4>
-
-                              {/* TYPE */}
-                              <p className="text-xs text-blue-600 font-medium uppercase">
-                                {task.type}
-                              </p>
-
-                              {/* DESCRIPTION */}
-                              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                {task.explanation || "No explanation"}
-                              </p>
-
-                              {/* META */}
-                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex gap-2 flex-wrap">
-                                <span>⏰ {task.time}</span>
-                                <span>•</span>
-                                <span>{task.difficulty}</span>
-
-                                {task.platform && (
-                                  <>
-                                    <span>•</span>
-                                    <span>{task.platform}</span>
-                                  </>
-                                )}
+                      <div className="p-4 space-y-3">
+                        {day.tasks?.map((task, taskIdx) => (
+                          <div
+                            key={taskIdx}
+                            className="p-3.5 rounded-lg border border-border bg-surface hover:border-primary/40 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-3"
+                          >
+                            <div className="space-y-1 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-primary-soft text-primary uppercase">
+                                  {task.type}
+                                </span>
+                                <h4 className="font-semibold text-xs text-text">
+                                  {task.title}
+                                </h4>
                               </div>
 
-                              {/* RESOURCE LINK */}
-                              {task.link && (
-                                <a
-                                  href={task.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-500 text-sm underline mt-2 inline-block"
-                                >
-                                  Open Resource
-                                </a>
-                              )}
+                              <p className="text-xs text-text-muted leading-relaxed">
+                                {task.explanation || task.desc || "Complete this target problem / reading."}
+                              </p>
 
-                              {/* YOUTUBE SEARCH */}
-                              {task.youtubeQuery && (
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                  🔍 {task.youtubeQuery}
-                                </p>
-                              )}
-
-                              {/* VIDEO */}
-                              {task.videoUrl && (
-                                <iframe
-                                  src={task.videoUrl.replace("watch?v=", "embed/")}
-                                  className="w-full h-[300px] md:h-[400px] mt-3 rounded-xl"
-                                />
-                              )}
-
-                              {/* COMPLETE */}
-                              <div className="mt-3 flex justify-end">
-                                {task.completed ? (
-                                  <span className="text-green-500 text-sm">Completed</span>
-                                ) : (
-                                  <input
-                                    type="checkbox"
-                                    onChange={() => handleCompleteTask(dayIdx, taskIdx)}
-                                  />
+                              <div className="flex items-center gap-3 text-[11px] text-text-subtle pt-1">
+                                <span>⏰ {task.time || "45m"}</span>
+                                {task.difficulty && <span>• {task.difficulty}</span>}
+                                {task.platform && <span>• {task.platform}</span>}
+                                {task.link && (
+                                  <a
+                                    href={task.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-primary hover:underline inline-flex items-center gap-1 font-medium"
+                                  >
+                                    Resource <ExternalLink className="w-3 h-3" />
+                                  </a>
                                 )}
                               </div>
                             </div>
-                          ))}
-                        </div>
+
+                            <div className="shrink-0 flex items-center gap-2">
+                              {task.completed ? (
+                                <span className="text-xs font-semibold text-success inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-success-soft border border-success/20">
+                                  <CheckCircle className="w-3.5 h-3.5" /> Done
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled={updatingTask === `${dayIdx}-${taskIdx}`}
+                                  onClick={() => handleCompleteTask(dayIdx, taskIdx)}
+                                  className="text-xs px-3 py-1.5 rounded-lg border border-border bg-surface-2 text-text hover:border-primary hover:text-primary transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                                >
+                                  {updatingTask === `${dayIdx}-${taskIdx}` ? (
+                                    <>
+                                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                      Saving...
+                                    </>
+                                  ) : (
+                                    "Mark Complete"
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* SIMPLE OVERVIEW */
+              <div className="bg-surface border border-border rounded-xl p-10 text-center shadow-subtle space-y-4 max-w-xl mx-auto">
+                <div className="w-12 h-12 rounded-xl bg-primary-soft text-primary flex items-center justify-center mx-auto">
+                  <Sparkles className="w-6 h-6" />
                 </div>
-              ) : (
-                //  SIMPLE VIEW (without id)
-                <div className="flex flex-col items-center justify-center text-center py-20">
-                  {/* ICON */}
-                  <div className="bg-linear-to-r from-purple-100 to-blue-100 p-6 rounded-full mb-6 shadow-inner">
-                    <Sparkles className="w-12 h-12 text-purple-600" />
-                  </div>
-
-                  {/* TITLE */}
-                  <h2 className="text-3xl font-bold mb-3">Magic Start</h2>
-
-                  {/* DESCRIPTION */}
-                  <p className="text-gray-500 max-w-md mb-8">
-                    Start your journey with a personalized AI mentor plan. Get daily tasks, videos,
-                    and roadmap tailored for your goal 🚀
-                  </p>
-
-                  {/* BUTTON */}
+                <h2 className="text-xl font-bold text-text">Personalized AI Roadmap</h2>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  Start your focused preparation path. Receive day-by-day practice tasks, video concepts, and interview milestones.
+                </p>
+                <div className="pt-2">
                   <Button
                     onClick={() => setShowForm(true)}
-                    size="lg"
-                    variant={planner ? "outline" : "default"}
-                    className={`
-                  ${
-                    planner
-                      ? "border-gray-300 hover:bg-gray-50"
-                      : "bg-linear-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                  }
-                `}
+                    className="bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold px-5 py-2.5 rounded-lg cursor-pointer shadow-soft"
                   >
-                    <Play className="mr-2" /> {planner ? "Create New Plan" : "Create Plan"}
+                    <Play className="w-3.5 h-3.5 mr-2" />
+                    Configure New Plan
                   </Button>
                 </div>
-              )
-            ) : (
-              <Card className="text-center p-12">
-                <Sparkles className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-2">No Planner Yet</h3>
-                <p className="text-gray-500 mb-6">Create your personalized mentor roadmap</p>
-                <Button onClick={() => setShowForm(true)} size="lg">
-                  Create New Plan (30 credits)
-                </Button>
-              </Card>
-            )}
-          </div>
+              </div>
+            )
+          ) : (
+            <div className="bg-surface border border-border rounded-xl p-12 text-center shadow-subtle space-y-4 max-w-lg mx-auto">
+              <div className="w-12 h-12 rounded-xl bg-surface-2 text-text-subtle flex items-center justify-center mx-auto border border-border">
+                <Sparkles className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold text-text">No Planner Active</h3>
+              <p className="text-xs text-text-muted">
+                Create a customized day-by-day roadmap tailored to your target company and exam dates.
+              </p>
+              <Button
+                onClick={() => setShowForm(true)}
+                className="bg-primary hover:bg-primary-hover text-on-primary text-xs font-semibold px-5 py-2.5 rounded-lg cursor-pointer"
+              >
+                Create Roadmap (30 credits)
+              </Button>
+            </div>
+          )}
         </main>
       </div>
+
       <Footer />
     </>
   );

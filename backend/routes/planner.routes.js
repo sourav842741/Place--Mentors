@@ -22,6 +22,7 @@ const router = express.Router();
 router.post("/create", maintenanceCheck, isAuth, createPlanner);
 router.get("/my", maintenanceCheck, isAuth, getMyPlanner);
 router.post("/complete", maintenanceCheck, isAuth, completeTask);
+router.post("/task/complete", maintenanceCheck, isAuth, completeTask);
 router.post("/calendar", maintenanceCheck, isAuth, syncCalendar);
 router.get("/calendar/auth", maintenanceCheck, isAuth, getCalendarAuthUrl);
 router.get("/calendar/callback", calendarCallback);

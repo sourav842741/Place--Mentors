@@ -1,61 +1,60 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
 import { Calendar, Award, Sparkles, ArrowLeft, ShieldCheck } from "lucide-react";
-
 import { useNavigate } from "react-router-dom";
 
 export default function CertificateCard({ badge, onGenerate }) {
   const navigate = useNavigate();
 
   return (
-    <Card className="group relative overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-700 bg-white/90 dark:bg-slate-900/80 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-      {/* Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-purple-500/0 to-emerald-500/0 group-hover:from-blue-500/5 group-hover:via-purple-500/5 group-hover:to-emerald-500/5 transition-all duration-500" />
+    <Card className="group relative overflow-hidden rounded-2xl border border-border bg-surface shadow-subtle hover:shadow-card hover:-translate-y-1 transition-all duration-300">
+      {/* Subtle hover glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-accent/0 group-hover:from-primary/5 group-hover:to-accent/5 transition-all duration-500 pointer-events-none rounded-2xl" />
 
       <CardContent className="relative p-6">
         {/* Top Row */}
         <div className="flex items-center justify-between mb-5">
           <button
             onClick={() => navigate("/profile")}
-            className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 transition"
+            className="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
           </button>
 
-          <div className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center gap-1">
+          <div className="px-3 py-1 rounded-full bg-success-soft text-success text-xs font-bold flex items-center gap-1 border border-success/20">
             <ShieldCheck className="w-3 h-3" />
             Verified
           </div>
         </div>
 
-        {/* Premium Badge Preview */}
+        {/* Badge Preview Area */}
         <div className="relative mb-6">
-          <div className="h-36 rounded-3xl bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 p-[1px] shadow-xl">
-            <div className="h-full rounded-3xl bg-gradient-to-br from-white to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center text-3xl shadow-lg mb-3 group-hover:scale-110 transition-transform duration-500">
+          <div className="h-36 rounded-xl bg-gradient-to-br from-primary to-accent/70 p-[1.5px] shadow-md">
+            <div className="h-full rounded-xl bg-surface flex flex-col items-center justify-center gap-2">
+              {/* Icon */}
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent via-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-transform duration-500">
                 {badge.icon || "🏆"}
               </div>
 
-              <p className="text-xs tracking-[0.25em] font-bold text-slate-500 uppercase">
-                CERTIFICATE READY
+              <p className="text-[10px] tracking-[0.3em] font-bold text-text-subtle uppercase">
+                Certificate Ready
               </p>
             </div>
           </div>
 
-          {/* Floating Sparkle */}
-          <Sparkles className="absolute -top-2 -right-2 w-5 h-5 text-yellow-500 animate-pulse" />
+          {/* Sparkle */}
+          <Sparkles className="absolute -top-2 -right-2 w-5 h-5 text-accent animate-pulse" />
         </div>
 
-        {/* Title */}
-        <div className="text-center">
-          <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">
+        {/* Badge Info */}
+        <div className="text-center space-y-2">
+          <h3 className="text-xl font-bold text-text leading-tight">
             {badge.name}
           </h3>
 
-          <div className="mt-3 flex justify-center items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-            <Calendar className="w-4 h-4" />
+          <div className="flex justify-center items-center gap-1.5 text-sm text-text-muted">
+            <Calendar className="w-3.5 h-3.5" />
             {new Date(badge.earnedAt).toLocaleDateString("en-GB", {
               day: "numeric",
               month: "long",
@@ -63,23 +62,23 @@ export default function CertificateCard({ badge, onGenerate }) {
             })}
           </div>
 
-          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+          <p className="text-xs text-text-subtle max-w-xs mx-auto leading-relaxed">
             Convert your achievement into a premium shareable certificate.
           </p>
         </div>
 
-        {/* CTA */}
+        {/* CTA Button */}
         <Button
           onClick={onGenerate}
-          className="mt-7 w-full h-14 rounded-2xl text-base font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transition-all duration-300"
+          className="mt-6 w-full h-12 rounded-xl text-sm font-semibold bg-primary hover:bg-primary-hover text-on-primary shadow-soft transition-all duration-200"
         >
-          <Award className="w-5 h-5 mr-2" />
+          <Award className="w-4 h-4 mr-2" />
           Generate Certificate
         </Button>
 
         {/* Footer */}
-        <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-700 text-center">
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+        <div className="mt-4 pt-4 border-t border-border text-center">
+          <p className="text-[11px] text-text-subtle font-medium">
             PlaceMentor Verified Achievement
           </p>
         </div>

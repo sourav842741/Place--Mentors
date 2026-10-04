@@ -455,48 +455,60 @@ export const getMyPlanner = async (req, res) => {
 
 export const completeTask = async (req, res) => {
   try {
-    const { dayIndex, taskIndex } = req.body;
+    const { dayIndex, taskIndex, plannerId } = req.body;
 
-    //  VALIDATION (0 index allowed)
+    // VALIDATION (0 index allowed)
     if (dayIndex === undefined || taskIndex === undefined) {
       return res.status(400).json({ message: "Missing dayIndex or taskIndex" });
     }
 
-    const planner = await Planner.findOne({ userId: req.user._id });
+    let query = { userId: req.user._id };
+    if (plannerId) {
+      query._id = plannerId;
+    }
+
+    let planner = await Planner.findOne(query).sort({ createdAt: -1 });
+
+    if (!planner && plannerId) {
+      planner = await Planner.findById(plannerId);
+    }
+    if (!planner) {
+      planner = await Planner.findOne({ userId: req.user._id }).sort({ createdAt: -1 });
+    }
 
     if (!planner) {
       return res.status(404).json({ message: "Planner not found" });
     }
 
-    //  DAY VALIDATION
+    // DAY VALIDATION
     if (dayIndex < 0 || dayIndex >= planner.plan.length) {
       return res.status(400).json({ message: `Invalid dayIndex: ${dayIndex}` });
     }
 
     const day = planner.plan[dayIndex];
 
-    //  TASK VALIDATION
-    if (taskIndex < 0 || taskIndex >= day.tasks.length) {
+    // TASK VALIDATION
+    if (!day.tasks || taskIndex < 0 || taskIndex >= day.tasks.length) {
       return res.status(400).json({ message: `Invalid taskIndex: ${taskIndex}` });
     }
 
     const task = day.tasks[taskIndex];
 
-    //  prevent double XP
+    // prevent double XP
     if (task.completed) {
       return res.json({
+        success: true,
         planner,
         progress: planner.progress,
         xp: planner.totalXP,
       });
     }
 
-    //  MARK COMPLETE
+    // MARK COMPLETE
     task.completed = true;
-
     planner.markModified("plan");
 
-    //  XP LOGIC
+    // XP LOGIC
     let xp = 0;
     switch (task.type) {
       case "coding":
@@ -518,42 +530,78 @@ export const completeTask = async (req, res) => {
         xp = 5;
     }
 
-    planner.totalXP += xp;
+    planner.totalXP = (planner.totalXP || 0) + xp;
 
-    const totalTasks = planner.plan.reduce((acc, d) => acc + d.tasks.length, 0);
-
+    const totalTasks = planner.plan.reduce((acc, d) => acc + (d.tasks?.length || 0), 0);
     const completedTasks = planner.plan.reduce(
-      (acc, d) => acc + d.tasks.filter((t) => t.completed).length,
+      (acc, d) => acc + (d.tasks?.filter((t) => t.completed).length || 0),
       0
     );
 
-    planner.progress = Math.round((completedTasks / totalTasks) * 100);
+    planner.progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-    //  UNLOCK NEXT DAY
+    // UNLOCK NEXT DAY
     if (planner.currentDay === dayIndex + 1) {
       planner.currentDay += 1;
     }
 
     const user = await User.findById(req.user._id);
-    const today = new Date().toISOString().split("T")[0];
+    if (user) {
+      user.xp = (user.xp || 0) + xp;
+      user.currentLevelXP = (user.currentLevelXP || 0) + xp;
+      if (user.currentLevelXP >= (user.nextLevelXP || 100)) {
+        user.level = (user.level || 1) + 1;
+        user.currentLevelXP = user.currentLevelXP - (user.nextLevelXP || 100);
+        user.nextLevelXP = user.level * 100;
+      }
 
-    let todayStat = user.dailyStats.find((stat) => stat.date === today);
-    if (!todayStat) {
-      todayStat = { date: today, timeSpent: 0, avgScore: 0, quizzesGiven: 0 };
-      user.dailyStats.push(todayStat);
+      if (!Array.isArray(user.dailyStats)) {
+        user.dailyStats = [];
+      }
+
+      const today = new Date().toISOString().split("T")[0];
+      let todayStat = user.dailyStats.find((stat) => stat.date === today);
+      if (!todayStat) {
+        todayStat = { date: today, timeSpent: 0, avgScore: 0, quizzesGiven: 0 };
+        user.dailyStats.push(todayStat);
+      }
+
+      // Safely parse task.time
+      let minutesSpent = 30; // fallback
+      if (typeof task.time === "string") {
+        const rangeMatch = task.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?\s*-\s*(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+        if (rangeMatch) {
+          let h1 = parseInt(rangeMatch[1]);
+          const m1 = parseInt(rangeMatch[2]);
+          const ampm1 = rangeMatch[3]?.toUpperCase();
+          let h2 = parseInt(rangeMatch[4]);
+          const m2 = parseInt(rangeMatch[5]);
+          const ampm2 = rangeMatch[6]?.toUpperCase();
+
+          if (ampm1 === "PM" && h1 < 12) h1 += 12;
+          if (ampm1 === "AM" && h1 === 12) h1 = 0;
+          if (ampm2 === "PM" && h2 < 12) h2 += 12;
+          if (ampm2 === "AM" && h2 === 12) h2 = 0;
+
+          const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+          if (diff > 0) minutesSpent = diff;
+        } else {
+          const timeMatch = task.time.match(/(\d+)h?\s*(\d*)m?/i);
+          const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
+          const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
+          if (hours > 0 || minutes > 0) {
+            minutesSpent = hours * 60 + minutes;
+          }
+        }
+      }
+
+      todayStat.timeSpent = (todayStat.timeSpent || 0) + minutesSpent;
+      if (task.type === "quiz") {
+        todayStat.quizzesGiven = (todayStat.quizzesGiven || 0) + 1;
+      }
+
+      await user.save();
     }
-
-    // Parse task.time "1h 30m" → minutes (safe)
-    const timeMatch = task.time.match(/(\\d+)h?\\s*(\\d*)m?/i);
-    const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
-    const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
-    todayStat.timeSpent += hours * 60 + minutes;
-
-    if (task.type === "quiz") {
-      todayStat.quizzesGiven += 1;
-    }
-
-    await user.save();
 
     await planner.save();
 

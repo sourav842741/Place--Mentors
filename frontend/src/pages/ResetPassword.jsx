@@ -1,15 +1,18 @@
 import { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Sun, Moon, ArrowLeft, LockKeyhole } from "lucide-react";
 import { toast } from "sonner";
+import AuthLayout from "../components/AuthLayout";
 import useAuth from "../hooks/useAuth";
+import { useTheme } from "../hooks/useTheme";
 
 export default function ResetPassword() {
   const { resetPassword } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const email = location.state?.email || "";
 
@@ -17,29 +20,8 @@ export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isDark, setIsDark] = useState(false);
 
   const inputsRef = useRef([]);
-
-  /* THEME LOAD */
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
-  }, []);
-
-  /* THEME TOGGLE */
-  const toggleTheme = () => {
-    const isNowDark = document.documentElement.classList.toggle("dark");
-    setIsDark(isNowDark);
-    localStorage.setItem("theme", isNowDark ? "dark" : "light");
-  };
 
   useEffect(() => {
     if (!email) {
@@ -113,112 +95,109 @@ export default function ResetPassword() {
     <>
       {loading && <FullScreenLoader />}
 
-      {/* THEME BUTTON */}
-      <div className="absolute top-5 right-5 z-20">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleTheme}
-          className="rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
-        >
-          {isDark ? <Sun /> : <Moon />}
-        </Button>
-      </div>
+      <AuthLayout>
+        {/* THEME TOGGLE BUTTON */}
+        <div className="absolute top-5 right-5 z-20">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-9 w-9 rounded-lg border border-border bg-surface text-text hover:bg-surface-2 transition-colors cursor-pointer"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-text-muted" />}
+          </Button>
+        </div>
 
-      <div
-        className="min-h-screen flex items-center justify-center px-4
-        bg-gradient-to-br from-slate-50 via-white to-indigo-50
-        dark:from-gray-950 dark:via-gray-900 dark:to-black"
-      >
         {/* CARD */}
-        <div
-          className="w-full max-w-md rounded-3xl p-7 space-y-6
-          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl
-          border border-gray-200 dark:border-white/10 shadow-2xl"
-        >
+        <div className="w-full max-w-md mx-auto space-y-5 bg-surface border border-border p-6 sm:p-7 rounded-xl shadow-subtle">
+          {/* BACK LINK */}
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text transition"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to login
+          </Link>
+
           {/* LOGO */}
           <div className="flex justify-center">
             <img
               src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
               alt="PlaceMentor"
-              className="w-20 h-20 rounded-2xl shadow-lg"
+              className="w-14 h-14 rounded-xl border border-border shadow-subtle"
             />
           </div>
 
-          {/* BACK */}
-          <button
-            onClick={() => navigate("/login")}
-            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to login
-          </button>
-
           {/* HEADING */}
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Reset Password</h2>
-
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <h2 className="text-2xl font-bold tracking-tight text-text">Reset Password</h2>
+            <p className="text-xs text-text-muted mt-1">
               Enter OTP and create your new password
             </p>
           </div>
 
           {/* EMAIL */}
-          <Input
-            value={email}
-            disabled
-            className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-500"
-          />
+          <div>
+            <label className="text-xs font-medium text-text block mb-1">Account Email</label>
+            <Input
+              value={email}
+              disabled
+              className="h-10 bg-surface-2 border-border text-text-muted rounded-lg opacity-80"
+            />
+          </div>
 
           {/* OTP */}
-          <div onPaste={handlePaste} className="flex justify-between gap-3">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                maxLength={1}
-                value={digit}
-                ref={(el) => (inputsRef.current[index] = el)}
-                onChange={(e) => handleChange(e.target.value, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-14 h-14 rounded-xl text-center text-xl font-semibold
-                bg-gray-100 dark:bg-gray-800
-                border border-gray-300 dark:border-gray-700
-                text-gray-900 dark:text-white
-                focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
-                outline-none transition"
-              />
-            ))}
+          <div>
+            <label className="text-xs font-medium text-text block mb-1">4-Digit Code</label>
+            <div onPaste={handlePaste} className="flex justify-center gap-3">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  maxLength={1}
+                  value={digit}
+                  ref={(el) => (inputsRef.current[index] = el)}
+                  onChange={(e) => handleChange(e.target.value, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg text-center text-xl font-bold bg-surface-2 border border-border text-text focus:border-primary focus:ring-1 focus:ring-primary outline-none transition"
+                />
+              ))}
+            </div>
           </div>
 
           {/* PASSWORD */}
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="pr-10 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-            />
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-text block">New Password</label>
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="h-10 pr-10 bg-surface-2 border-border text-text placeholder:text-text-subtle rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+              />
 
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-2.5 cursor-pointer text-gray-500 dark:text-gray-400"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </span>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 text-text-subtle hover:text-text cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
 
           {/* BUTTON */}
           <Button
             onClick={handleReset}
             disabled={loading}
-            className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white"
+            className="w-full h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-sm shadow-soft transition cursor-pointer"
           >
             <LockKeyhole className="w-4 h-4 mr-2" />
             {loading ? "Resetting..." : "Reset Password"}
           </Button>
         </div>
-      </div>
+      </AuthLayout>
     </>
   );
 }
@@ -226,11 +205,10 @@ export default function ResetPassword() {
 /* FULL LOADER */
 function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-900 px-8 py-6 rounded-2xl shadow-2xl text-center">
-        <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-
-        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">Resetting password...</p>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50">
+      <div className="bg-surface border border-border px-8 py-6 rounded-xl shadow-card text-center">
+        <div className="w-9 h-9 mx-auto border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="mt-3 text-xs font-medium text-text-muted">Resetting password...</p>
       </div>
     </div>
   );

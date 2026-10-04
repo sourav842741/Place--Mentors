@@ -38,7 +38,7 @@ const CompanyPage = () => {
     return (
       <>
         <Navbar />
-        <div className="pt-16 lg:pl-64 p-6 bg-gray-50 min-h-screen ">
+        <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg text-text min-h-screen transition-colors duration-200">
           <div className="max-w-7xl mx-auto space-y-6">
             <Skeleton className="h-12 w-96" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -61,7 +61,7 @@ const CompanyPage = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pl-64 p-4 md:p-6 mt-6 bg-gray-50 dark:bg-gray-950 min-h-screen lg:mt-16 ml-5 sm:mt-5 transition-colors duration-300">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg text-text min-h-screen transition-colors duration-200">
         <div className="max-w-7xl mx-auto">
           {/* Header + Search */}
           <div className="mb-8 p-6 bg-white rounded-2xl shadow-sm border flex flex-col md:flex-row md:items-center md:justify-between gap-4">

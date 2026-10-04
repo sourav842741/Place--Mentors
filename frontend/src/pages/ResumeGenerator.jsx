@@ -312,256 +312,221 @@ export default function ResumeGenerator() {
   return (
     <>
       <Navbar />
-      <div
-        className="min-h-screen 
-bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 
-dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 
-py-12 px-4 sm:px-6 lg:px-8 lg:ml-64 transition-colors duration-300"
-      >
-        <div className="max-w-7xl mx-auto space-y-12 lg:mt-5">
+      <div className="min-h-screen bg-bg text-text py-12 px-4 sm:px-6 lg:px-8 lg:ml-64 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto space-y-8 lg:mt-4">
           {/* Hero */}
           <div className="text-center">
-            <h1 className="text-5xl lg:text-6xl font-bold bg-linear-to-r from-gray-900 to-slate-800 bg-clip-text text-transparent mb-6 dark:text-white">
-              Premium Resume Builder
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-text mb-2">
+              ATS-Optimized Resume Builder
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed dark:text-white">
-              Real-time Canva-style preview • AI content generation • ATS optimized templates
+            <p className="text-xs sm:text-sm text-text-muted max-w-2xl mx-auto leading-relaxed">
+              Real-time Canva-style preview • AI content generation • Clean, ATS-friendly templates
             </p>
           </div>
 
           {/* Main Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
             {/* Form */}
-            <div className="lg:col-span-5 xl:col-span-4">
-              <Card className="shadow-2xl border-0 sticky top-8 h-fit">
-                <CardHeader className="pb-8">
-                  <CardTitle className="text-2xl flex items-center gap-3 mb-2">
-                    <BsStars className="w-8 h-8" />
-                    Resume Editor
-                  </CardTitle>
-                  <CardDescription>Fill in details to see live preview</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-8">
+            <div className="lg:col-span-5 xl:col-span-5">
+              <div className="rounded-xl border border-border bg-surface shadow-subtle p-5 sm:p-6 sticky top-20 space-y-6">
+                <div>
+                  <h2 className="text-lg font-bold text-text flex items-center gap-2">
+                    <BsStars className="w-5 h-5 text-primary" />
+                    Resume Content
+                  </h2>
+                  <p className="text-xs text-text-muted mt-0.5">Fill in your information to generate a live preview</p>
+                </div>
+
+                <div className="space-y-6">
                   {/* Contact */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900">
-                      👤 Contact Information
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-text-subtle">
+                      Contact Information
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <FaUser className="w-4 h-4" />
-                          Full Name *
-                        </Label>
+                        <Label className="text-xs font-medium text-text mb-1 block">Full Name *</Label>
                         <Input
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          className="h-12"
+                          className="h-9 bg-surface-2 border-border text-text placeholder:text-text-subtle text-xs rounded-lg"
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <MdEmail className="w-4 h-4" />
-                          Email
-                        </Label>
+                        <Label className="text-xs font-medium text-text mb-1 block">Email</Label>
                         <Input
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="h-12"
+                          className="h-9 bg-surface-2 border-border text-text placeholder:text-text-subtle text-xs rounded-lg"
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <FaPhone className="w-4 h-4" />
-                          Phone
-                        </Label>
+                        <Label className="text-xs font-medium text-text mb-1 block">Phone</Label>
                         <Input
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="h-12"
+                          className="h-9 bg-surface-2 border-border text-text placeholder:text-text-subtle text-xs rounded-lg"
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <FaLinkedin className="w-4 h-4" />
-                          LinkedIn
-                        </Label>
+                        <Label className="text-xs font-medium text-text mb-1 block">LinkedIn</Label>
                         <Input
                           name="linkedin"
                           value={formData.linkedin}
                           onChange={handleChange}
-                          className="h-12"
+                          className="h-9 bg-surface-2 border-border text-text placeholder:text-text-subtle text-xs rounded-lg"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900 dark:text-blue-800">
-                      📋 Professional Experience
+                  {/* Summary & Skills */}
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-text-subtle">
+                      Profile Summary & Skills
                     </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <Label className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-300">
-                          Summary
-                        </Label>
-                        <Textarea
-                          name="summary"
-                          value={formData.summary}
-                          onChange={handleChange}
-                          rows={3}
-                          className="resize-none"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium mb-2">Skills (comma separated)</Label>
-                        <Textarea
-                          name="skills"
-                          value={formData.skills}
-                          onChange={handleChange}
-                          rows={2}
-                          className="resize-none"
-                        />
-                      </div>
+                    <div>
+                      <Label className="text-xs font-medium text-text mb-1 block">Professional Summary</Label>
+                      <Textarea
+                        name="summary"
+                        value={formData.summary}
+                        onChange={handleChange}
+                        rows={3}
+                        className="resize-none bg-surface-2 border-border text-text text-xs rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-medium text-text mb-1 block">Skills (comma separated)</Label>
+                      <Textarea
+                        name="skills"
+                        value={formData.skills}
+                        onChange={handleChange}
+                        rows={2}
+                        className="resize-none bg-surface-2 border-border text-text text-xs rounded-lg"
+                      />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Experience & Projects */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                        <FaBriefcase className="w-4 h-4" />
-                        Experience
-                      </Label>
+                      <Label className="text-xs font-medium text-text mb-1 block">Experience</Label>
                       <Textarea
                         name="experience"
                         value={formData.experience}
                         onChange={handleChange}
-                        rows={4}
-                        className="resize-none"
+                        rows={3}
+                        className="resize-none bg-surface-2 border-border text-text text-xs rounded-lg"
                       />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                        <FaFolderOpen className="w-4 h-4" />
-                        Projects
-                      </Label>
+                      <Label className="text-xs font-medium text-text mb-1 block">Projects</Label>
                       <Textarea
                         name="projects"
                         value={formData.projects}
                         onChange={handleChange}
-                        rows={4}
-                        className="resize-none"
+                        rows={3}
+                        className="resize-none bg-surface-2 border-border text-text text-xs rounded-lg"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Education & Achievements */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                        <FaGraduationCap className="w-4 h-4" />
-                        Education
-                      </Label>
+                      <Label className="text-xs font-medium text-text mb-1 block">Education</Label>
                       <Textarea
                         name="education"
                         value={formData.education}
                         onChange={handleChange}
-                        rows={3}
-                        className="resize-none"
+                        rows={2}
+                        className="resize-none bg-surface-2 border-border text-text text-xs rounded-lg"
                       />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium mb-2 flex items-center gap-2">
-                        <FaTrophy className="w-4 h-4" />
-                        Achievements
-                      </Label>
+                      <Label className="text-xs font-medium text-text mb-1 block">Achievements</Label>
                       <Textarea
                         name="achievements"
                         value={formData.achievements}
                         onChange={handleChange}
-                        rows={3}
-                        className="resize-none "
+                        rows={2}
+                        className="resize-none bg-surface-2 border-border text-text text-xs rounded-lg"
                       />
                     </div>
                   </div>
 
-                  {/* Controls */}
-                  <div className="space-y-4 pt-8 border-t">
+                  {/* Actions & Controls */}
+                  <div className="space-y-3 pt-4 border-t border-border">
                     <Button
                       onClick={handleGenerateAI}
                       disabled={generateLoading}
-                      className="w-full h-14 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg font-semibold flex items-center gap-3 bg-linear-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700"
+                      className="w-full h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-xs shadow-soft transition cursor-pointer flex items-center justify-center gap-2"
                     >
                       {generateLoading ? (
                         <>
-                          <ImSpinner2 className="w-5 h-5 animate-spin" />
-                          Generating AI Content...
+                          <ImSpinner2 className="w-4 h-4 animate-spin" />
+                          Enhancing with AI...
                         </>
                       ) : (
                         <>
-                          <BsStars className="w-5 h-5" />
-                          Generate with AI
+                          <BsStars className="w-4 h-4" />
+                          Auto-Enhance with AI
                         </>
                       )}
                     </Button>
 
-                    <div className="flex gap-4">
+                    <div className="flex gap-2.5">
                       <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                        <SelectTrigger className="flex-1">
+                        <SelectTrigger className="flex-1 h-10 bg-surface-2 border-border text-text text-xs rounded-lg">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="classic">Classic</SelectItem>
+                        <SelectContent className="bg-surface border-border text-text">
+                          <SelectItem value="classic">Classic Template</SelectItem>
                           <SelectItem value="modern">Modern Sidebar</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button
                         onClick={handleDownload}
                         disabled={downloadLoading || !formData.name.trim()}
-                        className="flex-1 h-14 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg font-semibold flex items-center gap-3 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                        className="flex-1 h-10 rounded-lg bg-accent text-bg hover:opacity-90 font-semibold text-xs shadow-soft transition cursor-pointer flex items-center justify-center gap-1.5"
                       >
                         {downloadLoading ? (
                           <>
-                            <ImSpinner2 className="w-5 h-5 animate-spin mr-2" />
-                            Generating PDF...
+                            <ImSpinner2 className="w-4 h-4 animate-spin mr-1" />
+                            PDF...
                           </>
                         ) : (
                           <>
-                            <FaDownload className="w-5 h-5 mr-2" />
+                            <FaDownload className="w-3.5 h-3.5 mr-1" />
                             Download PDF
                           </>
                         )}
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             {/* Preview */}
-            <div className="lg:col-span-7 xl:col-span-8">
-              <Card className="shadow-2xl border-0">
-                <CardHeader className="pb-8">
-                  <div className="flex items-center gap-4">
-                    <FaEye className="w-8 h-8 text-gray-600" />
-                    <div>
-                      <CardTitle className="text-2xl">Live Preview</CardTitle>
-                      <CardDescription>A4 sized professional preview</CardDescription>
-                    </div>
-                    <div className="ml-auto text-xs bg-linear-to-r from-indigo-100 to-purple-100 text-indigo-800 px-4 py-2 rounded-full font-medium">
-                      {selectedTemplate === "modern" ? "Modern Sidebar" : "Classic"}
-                    </div>
+            <div className="lg:col-span-7 xl:col-span-7">
+              <div className="rounded-xl border border-border bg-surface p-5 sm:p-6 shadow-subtle space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <FaEye className="w-4 h-4 text-text-subtle" />
+                    <h3 className="text-sm font-bold text-text">Live Preview (A4)</h3>
                   </div>
-                </CardHeader>
-                <CardContent className="p-0 pt-6">
-                  <div className="pb-8">
-                    <ResumePreview data={formData} template={selectedTemplate} />
-                  </div>
-                </CardContent>
-              </Card>
+                  <span className="text-xs bg-primary-soft text-primary px-3 py-1 rounded-full font-medium">
+                    {selectedTemplate === "modern" ? "Modern Sidebar" : "Classic"}
+                  </span>
+                </div>
+                <div className="overflow-auto max-h-[850px] p-2 bg-surface-2/60 rounded-xl border border-border">
+                  <ResumePreview data={formData} template={selectedTemplate} />
+                </div>
+              </div>
             </div>
           </div>
         </div>

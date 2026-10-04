@@ -91,10 +91,10 @@ export default function AdminSettings() {
     const safeType = String(type || "info");
 
     const colors = {
-      info: "bg-blue-100 text-blue-800",
-      warning: "bg-yellow-100 text-yellow-800",
-      success: "bg-green-100 text-green-800",
-      danger: "bg-red-100 text-red-800",
+      info: "bg-blue-500/10 text-blue-500 border border-blue-500/20",
+      warning: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
+      success: "bg-green-500/10 text-green-500 border border-green-500/20",
+      danger: "bg-red-500/10 text-red-500 border border-red-500/20",
     };
 
     const icons = {
@@ -107,7 +107,7 @@ export default function AdminSettings() {
     const Icon = icons[safeType] || Info;
 
     return (
-      <Badge className={`border-0 font-semibold px-3 py-1.5 ${colors[safeType] || colors.info}`}>
+      <Badge className={`font-semibold px-3 py-1.5 rounded-full ${colors[safeType] || colors.info}`}>
         <Icon className="w-3 h-3 mr-1" />
         {safeType.toUpperCase()}
       </Badge>
@@ -118,26 +118,30 @@ export default function AdminSettings() {
      LOADING
   ========================= */
   if (isLoading) {
-    return <div className="p-10 text-center text-lg font-semibold">Loading Settings...</div>;
+    return (
+      <div className="min-h-screen bg-bg text-text lg:ml-72 p-10 flex items-center justify-center text-lg font-semibold">
+        Loading Settings...
+      </div>
+    );
   }
 
   /* =========================
      UI
   ========================= */
   return (
-    <div className="space-y-6 lg:ml-72 p-4">
+    <div className="min-h-screen bg-bg text-text lg:ml-72 p-4 md:p-6 space-y-6 transition-colors duration-200">
       {/* HEADER */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-          <Settings className="w-5 h-5 text-white" />
+        <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+          <Settings className="w-6 h-6 text-white" />
         </div>
 
         <div>
-          <h1 className="text-3xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-black text-text">
             Site Settings
           </h1>
 
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-text-muted mt-1">
             Control maintenance mode and announcements
           </p>
         </div>
@@ -148,35 +152,35 @@ export default function AdminSettings() {
             SECURITY
         ========================= */}
         <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow"
+          className="border border-border bg-surface text-text hover:border-primary/40 rounded-2xl shadow-sm transition-all cursor-pointer"
           onClick={() => navigate("/admin/security")}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-3">
+              <CardTitle className="flex items-center gap-3 text-text">
                 <Shield className="w-5 h-5 text-emerald-500" />
                 Account Security
               </CardTitle>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-text-muted" />
             </div>
-            <CardDescription>
+            <CardDescription className="text-text-muted">
               Manage two-factor authentication for your privileged account
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-3">
               <Badge
-                className={`px-3 py-1 ${
+                className={`px-3 py-1 rounded-full ${
                   user?.twoFactorEnabled
-                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
-                    : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                    ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                    : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
                 }`}
               >
                 {user?.twoFactorEnabled ? "2FA Enabled" : "2FA Not Enabled"}
               </Badge>
               {user?.twoFactorWarning && (
-                <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" />
+                <span className="text-xs text-amber-500 flex items-center gap-1 font-medium">
+                  <AlertTriangle className="w-3.5 h-3.5" />
                   Enable 2FA recommended for privileged accounts
                 </span>
               )}
@@ -187,19 +191,19 @@ export default function AdminSettings() {
         {/* =========================
             MAINTENANCE
         ========================= */}
-        <Card>
+        <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-orange-500" />
+            <CardTitle className="flex items-center gap-3 text-text">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
               Maintenance Mode
             </CardTitle>
 
-            <CardDescription>Block user access temporarily</CardDescription>
+            <CardDescription className="text-text-muted">Block user access temporarily</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-5">
             <div className="flex items-center justify-between">
-              <Label>Enable Maintenance</Label>
+              <Label className="text-text font-medium">Enable Maintenance</Label>
 
               <Switch
                 checked={formData.maintenanceMode}
@@ -213,7 +217,7 @@ export default function AdminSettings() {
             </div>
 
             <div>
-              <Label>Title</Label>
+              <Label className="text-text font-medium">Title</Label>
 
               <Input
                 value={formData.maintenanceTitle}
@@ -223,11 +227,12 @@ export default function AdminSettings() {
                     maintenanceTitle: e.target.value,
                   })
                 }
+                className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
             </div>
 
             <div>
-              <Label>Message</Label>
+              <Label className="text-text font-medium">Message</Label>
 
               <Textarea
                 rows={3}
@@ -238,11 +243,12 @@ export default function AdminSettings() {
                     maintenanceMessage: e.target.value,
                   })
                 }
+                className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
             </div>
 
             <div>
-              <Label>Image URL</Label>
+              <Label className="text-text font-medium">Image URL</Label>
 
               <Input
                 value={formData.maintenanceImage}
@@ -252,6 +258,7 @@ export default function AdminSettings() {
                     maintenanceImage: e.target.value,
                   })
                 }
+                className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
             </div>
           </CardContent>
@@ -260,19 +267,19 @@ export default function AdminSettings() {
         {/* =========================
             ANNOUNCEMENT
         ========================= */}
-        <Card>
+        <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3">
+            <CardTitle className="flex items-center gap-3 text-text">
               <Info className="w-5 h-5 text-blue-500" />
               Announcement Bar
             </CardTitle>
 
-            <CardDescription>Top banner for users</CardDescription>
+            <CardDescription className="text-text-muted">Top banner for users</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-5">
             <div className="flex items-center justify-between">
-              <Label>Enable Announcement</Label>
+              <Label className="text-text font-medium">Enable Announcement</Label>
 
               <Switch
                 checked={formData.announcementEnabled}
@@ -286,7 +293,7 @@ export default function AdminSettings() {
             </div>
 
             <div>
-              <Label>Message</Label>
+              <Label className="text-text font-medium">Message</Label>
 
               <Textarea
                 rows={2}
@@ -297,12 +304,13 @@ export default function AdminSettings() {
                     announcementText: e.target.value,
                   })
                 }
+                className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label>Type</Label>
+                <Label className="text-text font-medium">Type</Label>
 
                 <Select
                   value={formData.announcementType || "info"}
@@ -313,18 +321,15 @@ export default function AdminSettings() {
                     })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1.5 rounded-xl border-border bg-surface-2 text-text">
                     <SelectValue />
                   </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value="info">Info</SelectItem>
-
-                    <SelectItem value="success">Success</SelectItem>
-
-                    <SelectItem value="warning">Warning</SelectItem>
-
-                    <SelectItem value="danger">Danger</SelectItem>
+                  <SelectContent className="bg-surface border-border text-text">
+                    <SelectItem value="info" className="text-text hover:bg-surface-2">Info</SelectItem>
+                    <SelectItem value="success" className="text-text hover:bg-surface-2">Success</SelectItem>
+                    <SelectItem value="warning" className="text-text hover:bg-surface-2">Warning</SelectItem>
+                    <SelectItem value="danger" className="text-text hover:bg-surface-2">Danger</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -332,7 +337,7 @@ export default function AdminSettings() {
               </div>
 
               <div className="flex items-center justify-between mt-7">
-                <Label>Closable</Label>
+                <Label className="text-text font-medium">Closable</Label>
 
                 <Switch
                   checked={formData.announcementClosable}
@@ -347,7 +352,7 @@ export default function AdminSettings() {
             </div>
 
             <div>
-              <Label>Image URL</Label>
+              <Label className="text-text font-medium">Image URL</Label>
 
               <Input
                 value={formData.announcementImage}
@@ -357,12 +362,13 @@ export default function AdminSettings() {
                     announcementImage: e.target.value,
                   })
                 }
+                className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label>Button Text</Label>
+                <Label className="text-text font-medium">Button Text</Label>
 
                 <Input
                   value={formData.announcementButtonText}
@@ -372,11 +378,12 @@ export default function AdminSettings() {
                       announcementButtonText: e.target.value,
                     })
                   }
+                  className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
                 />
               </div>
 
               <div>
-                <Label>Button Link</Label>
+                <Label className="text-text font-medium">Button Link</Label>
 
                 <Input
                   value={formData.announcementButtonLink}
@@ -386,6 +393,7 @@ export default function AdminSettings() {
                       announcementButtonLink: e.target.value,
                     })
                   }
+                  className="mt-1.5 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
                 />
               </div>
             </div>
@@ -397,7 +405,7 @@ export default function AdminSettings() {
           type="submit"
           size="lg"
           disabled={isUpdating}
-          className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-lg font-semibold h-14"
+          className="w-full bg-primary hover:bg-primary-hover text-white text-lg font-semibold h-12 rounded-xl shadow-md shadow-primary/20"
         >
           {isUpdating ? "Saving..." : "Save All Settings"}
         </Button>

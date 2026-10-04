@@ -110,56 +110,58 @@ const AdminCreatePotd = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 p-6 lg:ml-64">
-      <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-bg text-text lg:ml-72 p-4 md:p-6 space-y-8 transition-colors duration-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black bg-gradient-to-r from-gray-900 to-black bg-clip-text text-transparent dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-black text-text">
             Create Manual POTD
           </h1>
-          <p className="text-xl text-gray-600 mt-2 dark:text-white">
+          <p className="text-text-muted mt-2">
             Create custom Problem of the Day (Minimum 15 questions)
           </p>
         </div>
-        <Badge variant="secondary" className="text-lg px-6 py-3">
-          {questions.length} Questions
-        </Badge>
-        <Button
-          type="button"
-          onClick={async () => {
-            try {
-              await api.post("/api/potd/generate");
-              toast.success(" POTD Generated!");
-            } catch {
-              toast.error("Failed to generate");
-            }
-          }}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl ml-5"
-        >
-          ⚡ Quick Trigger Potd Question
-        </Button>
+        <div className="flex items-center gap-3">
+          <Badge className="bg-primary-soft text-primary border border-primary/20 rounded-full text-sm px-4 py-2 font-semibold">
+            {questions.length} Questions
+          </Badge>
+          <Button
+            type="button"
+            onClick={async () => {
+              try {
+                await api.post("/api/potd/generate");
+                toast.success("POTD Generated!");
+              } catch {
+                toast.error("Failed to generate");
+              }
+            }}
+            className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl shadow-md shadow-primary/20 font-medium"
+          >
+            ⚡ Quick Trigger POTD
+          </Button>
+        </div>
       </div>
 
-      <Card className="border-0 shadow-2xl">
+      <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl text-white font-bold text-2xl">
+          <CardTitle className="flex items-center gap-3 text-text font-bold">
+            <div className="px-3 py-1.5 bg-primary-soft text-primary border border-primary/20 rounded-xl font-bold text-lg">
               {questions.length}/15+
             </div>
             Question List
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {questions.map((question, qIndex) => (
             <div
               key={`question-${question.id}`}
-              className="p-6 border border-gray-200 dark:border-gray-700 rounded-3xl bg-gradient-to-r from-slate-50/50 to-blue-50/50 dark:from-gray-900/50 dark:to-slate-900/50 hover:shadow-xl transition-all"
+              className="p-5 border border-border rounded-2xl bg-surface-2/40 hover:bg-surface-2/70 transition-colors"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center font-bold text-white text-xl shadow-lg">
+                  <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-base shadow-sm">
                     Q{qIndex + 1}
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h3 className="text-xl font-bold text-text">
                     Question {qIndex + 1}
                   </h3>
                 </div>
@@ -169,7 +171,7 @@ const AdminCreatePotd = () => {
                     variant="destructive"
                     size="sm"
                     onClick={() => removeQuestion(question.id)}
-                    className="p-2 rounded-xl"
+                    className="p-2 rounded-xl bg-red-600/10 text-red-500 hover:bg-red-600/20 border border-red-500/20"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -177,36 +179,37 @@ const AdminCreatePotd = () => {
               </div>
 
               {/* Question Text */}
-              <div className="space-y-2 mb-8">
-                <label className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              <div className="space-y-2 mb-6">
+                <label className="text-sm font-semibold text-text">
                   Question Text
                 </label>
                 <Input
                   value={question.text}
                   onChange={(e) => updateQuestion(question.id, "text", e.target.value)}
                   placeholder="Enter the question..."
-                  className="h-16 text-xl resize-none"
+                  className="h-12 text-base rounded-xl border-border bg-surface text-text placeholder:text-text-subtle focus:border-primary"
                 />
               </div>
 
               {/* Options */}
-              <div className="space-y-3 mb-8">
-                <label className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              <div className="space-y-3 mb-6">
+                <label className="text-sm font-semibold text-text">
                   Options
                 </label>
-                <div className="space-y-2">
+                <div className="grid md:grid-cols-2 gap-3">
                   {question.options.map((option, oIndex) => (
                     <div
                       key={oIndex}
-                      className="flex items-center gap-3 p-4 border rounded-2xl bg-white/50 dark:bg-gray-800/50"
+                      className="flex items-center gap-3 p-2.5 border border-border rounded-xl bg-surface"
                     >
-                      <div className="w-8 h-8 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-lg flex items-center justify-center font-bold text-sm">
+                      <div className="w-8 h-8 bg-surface-2 border border-border rounded-lg flex items-center justify-center font-bold text-sm text-text">
                         {String.fromCharCode(65 + oIndex)}
                       </div>
                       <Input
                         value={option}
                         onChange={(e) => updateOption(question.id, oIndex, e.target.value)}
                         placeholder={`Option ${String.fromCharCode(65 + oIndex)}`}
+                        className="border-0 bg-transparent text-text focus-visible:ring-0 px-2"
                       />
                     </div>
                   ))}
@@ -214,60 +217,60 @@ const AdminCreatePotd = () => {
               </div>
 
               {/* Correct Answer */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div>
-                  <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-2">
+                  <label className="text-sm font-semibold text-text block mb-2">
                     Correct Answer
                   </label>
                   <Select
                     value={question.correct}
                     onValueChange={(v) => updateQuestion(question.id, "correct", v)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-xl border-border bg-surface text-text">
                       <SelectValue placeholder="Select correct option" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="A">A</SelectItem>
-                      <SelectItem value="B">B</SelectItem>
-                      <SelectItem value="C">C</SelectItem>
-                      <SelectItem value="D">D</SelectItem>
+                    <SelectContent className="bg-surface border-border text-text">
+                      <SelectItem value="A" className="text-text hover:bg-surface-2">A</SelectItem>
+                      <SelectItem value="B" className="text-text hover:bg-surface-2">B</SelectItem>
+                      <SelectItem value="C" className="text-text hover:bg-surface-2">C</SelectItem>
+                      <SelectItem value="D" className="text-text hover:bg-surface-2">D</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-2">
+                  <label className="text-sm font-semibold text-text block mb-2">
                     Difficulty
                   </label>
                   <Select
                     value={question.difficulty}
                     onValueChange={(v) => updateQuestion(question.id, "difficulty", v)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-xl border-border bg-surface text-text">
                       <SelectValue placeholder="Select difficulty" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="easy">Easy</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="hard">Hard</SelectItem>
+                    <SelectContent className="bg-surface border-border text-text">
+                      <SelectItem value="easy" className="text-text hover:bg-surface-2">Easy</SelectItem>
+                      <SelectItem value="medium" className="text-text hover:bg-surface-2">Medium</SelectItem>
+                      <SelectItem value="hard" className="text-text hover:bg-surface-2">Hard</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label className="text-lg font-semibold text-gray-700 dark:text-gray-300 block mb-2">
+                  <label className="text-sm font-semibold text-text block mb-2">
                     Category
                   </label>
                   <Select
                     value={question.category}
                     onValueChange={(v) => updateQuestion(question.id, "category", v)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-xl border-border bg-surface text-text">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="aptitude">Aptitude</SelectItem>
-                      <SelectItem value="reasoning">Reasoning</SelectItem>
-                      <SelectItem value="verbal">Verbal</SelectItem>
-                      <SelectItem value="technical">Technical</SelectItem>
+                    <SelectContent className="bg-surface border-border text-text">
+                      <SelectItem value="aptitude" className="text-text hover:bg-surface-2">Aptitude</SelectItem>
+                      <SelectItem value="reasoning" className="text-text hover:bg-surface-2">Reasoning</SelectItem>
+                      <SelectItem value="verbal" className="text-text hover:bg-surface-2">Verbal</SelectItem>
+                      <SelectItem value="technical" className="text-text hover:bg-surface-2">Technical</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -275,13 +278,14 @@ const AdminCreatePotd = () => {
 
               {/* Explanation */}
               <div className="space-y-2">
-                <label className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-semibold text-text">
                   Explanation
                 </label>
                 <Input
                   value={question.explanation}
                   onChange={(e) => updateQuestion(question.id, "explanation", e.target.value)}
                   placeholder="Detailed explanation for this question..."
+                  className="h-11 rounded-xl border-border bg-surface text-text placeholder:text-text-subtle focus:border-primary"
                 />
               </div>
             </div>
@@ -290,55 +294,53 @@ const AdminCreatePotd = () => {
       </Card>
 
       {/* Add Question Button */}
-      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8">
-        <Card className="border-0 shadow-xl">
-          <CardContent className="p-12 text-center">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
+          <CardContent className="p-6 text-center">
             <Button
               type="button"
               onClick={addQuestion}
-              size="lg"
-              className="group bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-2xl text-xl px-12 py-8 rounded-3xl font-bold transform hover:scale-105 transition-all"
+              className="bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 px-8 py-3 rounded-xl font-bold transition-all"
             >
-              <Plus className="w-8 h-8 mr-4 group-hover:scale-110 transition-transform" />
+              <Plus className="w-5 h-5 mr-2" />
               Add Another Question
             </Button>
           </CardContent>
         </Card>
 
         {/* Submit Section */}
-        <Card className="border-0 shadow-2xl">
-          <CardContent className="p-12 pt-8">
+        <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
+          <CardContent className="p-6">
             {questions.length < 15 && (
-              <div className="flex items-center gap-3 p-6 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-3xl mb-8">
-                <AlertCircle className="w-8 h-8 text-orange-600" />
+              <div className="flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl mb-6 text-amber-500">
+                <AlertCircle className="w-6 h-6 shrink-0" />
                 <div>
-                  <h3 className="font-bold text-xl text-orange-800 dark:text-orange-300">
+                  <h3 className="font-bold text-base">
                     Minimum 15 Questions Required
                   </h3>
-                  <p className="text-orange-700 dark:text-orange-200 mt-1">
+                  <p className="text-sm mt-0.5 opacity-90">
                     Add {15 - questions.length} more questions to enable submit
                   </p>
                 </div>
               </div>
             )}
-            <div className="flex gap-4 justify-end">
+            <div className="flex gap-3 justify-end">
               <Button
                 variant="outline"
-                size="lg"
+                type="button"
                 onClick={() => navigate("/admin/potd")}
-                className="px-12 py-8 rounded-3xl font-bold text-lg"
+                className="px-6 py-2.5 rounded-xl border-border bg-surface text-text hover:bg-surface-2 font-medium"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading || questions.length < 15}
-                size="lg"
-                className="px-16 py-8 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-2xl text-xl rounded-3xl font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-2.5 bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
-                    <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
                     Creating POTD...
                   </>
                 ) : (

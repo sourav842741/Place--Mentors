@@ -105,20 +105,20 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
           className="max-w-3xl w-[95vw] max-h-[92vh] overflow-y-auto p-0
-          rounded-3xl border-0 shadow-2xl
-          bg-white dark:bg-gray-950"
+          rounded-3xl border border-border shadow-2xl
+          bg-surface text-text"
         >
           {/* HEADER */}
           <DialogHeader
-            className="relative px-6 sm:px-8 py-8 border-b
-            bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600
+            className="relative px-6 sm:px-8 py-8 border-b border-border/40
+            bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600
             text-white"
           >
             <div className="flex flex-col sm:flex-row gap-5 sm:items-center">
               {/* AVATAR */}
               <Avatar className="w-20 h-20 border-4 border-white/30 shadow-xl">
                 <AvatarImage src={user.avatar} />
-                <AvatarFallback className="text-xl font-bold bg-white text-indigo-700">
+                <AvatarFallback className="text-xl font-bold bg-white text-emerald-700">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -129,7 +129,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
                   {user.fullName || user.name || "User"}
                 </DialogTitle>
 
-                <DialogDescription className="text-blue-100 text-sm sm:text-base flex items-center gap-2">
+                <DialogDescription className="text-emerald-100 text-sm sm:text-base flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   {user.email}
                 </DialogDescription>
@@ -179,18 +179,18 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
             {/* BANNED BOX */}
             {user.isBanned && (
               <div
-                className="rounded-2xl border border-red-200 dark:border-red-900
-                bg-red-50 dark:bg-red-950/30 p-5"
+                className="rounded-2xl border border-red-500/30
+                bg-red-500/10 p-5"
               >
                 <div className="flex gap-3">
                   <Ban className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
 
                   <div>
-                    <h3 className="font-semibold text-red-700 dark:text-red-300">
+                    <h3 className="font-semibold text-red-600 dark:text-red-400">
                       Currently Banned
                     </h3>
 
-                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    <p className="text-sm text-red-500/90 mt-1">
                       Reason: {user.banReason || "No reason provided"}
                     </p>
                   </div>
@@ -201,7 +201,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
             {/* BAN HISTORY */}
             {user.banHistory?.length > 0 && (
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-text mb-4 flex items-center gap-2">
                   <Ban className="w-5 h-5 text-red-500" />
                   Ban History
                 </h3>
@@ -211,16 +211,16 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
                     <div
                       key={index}
                       className="rounded-2xl border p-4
-                      bg-gray-50 dark:bg-gray-900
-                      border-gray-200 dark:border-gray-800"
+                      bg-surface-2
+                      border-border"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">
+                          <p className="font-semibold text-text">
                             {ban.reason}
                           </p>
 
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          <p className="text-sm text-text-muted mt-1">
                             {formatDate(ban.bannedAt)} •{" "}
                             {formatDistanceToNow(new Date(ban.bannedAt), {
                               addSuffix: true,
@@ -238,13 +238,15 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
 
             {user.badges?.length > 0 && (
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-lg font-bold text-text mb-3">
                   Achievements
                 </h3>
 
                 <div className="flex flex-wrap gap-2">
                   {user.badges.map((badge, i) => (
-                    <Badge key={i}>{badge.name || badge}</Badge>
+                    <Badge key={i} variant="outline" className="bg-surface-2 border-border text-text">
+                      {badge.name || badge}
+                    </Badge>
                   ))}
                 </div>
               </div>
@@ -252,15 +254,15 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
 
             {/* ACTION BUTTONS */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
-              <Button variant="outline" className="rounded-xl h-11 dark:border-gray-700">
-                <User className="w-4 h-4 mr-2" />
+              <Button variant="outline" className="rounded-xl h-11 border-border text-text hover:bg-surface-2">
+                <User className="w-4 h-4 mr-2 text-primary" />
                 View Profile
               </Button>
 
               <Button
                 variant="outline"
                 className={`rounded-xl h-11 ${
-                  user.isBanned ? "border-red-500 text-red-600" : "border-green-500 text-green-600"
+                  user.isBanned ? "border-red-500/50 text-red-600 bg-red-500/10 hover:bg-red-500/20" : "border-emerald-500/50 text-emerald-600 bg-emerald-500/10 hover:bg-emerald-500/20"
                 }`}
               >
                 <Ban className="w-4 h-4 mr-2" />
@@ -269,10 +271,10 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
 
               <Button
                 variant="outline"
-                className="rounded-xl h-11 dark:border-gray-700 cursor-pointer"
+                className="rounded-xl h-11 border-border text-text hover:bg-surface-2 cursor-pointer"
                 onClick={() => setCreditDialogOpen(true)}
               >
-                <DollarSign className="w-4 h-4 mr-2" />
+                <DollarSign className="w-4 h-4 mr-2 text-amber-500" />
                 Adjust Credits
               </Button>
             </div>
@@ -282,15 +284,15 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
 
       {/* ADJUST CREDITS DIALOG */}
       <Dialog open={creditDialogOpen} onOpenChange={setCreditDialogOpen}>
-        <DialogContent className="max-w-md w-[92vw] rounded-2xl border-0 shadow-2xl bg-white dark:bg-gray-950">
+        <DialogContent className="max-w-md w-[92vw] rounded-2xl border border-border shadow-2xl bg-surface text-text">
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <DialogTitle className="text-xl font-bold text-text flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-amber-500" />
               Adjust Credits
             </DialogTitle>
-            <DialogDescription className="text-gray-500 dark:text-gray-400">
+            <DialogDescription className="text-text-muted">
               Current credits:{" "}
-              <span className="font-bold text-gray-900 dark:text-white">{user.credits || 0}</span>
+              <span className="font-bold text-text">{user.credits || 0}</span>
             </DialogDescription>
           </DialogHeader>
 
@@ -298,7 +300,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
             <div className="space-y-2">
               <Label
                 htmlFor="creditAmount"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="text-sm font-medium text-text"
               >
                 Amount
               </Label>
@@ -310,7 +312,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
                 placeholder="Enter amount..."
                 value={creditAmount}
                 onChange={(e) => setCreditAmount(e.target.value)}
-                className="h-12 rounded-xl bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800 focus-visible:ring-amber-500/50"
+                className="h-12 rounded-xl bg-surface-2 border-border text-text focus-visible:ring-primary"
                 disabled={creditLoading}
               />
             </div>
@@ -324,7 +326,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
                 setCreditAmount("");
               }}
               disabled={creditLoading}
-              className="rounded-xl h-11"
+              className="rounded-xl h-11 border-border text-text hover:bg-surface-2"
             >
               Cancel
             </Button>
@@ -344,7 +346,7 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
             <Button
               disabled={creditLoading || !creditAmount}
               onClick={() => handleCreditAction("add")}
-              className="rounded-xl h-11 gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+              className="rounded-xl h-11 gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
             >
               {creditLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -364,8 +366,8 @@ const UserProfileModal = ({ user, isOpen, onClose }) => {
 function StatCard({ icon: Icon, label, value, color }) {
   return (
     <div
-      className="rounded-2xl p-5 border border-gray-200 dark:border-gray-800
-      bg-white dark:bg-gray-900 shadow-sm"
+      className="rounded-2xl p-5 border border-border
+      bg-surface text-text shadow-sm"
     >
       <div className="flex items-center gap-4">
         <div
@@ -376,9 +378,9 @@ function StatCard({ icon: Icon, label, value, color }) {
         </div>
 
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+          <p className="text-sm text-text-muted">{label}</p>
 
-          <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
+          <p className="text-xl font-bold text-text">{value}</p>
         </div>
       </div>
     </div>
@@ -389,16 +391,16 @@ function StatCard({ icon: Icon, label, value, color }) {
 function InfoCard({ icon: Icon, title, value }) {
   return (
     <div
-      className="rounded-2xl p-5 border border-gray-200 dark:border-gray-800
-      bg-gray-50 dark:bg-gray-900"
+      className="rounded-2xl p-5 border border-border
+      bg-surface-2 text-text"
     >
       <div className="flex items-start gap-3">
-        <Icon className="w-5 h-5 text-indigo-600 mt-0.5" />
+        <Icon className="w-5 h-5 text-primary mt-0.5" />
 
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+          <p className="text-sm text-text-muted">{title}</p>
 
-          <p className="font-semibold text-gray-900 dark:text-white mt-1">{value}</p>
+          <p className="font-semibold text-text mt-1">{value}</p>
         </div>
       </div>
     </div>

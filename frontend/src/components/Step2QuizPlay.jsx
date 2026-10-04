@@ -3,10 +3,8 @@ import maleVideo from "../assets/videos/male-ai.mp4";
 import femaleVideo from "../assets/videos/female-ai.mp4";
 import Timer from "./Timer";
 import { motion } from "framer-motion";
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import { BsArrowRight } from "react-icons/bs";
+import { Mic, MicOff, ArrowRight, Volume2, Sparkles } from "lucide-react";
 import api from "../services/api";
-import Footer from "./Footer";
 
 function Step2Interview({ interviewData, onFinish }) {
   const { interviewId, questions, userName } = interviewData;
@@ -113,9 +111,7 @@ function Step2Interview({ interviewData, onFinish }) {
     const runIntro = async () => {
       if (isIntroPhase) {
         await speakText(`Hi ${userName}, it's great to meet you today.`);
-
         await speakText("I'll ask you a few questions. Let's begin.");
-
         setIsIntroPhase(false);
       } else if (currentQuestion) {
         await new Promise((r) => setTimeout(r, 800));
@@ -125,7 +121,6 @@ function Step2Interview({ interviewData, onFinish }) {
         }
 
         await speakText(currentQuestion.question);
-
         if (isMicOn) startMic();
       }
     };
@@ -143,7 +138,6 @@ function Step2Interview({ interviewData, onFinish }) {
           clearInterval(timer);
           return 0;
         }
-
         return prev - 1;
       });
     }, 1000);
@@ -162,14 +156,12 @@ function Step2Interview({ interviewData, onFinish }) {
     if (!("webkitSpeechRecognition" in window)) return;
 
     const recognition = new window.webkitSpeechRecognition();
-
     recognition.lang = "en-US";
     recognition.continuous = true;
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
-
       setAnswer((prev) => prev + " " + transcript);
     };
 
@@ -191,7 +183,6 @@ function Step2Interview({ interviewData, onFinish }) {
   const toggleMic = () => {
     if (isMicOn) stopMic();
     else startMic();
-
     setIsMicOn(!isMicOn);
   };
 
@@ -236,7 +227,6 @@ function Step2Interview({ interviewData, onFinish }) {
     }
 
     await speakText("Alright, next question.");
-
     setCurrentIndex(currentIndex + 1);
   };
 
@@ -275,254 +265,156 @@ function Step2Interview({ interviewData, onFinish }) {
   }, []);
 
   return (
-    <>
-      <div
-        className="min-h-screen
-      bg-gray-50 dark:bg-gray-950
-      flex items-center justify-center
-      p-4 sm:p-6 transition-colors duration-300"
-      >
-        <div
-          className="w-full max-w-[1400px]
-        min-h-[80vh]
-        bg-white dark:bg-gray-900
-        rounded-3xl shadow-2xl
-        border border-gray-200 dark:border-white/10
-        flex flex-col lg:flex-row overflow-hidden"
-        >
-          {/* LEFT */}
-          <div
-            className="w-full lg:w-[35%]
-          bg-white dark:bg-gray-900
-          flex flex-col items-center
-          p-6 space-y-6
-          border-r border-gray-200 dark:border-white/10"
-          >
-            <div
-              className="w-full max-w-md
-            rounded-2xl overflow-hidden
-            shadow-xl"
-            >
-              <video
-                src={videoSource}
-                key={videoSource}
-                ref={videoRef}
-                muted
-                playsInline
-                preload="auto"
-                className="w-full h-auto object-cover"
-              />
-            </div>
-
-            {/* Subtitle */}
-            {subtitle && (
-              <div
-                className="w-full max-w-md
-              bg-gray-50 dark:bg-gray-800
-              border border-gray-200 dark:border-white/10
-              rounded-xl p-4"
-              >
-                <p
-                  className="text-gray-700 dark:text-gray-300
-                text-sm sm:text-base
-                font-medium text-center"
-                >
-                  {subtitle}
-                </p>
-              </div>
-            )}
-
-            {/* Timer */}
-            <div
-              className="w-full max-w-md
-            bg-white dark:bg-gray-800
-            border border-gray-200 dark:border-white/10
-            rounded-2xl shadow-md
-            p-6 space-y-5"
-            >
-              <div className="flex justify-between items-center">
-                <span
-                  className="text-sm
-                text-gray-500 dark:text-gray-400"
-                >
-                  Interview Status
-                </span>
-
-                {isAIPlaying && (
-                  <span
-                    className="text-sm font-semibold
-                  text-blue-600 dark:text-blue-400"
-                  >
-                    AI Speaking
-                  </span>
-                )}
-              </div>
-
-              <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
-
-              <div className="flex justify-center">
-                <Timer timeLeft={timeLeft} totalTime={currentQuestion?.timeLimit} />
-              </div>
-
-              <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
-
-              <div className="grid grid-cols-2 gap-6 text-center">
-                <div>
-                  <span
-                    className="text-2xl font-bold
-                  text-blue-600 dark:text-blue-400"
-                  >
-                    {currentIndex + 1}
-                  </span>
-
-                  <span
-                    className="block text-xs
-                  text-gray-400 dark:text-gray-500"
-                  >
-                    Current Question
-                  </span>
-                </div>
-
-                <div>
-                  <span
-                    className="text-2xl font-bold
-                  text-blue-600 dark:text-blue-400"
-                  >
-                    {questions.length}
-                  </span>
-
-                  <span
-                    className="block text-xs
-                  text-gray-400 dark:text-gray-500"
-                  >
-                    Total Questions
-                  </span>
-                </div>
-              </div>
-            </div>
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4 sm:p-6 bg-bg text-text transition-colors duration-200">
+      <div className="w-full max-w-6xl min-h-[75vh] bg-surface border border-border rounded-xl shadow-subtle flex flex-col lg:flex-row overflow-hidden">
+        {/* LEFT COLUMN - AI Interviewer & Status */}
+        <div className="w-full lg:w-[380px] bg-surface-2/40 border-b lg:border-b-0 lg:border-r border-border p-6 flex flex-col items-center space-y-5">
+          <div className="w-full rounded-xl overflow-hidden border border-border shadow-sm bg-black aspect-video max-h-[240px] flex items-center justify-center">
+            <video
+              src={videoSource}
+              key={videoSource}
+              ref={videoRef}
+              muted
+              playsInline
+              preload="auto"
+              className="w-full h-full object-cover"
+            />
           </div>
 
-          {/* RIGHT */}
-          <div
-            className="flex-1 flex flex-col
-          p-4 sm:p-6 md:p-8
-          bg-white dark:bg-gray-900"
-          >
-            <h2
-              className="text-xl sm:text-2xl font-bold
-            text-blue-600 dark:text-blue-400 mb-6"
-            >
-              AI Smart Interview
-            </h2>
+          {/* Subtitle */}
+          {subtitle && (
+            <div className="w-full bg-surface border border-border rounded-lg p-3 text-xs text-text-muted leading-relaxed text-center">
+              {subtitle}
+            </div>
+          )}
 
-            {!isIntroPhase && (
-              <div
-                className="mb-6
-              bg-gray-50 dark:bg-gray-800
-              p-4 sm:p-6 rounded-2xl
-              border border-gray-200 dark:border-white/10"
-              >
-                <p
-                  className="text-xs sm:text-sm
-                text-gray-400 dark:text-gray-500 mb-2"
-                >
-                  Question {currentIndex + 1} of {questions.length}
-                </p>
+          {/* Timer & Meta */}
+          <div className="w-full bg-surface border border-border rounded-xl p-5 space-y-4">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-text-muted font-medium">Session Status</span>
+              {isAIPlaying ? (
+                <span className="inline-flex items-center gap-1.5 text-primary font-semibold">
+                  <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                  AI Speaking
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 text-accent font-semibold">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Your Turn
+                </span>
+              )}
+            </div>
 
-                <div
-                  className="text-base sm:text-lg font-semibold
-                text-gray-900 dark:text-white"
-                >
-                  {currentQuestion?.question}
-                </div>
+            <div className="h-px bg-border" />
+
+            <div className="flex justify-center">
+              <Timer timeLeft={timeLeft} totalTime={currentQuestion?.timeLimit} />
+            </div>
+
+            <div className="h-px bg-border" />
+
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <span className="text-xl font-bold text-text">
+                  {currentIndex + 1}
+                </span>
+                <span className="block text-[11px] text-text-subtle font-medium">
+                  Current Question
+                </span>
               </div>
-            )}
 
-            {/* Answer */}
-            <textarea
-              placeholder="Type your answer here..."
-              onChange={(e) => setAnswer(e.target.value)}
-              value={answer}
-              className="flex-1
-            bg-gray-100 dark:bg-gray-800
-            text-gray-900 dark:text-white
-            p-4 sm:p-6 rounded-2xl resize-none
-            outline-none border
-            border-gray-200 dark:border-white/10
-            focus:ring-2 focus:ring-blue-500"
-            />
-
-            {!feedback ? (
-              <div className="flex items-center gap-4 mt-6">
-                <motion.button
-                  onClick={toggleMic}
-                  whileTap={{
-                    scale: 0.9,
-                  }}
-                  className="w-12 h-12 sm:w-14 sm:h-14
-                flex items-center justify-center
-                rounded-full
-                bg-black dark:bg-white
-                text-white dark:text-black
-                shadow-lg"
-                >
-                  {isMicOn ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}
-                </motion.button>
-
-                <motion.button
-                  onClick={submitAnswer}
-                  disabled={isSubmitting}
-                  whileTap={{
-                    scale: 0.95,
-                  }}
-                  className="flex-1
-                bg-gradient-to-r from-blue-600 to-indigo-600
-                hover:from-blue-700 hover:to-indigo-700
-                text-white py-3 sm:py-4
-                rounded-2xl shadow-lg
-                font-semibold
-                disabled:opacity-60"
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Answer"}
-                </motion.button>
+              <div>
+                <span className="text-xl font-bold text-text">
+                  {questions.length}
+                </span>
+                <span className="block text-[11px] text-text-subtle font-medium">
+                  Total Questions
+                </span>
               </div>
-            ) : (
-              <motion.div
-                initial={{
-                  opacity: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                }}
-                className="mt-6
-              bg-blue-50 dark:bg-gray-800
-              border border-blue-200 dark:border-white/10
-              p-5 rounded-2xl"
-              >
-                <p
-                  className="text-blue-700 dark:text-blue-400
-                font-medium mb-4"
-                >
-                  {feedback}
-                </p>
-
-                <button
-                  onClick={handleNext}
-                  className="w-full
-                bg-gradient-to-r from-blue-600 to-indigo-600
-                hover:from-blue-700 hover:to-indigo-700
-                text-white py-3 rounded-xl
-                shadow-md transition
-                flex items-center justify-center gap-1"
-                >
-                  Next Question <BsArrowRight size={18} />
-                </button>
-              </motion.div>
-            )}
+            </div>
           </div>
         </div>
+
+        {/* RIGHT COLUMN - Question & Response */}
+        <div className="flex-1 flex flex-col p-6 sm:p-8 bg-surface justify-between space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-subtle">
+                AI Interview Assessment
+              </span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-surface-2 text-text-muted border border-border">
+                Question {currentIndex + 1} / {questions.length}
+              </span>
+            </div>
+
+            {!isIntroPhase && (
+              <div className="bg-surface-2 border border-border p-5 rounded-xl">
+                <p className="text-sm sm:text-base font-semibold text-text leading-snug">
+                  {currentQuestion?.question}
+                </p>
+              </div>
+            )}
+
+            {/* Answer textarea */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-text">Your Spoken or Typed Answer</label>
+              <textarea
+                placeholder="Speak clearly or type your response here..."
+                onChange={(e) => setAnswer(e.target.value)}
+                value={answer}
+                rows={7}
+                className="w-full bg-surface-2 border border-border rounded-xl p-4 text-xs text-text placeholder:text-text-subtle focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none leading-relaxed"
+              />
+            </div>
+          </div>
+
+          {/* Action bar */}
+          {!feedback ? (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleMic}
+                className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors cursor-pointer ${
+                  isMicOn
+                    ? "bg-primary text-on-primary border-primary"
+                    : "bg-surface-2 text-text-subtle border-border hover:text-text"
+                }`}
+                title={isMicOn ? "Mute Microphone" : "Unmute Microphone"}
+              >
+                {isMicOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={submitAnswer}
+                disabled={isSubmitting || !answer.trim()}
+                className="flex-1 bg-primary hover:bg-primary-hover text-on-primary py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-soft disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isSubmitting ? "Evaluating with AI..." : "Submit Answer"}
+              </button>
+            </div>
+          ) : (
+            <div className="bg-surface-2 border border-border p-5 rounded-xl space-y-4">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">
+                  AI Feedback
+                </h4>
+                <p className="text-xs text-text leading-relaxed">{feedback}</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleNext}
+                className="w-full bg-primary hover:bg-primary-hover text-on-primary py-2.5 rounded-lg text-xs font-semibold transition-colors shadow-soft flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Continue to Next Question</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

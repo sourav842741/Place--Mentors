@@ -17,30 +17,32 @@ const FriendCard = ({
   onReject,
   onChallenge,
   loading = false,
-  challengeText = "⚔️ Challenge",
+  challengeText = "Challenge",
   disabledChallenge = false,
 }) => {
   return (
-    <Card className="w-full p-4 rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg transition">
-      <div className="flex items-center gap-4">
-        <Avatar className="h-12 w-12">
+    <Card className="w-full p-3.5 rounded-xl border border-border bg-surface shadow-subtle hover:border-primary/40 transition-colors">
+      <div className="flex items-center gap-3">
+        <Avatar className="h-10 w-10 border border-border">
           <AvatarImage src={friend.avatar} />
-          <AvatarFallback>{friend.fullName?.[0]}</AvatarFallback>
+          <AvatarFallback className="bg-primary-soft text-primary font-semibold text-xs">
+            {friend.fullName?.[0]}
+          </AvatarFallback>
         </Avatar>
 
-        <div className="flex-1">
-          <h3 className="font-semibold text-sm">{friend.fullName}</h3>
-          <p className="text-xs text-gray-500">XP: {friend.xp?.toLocaleString()}</p>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-xs text-text truncate">{friend.fullName}</h3>
+          <p className="text-[11px] text-text-muted">XP: {friend.xp?.toLocaleString() || 0}</p>
         </div>
       </div>
 
-      <div className="mt-4 flex gap-2 flex-wrap">
+      <div className="mt-3 flex gap-2 flex-wrap">
         {isRequest && (
           <>
             <Button
               size="sm"
               disabled={loading}
-              className="flex-1 bg-green-500 hover:bg-green-600"
+              className="flex-1 h-8 text-xs font-semibold rounded-lg bg-primary hover:bg-primary-hover text-on-primary shadow-soft cursor-pointer"
               onClick={onAccept}
             >
               {loading ? "Accepting..." : "Accept"}
@@ -50,7 +52,7 @@ const FriendCard = ({
               size="sm"
               variant="outline"
               disabled={loading}
-              className="flex-1"
+              className="flex-1 h-8 text-xs font-semibold rounded-lg border-border text-text hover:bg-surface-2 cursor-pointer"
               onClick={onReject}
             >
               Reject
@@ -62,7 +64,7 @@ const FriendCard = ({
           <Button
             size="sm"
             disabled={loading || disabledChallenge}
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
+            className="w-full h-8 text-xs font-semibold rounded-lg bg-primary hover:bg-primary-hover text-on-primary shadow-soft cursor-pointer"
             onClick={onChallenge}
           >
             {loading ? "Sending..." : challengeText}
@@ -206,7 +208,11 @@ export default function FriendsSection({ friendsData }) {
           })}
         </div>
       ) : (
-        <div className="text-center text-gray-400">No friends yet 😅</div>
+        <div className="py-8 text-center text-text-muted">
+          <Users className="w-8 h-8 mx-auto text-text-muted/40 mb-2" />
+          <p className="font-semibold text-text text-xs">No peers connected yet</p>
+          <p className="text-[11px] text-text-muted mt-0.5">Add friends to compete in challenges & streaks.</p>
+        </div>
       )}
 
       {/* REQUESTS */}

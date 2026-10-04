@@ -6,12 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
   Sparkles,
-  Trophy,
   Code2,
   Brain,
   Moon,
   Sun,
-  Star,
   PlayCircle,
   ShieldCheck,
   ChevronDown,
@@ -21,12 +19,14 @@ import {
   Target,
   Award,
 } from "lucide-react";
+import useTheme from "../hooks/useTheme";
+import BrandLogo from "../components/BrandLogo";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+  const { isDark, toggleTheme } = useTheme();
 
-  const [dark, setDark] = useState(false);
   const [count1, setCount1] = useState(0);
   const [count2, setCount2] = useState(0);
   const [count3, setCount3] = useState(0);
@@ -42,16 +42,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (user) navigate("/dashboard");
-  }, [user]);
+  }, [user, navigate]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
-
-    if (saved === "dark") {
-      document.documentElement.classList.add("dark");
-      setDark(true);
-    }
-
     const counter = setInterval(() => {
       setCount1((p) => (p < 10000 ? p + 100 : 10000));
       setCount2((p) => (p < 50000 ? p + 500 : 50000));
@@ -66,296 +59,322 @@ export default function LandingPage() {
       clearInterval(counter);
       clearInterval(slider);
     };
-  }, []);
-
-  const toggleTheme = () => {
-    const mode = document.documentElement.classList.toggle("dark");
-    setDark(mode);
-    localStorage.setItem("theme", mode ? "dark" : "light");
-  };
+  }, [gallery.length]);
 
   const faqs = [
     {
       q: "Is PlaceMentor free to start?",
-      a: "Yes, you can begin free and use core features instantly.",
+      a: "Yes, you can begin free and access core placement practice features immediately.",
     },
     {
-      q: "Can I improve coding here?",
-      a: "Yes, coding battles, POTD and practice tools are included.",
+      q: "Can I practice DSA and coding here?",
+      a: "Yes, structured coding practice, Problem of the Day, and company-specific questions are included.",
     },
     {
-      q: "Does AI Planner help placements?",
-      a: "Yes, it creates roadmap based on your goals.",
+      q: "Does the AI Planner help tailor my placement preparation?",
+      a: "Yes, it evaluates your current timeline and target dream companies to generate a personalized roadmap.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-slate-950 dark:to-black text-gray-900 dark:text-white overflow-hidden">
+    <div className="min-h-screen bg-bg text-text overflow-hidden transition-colors duration-200">
       {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b border-white/20 dark:border-white/10 bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img
-              src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
-              className="w-10 h-10 rounded-2xl"
-            />
-
-            <h1 className="text-lg sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent whitespace-nowrap">
-              PlaceMentor
-            </h1>
+          <div
+            onClick={() => navigate("/")}
+            className="cursor-pointer"
+          >
+            <BrandLogo size="lg" />
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={toggleTheme}>
-              {dark ? <Sun /> : <Moon />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="h-9 w-9 rounded-lg border border-border bg-surface text-text hover:bg-surface-2 transition-colors cursor-pointer"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-text-muted" />}
             </Button>
 
             <Button
               variant="outline"
-              className="hidden sm:flex rounded-xl"
+              className="hidden sm:flex rounded-lg border-border text-text hover:bg-surface-2"
               onClick={() => navigate("/login")}
             >
-              Login
+              Log In
             </Button>
 
             <Button
-              className="rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
+              className="rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium shadow-soft text-sm px-4"
               onClick={() => navigate("/signup")}
             >
-              Start Free
+              Get Started Free
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="relative max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-14 items-center">
-        <div className="absolute -top-10 left-10 w-72 h-72 bg-purple-400/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-400/20 blur-[120px] rounded-full" />
-
+      {/* HERO SECTION */}
+      <section className="relative max-w-7xl mx-auto px-6 py-16 md:py-24 grid lg:grid-cols-2 gap-12 items-center">
         {/* LEFT */}
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-gray-900 border shadow-sm mb-6">
-            <Sparkles className="w-4 h-4 text-purple-500" />
-            <span className="text-sm font-semibold">AI Powered Placement Platform</span>
+        <div className="relative z-10 space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-soft text-primary border border-primary/20 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>AI-Powered Placement Preparation Platform</span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-black leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text leading-[1.15]">
             Build Your{" "}
-            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Dream Career
-            </span>{" "}
-            Faster 🚀
+            <span className="text-primary">Dream Career</span> Faster 🚀
           </h1>
 
-          <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-xl leading-relaxed">
-            Coding practice, AI roadmap, interviews, resume tools and everything needed to crack
-            placements smarter.
+          <p className="text-base sm:text-lg text-text-muted max-w-xl leading-relaxed">
+            Curated DSA practice, personalized AI roadmaps, interview preparation, and ATS resume tools designed to help students crack top campus and off-campus placements.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3.5 pt-2">
             <Button
               size="lg"
-              className="rounded-2xl px-8 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white"
+              className="rounded-lg px-7 bg-primary hover:bg-primary-hover text-on-primary font-medium shadow-soft h-11"
               onClick={() => navigate("/signup")}
             >
               Join Free Now
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
 
             <Button
               size="lg"
               variant="outline"
-              className="rounded-2xl px-8"
+              className="rounded-lg px-7 border-border text-text hover:bg-surface-2 h-11"
               onClick={() => navigate("/login")}
             >
-              Login
+              Log In
             </Button>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <MiniBadge text="10K+ Students" />
-            <MiniBadge text="24/7 AI Help" />
-            <MiniBadge text="Daily Coding" />
+          <div className="pt-4 flex items-center gap-6 text-xs text-text-subtle">
+            <div className="flex items-center gap-1.5">
+              <span className="text-success font-bold">✓</span> No credit card required
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-success font-bold">✓</span> 50,000+ problems solved
+            </div>
           </div>
         </div>
 
-        {/* RIGHT VIDEO */}
-        <div className="relative z-10">
-          <div className="rounded-[32px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border shadow-2xl p-3 rotate-1 hover:rotate-0 transition duration-500">
-            <div className="aspect-video rounded-2xl overflow-hidden relative">
-              <iframe
-                src="https://drive.google.com/file/d/1aSSVekipm6ydMEBLg-F4RxRZGdrUofWf/preview"
-                className="w-full h-full"
-                allow="autoplay"
-              />
+        {/* RIGHT PREVIEW CARD */}
+        <div className="relative z-10 flex justify-center">
+          <div className="w-full max-w-lg rounded-xl bg-surface border border-border shadow-subtle p-5 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center font-bold text-xs">
+                  DSA
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm text-text">Placement Readiness Score</h4>
+                  <p className="text-xs text-text-subtle">Real-time assessment</p>
+                </div>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success-soft text-success">
+                Top 5%
+              </span>
+            </div>
 
-              <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 rounded-xl px-4 py-2 flex items-center gap-2 shadow">
-                <PlayCircle className="w-5 h-5 text-purple-600" />
-                <span className="text-sm font-semibold">Product Preview</span>
+            <div className="grid grid-cols-2 gap-3 py-1">
+              <div className="p-3 rounded-lg bg-surface-2 border border-border">
+                <div className="flex items-center gap-1.5 text-xs text-text-muted mb-1">
+                  <PlayCircle className="w-4 h-4 text-primary" />
+                  <span>Mock Score</span>
+                </div>
+                <p className="text-2xl font-bold text-primary">9.1/10</p>
+              </div>
+
+              <div className="p-3 rounded-lg bg-surface-2 border border-border">
+                <div className="flex items-center gap-1.5 text-xs text-text-muted mb-1">
+                  <Zap className="w-4 h-4 text-accent" />
+                  <span>Consistency</span>
+                </div>
+                <p className="text-2xl font-bold text-accent">24 Days</p>
               </div>
             </div>
-          </div>
 
-          <div className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-4 border">
-            <p className="text-sm text-gray-500">Weekly Progress</p>
-            <p className="text-2xl font-black text-green-500">+82%</p>
-          </div>
-
-          <div className="absolute -top-6 -right-4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-4 border">
-            <p className="text-sm text-gray-500">Interview Score</p>
-            <p className="text-2xl font-black text-indigo-600">9.1/10</p>
+            <div className="space-y-2 pt-1 text-xs">
+              <div className="flex justify-between text-text-muted">
+                <span>Core Topics Mastered</span>
+                <span className="font-semibold text-text">82%</span>
+              </div>
+              <div className="w-full bg-surface-2 rounded-full h-2 overflow-hidden border border-border">
+                <div className="bg-primary h-2 rounded-full w-[82%]"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* COUNTERS */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
+      <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid md:grid-cols-3 gap-6">
           <CounterCard number={`${count1.toLocaleString()}+`} label="Students Joined" />
           <CounterCard number={`${count2.toLocaleString()}+`} label="Problems Solved" />
-          <CounterCard number={`${count3.toLocaleString()}+`} label="Trusted Users" />
+          <CounterCard number={`${count3.toLocaleString()}+`} label="Top Company Questions" />
         </div>
       </section>
 
-      {/* CAROUSEL */}
-      <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-black text-center mb-4">Explore PlaceMentor ✨</h2>
+      {/* CAROUSEL PREVIEWS */}
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <h2 className="text-3xl font-bold tracking-tight text-text">
+            Explore the Platform
+          </h2>
+          <p className="text-text-muted text-sm mt-2">
+            Real product previews and dashboard snapshots
+          </p>
+        </div>
 
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
-          Real product previews and dashboard snapshots
-        </p>
-
-        <div className="relative rounded-[32px] bg-white/80 dark:bg-gray-900/80 border shadow-2xl p-3 overflow-hidden">
-          <div className="aspect-video rounded-2xl overflow-hidden">
-            <iframe src={gallery[slide]} className="w-full h-full" />
+        <div className="relative rounded-xl bg-surface border border-border shadow-subtle p-3 overflow-hidden">
+          <div className="aspect-video rounded-lg overflow-hidden bg-surface-2">
+            <iframe
+              src={gallery[slide]}
+              title="Platform Preview"
+              className="w-full h-full border-0"
+            />
           </div>
 
           <button
             onClick={() => setSlide(slide === 0 ? gallery.length - 1 : slide - 1)}
-            className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center"
+            aria-label="Previous slide"
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface/90 hover:bg-surface border border-border shadow-soft flex items-center justify-center text-text transition-colors cursor-pointer"
           >
-            <ChevronLeft />
+            <ChevronLeft className="w-5 h-5" />
           </button>
 
           <button
             onClick={() => setSlide((slide + 1) % gallery.length)}
-            className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center"
+            aria-label="Next slide"
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface/90 hover:bg-surface border border-border shadow-soft flex items-center justify-center text-text transition-colors cursor-pointer"
           >
-            <ChevronRight />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </section>
 
       {/* FEATURES */}
-      <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-black text-center mb-12">Why PlaceMentor Wins 🚀</h2>
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <h2 className="text-3xl font-bold tracking-tight text-text">
+            Everything You Need to Get Hired
+          </h2>
+          <p className="text-text-muted text-sm mt-2">
+            Purpose-built modules focused on measurable student placement outcomes.
+          </p>
+        </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <FeatureCard
-            icon={<Brain />}
-            title="AI Planner"
-            desc="Personal roadmap based on your level."
+            icon={<Brain className="w-5 h-5" />}
+            title="Personalized AI Planner"
+            desc="Structured week-by-week roadmaps tailored to your placement timeline."
           />
           <FeatureCard
-            icon={<Code2 />}
-            title="Coding Battles"
-            desc="Daily challenges with growth tracking."
+            icon={<Code2 className="w-5 h-5" />}
+            title="DSA & Coding Practice"
+            desc="Curated sheets, daily problems, and real-time execution compiler."
           />
           <FeatureCard
-            icon={<Target />}
+            icon={<Target className="w-5 h-5" />}
             title="Placement Predictor"
-            desc="Check chances instantly."
+            desc="Assess your interview readiness based on algorithmic skills and project depth."
           />
-          <FeatureCard icon={<Award />} title="Leaderboard" desc="Compete and stay consistent." />
-          <FeatureCard icon={<Zap />} title="Fast Progress" desc="XP, streaks and growth system." />
           <FeatureCard
-            icon={<ShieldCheck />}
-            title="Resume Tools"
-            desc="Create ATS ready resumes."
+            icon={<Award className="w-5 h-5" />}
+            title="Peer Leaderboards"
+            desc="Compete in live coding battles and stay accountable every day."
           />
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <h2 className="text-4xl font-black text-center mb-12">Loved by Students ❤️</h2>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          <Testimonial name="Rahul" text="Coding consistency became much better." />
-          <Testimonial name="Anjali" text="AI roadmap helped me stay focused." />
-          <Testimonial name="Sourav" text="Best modern platform for placements." />
+          <FeatureCard
+            icon={<Zap className="w-5 h-5" />}
+            title="Streak & XP System"
+            desc="Build durable daily habits with streak badges and milestones."
+          />
+          <FeatureCard
+            icon={<ShieldCheck className="w-5 h-5" />}
+            title="ATS Resume Tools"
+            desc="Generate and audit clean, industry-standard tech resumes."
+          />
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="max-w-4xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-black text-center mb-10">Frequently Asked Questions</h2>
+      <section className="max-w-3xl mx-auto px-6 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold tracking-tight text-text">
+            Frequently Asked Questions
+          </h2>
+        </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {faqs.map((item, i) => (
             <div
               key={i}
-              className="rounded-2xl bg-white dark:bg-gray-900 border shadow-sm overflow-hidden"
+              className="rounded-xl bg-surface border border-border shadow-soft overflow-hidden"
             >
               <button
                 onClick={() => setFaq(faq === i ? null : i)}
-                className="w-full px-5 py-4 flex justify-between font-semibold text-left"
+                className="w-full px-5 py-4 flex justify-between items-center font-semibold text-left text-sm text-text hover:bg-surface-2 transition-colors cursor-pointer"
               >
-                {item.q}
-                <ChevronDown className={`w-5 h-5 transition ${faq === i ? "rotate-180" : ""}`} />
+                <span>{item.q}</span>
+                <ChevronDown className={`w-4 h-4 text-text-subtle transition-transform duration-200 ${faq === i ? "rotate-180" : ""}`} />
               </button>
 
               {faq === i && (
-                <div className="px-5 pb-4 text-gray-500 dark:text-gray-300">{item.a}</div>
+                <div className="px-5 pb-4 text-sm text-text-muted leading-relaxed border-t border-border pt-3">
+                  {item.a}
+                </div>
               )}
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-6xl mx-auto px-6 pb-24">
-        <div className="rounded-[32px] p-10 text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white shadow-2xl">
-          <h2 className="text-4xl font-black mb-4">Ready To Crack Your Dream Job?</h2>
-
-          <p className="text-white/90 max-w-2xl mx-auto">
-            Join thousands of students building careers smarter.
+      {/* BOTTOM CTA */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="rounded-2xl p-10 text-center bg-primary text-on-primary shadow-subtle space-y-4">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            Ready to Crack Your Placement?
+          </h2>
+          <p className="opacity-90 max-w-xl mx-auto text-sm sm:text-base">
+            Start your preparation today with structured learning, company sheets, and daily coding.
           </p>
 
-          <Button
-            className="mt-7 bg-white text-indigo-700 rounded-2xl px-10"
-            onClick={() => navigate("/signup")}
-          >
-            Get Started Free
-          </Button>
+          <div className="pt-2">
+            <Button
+              className="bg-surface hover:bg-surface-2 text-primary font-semibold rounded-lg px-8 h-11 text-sm shadow-soft cursor-pointer transition-colors"
+              onClick={() => navigate("/signup")}
+            >
+              Get Started Free
+            </Button>
+          </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 py-8 text-center text-gray-500 dark:text-gray-400">
-        © {new Date().getFullYear()} PlaceMentor. All rights reserved.
+      <footer className="border-t border-border py-6 text-center text-xs text-text-subtle">
+        © {new Date().getFullYear()} Place Mentor. All rights reserved.
       </footer>
-    </div>
-  );
-}
-
-function MiniBadge({ text }) {
-  return (
-    <div className="px-4 py-2 rounded-full bg-white dark:bg-gray-900 border text-sm font-medium shadow-sm">
-      {text}
     </div>
   );
 }
 
 function CounterCard({ number, label }) {
   return (
-    <Card className="rounded-3xl border-0 shadow-xl bg-white/80 dark:bg-gray-900/80">
-      <CardContent className="p-8 text-center">
-        <div className="text-5xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+    <Card className="rounded-xl border border-border shadow-soft bg-surface">
+      <CardContent className="p-6 text-center">
+        <div className="text-3xl sm:text-4xl font-bold text-primary tracking-tight">
           {number}
         </div>
-        <p className="mt-2 text-gray-500">{label}</p>
+        <p className="mt-1.5 text-xs text-text-muted font-medium">{label}</p>
       </CardContent>
     </Card>
   );
@@ -363,25 +382,13 @@ function CounterCard({ number, label }) {
 
 function FeatureCard({ icon, title, desc }) {
   return (
-    <Card className="rounded-3xl border-0 shadow-lg hover:-translate-y-2 transition bg-white/80 dark:bg-gray-900/80">
-      <CardContent className="p-7">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center mb-5">
+    <Card className="rounded-xl border border-border shadow-soft hover:shadow-subtle hover:border-primary/40 transition-all duration-200 bg-surface">
+      <CardContent className="p-6">
+        <div className="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center mb-4 border border-primary/20">
           {icon}
         </div>
-        <h3 className="text-xl font-bold">{title}</h3>
-        <p className="mt-2 text-gray-500 text-sm">{desc}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Testimonial({ name, text }) {
-  return (
-    <Card className="rounded-3xl border-0 shadow-lg bg-white/80 dark:bg-gray-900/80">
-      <CardContent className="p-7">
-        <div className="text-yellow-500 text-xl mb-3">★★★★★</div>
-        <p className="text-gray-700 dark:text-gray-300">{text}</p>
-        <div className="mt-4 font-bold">{name}</div>
+        <h3 className="text-base font-semibold text-text mb-1.5">{title}</h3>
+        <p className="text-text-muted text-xs leading-relaxed">{desc}</p>
       </CardContent>
     </Card>
   );

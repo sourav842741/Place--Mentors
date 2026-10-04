@@ -4,64 +4,58 @@ export default function AuthLayout({ children }) {
   return (
     <div
       className="min-h-screen flex items-center justify-center
-      bg-gray-100 dark:bg-gray-950
-      px-4 relative overflow-hidden transition-colors duration-300"
+      bg-bg text-text
+      px-4 py-8 relative transition-colors duration-200"
     >
-      {/* BACKGROUND GLOW */}
-      <div className="absolute inset-0 -z-10">
-        {/* LIGHT */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-blue-300/30 blur-3xl rounded-full dark:hidden"></div>
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-purple-300/30 blur-3xl rounded-full dark:hidden"></div>
-
-        {/* DARK */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full hidden dark:block"></div>
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-purple-500/20 blur-3xl rounded-full hidden dark:block"></div>
-      </div>
-
       {/* LEFT FORM */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-6">
         <div
           className="w-full max-w-md
-          bg-white dark:bg-gray-900
-          border border-gray-200 dark:border-white/10
-          rounded-2xl p-6 shadow-md
-          transition-colors duration-300"
+          bg-surface
+          border border-border
+          rounded-xl p-6 sm:p-8 shadow-soft
+          transition-colors duration-200"
         >
           {children}
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
+      {/* RIGHT PANEL - Clean EdTech brand showcase */}
       <div className="hidden md:flex w-1/2 flex-col justify-center p-12">
-        <div className="max-w-md space-y-10">
-          <h1
-            className="text-4xl font-bold leading-tight
-            text-gray-900 dark:text-white"
-          >
-            Welcome to{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              PlaceMentor
+        <div className="max-w-md space-y-8">
+          <div>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary-soft text-primary mb-3">
+              Placement Preparation Platform
             </span>
-          </h1>
+            <h1 className="text-4xl font-bold leading-tight text-text tracking-tight">
+              Welcome to{" "}
+              <span className="text-primary">
+                PlaceMentor
+              </span>
+            </h1>
+            <p className="text-text-muted mt-2 text-base">
+              A calm, structured pathway to crack your campus and off-campus placements.
+            </p>
+          </div>
 
           {/* FEATURES */}
-          <div className="space-y-6">
+          <div className="space-y-5">
             <Feature
               icon={Code2}
-              title="All in One Coding Profile"
-              desc="Track your skills, projects & growth in one place."
+              title="All-in-One Coding Profile"
+              desc="Track your algorithmic skills, projects & structured progress."
             />
 
             <Feature
               icon={Brain}
-              title="Smart Learning"
-              desc="Follow curated DSA sheets and roadmaps."
+              title="Smart Curated Learning"
+              desc="Step-by-step topic mastery with targeted practice sheets."
             />
 
             <Feature
               icon={Briefcase}
-              title="Placement Ready"
-              desc="Prepare with real interview questions & contests."
+              title="Placement Readiness"
+              desc="Prepare with actual company interview questions and mock assessments."
             />
           </div>
         </div>
@@ -73,21 +67,19 @@ export default function AuthLayout({ children }) {
 /* FEATURE CARD */
 function Feature({ icon: Icon, title, desc }) {
   return (
-    <div className="flex items-start gap-4 group">
-      {/* ICON */}
+    <div className="flex items-start gap-4">
+      {/* ICON - Clean primary-soft container without AI glow */}
       <div
-        className="bg-gradient-to-r from-blue-600 to-purple-600
-        text-white p-3 rounded-xl shadow-md
-        group-hover:scale-110 transition"
+        className="bg-primary-soft text-primary
+        p-3 rounded-lg border border-primary/20 shrink-0"
       >
-        <Icon className="w-6 h-6" />
+        <Icon className="w-5 h-5 text-primary" />
       </div>
 
       {/* TEXT */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
-
-        <p className="text-gray-600 dark:text-gray-400 text-sm">{desc}</p>
+        <h3 className="text-base font-semibold text-text">{title}</h3>
+        <p className="text-text-muted text-sm leading-relaxed">{desc}</p>
       </div>
     </div>
   );

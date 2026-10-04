@@ -4,55 +4,56 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NotesForm from "../components/NotesForm";
 import NotesList from "../components/NotesList";
 import { useGetMyNotesQuery } from "../redux/notesSlice";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 function Notes() {
   const { data: notes, isLoading, error } = useGetMyNotesQuery();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 dark:from-gray-950 dark:to-gray-950 py-12 lg:mt-12 md:mt-16 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* HERO */}
-        <div className="text-center pb-12">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-xl border">
-            <Sparkles className="h-6 w-6 text-purple-600" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              AI Exam Notes
+    <>
+      <Navbar />
+
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="max-w-5xl mx-auto space-y-8">
+          {/* HERO */}
+          <div className="text-center pb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary-soft text-primary text-xs font-semibold mb-3">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Smart Revision Assistant</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+              AI Exam & Interview Notes
             </h1>
-            <Sparkles className="h-6 w-6 text-purple-600" />
+            <p className="mt-2 text-xs sm:text-sm text-text-muted max-w-xl mx-auto leading-relaxed">
+              Generate structured, high-yield study notes with diagrams, short questions, and revision summaries tailored to your syllabus.
+            </p>
           </div>
-          <p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
-            Generate topper-level notes with diagrams, questions, and revision points. Powered by
-            advanced AI tailored for your exams.
-          </p>
-        </div>
 
-        {/* FORM */}
-        <NotesForm />
+          {/* FORM */}
+          <NotesForm />
 
-        {/* HISTORY */}
-        <div>
-          <Card className="border-0 shadow-xl md:ml-30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-2xl ">
-                <BookOpen className="h-8 w-8" />
-                Your Notes Library
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
+          {/* HISTORY */}
+          <div className="space-y-4">
+            <div className="bg-surface rounded-xl border border-border p-6 shadow-subtle">
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen className="w-5 h-5 text-primary" />
+                <h2 className="text-base font-bold text-text">Your Generated Notes Library</h2>
+              </div>
               <NotesList notes={notes} isLoading={isLoading} />
-            </CardContent>
-          </Card>
+            </div>
 
-          {error && (
-            <Card className="mt-6 border-red-200">
-              <CardContent className="p-6 text-center text-red-600">
-                Failed to load notes. <button className="underline ml-1">Retry</button>
-              </CardContent>
-            </Card>
-          )}
+            {error && (
+              <div className="p-4 bg-danger-soft border border-danger/20 rounded-xl text-center text-xs text-danger">
+                Failed to load notes. <button onClick={() => window.location.reload()} className="underline font-medium ml-1 cursor-pointer">Retry</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      <Footer />
+    </>
   );
 }
 

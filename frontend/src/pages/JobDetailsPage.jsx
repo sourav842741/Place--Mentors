@@ -61,23 +61,19 @@ const JobDetailsPage = () => {
   // Loading Skeleton
   if (loading) {
     return (
-      <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
+      <div className="pt-20 md:pl-64 min-h-screen bg-bg text-text transition-colors duration-200">
         <Navbar />
-        <div className="max-w-4xl mx-auto p-6 space-y-8">
-          <Skeleton className="h-12 w-64" />
-          <Card className="shadow-xl">
-            <CardHeader className="p-8">
-              <Skeleton className="h-10 w-3/4" />
-              <Skeleton className="h-8 w-1/2 mt-4" />
-            </CardHeader>
-            <CardContent className="p-8 space-y-6">
-              <div className="space-y-4">
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-4 w-4/5" />
-                <Skeleton className="h-12 w-full" />
-              </div>
-            </CardContent>
-          </Card>
+        <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
+          <Skeleton className="h-8 w-48 bg-surface-2" />
+          <div className="rounded-xl border border-border bg-surface p-6 space-y-4">
+            <Skeleton className="h-8 w-3/4 bg-surface-2" />
+            <Skeleton className="h-5 w-1/3 bg-surface-2" />
+            <div className="space-y-3 pt-4">
+              <Skeleton className="h-4 w-full bg-surface-2" />
+              <Skeleton className="h-4 w-5/6 bg-surface-2" />
+              <Skeleton className="h-4 w-2/3 bg-surface-2" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -86,17 +82,17 @@ const JobDetailsPage = () => {
   // Error / Not found
   if (!job) {
     return (
-      <div className="pt-16 lg:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300 flex items-center justify-center">
+      <div className="pt-20 lg:pl-64 min-h-screen bg-bg text-text transition-colors duration-200 flex items-center justify-center">
         <Navbar />
-        <div className="text-center p-12 max-w-md">
-          <Briefcase className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Job Not Found</h2>
-          <p className="text-gray-500 mb-8">
+        <div className="text-center p-8 max-w-md bg-surface border border-border rounded-xl shadow-subtle">
+          <Briefcase className="h-14 w-14 text-text-subtle mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-text mb-1">Job Not Found</h2>
+          <p className="text-xs text-text-muted mb-6">
             The job you're looking for doesn't exist or has been removed.
           </p>
-          <Button asChild>
-            <Link to="/jobs" className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
+          <Button asChild className="h-9 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-medium">
+            <Link to="/jobs" className="flex items-center gap-1.5">
+              <ArrowLeft className="h-3.5 w-3.5" />
               Back to Jobs
             </Link>
           </Button>
@@ -117,59 +113,58 @@ const JobDetailsPage = () => {
 
   return (
     <>
-      <div className="pt-16 md:pl-64 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
+      <div className="pt-20 md:pl-64 min-h-screen bg-bg text-text transition-colors duration-200">
         <Navbar />
 
-        <div className="max-w-6xl mx-auto p-4 md:p-8">
-          {/* Hero Header */}
-          <div className="bg-linear-to-r from-indigo-600 to-purple-200 rounded-3xl p-8 md:p-12 text-black mb-8 shadow-2xl">
-            <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-12">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
+        <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+          {/* Header Banner */}
+          <div className="rounded-xl border border-border bg-surface p-6 sm:p-8 shadow-subtle">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="space-y-2 flex-1 min-w-0">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-white/20"
+                    className="h-8 w-8 rounded-lg border border-border bg-surface-2 text-text hover:bg-surface transition cursor-pointer"
                     asChild
                   >
                     <Link to="/jobs">
-                      <ArrowLeft className="h-5 w-5" />
+                      <ArrowLeft className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <h1 className="text-3xl lg:text-4xl font-bold leading-tight">{job.title}</h1>
+                  <span className="text-xs font-medium text-text-muted">Back to Jobs</span>
                 </div>
-                <p className="text-2xl font-semibold opacity-95">{job.company}</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-text leading-tight">{job.title}</h1>
+                <p className="text-base font-semibold text-primary">{job.company}</p>
               </div>
-              <div className="flex flex-wrap gap-3 items-center">
+
+              <div className="flex flex-wrap gap-2.5 items-center">
                 <Button
-                  size="lg"
-                  className="bg-white text-indigo-600 hover:bg-white/90 font-semibold shadow-lg"
+                  className="h-10 px-5 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-xs shadow-soft transition cursor-pointer"
                   onClick={() => {
                     if (job.applyLink || job.url) {
                       window.open(job.applyLink || job.url, "_blank");
                     }
                   }}
                 >
-                  <Mail className="mr-2 h-4 w-4" />
+                  <Mail className="mr-1.5 h-3.5 w-3.5" />
                   Apply Now
                 </Button>
                 <Button
                   variant="outline"
-                  size="lg"
-                  className="text-black border-white/80 hover:bg-white/20 font-semibold"
+                  className="h-10 rounded-lg border-border bg-surface hover:bg-surface-2 text-text text-xs transition cursor-pointer"
                   onClick={shareJob}
                 >
-                  <Share2 className="mr-2 h-4 w-4" />
+                  <Share2 className="mr-1.5 h-3.5 w-3.5" />
                   Share
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-white hover:bg-white/20"
+                  variant="outline"
+                  className="h-10 rounded-lg border-border bg-surface hover:bg-surface-2 text-text text-xs transition cursor-pointer"
                   onClick={handleBookmark}
                 >
                   <Star
-                    className={`mr-2 h-5 w-5 ${isBookmarked ? "fill-yellow-300 text-yellow-300" : "text-white/70"}`}
+                    className={`mr-1.5 h-3.5 w-3.5 ${isBookmarked ? "fill-accent text-accent" : "text-text-subtle"}`}
                   />
                   {isBookmarked ? "Saved" : "Save"}
                 </Button>
@@ -177,142 +172,123 @@ const JobDetailsPage = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-6">
               {/* Meta Badges */}
-              <Card className="shadow-lg border-0">
-                <CardContent className="p-8 flex flex-wrap gap-3 pt-8">
-                  <Badge variant="outline" className="text-lg px-4 py-2 flex items-center gap-2">
-                    <MapPin className="h-5 w-5" /> {job.location}
-                  </Badge>
-                  {job.jobType && (
-                    <Badge variant="secondary" className="text-lg px-4 py-2">
-                      {job.jobType.replace(/^\w/, (c) => c.toUpperCase())}
-                    </Badge>
-                  )}
-                  {formatSalary(job.salary) && (
-                    <Badge variant="outline" className="text-lg px-4 py-2 flex items-center gap-2">
-                      <DollarSign className="h-5 w-5" /> {formatSalary(job.salary)}
-                    </Badge>
-                  )}
-                  {job.remote && (
-                    <Badge variant="outline" className="text-lg px-4 py-2 flex items-center gap-2">
-                      <Globe className="h-5 w-5" /> Remote Friendly
-                    </Badge>
-                  )}
-                  {job.date && (
-                    <Badge variant="ghost" className="text-lg px-4 py-2 flex items-center gap-2">
-                      <Calendar className="h-5 w-5" /> {formatDate(job.date)}
-                    </Badge>
-                  )}
-                </CardContent>
-              </Card>
+              <div className="rounded-xl border border-border bg-surface p-4 flex flex-wrap gap-2 text-xs shadow-subtle">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text font-medium">
+                  <MapPin className="h-3.5 w-3.5 text-text-muted" /> {job.location}
+                </span>
+                {job.jobType && (
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-primary-soft text-primary font-medium">
+                    {job.jobType.replace(/^\w/, (c) => c.toUpperCase())}
+                  </span>
+                )}
+                {formatSalary(job.salary) && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success-soft text-success font-medium">
+                    <DollarSign className="h-3.5 w-3.5" /> {formatSalary(job.salary)}
+                  </span>
+                )}
+                {job.remote && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-soft text-accent font-medium">
+                    <Globe className="h-3.5 w-3.5" /> Remote Friendly
+                  </span>
+                )}
+                {job.date && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted">
+                    <Calendar className="h-3.5 w-3.5" /> {formatDate(job.date)}
+                  </span>
+                )}
+              </div>
 
-              <Card className="shadow-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
-                    <FileText className="h-6 w-6" />
-                    Job Description
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent className="prose prose-lg max-w-none text-gray-800 dark:text-gray-300 prose-headings:text-gray-900 dark:prose-headings:text-white">
-                  <div dangerouslySetInnerHTML={{ __html: job.description || "" }} />
-                </CardContent>
-              </Card>
+              {/* Description */}
+              <div className="rounded-xl border border-border bg-surface p-6 shadow-subtle space-y-4">
+                <h3 className="flex items-center gap-2 text-base font-bold text-text">
+                  <FileText className="h-4 w-4 text-primary" />
+                  Job Description
+                </h3>
+                <div
+                  className="prose prose-sm max-w-none text-text text-xs leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: job.description || "" }}
+                />
+              </div>
 
               {/* Skills */}
               {job.tags?.length > 0 && (
-                <Card className="shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                      <Zap className="h-6 w-6" />
-                      Required Skills ({job.tags.length})
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-0 pt-4">
+                <div className="rounded-xl border border-border bg-surface p-6 shadow-subtle space-y-4">
+                  <h3 className="text-base font-bold text-text flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-accent" />
+                    Required Skills ({job.tags.length})
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
                     {job.tags.map((tag, i) => (
-                      <Badge key={i} variant="outline" className="justify-center py-3 text-sm">
+                      <span key={i} className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text text-xs font-medium">
                         {tag}
-                      </Badge>
+                      </span>
                     ))}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )}
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Company Info */}
-              <Card className="shadow-lg sticky top-6">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-lg">
-                    <Building className="h-6 w-6 text-indigo-600" />
-                    About {job.company}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-                      <Users className="h-6 w-6 text-indigo-600" />
-                    </div>
-
-                    <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">{job.company}</p>
-                      <p className="text-gray-600 dark:text-gray-400">{job.location}</p>
-                    </div>
+              <div className="rounded-xl border border-border bg-surface p-5 shadow-subtle space-y-4">
+                <h3 className="flex items-center gap-2 text-sm font-bold text-text">
+                  <Building className="h-4 w-4 text-primary" />
+                  About {job.company}
+                </h3>
+                <div className="flex items-center gap-3 p-3.5 bg-surface-2 rounded-lg border border-border">
+                  <div className="w-10 h-10 bg-primary-soft rounded-lg flex items-center justify-center">
+                    <Users className="h-5 w-5 text-primary" />
                   </div>
-
-                  <Button className="w-full bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700">
-                    Visit Company
-                  </Button>
-                </CardContent>
-              </Card>
+                  <div>
+                    <p className="font-semibold text-xs text-text">{job.company}</p>
+                    <p className="text-[11px] text-text-muted">{job.location}</p>
+                  </div>
+                </div>
+                <Button className="w-full h-9 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-xs font-medium cursor-pointer shadow-soft">
+                  Visit Company
+                </Button>
+              </div>
 
               {/* Quick Actions */}
-              <Card className="shadow-lg">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
+              <div className="rounded-xl border border-border bg-surface p-5 shadow-subtle space-y-3">
+                <h3 className="text-sm font-bold text-text">Quick Actions</h3>
+                <div className="space-y-2">
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
+                    className="w-full h-9 justify-start border-border bg-surface hover:bg-surface-2 text-text text-xs rounded-lg cursor-pointer"
                     onClick={shareJob}
                   >
-                    <Share2 className="mr-2 h-4 w-4" />
+                    <Share2 className="mr-2 h-3.5 w-3.5" />
                     Copy Link
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
+                    className="w-full h-9 justify-start border-border bg-surface hover:bg-surface-2 text-text text-xs rounded-lg cursor-pointer"
                     onClick={handleBookmark}
                   >
                     <Star
-                      className={`mr-2 h-4 w-4 ${isBookmarked ? "fill-yellow-400 text-yellow-400" : ""}`}
+                      className={`mr-2 h-3.5 w-3.5 ${isBookmarked ? "fill-accent text-accent" : ""}`}
                     />
                     {isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Similar Jobs Teaser */}
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Similar Jobs</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <p>5 more jobs like this one</p>
-                  <Button variant="outline" size="sm" className="w-full" asChild>
-                    <Link to="/jobs" className="w-full block">
-                      Browse Similar Jobs
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              <div className="rounded-xl border border-border bg-surface p-5 shadow-subtle space-y-3 text-xs">
+                <h3 className="font-bold text-text">More Opportunities</h3>
+                <p className="text-text-muted">Explore similar roles matching your skill set</p>
+                <Button variant="outline" className="w-full h-9 border-border bg-surface hover:bg-surface-2 text-text text-xs rounded-lg" asChild>
+                  <Link to="/jobs">
+                    Browse All Jobs
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

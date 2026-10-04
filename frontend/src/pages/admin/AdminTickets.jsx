@@ -216,7 +216,7 @@ export default function AdminTickets() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-4 md:p-6 space-y-6 transition-colors duration-300 lg:ml-64">
+    <div className="min-h-screen bg-bg text-text p-4 md:p-6 space-y-6 transition-colors duration-200 lg:ml-72">
       {/* HEADER */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -224,13 +224,13 @@ export default function AdminTickets() {
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <Ticket className="w-5 h-5 text-white" />
+          <h1 className="text-3xl font-black text-text flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg text-white">
+              <Ticket className="w-5 h-5" />
             </div>
             Ticket Management
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-text-muted mt-1">
             Manage and respond to user support tickets in real-time.
           </p>
         </div>
@@ -246,15 +246,15 @@ export default function AdminTickets() {
         {statCards.map((stat) => (
           <Card
             key={stat.label}
-            className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-md transition-shadow"
+            className="border border-border bg-surface text-text hover:shadow-md transition-shadow"
           >
             <CardContent className="p-4 flex items-center gap-3">
               <div className={`p-2 rounded-lg ${stat.bg}`}>
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                <p className="text-xs text-text-muted">{stat.label}</p>
+                <p className="text-xl font-bold text-text">{stat.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -273,9 +273,9 @@ export default function AdminTickets() {
             <Badge
               key={cat._id}
               variant="outline"
-              className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-xs px-3 py-1"
+              className="bg-surface border-border text-text text-xs px-3 py-1"
             >
-              <BarChart3 className="w-3 h-3 mr-1 text-blue-500" />
+              <BarChart3 className="w-3 h-3 mr-1 text-primary" />
               {cat._id}: {cat.count}
             </Badge>
           ))}
@@ -290,12 +290,12 @@ export default function AdminTickets() {
         className="flex flex-col lg:flex-row gap-3"
       >
         <form onSubmit={handleSearch} className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-subtle" />
           <Input
             placeholder="Search by ID, subject, email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-10 rounded-xl"
+            className="pl-9 h-10 rounded-xl bg-surface-2 border-border text-text placeholder:text-text-subtle focus-visible:ring-primary"
           />
         </form>
 
@@ -377,13 +377,13 @@ export default function AdminTickets() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ delay: index * 0.03 }}
               >
-                <Card className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-md transition-all">
+                <Card className="border border-border bg-surface text-text hover:shadow-md transition-all">
                   <CardContent className="p-4 md:p-5">
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
                       {/* INFO */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">
+                          <span className="text-sm font-mono font-bold text-primary">
                             {ticket.ticketId}
                           </span>
                           <TicketStatusBadge status={ticket.status} />
@@ -391,7 +391,7 @@ export default function AdminTickets() {
                           {ticket.aiEscalated && (
                             <Badge
                               variant="outline"
-                              className="text-[10px] bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300"
+                              className="text-[10px] bg-primary-soft text-primary border-primary/20"
                             >
                               <Bot className="w-3 h-3 mr-1" />
                               AI Escalated
@@ -400,16 +400,16 @@ export default function AdminTickets() {
                           {ticket.isReopened && (
                             <Badge
                               variant="outline"
-                              className="text-[10px] bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300"
+                              className="text-[10px] bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20"
                             >
                               Reopened
                             </Badge>
                           )}
                         </div>
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-white mt-1 truncate">
+                        <h3 className="text-base font-semibold text-text mt-1 truncate">
                           {ticket.subject}
                         </h3>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
+                        <div className="flex items-center gap-3 mt-1 text-xs text-text-muted flex-wrap">
                           <span className="font-medium">{ticket.category}</span>
                           <span>•</span>
                           <span className="truncate max-w-[200px]">{ticket.email}</span>
@@ -479,31 +479,31 @@ export default function AdminTickets() {
           if (!val) handleCloseDetail();
         }}
       >
-        <DialogContent className="sm:max-w-3xl max-h-[92vh] overflow-hidden rounded-2xl p-0 gap-0">
+        <DialogContent className="sm:max-w-3xl max-h-[92vh] overflow-hidden rounded-2xl p-0 gap-0 bg-surface border border-border text-text shadow-2xl">
           {/* HEADER */}
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
             <DialogHeader className="m-0">
-              <DialogTitle className="text-lg font-bold flex items-center gap-2">
-                <Ticket className="w-5 h-5 text-blue-500" />
+              <DialogTitle className="text-lg font-bold flex items-center gap-2 text-text">
+                <Ticket className="w-5 h-5 text-primary" />
                 Ticket Details
               </DialogTitle>
             </DialogHeader>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-lg"
+              className="h-8 w-8 rounded-lg text-text hover:bg-surface-2"
               onClick={handleCloseDetail}
             >
-              {/* <X className="w-4 h-4" /> */}
+              <X className="w-4 h-4" />
             </Button>
           </div>
 
           {detailLoading ? (
             <div className="flex items-center justify-center py-16">
-              <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           ) : !ticketDetail ? (
-            <div className="flex items-center justify-center py-16 text-gray-500">
+            <div className="flex items-center justify-center py-16 text-text-muted">
               Failed to load ticket details
             </div>
           ) : (
@@ -512,52 +512,52 @@ export default function AdminTickets() {
               <div ref={detailScrollRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
                 {/* Ticket Info */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">
+                  <span className="text-sm font-mono font-bold text-primary">
                     {ticketDetail.ticketId}
                   </span>
                   <TicketStatusBadge status={ticketDetail.status} />
                   <TicketPriorityBadge priority={ticketDetail.priority} />
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-text">
                   {ticketDetail.subject}
                 </h3>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">User</p>
-                    <p className="font-medium text-gray-900 dark:text-white truncate">
+                  <div className="bg-surface-2 border border-border rounded-xl p-3">
+                    <p className="text-text-muted text-xs">User</p>
+                    <p className="font-medium text-text truncate">
                       {ticketDetail.user?.fullName || "N/A"}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">Email</p>
-                    <p className="font-medium text-gray-900 dark:text-white truncate">
+                  <div className="bg-surface-2 border border-border rounded-xl p-3">
+                    <p className="text-text-muted text-xs">Email</p>
+                    <p className="font-medium text-text truncate">
                       {ticketDetail.email}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">Category</p>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                  <div className="bg-surface-2 border border-border rounded-xl p-3">
+                    <p className="text-text-muted text-xs">Category</p>
+                    <p className="font-medium text-text">
                       {ticketDetail.category}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">Created</p>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                  <div className="bg-surface-2 border border-border rounded-xl p-3">
+                    <p className="text-text-muted text-xs">Created</p>
+                    <p className="font-medium text-text">
                       {new Date(ticketDetail.createdAt).toLocaleString()}
                     </p>
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border" />
 
                 {/* Description */}
                 <div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-1 font-medium">
+                  <p className="text-text-muted text-sm mb-1 font-medium">
                     Description
                   </p>
-                  <p className="text-gray-900 dark:text-white whitespace-pre-wrap text-sm leading-relaxed">
+                  <p className="text-text whitespace-pre-wrap text-sm leading-relaxed">
                     {ticketDetail.description}
                   </p>
                 </div>
@@ -642,35 +642,35 @@ export default function AdminTickets() {
                               <div
                                 className={`max-w-[85%] rounded-2xl p-3.5 text-sm ${
                                   isAdmin
-                                    ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
-                                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                                    ? "bg-surface-2 border border-border text-text"
+                                    : "bg-primary text-white shadow-md shadow-primary/20"
                                 }`}
                               >
                                 <div className="flex items-center gap-2 mb-1.5">
                                   <div
-                                    className={`w-6 h-6 rounded-full flex items-center justify-center ${isAdmin ? "bg-purple-100 dark:bg-purple-900/30" : "bg-white/20"}`}
+                                    className={`w-6 h-6 rounded-full flex items-center justify-center ${isAdmin ? "bg-primary-soft text-primary" : "bg-white/20 text-white"}`}
                                   >
                                     {isAdmin ? (
-                                      <Shield className="w-3 h-3 text-purple-600 dark:text-purple-300" />
+                                      <Shield className="w-3 h-3" />
                                     ) : (
-                                      <User className="w-3 h-3 text-white" />
+                                      <User className="w-3 h-3" />
                                     )}
                                   </div>
                                   <span
-                                    className={`font-semibold text-xs ${isAdmin ? "text-purple-700 dark:text-purple-300" : "opacity-90"}`}
+                                    className={`font-semibold text-xs ${isAdmin ? "text-primary" : "text-white"}`}
                                   >
                                     {isAdmin
                                       ? reply.sender?.fullName || "Support Team"
                                       : reply.sender?.fullName || "User"}
                                   </span>
                                   <span
-                                    className={`text-[10px] ml-auto ${isAdmin ? "text-gray-400" : "opacity-60"}`}
+                                    className={`text-[10px] ml-auto ${isAdmin ? "text-text-subtle" : "opacity-80"}`}
                                   >
                                     {new Date(reply.createdAt).toLocaleString()}
                                   </span>
                                 </div>
                                 <p
-                                  className={`whitespace-pre-wrap leading-relaxed ${isAdmin ? "text-gray-900 dark:text-white" : ""}`}
+                                  className={`whitespace-pre-wrap leading-relaxed ${isAdmin ? "text-text" : "text-white"}`}
                                 >
                                   {reply.message}
                                 </p>
@@ -688,25 +688,25 @@ export default function AdminTickets() {
                 {activeTab === "internal" && (
                   <div className="space-y-3">
                     {internalNotes.length === 0 ? (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                      <p className="text-sm text-text-muted text-center py-4">
                         No internal notes.
                       </p>
                     ) : (
                       internalNotes.map((note) => (
                         <div
                           key={note._id}
-                          className="rounded-xl p-3.5 text-sm bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800"
+                          className="rounded-xl p-3.5 text-sm bg-amber-500/10 border border-amber-500/20 text-text"
                         >
                           <div className="flex items-center gap-2 mb-1.5">
-                            <Shield className="w-4 h-4 text-orange-500" />
-                            <span className="font-semibold text-xs text-orange-800 dark:text-orange-200">
+                            <Shield className="w-4 h-4 text-amber-500" />
+                            <span className="font-semibold text-xs text-amber-600 dark:text-amber-400">
                               {note.sender?.fullName || "Admin"}
                             </span>
-                            <span className="text-[10px] text-gray-400 ml-auto">
+                            <span className="text-[10px] text-text-subtle ml-auto">
                               {new Date(note.createdAt).toLocaleString()}
                             </span>
                           </div>
-                          <p className="text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">
+                          <p className="text-text whitespace-pre-wrap leading-relaxed">
                             {note.message}
                           </p>
                         </div>
@@ -718,14 +718,14 @@ export default function AdminTickets() {
               </div>
 
               {/* STICKY REPLY INPUT */}
-              <div className="border-t border-gray-200 dark:border-gray-800 px-6 py-4 bg-gray-50/50 dark:bg-gray-900/50">
+              <div className="border-t border-border px-6 py-4 bg-surface-2">
                 {activeTab === "conversation" ? (
                   <div className="space-y-3">
                     <Textarea
                       placeholder="Type your reply to the user..."
                       value={replyMessage}
                       onChange={(e) => setReplyMessage(e.target.value)}
-                      className="rounded-xl resize-none min-h-[80px] bg-white dark:bg-gray-900"
+                      className="rounded-xl resize-none min-h-[80px] bg-surface border-border text-text placeholder:text-text-subtle focus-visible:ring-primary"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
@@ -734,13 +734,13 @@ export default function AdminTickets() {
                       }}
                     />
                     <div className="flex justify-between items-center">
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-text-subtle">
                         Press Enter to send, Shift+Enter for new line
                       </p>
                       <Button
                         onClick={handleReply}
                         disabled={actionLoading || !replyMessage.trim()}
-                        className="rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90"
+                        className="rounded-xl bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20"
                       >
                         {actionLoading ? (
                           <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -753,7 +753,7 @@ export default function AdminTickets() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    <p className="text-xs text-text-muted font-medium">
                       Add Internal Note (visible only to admins)
                     </p>
                     <div className="flex gap-2">
@@ -761,7 +761,7 @@ export default function AdminTickets() {
                         placeholder="Internal note..."
                         value={internalNoteInput}
                         onChange={(e) => setInternalNoteInput(e.target.value)}
-                        className="rounded-xl bg-white dark:bg-gray-900"
+                        className="rounded-xl bg-surface border-border text-text placeholder:text-text-subtle focus-visible:ring-primary"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
@@ -773,7 +773,7 @@ export default function AdminTickets() {
                         variant="outline"
                         onClick={handleAddInternalNote}
                         disabled={actionLoading || !internalNoteInput.trim()}
-                        className="rounded-xl"
+                        className="rounded-xl border-border text-text hover:bg-surface"
                       >
                         Add Note
                       </Button>
@@ -788,14 +788,14 @@ export default function AdminTickets() {
 
       {/* DELETE CONFIRM */}
       <Dialog open={!!showDeleteConfirm} onOpenChange={() => setShowDeleteConfirm(null)}>
-        <DialogContent className="rounded-2xl max-w-sm">
+        <DialogContent className="rounded-2xl max-w-sm bg-surface border border-border text-text shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+            <DialogTitle className="text-lg font-bold flex items-center gap-2 text-text">
               <Trash2 className="w-5 h-5 text-red-500" />
               Delete Ticket?
             </DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-text-muted">
             This will permanently delete the ticket and all its replies. This action cannot be
             undone.
           </p>
@@ -803,7 +803,7 @@ export default function AdminTickets() {
             <Button
               variant="outline"
               onClick={() => setShowDeleteConfirm(null)}
-              className="rounded-xl"
+              className="rounded-xl border-border text-text hover:bg-surface-2"
             >
               Cancel
             </Button>

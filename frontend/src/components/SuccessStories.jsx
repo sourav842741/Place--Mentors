@@ -49,64 +49,63 @@ const SuccessStories = () => {
   };
 
   return (
-    <section className="w-full py-14 md:py-20 px-4 bg-gradient-to-b from-white via-slate-50 to-indigo-50 dark:from-[#020617] dark:via-[#0b1120] dark:to-[#111827] transition-colors duration-300">
+    <section className="w-full py-12 md:py-16 px-4 bg-bg text-text transition-colors duration-200">
       <div className="max-w-4xl mx-auto">
         {/* TOP TAG */}
-        <div className="flex justify-center mb-4">
-          <span className="px-4 py-2 rounded-full text-sm font-medium border border-blue-200 text-blue-700 bg-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20">
+        <div className="flex justify-center mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-primary-soft text-primary">
             Need Help?
           </span>
         </div>
 
         {/* HEADING */}
-        <h2 className="text-3xl md:text-5xl font-bold text-center text-slate-900 dark:text-white">
-          Frequently Asked{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Questions
-          </span>
+        <h2 className="text-2xl sm:text-4xl font-bold text-center text-text tracking-tight">
+          Frequently Asked Questions
         </h2>
 
-        <p className="text-center text-slate-600 dark:text-slate-400 mt-4 mb-12 max-w-2xl mx-auto text-sm md:text-base">
+        <p className="text-center text-text-muted mt-2 mb-10 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed">
           Find quick answers about Place Mentor, account setup, progress tracking, premium plans,
           and preparation tools.
         </p>
 
         {/* FAQ BOX */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {successStoriesData.map((item, index) => {
             const isOpen = openIndex === index;
 
             return (
               <div
                 key={index}
-                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+                className="rounded-xl border border-border bg-surface shadow-subtle hover:border-primary/40 transition-colors overflow-hidden"
               >
                 {/* QUESTION */}
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full flex items-center justify-between gap-4 text-left px-5 md:px-6 py-5"
+                  className="w-full flex items-center justify-between gap-4 text-left px-5 py-4 cursor-pointer hover:bg-surface-2/60 transition-colors"
                 >
-                  <span className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100">
+                  <span className="text-sm sm:text-base font-semibold text-text">
                     {item.name}
                   </span>
 
                   <div
-                    className={`min-w-[38px] h-[38px] rounded-xl flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white transition-transform duration-300 ${
-                      isOpen ? "rotate-45 scale-105" : ""
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      isOpen
+                        ? "bg-primary text-on-primary rotate-45"
+                        : "bg-surface-2 text-text-muted border border-border hover:text-text"
                     }`}
                   >
-                    <Plus className="w-5 h-5" />
+                    <Plus className="w-4 h-4" />
                   </div>
                 </button>
 
                 {/* ANSWER */}
                 <div
-                  className={`grid transition-all duration-300 ease-in-out ${
+                  className={`grid transition-all duration-200 ease-in-out ${
                     isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 md:px-6 pb-5 text-sm md:text-base leading-7 text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-4">
+                    <p className="px-5 pb-4 pt-1 text-xs sm:text-sm leading-relaxed text-text-muted border-t border-border">
                       {item.message}
                     </p>
                   </div>
@@ -117,8 +116,8 @@ const SuccessStories = () => {
         </div>
 
         {/* BOTTOM TEXT */}
-        <p className="text-center text-sm text-slate-500 dark:text-slate-500 mt-10">
-          Still have questions? Contact our support team anytime.
+        <p className="text-center text-xs text-text-muted mt-8">
+          Still have questions? Reach out to our community support anytime.
         </p>
       </div>
     </section>

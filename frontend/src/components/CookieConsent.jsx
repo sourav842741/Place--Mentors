@@ -33,7 +33,6 @@ const setStoredConsent = (status, days) => {
 
 export const hasCookieConsent = () => {
   const consent = getStoredConsent();
-
   return consent && consent.status === "accepted" && consent.expiresAt > Date.now();
 };
 
@@ -84,28 +83,27 @@ const CookieConsent = () => {
             stiffness: 300,
             damping: 28,
           }}
-          className="fixed bottom-4 left-4 right-4 z-[9999] mx-auto max-w-2xl"
+          className="fixed bottom-5 left-4 right-4 z-[9999] mx-auto max-w-2xl"
         >
-          <div className="rounded-2xl border border-gray-200 bg-white/95 p-5 shadow-2xl backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/95 dark:text-white">
+          <div className="rounded-2xl border border-border bg-surface/95 p-5 shadow-card backdrop-blur-xl text-text transition-colors duration-200">
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
-                <Cookie className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary shadow-soft">
+                <Cookie className="h-6 w-6" />
               </div>
 
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                <h3 className="text-base sm:text-lg font-bold text-text">
                   We value your privacy
                 </h3>
 
-                <p className="mt-1 text-sm leading-relaxed text-gray-600 dark:text-zinc-400">
-                  We use cookies to enhance your experience, analyze traffic, and improve our
-                  services.
+                <p className="mt-1 text-xs sm:text-sm leading-relaxed text-text-muted">
+                  We use cookies to enhance your placement prep experience, analyze learning analytics, and improve our services.
                 </p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <button
                     onClick={handleAccept}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:scale-[1.02]"
+                    className="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-5 py-2.5 text-xs sm:text-sm font-semibold text-on-primary shadow-soft transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <Check className="h-4 w-4" />
                     Accept All
@@ -113,7 +111,7 @@ const CookieConsent = () => {
 
                   <button
                     onClick={handleReject}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+                    className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-2 hover:bg-surface px-5 py-2.5 text-xs sm:text-sm font-medium text-text transition-colors cursor-pointer"
                   >
                     <X className="h-4 w-4" />
                     Reject

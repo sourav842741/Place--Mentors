@@ -136,66 +136,55 @@ export default function DashboardQuoteCard() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden">
-      {/* Background glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-20 -left-20 h-56 w-56 rounded-full bg-gradient-to-r from-blue-500/25 to-purple-500/25 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl"
-      />
-
-      <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-white/10 bg-white/50 dark:bg-gray-900/40 backdrop-blur-md shadow-sm hover:shadow-xl hover:border-purple-400/40 transition-all duration-300">
-        <div className="p-5 md:p-6">
-          {/* Header Icon */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-sm flex items-center justify-center">
-                <Quote className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs sm:text-sm font-semibold tracking-wide text-gray-700 dark:text-gray-200">
-                  💡 Daily Motivation
-                </p>
-              </div>
+    <div className="h-full bg-surface border border-border rounded-xl shadow-subtle p-5 md:p-6 flex flex-col justify-between">
+      {/* Header Icon */}
+      <div>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+              <Quote className="w-5 h-5" />
             </div>
-
-            {status === "loading" ? (
-              <span className="inline-flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Fetching...
-              </span>
-            ) : (
-              <span className="hidden sm:inline-flex text-xs font-semibold px-3 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-white/5 dark:text-gray-200">
-                Today
-              </span>
-            )}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-text-subtle">
+                Daily Motivation
+              </p>
+            </div>
           </div>
 
-          <div className="mt-4">
-            {status === "loading" ? (
-              <div className="space-y-3">
-                <div className="h-10 sm:h-12 rounded-xl bg-gray-200/70 dark:bg-gray-800/60 animate-pulse" />
-                <div className="h-10 sm:h-12 rounded-xl bg-gray-200/70 dark:bg-gray-800/60 animate-pulse" />
-                <div className="h-8 sm:h-9 w-2/3 rounded-xl bg-gray-200/70 dark:bg-gray-800/60 animate-pulse" />
-              </div>
-            ) : (
-              <>
-                <blockquote className="text-gray-900 dark:text-white text-base sm:text-lg leading-relaxed font-medium whitespace-pre-line">
-                  “{quote.text}”
-                </blockquote>
-                <div className="mt-4 flex items-center justify-between gap-3">
-                  <div className="text-sm sm:text-base font-semibold text-gray-600 dark:text-gray-300">
-                    — {quote.author}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          {status === "loading" ? (
+            <span className="inline-flex items-center gap-1.5 text-xs text-text-subtle">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Fetching...
+            </span>
+          ) : (
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-surface-2 text-text-muted border border-border">
+              Today
+            </span>
+          )}
+        </div>
+
+        <div className="mt-4">
+          {status === "loading" ? (
+            <div className="space-y-2.5">
+              <div className="h-4 rounded bg-surface-2 animate-pulse w-full" />
+              <div className="h-4 rounded bg-surface-2 animate-pulse w-4/5" />
+              <div className="h-4 rounded bg-surface-2 animate-pulse w-1/2" />
+            </div>
+          ) : (
+            <blockquote className="text-text text-sm sm:text-base leading-relaxed font-medium">
+              "{quote.text}"
+            </blockquote>
+          )}
         </div>
       </div>
-    </section>
+
+      {status !== "loading" && (
+        <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+          <span className="text-xs font-semibold text-text-muted">
+            — {quote.author}
+          </span>
+        </div>
+      )}
+    </div>
   );
 }

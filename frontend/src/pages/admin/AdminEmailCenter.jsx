@@ -189,25 +189,29 @@ const AdminEmailCenter = () => {
   };
 
   if (loading && !stats) {
-    return <div className="p-10 text-black dark:text-white">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-bg text-text lg:ml-72 p-10 flex items-center justify-center text-lg font-semibold">
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 min-h-screen space-y-6 transition-all duration-300 bg-gray-50 text-gray-900 dark:bg-[#050505] dark:text-white lg:ml-64">
+    <div className="min-h-screen bg-bg text-text lg:ml-72 p-4 md:p-6 space-y-6 transition-colors duration-200">
       {/* HEADER */}
       <div className="flex items-center gap-4">
-        <div className="p-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg">
-          <Mail className="h-7 w-7" />
+        <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
+          <Mail className="h-6 w-6" />
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold">Email Center</h1>
-          <p className="text-gray-500 dark:text-zinc-400">Smart campaign system</p>
+          <h1 className="text-3xl md:text-4xl font-black text-text">Email Center</h1>
+          <p className="text-text-muted mt-1">Smart campaign system</p>
         </div>
       </div>
 
       {/* STATS */}
-      <div className="grid md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
         <StatCard title="Total Sent" value={stats?.totalSent || 0} icon={Send} />
 
         <StatCard title="Today Sent" value={stats?.todaySent || 0} icon={Zap} />
@@ -226,21 +230,21 @@ const AdminEmailCenter = () => {
       {/* FORM + PREVIEW */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* FORM */}
-        <Card className="border bg-white border-gray-200 dark:bg-zinc-950 dark:border-zinc-800 shadow-md">
+        <Card className="border border-border bg-surface text-text shadow-sm rounded-2xl">
           <CardHeader>
-            <CardTitle>New Campaign</CardTitle>
+            <CardTitle className="text-text font-bold">New Campaign</CardTitle>
           </CardHeader>
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Select value={form.segment} onValueChange={(v) => handleChange("segment", v)}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 rounded-xl border-border bg-surface-2 text-text">
                   <SelectValue placeholder="Select Segment" />
                 </SelectTrigger>
 
-                <SelectContent>
+                <SelectContent className="bg-surface border-border text-text">
                   {segments.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
+                    <SelectItem key={item.value} value={item.value} className="text-text hover:bg-surface-2">
                       {item.label}
                     </SelectItem>
                   ))}
@@ -248,13 +252,13 @@ const AdminEmailCenter = () => {
               </Select>
 
               <Select value={form.template} onValueChange={(v) => handleChange("template", v)}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 rounded-xl border-border bg-surface-2 text-text">
                   <SelectValue placeholder="Select Template" />
                 </SelectTrigger>
 
-                <SelectContent>
+                <SelectContent className="bg-surface border-border text-text">
                   {templates.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
+                    <SelectItem key={item.value} value={item.value} className="text-text hover:bg-surface-2">
                       {item.label}
                     </SelectItem>
                   ))}
@@ -265,6 +269,7 @@ const AdminEmailCenter = () => {
                 placeholder="Subject"
                 value={form.subject}
                 onChange={(e) => handleChange("subject", e.target.value)}
+                className="h-11 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
 
               <Textarea
@@ -272,16 +277,18 @@ const AdminEmailCenter = () => {
                 placeholder="Message"
                 value={form.message}
                 onChange={(e) => handleChange("message", e.target.value)}
+                className="rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
 
               <Input
                 placeholder="Test Email"
                 value={form.email}
                 onChange={(e) => handleChange("email", e.target.value)}
+                className="h-11 rounded-xl border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
               />
 
               <div className="flex gap-3">
-                <Button type="submit" disabled={sending} className="flex-1">
+                <Button type="submit" disabled={sending} className="flex-1 h-11 rounded-xl bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 font-medium">
                   {sending ? (
                     <Loader2 className="animate-spin h-4 w-4 mr-2" />
                   ) : (
@@ -290,7 +297,7 @@ const AdminEmailCenter = () => {
                   Send
                 </Button>
 
-                <Button type="button" variant="outline" onClick={handleTest}>
+                <Button type="button" variant="outline" onClick={handleTest} className="h-11 rounded-xl border-border bg-surface text-text hover:bg-surface-2">
                   Test
                 </Button>
               </div>
@@ -299,23 +306,23 @@ const AdminEmailCenter = () => {
         </Card>
 
         {/* PREVIEW */}
-        <Card className="border bg-white border-gray-200 dark:bg-zinc-950 dark:border-zinc-800 shadow-md">
+        <Card className="border border-border bg-surface text-text shadow-sm rounded-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-text font-bold">
+              <Eye className="h-5 w-5 text-primary" />
               Live Preview
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <div className="rounded-2xl bg-white text-black p-6 min-h-[450px] shadow-xl border border-gray-200">
-              <div className="text-xs text-zinc-500 uppercase">PlaceMentor</div>
+            <div className="rounded-2xl bg-surface-2 border border-border p-6 min-h-[450px] shadow-sm text-text">
+              <div className="text-xs text-primary font-bold tracking-wider uppercase">PlaceMentor</div>
 
-              <h2 className="text-2xl font-bold mt-4">{preview.title}</h2>
+              <h2 className="text-2xl font-bold mt-4 text-text">{preview.title}</h2>
 
-              <p className="mt-6 whitespace-pre-line text-zinc-700 leading-7">{preview.message}</p>
+              <p className="mt-6 whitespace-pre-line text-text-muted leading-7">{preview.message}</p>
 
-              <button className="mt-8 px-5 py-3 bg-black text-white rounded-xl hover:opacity-90">
+              <button className="mt-8 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-medium shadow-md shadow-primary/20">
                 Open Dashboard
               </button>
             </div>
@@ -324,41 +331,44 @@ const AdminEmailCenter = () => {
       </div>
 
       {/* LOGS */}
-      <Card className="border bg-white border-gray-200 dark:bg-zinc-950 dark:border-zinc-800 shadow-md">
+      <Card className="border border-border bg-surface text-text shadow-sm rounded-2xl">
         <CardHeader>
-          <CardTitle>Email Logs</CardTitle>
+          <CardTitle className="text-text font-bold">Email Logs</CardTitle>
         </CardHeader>
 
         <CardContent>
           {logs?.logs?.map((log) => (
             <div
               key={log._id}
-              className="flex justify-between py-3 border-b border-gray-200 dark:border-zinc-800"
+              className="flex justify-between items-center py-3 border-b border-border last:border-b-0"
             >
-              <span>{log.email}</span>
-              <Badge>{log.status}</Badge>
+              <span className="text-sm font-medium text-text">{log.email}</span>
+              <Badge className="bg-primary-soft text-primary border border-primary/20 rounded-full px-3 py-1 font-medium">{log.status}</Badge>
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
     </div>
   );
 };
 
 const StatCard = ({ title, value, icon: Icon }) => (
-  <Card className="border bg-white border-gray-200 dark:bg-zinc-950 dark:border-zinc-800 shadow-md">
+  <Card className="border border-border bg-surface text-text shadow-sm rounded-2xl">
     <CardContent className="p-5 flex justify-between items-center">
       <div>
-        <p className="text-sm text-gray-500 dark:text-zinc-400">{title}</p>
+        <p className="text-sm text-text-muted">{title}</p>
 
-        <h3 className="text-2xl font-bold mt-1">{value}</h3>
+        <h3 className="text-2xl font-bold text-text mt-1">{value}</h3>
       </div>
 
-      <Icon className="h-5 w-5 text-violet-500" />
+      <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+        <Icon className="h-5 w-5 text-primary" />
+      </div>
     </CardContent>
   </Card>
 );
 
 export default AdminEmailCenter;
+

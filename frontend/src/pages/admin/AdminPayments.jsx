@@ -145,7 +145,7 @@ export default function AdminPayments() {
   }, [payments]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#020817] lg:ml-72 p-4 md:p-6 transition-colors duration-300">
+    <div className="min-h-screen bg-bg text-text lg:ml-72 p-4 md:p-6 transition-colors duration-200">
       <div className="max-w-[1600px] mx-auto space-y-6">
         {/* HEADER */}
 
@@ -155,14 +155,14 @@ export default function AdminPayments() {
           className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <h1 className="text-3xl md:text-4xl font-black text-text flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
                 <Shield className="w-6 h-6 text-white" />
               </div>
               Admin Payments
             </h1>
 
-            <p className="text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-text-muted mt-2">
               Monitor transactions, credits and payment activity.
             </p>
           </div>
@@ -202,18 +202,18 @@ export default function AdminPayments() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <Card className="border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl shadow-sm">
+              <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
                 <CardContent className="p-5 flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{item.title}</p>
+                    <p className="text-sm text-text-muted">{item.title}</p>
 
-                    <h2 className="text-3xl font-black text-gray-900 dark:text-white mt-1">
+                    <h2 className="text-3xl font-black text-text mt-1">
                       {item.value}
                     </h2>
                   </div>
 
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                    <item.icon className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 rounded-xl bg-primary-soft text-primary flex items-center justify-center shadow-sm">
+                    <item.icon className="w-6 h-6 text-primary" />
                   </div>
                 </CardContent>
               </Card>
@@ -223,29 +223,29 @@ export default function AdminPayments() {
 
         {/* FILTERS */}
 
-        <Card className="border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-xl rounded-3xl shadow-sm">
+        <Card className="border border-border bg-surface text-text rounded-2xl shadow-sm">
           <CardContent className="p-5">
             <div className="flex flex-col xl:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-subtle" />
 
                 <Input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search user id or razorpay ids..."
-                  className="pl-10 h-12 rounded-2xl border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5"
+                  className="pl-10 h-11 rounded-xl border border-border bg-surface-2 text-text placeholder:text-text-subtle focus:border-primary"
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="w-full sm:w-[200px] h-12 rounded-2xl border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
+                  <SelectTrigger className="w-full sm:w-[200px] h-11 rounded-xl border border-border bg-surface-2 text-text">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
 
-                  <SelectContent>
+                  <SelectContent className="bg-surface border-border text-text">
                     {STATUS_OPTIONS.map((s) => (
-                      <SelectItem key={s} value={s}>
+                      <SelectItem key={s} value={s} className="hover:bg-surface-2 focus:bg-surface-2 text-text">
                         {s === "All" ? "All Statuses" : s}
                       </SelectItem>
                     ))}
@@ -254,7 +254,7 @@ export default function AdminPayments() {
 
                 <Button
                   onClick={() => setPage(1)}
-                  className="h-12 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white"
+                  className="h-11 px-6 rounded-xl bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 font-medium"
                 >
                   Apply Filters
                 </Button>
@@ -268,16 +268,16 @@ export default function AdminPayments() {
         <div className="grid gap-4">
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-32 rounded-3xl" />
+              <Skeleton key={i} className="h-32 rounded-2xl bg-surface-2" />
             ))
           ) : payments.length === 0 ? (
-            <Card className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5">
+            <Card className="rounded-2xl border border-border bg-surface text-text">
               <CardContent className="p-10 text-center">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h3 className="text-xl font-bold text-text">
                   No payments found
                 </h3>
 
-                <p className="text-gray-500 dark:text-gray-400 mt-2">
+                <p className="text-text-muted mt-2">
                   No payment records available right now.
                 </p>
               </CardContent>
@@ -295,7 +295,7 @@ export default function AdminPayments() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.04 }}
                 >
-                  <Card className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-xl hover:shadow-xl transition-all duration-300 overflow-hidden">
+                  <Card className="rounded-2xl border border-border bg-surface text-text hover:border-primary/40 hover:shadow-md transition-all duration-200 overflow-hidden">
                     <CardContent className="p-5">
                       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
                         {/* LEFT */}
@@ -304,7 +304,7 @@ export default function AdminPayments() {
                           <div className="flex flex-wrap items-center gap-3">
                             <Badge
                               variant="outline"
-                              className={`${meta.bg} rounded-full px-4 py-1.5 border`}
+                              className={`${meta.bg} rounded-full px-4 py-1.5 border font-medium`}
                             >
                               <span className={`w-2 h-2 rounded-full mr-2 ${meta.dot}`} />
 
@@ -313,40 +313,40 @@ export default function AdminPayments() {
                               {p.status}
                             </Badge>
 
-                            <Badge variant="outline" className="rounded-full px-4 py-1.5">
+                            <Badge variant="outline" className="rounded-full px-4 py-1.5 border-border bg-surface-2 text-text-muted">
                               {p.credits_added ? "Credits Added" : "Pending Credits"}
                             </Badge>
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                             <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">User ID</p>
+                              <p className="text-xs text-text-muted">User ID</p>
 
-                              <p className="font-mono text-sm text-gray-900 dark:text-white break-all">
+                              <p className="font-mono text-sm text-text break-all">
                                 {p.user_id}
                               </p>
                             </div>
 
                             <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">Plan</p>
+                              <p className="text-xs text-text-muted">Plan</p>
 
-                              <p className="font-semibold text-gray-900 dark:text-white">
+                              <p className="font-semibold text-text">
                                 {p.plan_id}
                               </p>
                             </div>
 
                             <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">Amount</p>
+                              <p className="text-xs text-text-muted">Amount</p>
 
-                              <p className="font-semibold text-gray-900 dark:text-white">
+                              <p className="font-bold text-text">
                                 ₹{p.amount}
                               </p>
                             </div>
 
                             <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">Credits</p>
+                              <p className="text-xs text-text-muted">Credits</p>
 
-                              <p className="font-semibold text-gray-900 dark:text-white">
+                              <p className="font-semibold text-text">
                                 {p.credits}
                               </p>
                             </div>
@@ -357,37 +357,37 @@ export default function AdminPayments() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:min-w-[450px]">
                           <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-xs text-text-muted">
                               Razorpay Order ID
                             </p>
 
-                            <p className="font-mono text-xs text-gray-900 dark:text-white break-all">
+                            <p className="font-mono text-xs text-text-muted break-all">
                               {p.razorpay_order_id}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-xs text-text-muted">
                               Razorpay Payment ID
                             </p>
 
-                            <p className="font-mono text-xs text-gray-900 dark:text-white break-all">
+                            <p className="font-mono text-xs text-text-muted break-all">
                               {p.razorpay_payment_id || "—"}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Created</p>
+                            <p className="text-xs text-text-muted">Created</p>
 
-                            <p className="text-sm text-gray-900 dark:text-white">
+                            <p className="text-sm text-text">
                               {formatDateTime(p.created_at)}
                             </p>
                           </div>
 
                           <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Updated</p>
+                            <p className="text-xs text-text-muted">Updated</p>
 
-                            <p className="text-sm text-gray-900 dark:text-white">
+                            <p className="text-sm text-text">
                               {formatDateTime(p.updated_at)}
                             </p>
                           </div>
@@ -419,20 +419,20 @@ export default function AdminPayments() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <Button
               variant="outline"
-              className="rounded-2xl"
+              className="rounded-xl border border-border bg-surface text-text hover:bg-surface-2"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               Previous
             </Button>
 
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              Page <span className="font-bold">{pagination.page}</span> of {pagination.pages}
+            <div className="text-sm text-text-muted">
+              Page <span className="font-bold text-text">{pagination.page}</span> of {pagination.pages}
             </div>
 
             <Button
               variant="outline"
-              className="rounded-2xl"
+              className="rounded-xl border border-border bg-surface text-text hover:bg-surface-2"
               disabled={page >= pagination.pages}
               onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
             >

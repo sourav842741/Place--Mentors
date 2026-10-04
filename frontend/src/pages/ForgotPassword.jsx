@@ -1,40 +1,21 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, ArrowLeft, Mail, SendHorizonal } from "lucide-react";
 
+import AuthLayout from "../components/AuthLayout";
 import useAuth from "../hooks/useAuth";
+import { useTheme } from "../hooks/useTheme";
 import { toast } from "sonner";
 
 export default function ForgotPassword() {
   const { sendResetOtp } = useAuth();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isDark, setIsDark] = useState(false);
-
-  /* LOAD THEME */
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
-  }, []);
-
-  /* TOGGLE THEME */
-  const toggleTheme = () => {
-    const nowDark = document.documentElement.classList.toggle("dark");
-
-    setIsDark(nowDark);
-    localStorage.setItem("theme", nowDark ? "dark" : "light");
-  };
 
   /* SEND OTP */
   const handleSendOtp = async () => {
@@ -67,88 +48,79 @@ export default function ForgotPassword() {
     <>
       {loading && <FullScreenLoader />}
 
-      <div
-        className="min-h-screen flex items-center justify-center px-4 relative
-        bg-gradient-to-br from-slate-50 via-white to-indigo-50
-        dark:from-gray-950 dark:via-gray-900 dark:to-black transition-colors duration-300"
-      >
-        {/* THEME BUTTON */}
+      <AuthLayout>
+        {/* THEME TOGGLE BUTTON */}
         <div className="absolute top-5 right-5 z-20">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="h-9 w-9 rounded-lg border border-border bg-surface text-text hover:bg-surface-2 transition-colors cursor-pointer"
+            aria-label="Toggle theme"
           >
-            {isDark ? (
-              <Sun className="w-5 h-5 text-yellow-400" />
-            ) : (
-              <Moon className="w-5 h-5 text-gray-700" />
-            )}
+            {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-text-muted" />}
           </Button>
         </div>
 
         {/* CARD */}
-        <div
-          className="w-full max-w-md rounded-3xl p-7 space-y-6
-          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl
-          border border-gray-200 dark:border-white/10 shadow-2xl"
-        >
+        <div className="w-full max-w-md mx-auto space-y-5 bg-surface border border-border p-6 sm:p-7 rounded-xl shadow-subtle">
+          {/* BACK LINK */}
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text transition"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to login
+          </Link>
+
           {/* LOGO */}
           <div className="flex justify-center">
             <img
               src="https://res.cloudinary.com/dm9hpyepi/image/upload/v1776539367/android-chrome-512x512_stedh8.png"
               alt="PlaceMentor"
-              className="w-20 h-20 rounded-2xl shadow-lg"
+              className="w-14 h-14 rounded-xl border border-border shadow-subtle"
             />
           </div>
 
-          {/* BACK */}
-          <button
-            onClick={() => navigate("/login")}
-            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to login
-          </button>
-
           {/* TITLE */}
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Forgot Password</h2>
-
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              Enter your email to receive reset OTP
+            <h2 className="text-2xl font-bold tracking-tight text-text">Forgot Password</h2>
+            <p className="text-xs text-text-muted mt-1">
+              Enter your email to receive a password reset OTP
             </p>
           </div>
 
           {/* INPUT */}
-          <div className="relative">
-            <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-
-            <Input
-              placeholder="Enter email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-12 pl-10 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-black dark:text-white"
-            />
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-text block">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-text-subtle w-4 h-4" />
+              <Input
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-10 pl-9 bg-surface-2 border-border text-text placeholder:text-text-subtle rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+              />
+            </div>
           </div>
 
           {/* BUTTON */}
           <Button
             onClick={handleSendOtp}
             disabled={loading}
-            className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white font-semibold shadow-lg"
+            className="w-full h-10 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-medium text-sm shadow-soft transition cursor-pointer"
           >
             <SendHorizonal className="w-4 h-4 mr-2" />
             {loading ? "Sending..." : "Send OTP"}
           </Button>
 
           {/* FOOT TEXT */}
-          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-center text-xs text-text-muted pt-1">
             Secure password recovery for your account
           </p>
         </div>
-      </div>
+      </AuthLayout>
     </>
   );
 }
@@ -156,11 +128,10 @@ export default function ForgotPassword() {
 /* FULLSCREEN LOADER */
 function FullScreenLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl px-8 py-6 shadow-2xl text-center">
-        <div className="w-10 h-10 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-
-        <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">Sending OTP...</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs">
+      <div className="bg-surface border border-border rounded-xl px-8 py-6 shadow-card text-center">
+        <div className="w-9 h-9 mx-auto border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="mt-3 text-xs font-medium text-text-muted">Sending OTP...</p>
       </div>
     </div>
   );

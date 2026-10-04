@@ -27,19 +27,12 @@ const formatDateTime = (value) => {
 };
 
 function deviceBadge(device) {
-  if (!device?.os) return <Badge variant="secondary">Device</Badge>;
-  if (String(device.os).toLowerCase().includes("windows")) {
-    return <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">Windows</Badge>;
-  }
-  if (String(device.os).toLowerCase().includes("mac")) {
-    return <Badge className="bg-gradient-to-r from-slate-500 to-gray-700 text-white">macOS</Badge>;
-  }
-  if (String(device.os).toLowerCase().includes("android")) {
-    return (
-      <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">Android</Badge>
-    );
-  }
-  return <Badge variant="secondary">Device</Badge>;
+  const osName = device?.os ? String(device.os) : "Device";
+  return (
+    <Badge variant="outline" className="bg-surface-2 text-text border-border text-xs font-medium px-2 py-0.5 rounded-md">
+      {osName}
+    </Badge>
+  );
 }
 
 export default function SettingsSecurity() {
@@ -55,7 +48,6 @@ export default function SettingsSecurity() {
     setError(null);
     try {
       const res = await api.get("/api/sessions");
-      // ApiResponse wrapper: { data: { sessions: [...] } } OR legacy { sessions: [...] }
       const list = res?.data?.data?.sessions || res?.data?.sessions || [];
       setSessions(list);
     } catch (e) {
@@ -106,156 +98,162 @@ export default function SettingsSecurity() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen p-4 sm:p-6 bg-linear-to-br from-slate-100 via-blue-50 to-purple-100 dark:from-gray-950 dark:via-gray-900 dark:to-black lg:mt-16 lg:ml-64">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                <Shield className="w-7 h-7 text-blue-600 dark:text-blue-400" />
-                Security Settings
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">
-                Review your active logins and keep your account safe.
-              </p>
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
+        <div className="max-w-5xl mx-auto space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                <Shield className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-text">
+                  Security Settings
+                </h1>
+                <p className="text-xs sm:text-sm text-text-muted mt-0.5">
+                  Review your active logins and manage account devices.
+                </p>
+              </div>
             </div>
 
             <Button
               onClick={logoutOtherDevices}
               disabled={mutating}
-              className="rounded-2xl bg-gradient-to-r from-red-500 to-orange-500 text-white hover:opacity-90"
+              className="h-9 px-3.5 text-xs font-semibold rounded-lg bg-danger hover:bg-danger-hover text-on-danger shadow-soft flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 self-start sm:self-auto"
             >
-              <LogOut className="w-4 h-4 mr-2" />
+              <LogOut className="w-3.5 h-3.5" />
               Logout All Other Devices
             </Button>
           </div>
 
           {error && (
-            <Card className="p-4 mb-4 border border-red-200 dark:border-red-800 bg-red-50/60 dark:bg-red-950/30 text-red-700 dark:text-red-200">
+            <Card className="p-4 border border-danger/20 bg-danger-soft text-danger rounded-xl">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 mt-0.5" />
+                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
                 <div>
-                  <div className="font-semibold">Something went wrong</div>
-                  <div className="text-sm opacity-90">{error}</div>
+                  <div className="font-semibold text-xs">Error</div>
+                  <div className="text-xs opacity-90 mt-0.5">{error}</div>
                 </div>
               </div>
             </Card>
           )}
 
           {/* Active Sessions */}
-          <Card className="p-5 sm:p-6 rounded-3xl shadow-sm bg-white/80 dark:bg-gray-900 backdrop-blur-xl border border-white/20">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Active Sessions</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <Card className="p-5 sm:p-6 rounded-xl shadow-subtle bg-surface border border-border">
+            <h2 className="text-base sm:text-lg font-bold text-text">Active Sessions</h2>
+            <p className="text-xs text-text-muted mt-0.5">
               Current device and other logged-in browsers for your account.
             </p>
 
             {loading ? (
               <div className="mt-5 grid md:grid-cols-2 gap-4">
-                <div className="h-28 bg-gray-200 dark:bg-gray-800 rounded-2xl animate-pulse" />
-                <div className="h-28 bg-gray-200 dark:bg-gray-800 rounded-2xl animate-pulse" />
+                <div className="h-28 bg-surface-2 rounded-xl animate-pulse border border-border" />
+                <div className="h-28 bg-surface-2 rounded-xl animate-pulse border border-border" />
               </div>
             ) : (
-              <div className="mt-6 grid md:grid-cols-2 gap-5">
+              <div className="mt-5 grid md:grid-cols-2 gap-5">
                 {/* Current */}
-                <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50/60 dark:bg-white/5 p-4">
+                <div className="rounded-xl border border-border bg-surface-2/40 p-4">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/15 to-purple-500/15 flex items-center justify-center">
-                        <Laptop className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <div className="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                        <Laptop className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-semibold text-gray-900 dark:text-white">
+                        <div className="font-semibold text-xs sm:text-sm text-text">
                           Current Device
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                        <div className="text-[11px] text-text-muted">
                           Always active
                         </div>
                       </div>
                     </div>
 
                     {currentSession ? (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         {deviceBadge(currentSession)}
-                        <Badge className="bg-blue-600 text-white">Current</Badge>
+                        <Badge className="bg-primary-soft text-primary border border-primary/20 text-xs font-semibold px-2 py-0.5 rounded-md">
+                          Current
+                        </Badge>
                       </div>
                     ) : null}
                   </div>
 
                   {currentSession ? (
-                    <div className="mt-4 space-y-2 text-sm">
+                    <div className="mt-4 space-y-2 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-500 dark:text-gray-400">Browser</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="text-text-muted">Browser</span>
+                        <span className="font-medium text-text">
                           {currentSession.browser || "—"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-500 dark:text-gray-400">OS</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="text-text-muted">OS</span>
+                        <span className="font-medium text-text">
                           {currentSession.os || "—"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-500 dark:text-gray-400">Login Time</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="text-text-muted">Login Time</span>
+                        <span className="font-medium text-text">
                           {formatDateTime(currentSession.loginTime)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-500 dark:text-gray-400">Last Active</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="text-text-muted">Last Active</span>
+                        <span className="font-medium text-text">
                           {formatDateTime(currentSession.lastActive)}
                         </span>
                       </div>
                       {currentSession.ipAddress ? (
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-500 dark:text-gray-400">IP Address</span>
-                          <span className="font-medium text-gray-900 dark:text-white">
+                          <span className="text-text-muted">IP Address</span>
+                          <span className="font-medium text-text">
                             {currentSession.ipAddress}
                           </span>
                         </div>
                       ) : null}
                     </div>
                   ) : (
-                    <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="mt-4 text-xs text-text-muted">
                       No active sessions found.
                     </div>
                   )}
                 </div>
 
                 {/* Other */}
-                <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50/60 dark:bg-white/5 p-4">
+                <div className="rounded-xl border border-border bg-surface-2/40 p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">
+                      <div className="font-semibold text-xs sm:text-sm text-text">
                         Other Devices
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="text-[11px] text-text-muted">
                         {otherSessions.length} session(s)
                       </div>
                     </div>
                     <BellIcon />
                   </div>
 
-                  <div className="mt-4 space-y-3">
+                  <div className="mt-4 space-y-2.5">
                     {otherSessions.length === 0 ? (
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="py-6 text-center text-xs text-text-muted">
                         No other devices are currently logged in.
                       </div>
                     ) : (
                       otherSessions.map((s) => (
                         <div
                           key={s.sessionId}
-                          className="p-3 rounded-2xl border border-gray-200/70 dark:border-white/10 bg-white/70 dark:bg-gray-950/40"
+                          className="p-3 rounded-lg border border-border bg-surface shadow-subtle"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <Globe className="w-4 h-4 text-gray-500" />
-                                <div className="font-semibold text-gray-900 dark:text-white truncate">
+                              <div className="flex items-center gap-1.5">
+                                <Globe className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                                <div className="font-semibold text-xs text-text truncate">
                                   {s.browser || "Unknown Browser"}
                                 </div>
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-[11px] text-text-muted mt-0.5">
                                 {s.deviceName || "Device"} • {s.os || "Unknown OS"}
                               </div>
                             </div>
@@ -264,30 +262,30 @@ export default function SettingsSecurity() {
                               variant="outline"
                               onClick={() => logoutDevice(s.sessionId)}
                               disabled={mutating}
-                              className="rounded-xl border-red-200 dark:border-red-800 text-red-600 dark:text-red-300 hover:bg-red-50/60 dark:hover:bg-red-950/30"
+                              className="h-7 px-2.5 text-xs font-semibold rounded-md border-danger/30 text-danger hover:bg-danger-soft transition-colors cursor-pointer"
                             >
-                              <LogOut className="w-4 h-4 mr-2" />
+                              <LogOut className="w-3 h-3 mr-1" />
                               Logout
                             </Button>
                           </div>
 
-                          <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="text-gray-500 dark:text-gray-400">Login</span>
-                              <span className="text-gray-900 dark:text-white font-medium">
+                          <div className="mt-2.5 grid grid-cols-2 gap-1.5 text-[11px] border-t border-border/60 pt-2">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-text-muted">Login</span>
+                              <span className="text-text font-medium truncate">
                                 {formatDateTime(s.loginTime)}
                               </span>
                             </div>
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="text-gray-500 dark:text-gray-400">Last</span>
-                              <span className="text-gray-900 dark:text-white font-medium">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-text-muted">Last</span>
+                              <span className="text-text font-medium truncate">
                                 {formatDateTime(s.lastActive)}
                               </span>
                             </div>
                             {s.ipAddress ? (
                               <div className="col-span-2 flex items-center justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">IP</span>
-                                <span className="text-gray-900 dark:text-white font-medium truncate">
+                                <span className="text-text-muted">IP</span>
+                                <span className="text-text font-medium truncate">
                                   {s.ipAddress}
                                 </span>
                               </div>
@@ -303,28 +301,28 @@ export default function SettingsSecurity() {
           </Card>
 
           {/* Future-ready: Login Activity */}
-          <Card className="mt-5 p-5 sm:p-6 rounded-3xl shadow-sm bg-white/80 dark:bg-gray-900 backdrop-blur-xl border border-white/20">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Login Activity</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Coming soon: location tracking, full history, and anomaly detection.
+          <Card className="p-5 rounded-xl shadow-subtle bg-surface border border-border">
+            <h2 className="text-sm font-bold text-text">Login Activity & Geolocation</h2>
+            <p className="text-xs text-text-muted mt-0.5">
+              Location tracking, history logs, and anomaly detection.
             </p>
-            <div className="mt-4 flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-              <Clock className="w-4 h-4" />
-              We already store device metadata in your session records.
+            <div className="mt-3 flex items-center gap-2 text-xs text-text-muted">
+              <Clock className="w-3.5 h-3.5 text-primary" />
+              Device metadata and timestamps are securely logged for your protection.
             </div>
           </Card>
 
           {/* Future-ready: 2FA */}
-          <Card className="mt-5 p-5 sm:p-6 rounded-3xl shadow-sm bg-white/80 dark:bg-gray-900 backdrop-blur-xl border border-white/20">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <Card className="p-5 rounded-xl shadow-subtle bg-surface border border-border">
+            <h2 className="text-sm font-bold text-text">
               Two-Factor Authentication (2FA)
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Coming soon: manage 2FA, trusted devices, and security preferences.
+            <p className="text-xs text-text-muted mt-0.5">
+              Manage 2FA, trusted devices, and security preferences.
             </p>
-            <div className="mt-4 flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-              <Smartphone className="w-4 h-4" />
-              For now, use your existing 2FA endpoints.
+            <div className="mt-3 flex items-center gap-2 text-xs text-text-muted">
+              <Smartphone className="w-3.5 h-3.5 text-primary" />
+              OTP verification is enabled on login to safeguard account access.
             </div>
           </Card>
         </div>
@@ -336,7 +334,7 @@ export default function SettingsSecurity() {
 
 function BellIcon() {
   return (
-    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500/15 to-purple-500/15 flex items-center justify-center">
+    <div className="w-7 h-7 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
       <BellGlyph />
     </div>
   );
@@ -344,11 +342,11 @@ function BellIcon() {
 
 function BellGlyph() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2Zm6-6V11c0-3.07-1.63-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2Z"
         fill="currentColor"
-        className="text-blue-600 dark:text-blue-400"
+        className="text-primary"
       />
     </svg>
   );

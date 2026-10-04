@@ -109,28 +109,24 @@ const AIVoiceCoach = () => {
       title: "HR Interview",
       desc: "Realistic HR & placement interview practice",
       icon: PhoneCall,
-      color: "bg-blue-500",
     },
     {
       id: "spoken-english",
       title: "Spoken English",
       desc: "Fluency, grammar & confidence practice",
       icon: Mic,
-      color: "bg-green-500",
     },
     {
       id: "motivation",
       title: "Motivation Coach",
       desc: "Confidence boost & discipline guidance",
       icon: Award,
-      color: "bg-orange-500",
     },
     {
       id: "resume-screening",
       title: "Resume Review",
       desc: "Resume screening & career feedback",
       icon: Headphones,
-      color: "bg-purple-500",
     },
   ];
 
@@ -138,103 +134,132 @@ const AIVoiceCoach = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 px-4 md:px-8 py-8 lg:mt-14 lg:ml-64 md:mt-16">
+      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 min-h-screen bg-bg text-text transition-colors duration-200">
         {/* HERO */}
-        <div className="max-w-6xl mx-auto text-center mb-16 ">
-          <div className="inline-flex items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl px-6 py-3 rounded-3xl shadow-xl mb-8 border border-white/50">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-ping " />
-
-            <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-gray-900 to-slate-700 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mt-6 sm:mt-0">
-              PlaceMentor AI Voice Coach
-            </h1>
+        <div className="max-w-4xl mx-auto text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary-soft text-primary text-xs font-semibold mb-3">
+            <Mic className="w-3.5 h-3.5" />
+            <span>Interactive Voice Training</span>
           </div>
 
-          <p className="text-lg md:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Practice interviews, spoken English, motivation and resume guidance through smart AI
-            phone calls.
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-text mb-3">
+            AI Voice Interview Coach
+          </h1>
+
+          <p className="text-xs sm:text-sm text-text-muted max-w-2xl mx-auto leading-relaxed">
+            Practice live spoken interviews, fluency, HR conversation scenarios and resume review over voice calls.
           </p>
         </div>
 
         {/* MODES */}
-        <div className="max-w-6xl mx-auto mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {modes.map(({ id, title, desc, icon: Icon, color }) => (
-              <Card
-                key={id}
-                className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-              >
-                <CardHeader>
-                  <div
-                    className={`w-16 h-16 ${color} rounded-2xl flex items-center justify-center mx-auto shadow-xl`}
-                  >
-                    <Icon className="w-8 h-8 text-white" />
+        <div className="max-w-5xl mx-auto mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {modes.map(({ id, title, desc, icon: Icon }) => {
+              const isSelected = mode === id;
+              return (
+                <div
+                  key={id}
+                  onClick={() => setMode(id)}
+                  className={`cursor-pointer rounded-xl border p-5 flex flex-col justify-between transition-all duration-200 shadow-subtle ${
+                    isSelected
+                      ? "border-primary bg-primary-soft/10 ring-1 ring-primary/40"
+                      : "border-border bg-surface hover:border-primary/40 hover:bg-surface-2"
+                  }`}
+                >
+                  <div>
+                    <div
+                      className={`w-11 h-11 rounded-lg flex items-center justify-center mb-3.5 transition-colors ${
+                        isSelected
+                          ? "bg-primary text-on-primary shadow-soft"
+                          : "bg-surface-2 text-text-muted border border-border"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+
+                    <h3 className="font-semibold text-text text-sm mb-1.5">{title}</h3>
+                    <p className="text-xs text-text-muted leading-relaxed mb-4">{desc}</p>
                   </div>
 
-                  <CardTitle className="text-center mt-4 text-xl">{title}</CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                  <p className="text-center text-gray-600 dark:text-gray-300 mb-5">{desc}</p>
-
                   <Button
-                    className="w-full"
-                    variant={mode === id ? "default" : "outline"}
-                    onClick={() => setMode(id)}
+                    size="sm"
+                    variant={isSelected ? "default" : "outline"}
+                    className={`w-full text-xs font-semibold rounded-lg h-8 transition-colors ${
+                      isSelected
+                        ? "bg-primary hover:bg-primary-hover text-on-primary shadow-soft"
+                        : "border-border text-text hover:bg-surface-2"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMode(id);
+                    }}
                   >
-                    {mode === id ? "Selected" : "Select"}
+                    {isSelected ? "Selected" : "Select Mode"}
                   </Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* START CALL */}
-        <div className="max-w-md mx-auto mb-16">
-          <Card className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-center text-2xl flex justify-center items-center gap-3">
-                <Phone className="w-7 h-7 text-blue-500" />
+        {/* START CALL CARD */}
+        <div className="max-w-lg mx-auto mb-16">
+          <Card className="bg-surface border border-border rounded-xl shadow-subtle">
+            <CardHeader className="text-center pb-4 pt-6">
+              <div className="w-12 h-12 rounded-xl bg-primary-soft text-primary flex items-center justify-center mx-auto mb-3">
+                <Phone className="w-6 h-6" />
+              </div>
+              <CardTitle className="text-xl sm:text-2xl font-bold text-text">
                 Start AI Call
               </CardTitle>
+              <div className="flex justify-center mt-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-soft text-accent text-xs font-semibold">
+                  Mode: {modes.find((m) => m.id === mode)?.title || "Interview"}
+                </span>
+              </div>
             </CardHeader>
 
-            <CardContent className="space-y-5">
+            <CardContent className="space-y-4 px-6 pb-6 pt-2">
               <div>
-                <label className="text-sm font-medium mb-2 block">Phone Number</label>
+                <label className="text-xs font-semibold text-text mb-1.5 block">
+                  Phone Number
+                </label>
 
                 <Input
-                  placeholder="+919876543210"
+                  placeholder="+91 98765 43210"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="h-14 text-lg"
+                  className="h-11 text-sm bg-surface-2 border-border text-text placeholder:text-text-muted rounded-lg focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
                 />
+                <p className="text-[11px] text-text-muted mt-1.5">
+                  Include country code (e.g. +91 for India).
+                </p>
               </div>
 
               <Button
                 onClick={handleStartCall}
                 disabled={isCalling || loading || cooldownLeft > 0}
-                className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-70"
+                className="w-full h-11 text-sm font-semibold rounded-lg bg-primary hover:bg-primary-hover text-on-primary shadow-soft transition-colors disabled:opacity-60 cursor-pointer"
               >
                 {isCalling ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
-                    Calling...
+                    <div className="w-4 h-4 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin mr-2" />
+                    Connecting Call...
                   </>
                 ) : cooldownLeft > 0 ? (
                   <>
-                    <Timer className="w-5 h-5 mr-2" />
+                    <Timer className="w-4 h-4 mr-2" />
                     Next Call In {formatTime(cooldownLeft)}
                   </>
                 ) : (
                   <>
-                    <Play className="w-5 h-5 mr-2" />
+                    <Play className="w-4 h-4 mr-2 fill-current" />
                     Start {modes.find((m) => m.id === mode)?.title} Call
                   </>
                 )}
               </Button>
 
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-center text-text-muted">
                 {cooldownLeft > 0
                   ? "Cooldown active after successful call."
                   : "Keep your phone ready. AI will call you instantly."}
@@ -245,54 +270,52 @@ const AIVoiceCoach = () => {
 
         {/* RECENT CALLS */}
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <Clock className="w-6 h-6 text-gray-500" />
-            <h2 className="text-2xl font-bold">Recent Calls</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <Clock className="w-5 h-5 text-text-muted" />
+            <h2 className="text-lg sm:text-xl font-bold text-text">Recent Calls</h2>
 
-            <Badge variant="outline" className="ml-auto">
+            <Badge variant="outline" className="ml-auto text-xs bg-surface-2 text-text-muted border-border font-medium px-2.5 py-0.5 rounded-full">
               {recentCalls.length}
             </Badge>
           </div>
 
-          <div className="grid gap-4">
+          <div className="space-y-3">
             {recentCalls.length > 0 ? (
               recentCalls.map((call, index) => (
-                <Card
+                <div
                   key={call?._id || call?.id || call?.twilioCallSid || index}
-                  className="border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-md hover:shadow-xl transition-all"
+                  className="bg-surface border border-border rounded-xl p-4 flex items-center justify-between shadow-subtle hover:border-primary/40 transition-colors"
                 >
-                  <CardContent className="p-6 flex items-center gap-4">
-                    <div className="p-3 rounded-2xl bg-green-100 dark:bg-green-900/30">
-                      <Mic className="w-6 h-6 text-green-600" />
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                      <Mic className="w-5 h-5" />
                     </div>
 
-                    <div className="flex-1">
-                      <div className="font-semibold">
+                    <div>
+                      <div className="font-semibold text-text text-sm">
                         {modes.find((m) => m.id === call?.mode)?.title || "AI Voice Call"}
                       </div>
 
-                      <div className="text-sm text-gray-500">
+                      <div className="text-xs text-text-muted mt-0.5">
                         {call?.createdAt ? new Date(call.createdAt).toLocaleString() : "Recently"}
                       </div>
                     </div>
+                  </div>
 
-                    <Link
-                      to={`/voice-report/${call?._id || call?.id}`}
-                      className="text-blue-600 text-sm font-medium"
-                    >
-                      View →
-                    </Link>
-                  </CardContent>
-                </Card>
+                  <Link
+                    to={`/voice-report/${call?._id || call?.id}`}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary bg-primary-soft hover:bg-primary-soft/80 transition-colors"
+                  >
+                    View Report →
+                  </Link>
+                </div>
               ))
             ) : (
-              <Card>
-                <CardContent className="p-10 text-center">
-                  <MicOff className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                  <h3 className="font-semibold text-xl">No calls yet</h3>
-                  <p className="text-gray-500 mt-2">Start your first AI call above.</p>
-                </CardContent>
-              </Card>
+              <div className="bg-surface border border-border rounded-xl p-10 text-center shadow-subtle">
+                <MicOff className="w-10 h-10 mx-auto text-text-muted/40 mb-3" />
+                <h3 className="font-semibold text-base text-text">No calls yet</h3>
+                <p className="text-xs text-text-muted mt-1">Start your first AI call above to practice live speaking.</p>
+              </div>
             )}
           </div>
         </div>

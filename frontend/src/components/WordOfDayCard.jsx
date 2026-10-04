@@ -41,19 +41,19 @@ function difficultyToStyles(difficulty) {
   switch (difficulty) {
     case "Beginner":
       return {
-        badge: "bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400",
-        dot: "from-green-500 to-emerald-500",
+        badge: "bg-success-soft text-success",
+        dot: "bg-success",
       };
     case "Advanced":
       return {
-        badge: "bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400",
-        dot: "from-red-500 to-orange-500",
+        badge: "bg-danger-soft text-danger",
+        dot: "bg-danger",
       };
     case "Intermediate":
     default:
       return {
-        badge: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-300",
-        dot: "from-yellow-500 to-amber-500",
+        badge: "bg-accent-soft text-accent",
+        dot: "bg-accent",
       };
   }
 }
@@ -207,124 +207,96 @@ export default function WordOfDayCard() {
   };
 
   return (
-    <section className="relative overflow-hidden">
-      {/* Background glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-16 -left-16 h-44 w-44 rounded-full bg-gradient-to-r from-purple-500/25 to-blue-500/20 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-16 -right-16 h-44 w-44 rounded-full bg-gradient-to-r from-indigo-500/20 to-pink-500/20 blur-3xl"
-      />
-
-      <div className="relative rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-white/10 bg-white/50 dark:bg-gray-900/40 backdrop-blur-md shadow-sm hover:shadow-xl hover:border-purple-400/40 transition-all duration-300">
-        <div className="p-4 md:p-5">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm flex items-center justify-center">
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs sm:text-sm font-semibold tracking-wide text-gray-700 dark:text-gray-200">
-                  Word of the Day
-                </p>
-                <p className="mt-0.5 text-[11px] sm:text-xs font-medium text-gray-500 dark:text-gray-400">
-                  Improve Communication Skills
-                </p>
-              </div>
+    <section className="relative">
+      <div className="rounded-xl border border-border bg-surface p-5 shadow-subtle hover:shadow-card transition-all duration-200">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+              <BookOpen className="w-4 h-4" />
             </div>
-
-            <div className="flex flex-col items-end gap-2">
-              <span
-                className={`text-[11px] sm:text-xs font-semibold px-3 py-1 rounded-full ${styles.badge}`}
-              >
-                {word.difficulty}
-              </span>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="mt-3 space-y-3">
             <div>
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white leading-tight">
-                  {word.word}
-                </h3>
-                <span className="hidden sm:inline-flex text-[11px] font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-white/5 dark:text-gray-200">
-                  {word.category}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                <span className="font-semibold text-gray-800 dark:text-gray-100">Meaning:</span>{" "}
-                {word.meaning}
+              <p className="text-xs font-semibold tracking-tight text-text">
+                Word of the Day
+              </p>
+              <p className="text-[11px] font-medium text-text-muted">
+                Improve Communication Skills
               </p>
             </div>
-
-            <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
-              <span className="font-semibold text-gray-800 dark:text-gray-100">Example:</span> “
-              {word.example}”
-            </p>
-
-            <div className="flex flex-wrap gap-2">
-              <span
-                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${styles.badge}`}
-              >
-                {word.difficulty}
-              </span>
-              <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-white/5 dark:text-gray-200">
-                {word.category}
-              </span>
-            </div>
           </div>
 
-          {/* Actions */}
-          <div className="mt-4 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onCopy}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-gray-900/30 hover:bg-white dark:hover:bg-gray-900 transition-all duration-200"
-              >
-                <Copy className="w-4 h-4 text-gray-700 dark:text-gray-200" />
-                <span className="text-xs font-semibold text-gray-800 dark:text-gray-100">Copy</span>
-              </button>
+          <span
+            className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${styles.badge}`}
+          >
+            {word.difficulty}
+          </span>
+        </div>
 
-              <button
-                type="button"
-                onClick={onSave}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-gray-900/30 hover:bg-white dark:hover:bg-gray-900 transition-all duration-200"
-              >
-                {isSaved ? (
-                  <Check className="w-4 h-4 text-emerald-500" />
-                ) : (
-                  <Bookmark className="w-4 h-4 text-gray-700 dark:text-gray-200" />
-                )}
-                <span className="text-xs font-semibold text-gray-800 dark:text-gray-100">
-                  {isSaved ? "Saved" : "Save"}
-                </span>
-              </button>
-            </div>
+        {/* Content */}
+        <div className="mt-3.5 space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-lg sm:text-xl font-bold text-text leading-tight tracking-tight">
+              {word.word}
+            </h3>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-surface-2 text-text-subtle border border-border">
+              {word.category}
+            </span>
+          </div>
+
+          <p className="text-xs text-text leading-relaxed">
+            <span className="font-semibold text-text">Meaning:</span> {word.meaning}
+          </p>
+
+          <div className="p-2.5 rounded-lg bg-surface-2 border border-border">
+            <p className="text-xs text-text-muted italic leading-relaxed">
+              "{word.example}"
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-4 flex items-center justify-between gap-2 pt-2 border-t border-border">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onCopy}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-surface hover:bg-surface-2 text-text text-xs font-medium cursor-pointer transition"
+            >
+              <Copy className="w-3.5 h-3.5 text-text-subtle" />
+              <span>Copy</span>
+            </button>
 
             <button
               type="button"
-              onClick={onShare}
-              className="inline-flex items-center justify-center px-3 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 hover:from-purple-500/15 hover:to-indigo-500/15 transition-all duration-200"
-              aria-label="Share word"
+              onClick={onSave}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-surface hover:bg-surface-2 text-text text-xs font-medium cursor-pointer transition"
             >
-              <Share2 className="w-4 h-4 text-gray-800 dark:text-gray-100" />
+              {isSaved ? (
+                <Check className="w-3.5 h-3.5 text-success" />
+              ) : (
+                <Bookmark className="w-3.5 h-3.5 text-text-subtle" />
+              )}
+              <span>{isSaved ? "Saved" : "Save"}</span>
             </button>
           </div>
 
-          {/* Hidden scaffold modal */}
-          <WordSavedModalScaffold open={modalOpen} onClose={() => setModalOpen(false)} />
+          <button
+            type="button"
+            onClick={onShare}
+            className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border bg-surface hover:bg-surface-2 text-text-subtle hover:text-text cursor-pointer transition"
+            aria-label="Share word"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+          </button>
         </div>
+
+        {/* Hidden scaffold modal */}
+        <WordSavedModalScaffold open={modalOpen} onClose={() => setModalOpen(false)} />
 
         {/* Toast */}
         {toast?.message ? (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
-            <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-xs shadow-lg">
+            <div className="px-3 py-1 rounded-full bg-surface-2 text-text text-xs border border-border shadow-card font-medium">
               {toast.message}
             </div>
           </div>

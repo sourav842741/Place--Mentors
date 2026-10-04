@@ -1,29 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
     <linearGradient id="g1" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#7c3aed"></stop>
-      <stop offset="50%" stop-color="#2563eb"></stop>
-      <stop offset="100%" stop-color="#22d3ee"></stop>
+      <stop offset="0%" stop-color="#047857"></stop>
+      <stop offset="100%" stop-color="#059669"></stop>
     </linearGradient>
 
     <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#4f46e5"></stop>
-      <stop offset="100%" stop-color="#22d3ee"></stop>
+      <stop offset="0%" stop-color="#059669"></stop>
+      <stop offset="100%" stop-color="#34D399"></stop>
     </linearGradient>
   </defs>
 
-  <!-- Background -->
-  <rect x="4" y="4" width="56" height="56" rx="18" fill="#050816"></rect>
+  <!-- Background: Deep EdTech Emerald Slate -->
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="#0A1210" stroke="#24342E" stroke-width="1.5"></rect>
 
-  <!-- Stylized P -->
+  <!-- Stylized P in clean professional emerald green -->
   <path d="M20 50V18H37C46 18 50 23 50 30C50 38 45 42 37 42H28V50H20ZM28 35H36C40 35 42 33 42 30C42 27 40 25 36 25H28V35Z" fill="url(#g1)"></path>
 
   <!-- Growth bars -->
-  <rect x="26" y="42" width="4" height="8" rx="1" fill="url(#g2)"></rect>
-  <rect x="33" y="38" width="4" height="12" rx="1" fill="url(#g2)"></rect>
-  <rect x="40" y="33" width="4" height="17" rx="1" fill="url(#g2)"></rect>
+  <rect x="26" y="42" width="4" height="8" rx="1.5" fill="url(#g2)"></rect>
+  <rect x="33" y="38" width="4" height="12" rx="1.5" fill="url(#g2)"></rect>
+  <rect x="40" y="33" width="4" height="17" rx="1.5" fill="url(#g2)"></rect>
 
-  <!-- Arrow -->
-  <path d="M31 39L39 31L44 34L51 24" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
-  <path d="M47 24H51V28" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+  <!-- Accent Arrow: Amber gold growth trajectory -->
+  <path d="M31 39L39 31L44 34L51 24" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+  <path d="M47 24H51V28" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
 </svg>

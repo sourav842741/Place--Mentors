@@ -66,11 +66,10 @@ import { toast } from "sonner";
 import { fetchAdminLatestNews } from "../../services/api";
 
 const cardStyle =
-  "border border-gray-200 bg-white text-gray-900 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-white";
-
+  "border border-border bg-surface text-text shadow-sm rounded-2xl";
 
 const softCard =
-  "border border-gray-200 bg-gradient-to-br from-white to-gray-50 text-gray-900 shadow-sm dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900 dark:text-white";
+  "border border-border bg-surface text-text shadow-sm rounded-2xl";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#6b7280"];
 
@@ -80,7 +79,6 @@ const AdminDashboard = () => {
   const { stats: ticketStats, loadTicketStats } = useAdminTickets();
 
   const [newsLoading, setNewsLoading] = useState(false);
-
 
   useEffect(() => {
     loadTicketStats();
@@ -137,14 +135,14 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-[500px] flex flex-col items-center justify-center p-8 text-center">
-        <BarChart3 className="w-16 h-16 text-gray-400 mb-5" />
+      <div className="min-h-[500px] flex flex-col items-center justify-center p-8 text-center text-text">
+        <BarChart3 className="w-16 h-16 text-text-subtle mb-5" />
 
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-bold text-text">
           Failed to load analytics
         </h2>
 
-        <p className="text-gray-500 dark:text-zinc-400 mt-2 mb-6">{error}</p>
+        <p className="text-text-muted mt-2 mb-6">{error}</p>
 
         <Button onClick={refetch}>Retry</Button>
       </div>
@@ -162,7 +160,7 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="space-y-8 p-6 min-h-screen bg-gray-50 text-gray-900 dark:bg-[#050505] dark:text-white lg:ml-64 transition-all">
+    <div className="space-y-8 p-4 sm:p-6 min-h-screen bg-bg text-text lg:ml-72 transition-colors duration-200">
       {/* HEADER */}
       <motion.div
         initial={{
@@ -174,11 +172,11 @@ const AdminDashboard = () => {
           y: 0,
         }}
       >
-        <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-text">
           Admin Dashboard
         </h1>
 
-        <p className="text-gray-500 dark:text-zinc-400 mt-2">Real-time platform analytics</p>
+        <p className="text-text-muted mt-2">Real-time platform analytics</p>
       </motion.div>
 
       {/* 📰 Admin Manual Trigger: Fetch Latest News */}
@@ -192,7 +190,7 @@ const AdminDashboard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <p className="text-sm text-gray-600 dark:text-zinc-400 max-w-xl">
+          <p className="text-sm text-text-muted max-w-xl">
             Fetch the latest NewsData articles immediately.
           </p>
 
@@ -220,7 +218,7 @@ const AdminDashboard = () => {
               }
             }}
             disabled={newsLoading}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:bg-gradient-to-r hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6"
+            className="bg-primary hover:bg-primary-hover text-white rounded-xl px-6 font-semibold shadow-md shadow-primary/20"
           >
             {newsLoading ? (
               <>
@@ -830,9 +828,9 @@ const MetricCard = ({ title, value, icon: Icon, color }) => (
   <Card className={cardStyle}>
     <CardContent className="p-5 flex justify-between items-center">
       <div>
-        <p className="text-sm text-gray-500 dark:text-zinc-400">{title}</p>
+        <p className="text-sm text-text-muted">{title}</p>
 
-        <h3 className="text-2xl font-bold mt-1">{value}</h3>
+        <h3 className="text-2xl font-bold mt-1 text-text">{value}</h3>
       </div>
 
       <Icon className={`w-6 h-6 ${color}`} />
@@ -841,10 +839,10 @@ const MetricCard = ({ title, value, icon: Icon, color }) => (
 );
 
 const MiniBox = ({ label, value }) => (
-  <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
-    <p className="text-sm text-gray-500 dark:text-zinc-400">{label}</p>
+  <div className="rounded-xl border border-border bg-surface-2 p-4 text-text">
+    <p className="text-sm text-text-muted">{label}</p>
 
-    <h4 className="text-xl font-bold mt-1">{value}</h4>
+    <h4 className="text-xl font-bold mt-1 text-text">{value}</h4>
   </div>
 );
 
@@ -853,12 +851,12 @@ const FeatureMiniCard = ({ label, today, week, icon: Icon, color }) => (
     <CardContent className="p-4">
       <div className="flex items-center justify-between mb-3">
         <Icon className={`w-5 h-5 ${color}`} />
-        <span className="text-xs font-medium text-gray-400 dark:text-zinc-500">Today / Week</span>
+        <span className="text-xs font-medium text-text-subtle">Today / Week</span>
       </div>
-      <p className="text-sm text-gray-500 dark:text-zinc-400">{label}</p>
-      <h4 className="text-xl font-bold mt-1">
+      <p className="text-sm text-text-muted">{label}</p>
+      <h4 className="text-xl font-bold mt-1 text-text">
         {today}
-        <span className="text-sm font-normal text-gray-400 ml-1">/ {week}</span>
+        <span className="text-sm font-normal text-text-subtle ml-1">/ {week}</span>
       </h4>
     </CardContent>
   </Card>
