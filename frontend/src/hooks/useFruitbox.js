@@ -16,13 +16,35 @@ const useFruitbox = () => {
 
   const progressPercent = ((progress?.completedLevels?.length || 0) / 15) * 100;
 
-  const normalizeCSS = (css) => css.trim().replace(/\s+/g, " ").toLowerCase();
+  const normalizeCSS = (css) =>
+    (css || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/\s*;\s*/g, ";")
+      .replace(/\s*:\s*/g, ":")
+      .toLowerCase();
 
   const validateSolution = useCallback(
     (inputCSS) => {
+      if (!inputCSS || !inputCSS.trim()) return false;
       const normInput = normalizeCSS(inputCSS);
 
-      return currentLevel.acceptedAnswers.some((ans) => normInput.includes(normalizeCSS(ans)));
+      return currentLevel.acceptedAnswers.some((ans) => {
+        const normAns = normalizeCSS(ans);
+        if (normInput.includes(normAns)) return true;
+
+        // Check if user omitted the trailing semicolon
+        const withoutSemi = normAns.replace(/;$/, "");
+        if (normInput.includes(withoutSemi)) return true;
+
+        // If answer has multiple declarations, check if all parts exist in input
+        const parts = normAns.split(";").map((p) => p.trim()).filter(Boolean);
+        if (parts.length > 1) {
+          return parts.every((part) => normInput.includes(part));
+        }
+
+        return false;
+      });
     },
     [currentLevel]
   );

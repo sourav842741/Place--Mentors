@@ -12,6 +12,7 @@ import {
   calendarCallback,
   getCalendarStatus,
   analyzeResume,
+  deletePlanner,
 } from "../controllers/planner.controller.js";
 import { upload } from "../middlewares/multer.js";
 import isAuth from "../middlewares/isAuth.js";
@@ -30,6 +31,7 @@ router.get("/calendar/status", maintenanceCheck, isAuth, getCalendarStatus);
 router.get("/all", maintenanceCheck, isAuth, getAllPlanners);
 router.get("/user", maintenanceCheck, isAuth, getAllPlanners);
 router.get("/:id", maintenanceCheck, isAuth, getPlannerById);
+router.delete("/:id", maintenanceCheck, isAuth, deletePlanner);
 
 router.post("/analyze-resume", maintenanceCheck, isAuth, upload.single("resume"), analyzeResume);
 

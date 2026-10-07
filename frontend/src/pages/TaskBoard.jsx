@@ -9,18 +9,51 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  ListTodo,
+  Columns,
+  LayoutGrid,
+  RefreshCw,
+  Search,
+  X,
+  Filter,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  BookOpen,
+  Briefcase,
+  User,
+  Sparkles,
+  ArrowRight,
+  Flame,
+} from "lucide-react";
 import { toast } from "sonner";
 import useTasks from "../hooks/useTasks";
 import TaskStats from "../components/tasks/TaskStats";
 import TaskCard from "../components/tasks/TaskCard";
 import TaskForm from "../components/tasks/TaskForm";
-import TaskFilters from "../components/tasks/TaskFilters";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { ListTodo, Filter, RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Footer from "@/components/Footer";
+
+// Starter Goal Templates for Students
+const STARTER_TEMPLATES = [
+  { title: "Solve 2 LeetCode Medium Problems", category: "Study", priority: "High" },
+  { title: "Tailor Resume for SDE / Frontend Internships", category: "Job", priority: "High" },
+  { title: "Revise Operating Systems & DBMS Core Topics", category: "Study", priority: "Medium" },
+  { title: "Practice 1 Mock Behavioral Interview", category: "Job", priority: "Medium" },
+  { title: "Solve Today's Coding POTD on PlaceMentor", category: "Study", priority: "High" },
+];
 
 const TaskBoard = () => {
   const { user } = useSelector((state) => state.user);
@@ -40,7 +73,9 @@ const TaskBoard = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editTask, setEditTask] = useState(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [viewMode, setViewMode] = useState("kanban"); // 'kanban' | 'grid'
+  const [prefilledForm, setPrefilledForm] = useState(null);
+
   const [filters, setFilters] = useState({
     searchTerm: "",
     categoryFilter: "",
@@ -50,68 +85,68 @@ const TaskBoard = () => {
   });
 
   // Filter and sort tasks
-  const applyFilters = useCallback(
-    (tasksList) => {
-      let filtered = [...tasksList];
+  const filteredTasks = useMemo(() => {
+    let result = [...tasks];
 
-      // Search
-      if (filters.searchTerm) {
-        filtered = filtered.filter((task) =>
-          task.title.toLowerCase().includes(filters.searchTerm.toLowerCase())
-        );
+    // Search
+    if (filters.searchTerm) {
+      const q = filters.searchTerm.toLowerCase();
+      result = result.filter(
+        (t) =>
+          t.title.toLowerCase().includes(q) ||
+          (t.description && t.description.toLowerCase().includes(q))
+      );
+    }
+
+    // Category
+    if (filters.categoryFilter && filters.categoryFilter !== "all") {
+      result = result.filter((t) => t.category === filters.categoryFilter);
+    }
+
+    // Status
+    if (filters.statusFilter && filters.statusFilter !== "all") {
+      if (filters.statusFilter === "Completed") {
+        result = result.filter((t) => t.completed);
+      } else if (filters.statusFilter === "Pending") {
+        result = result.filter((t) => !t.completed);
       }
+    }
 
-      // Category
-      if (filters.categoryFilter) {
-        filtered = filtered.filter((task) => task.category === filters.categoryFilter);
-      }
+    // Priority
+    if (filters.priorityFilter && filters.priorityFilter !== "all") {
+      result = result.filter((t) => t.priority === filters.priorityFilter);
+    }
 
-      // Status
-      if (filters.statusFilter) {
-        if (filters.statusFilter === "Completed") {
-          filtered = filtered.filter((task) => task.completed);
-        } else if (filters.statusFilter === "Pending") {
-          filtered = filtered.filter((task) => !task.completed);
-        }
-      }
+    // Sort
+    switch (filters.sortBy) {
+      case "oldest":
+        result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+      case "due-soon":
+        result.sort((a, b) => {
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate) - new Date(b.dueDate);
+        });
+        break;
+      case "priority":
+        const pOrder = { High: 1, Medium: 2, Low: 3 };
+        result.sort((a, b) => (pOrder[a.priority] || 4) - (pOrder[b.priority] || 4));
+        break;
+      case "newest":
+      default:
+        result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+    }
 
-      // Priority
-      if (filters.priorityFilter) {
-        filtered = filtered.filter((task) => task.priority === filters.priorityFilter);
-      }
-
-      // Sort
-      switch (filters.sortBy) {
-        case "oldest":
-          filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-          break;
-        case "due-soon":
-          filtered.sort((a, b) => {
-            if (!a.dueDate && !b.dueDate) return 0;
-            if (!a.dueDate) return 1;
-            if (!b.dueDate) return -1;
-            return new Date(a.dueDate) - new Date(b.dueDate);
-          });
-          break;
-        case "newest":
-        default:
-          filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          break;
-      }
-
-      return filtered;
-    },
-    [filters]
-  );
-
-  useEffect(() => {
-    setFilteredTasks(applyFilters(tasks));
-  }, [tasks, applyFilters]);
+    return result;
+  }, [tasks, filters]);
 
   const activeFiltersCount = [
-    filters.categoryFilter,
-    filters.statusFilter,
-    filters.priorityFilter,
+    filters.categoryFilter && filters.categoryFilter !== "all",
+    filters.statusFilter && filters.statusFilter !== "all",
+    filters.priorityFilter && filters.priorityFilter !== "all",
   ].filter(Boolean).length;
 
   const clearFilters = () => {
@@ -128,10 +163,10 @@ const TaskBoard = () => {
     try {
       await createTask(formData);
       setShowCreateDialog(false);
-      toast.success("Task created successfully!");
+      setPrefilledForm(null);
       refetchStats();
     } catch (error) {
-      // Error toast handled in thunk
+      // Toast handled in thunk
     }
   };
 
@@ -140,10 +175,9 @@ const TaskBoard = () => {
       await updateTask(editTask._id, formData);
       setShowEditDialog(false);
       setEditTask(null);
-      toast.success("Task updated successfully!");
       refetchStats();
     } catch (error) {
-      // Error toast handled in thunk
+      // Toast handled in thunk
     }
   };
 
@@ -152,168 +186,484 @@ const TaskBoard = () => {
     setShowEditDialog(true);
   };
 
-  if (isLoading && tasks.length === 0) {
-    return (
-      <>
-        <Navbar />
-        <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-12 w-12 rounded-xl" />
-              <div className="space-y-2">
-                <Skeleton className="h-8 w-64" />
-                <Skeleton className="h-4 w-48" />
-              </div>
-            </div>
-            <TaskStats />
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-48 w-full rounded-2xl" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
+  const handleUseTemplate = (template) => {
+    setPrefilledForm(template);
+    setShowCreateDialog(true);
+  };
+
+  // Kanban Columns
+  const pendingTasks = filteredTasks.filter((t) => !t.completed && t.priority !== "High");
+  const urgentTasks = filteredTasks.filter((t) => !t.completed && t.priority === "High");
+  const completedTasks = filteredTasks.filter((t) => t.completed);
 
   return (
     <>
       <Navbar />
-      <div className="pt-24 lg:pt-24 lg:pl-64 px-4 md:px-8 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-9 h-9 bg-primary-soft text-primary rounded-lg flex items-center justify-center border border-primary/20">
-                  <ListTodo className="w-5 h-5 text-primary" />
+      <div className="pt-20 lg:pt-20 lg:pl-64 px-3 sm:px-6 pb-12 bg-bg min-h-screen text-text transition-colors duration-200">
+        <div className="max-w-[1600px] mx-auto space-y-5">
+          {/* Top Bar Header */}
+          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                <ListTodo className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-bold tracking-tight text-text">Task Board</h1>
+                  <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
+                    {tasks.length} {tasks.length === 1 ? "Task" : "Tasks"}
+                  </Badge>
                 </div>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
-                    Task Board
-                  </h1>
-                  <p className="text-xs text-text-muted">
-                    Organize your placement prep, daily goals & revision schedule
-                  </p>
-                </div>
+                <p className="text-xs text-text-muted">
+                  Organize daily placement prep goals, interview revisions & deadlines
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Button onClick={refetchTasks} variant="outline" size="sm" disabled={isLoading}>
-                {isLoading ? (
-                  <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-                ) : (
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                )}
-                Refresh
+            {/* Header Right Controls */}
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {/* View Switcher */}
+              <div className="flex items-center p-1 bg-muted/60 rounded-xl border border-border">
+                <button
+                  onClick={() => setViewMode("kanban")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                    viewMode === "kanban"
+                      ? "bg-card text-text shadow-xs font-semibold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                  title="Kanban Board View"
+                >
+                  <Columns className="w-3.5 h-3.5" />
+                  <span>Kanban</span>
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                    viewMode === "grid"
+                      ? "bg-card text-text shadow-xs font-semibold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                  title="Grid Cards View"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>Grid</span>
+                </button>
+              </div>
+
+              {/* Refresh Button */}
+              <Button
+                onClick={() => {
+                  refetchTasks();
+                  refetchStats();
+                }}
+                variant="outline"
+                size="sm"
+                disabled={isLoading}
+                className="h-9 px-3 text-xs"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isLoading ? "animate-spin" : ""}`} />
+                Sync
               </Button>
-              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+
+              {/* Create Task Button */}
+              <Dialog
+                open={showCreateDialog}
+                onOpenChange={(open) => {
+                  setShowCreateDialog(open);
+                  if (!open) setPrefilledForm(null);
+                }}
+              >
                 <DialogTrigger asChild>
-                  <Button size="lg" className="group">
-                    <Plus className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-all duration-200" />
+                  <Button className="h-9 px-4 text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs">
+                    <Plus className="w-4 h-4 mr-1.5" />
                     Create Task
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl p-0">
-                  <DialogHeader className="p-6 border-b">
-                    <DialogTitle className="text-2xl font-bold">Create New Task</DialogTitle>
+                <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl">
+                  <DialogHeader className="p-5 border-b border-border bg-card">
+                    <DialogTitle className="text-xl font-bold text-text flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-primary" />
+                      Create New Placement Task
+                    </DialogTitle>
                   </DialogHeader>
-                  <div className="p-6">
-                    <TaskForm onSuccess={handleCreateTask} />
+                  <div className="p-5">
+                    <TaskForm
+                      task={prefilledForm}
+                      isOpen={showCreateDialog}
+                      onSuccess={handleCreateTask}
+                      onClose={() => setShowCreateDialog(false)}
+                    />
                   </div>
                 </DialogContent>
               </Dialog>
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Compact Performance & KPI Ribbon */}
           <TaskStats />
 
-          {/* Filters */}
-          <Card className="mt-8 mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                Filters & Search
-                {activeFiltersCount > 0 && (
-                  <Badge className="text-xs">{activeFiltersCount} active</Badge>
+          {/* Streamlined Filter & Search Toolbar */}
+          <div className="p-3.5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+              {/* Search Bar */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted h-4 w-4" />
+                <Input
+                  placeholder="Search tasks by title or keyword..."
+                  value={filters.searchTerm}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, searchTerm: e.target.value }))
+                  }
+                  className="pl-9 pr-8 h-9 text-xs bg-muted/40 border-border focus:ring-1 focus:ring-primary rounded-xl"
+                />
+                {filters.searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setFilters((prev) => ({ ...prev, searchTerm: "" }))}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <TaskFilters
-                {...filters}
-                activeFiltersCount={activeFiltersCount}
-                setSearchTerm={(term) => setFilters((prev) => ({ ...prev, searchTerm: term }))}
-                setCategoryFilter={(cat) =>
-                  setFilters((prev) => ({ ...prev, categoryFilter: cat }))
-                }
-                setStatusFilter={(status) =>
-                  setFilters((prev) => ({ ...prev, statusFilter: status }))
-                }
-                setPriorityFilter={(prio) =>
-                  setFilters((prev) => ({ ...prev, priorityFilter: prio }))
-                }
-                setSortBy={(sort) => setFilters((prev) => ({ ...prev, sortBy: sort }))}
-                clearFilters={clearFilters}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Tasks Grid */}
-          <div className="space-y-6">
-            {filteredTasks.length === 0 ? (
-              <Card>
-                <CardContent className="py-20 text-center">
-                  <ListTodo className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
-                    {isLoading ? "Loading tasks..." : "No tasks found"}
-                  </h3>
-                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    {isLoading
-                      ? "Fetching your tasks..."
-                      : filters.searchTerm || activeFiltersCount > 0
-                        ? "Try adjusting your filters or search terms"
-                        : "Get started by creating your first task above."}
-                  </p>
-                  {!isLoading && (
-                    <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-                      <DialogTrigger asChild>
-                        <Button size="lg">
-                          <Plus className="w-5 h-5 mr-2" />
-                          Create First Task
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl p-0">
-                        <DialogHeader className="p-6 border-b">
-                          <DialogTitle className="text-2xl font-bold">Create New Task</DialogTitle>
-                        </DialogHeader>
-                        <div className="p-6">
-                          <TaskForm onSuccess={handleCreateTask} />
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  )}
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredTasks.map((task) => (
-                  <TaskCard key={task._id} task={task} onEdit={() => handleEditTask(task)} />
-                ))}
               </div>
-            )}
+
+              {/* Filter Controls Row */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Priority Filter */}
+                <Select
+                  value={filters.priorityFilter || "all"}
+                  onValueChange={(val) =>
+                    setFilters((prev) => ({ ...prev, priorityFilter: val === "all" ? "" : val }))
+                  }
+                >
+                  <SelectTrigger className="h-9 text-xs px-3 min-w-[120px] rounded-xl bg-muted/40 border-border">
+                    <SelectValue placeholder="Priority: All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="High">🔴 High Priority</SelectItem>
+                    <SelectItem value="Medium">🟡 Medium</SelectItem>
+                    <SelectItem value="Low">🔵 Low</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Status Filter */}
+                <Select
+                  value={filters.statusFilter || "all"}
+                  onValueChange={(val) =>
+                    setFilters((prev) => ({ ...prev, statusFilter: val === "all" ? "" : val }))
+                  }
+                >
+                  <SelectTrigger className="h-9 text-xs px-3 min-w-[110px] rounded-xl bg-muted/40 border-border">
+                    <SelectValue placeholder="Status: All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="Pending">⏳ Pending</SelectItem>
+                    <SelectItem value="Completed">✅ Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Sort By */}
+                <Select
+                  value={filters.sortBy || "newest"}
+                  onValueChange={(val) => setFilters((prev) => ({ ...prev, sortBy: val }))}
+                >
+                  <SelectTrigger className="h-9 text-xs px-3 min-w-[110px] rounded-xl bg-muted/40 border-border">
+                    <SelectValue placeholder="Sort" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="due-soon">Due Soonest</SelectItem>
+                    <SelectItem value="priority">Priority First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Clear Filters Button if any active */}
+                {(activeFiltersCount > 0 || filters.searchTerm) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="h-9 px-2.5 text-xs text-text-muted hover:text-text rounded-xl"
+                  >
+                    <X className="w-3.5 h-3.5 mr-1" />
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Category Chips Row */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-border/50">
+              <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mr-1">
+                Category:
+              </span>
+              {[
+                { id: "all", label: "All Categories", count: tasks.length },
+                {
+                  id: "Study",
+                  label: "Study",
+                  icon: BookOpen,
+                  count: tasks.filter((t) => t.category === "Study").length,
+                  color: "text-purple-500",
+                },
+                {
+                  id: "Job",
+                  label: "Job Prep",
+                  icon: Briefcase,
+                  count: tasks.filter((t) => t.category === "Job").length,
+                  color: "text-emerald-500",
+                },
+                {
+                  id: "Personal",
+                  label: "Personal",
+                  icon: User,
+                  count: tasks.filter((t) => t.category === "Personal").length,
+                  color: "text-pink-500",
+                },
+              ].map((cat) => {
+                const isActive =
+                  (!filters.categoryFilter && cat.id === "all") ||
+                  filters.categoryFilter === cat.id;
+                const Icon = cat.icon;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        categoryFilter: cat.id === "all" ? "" : cat.id,
+                      }))
+                    }
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                      isActive
+                        ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+                        : "bg-muted/50 text-text-muted hover:bg-muted hover:text-text"
+                    }`}
+                  >
+                    {Icon && <Icon className={`w-3 h-3 ${isActive ? "" : cat.color}`} />}
+                    <span>{cat.label}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                        isActive
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-background/80 text-text-muted"
+                      }`}
+                    >
+                      {cat.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {/* MAIN CONTENT AREA */}
+          {tasks.length === 0 ? (
+            /* INSPIRING EMPTY STATE WITH QUICK-STARTER GOALS */
+            <Card className="rounded-2xl border border-border bg-card shadow-xs">
+              <CardContent className="py-12 sm:py-16 text-center max-w-2xl mx-auto space-y-6">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center mx-auto shadow-xs">
+                  <ListTodo className="w-8 h-8 text-primary" />
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-xl sm:text-2xl font-bold text-text">
+                    Your Task Board is Ready
+                  </h3>
+                  <p className="text-sm text-text-muted max-w-md mx-auto">
+                    Track daily coding goals, company applications, and revision deadlines to stay ahead in your placement journey.
+                  </p>
+                </div>
+
+                <div className="pt-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3">
+                    🚀 Quick-Add Placement Prep Goals
+                  </span>
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {STARTER_TEMPLATES.map((tmpl, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleUseTemplate(tmpl)}
+                        className="px-3 py-2 rounded-xl text-xs font-medium bg-muted/40 hover:bg-muted border border-border hover:border-primary/40 text-text transition-all flex items-center gap-2 text-left group shadow-2xs"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-primary group-hover:scale-125 transition-transform" />
+                        <span>{tmpl.title}</span>
+                        <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+                          {tmpl.category}
+                        </Badge>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    onClick={() => {
+                      setPrefilledForm(null);
+                      setShowCreateDialog(true);
+                    }}
+                    size="lg"
+                    className="px-6 rounded-xl font-semibold shadow-xs"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Custom Task
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : filteredTasks.length === 0 ? (
+            /* NO RESULTS MATCHING FILTERS */
+            <Card className="rounded-2xl border border-border bg-card">
+              <CardContent className="py-16 text-center space-y-3">
+                <Filter className="w-10 h-10 text-text-muted mx-auto opacity-50" />
+                <h4 className="text-lg font-bold text-text">No tasks match your filters</h4>
+                <p className="text-xs text-text-muted max-w-sm mx-auto">
+                  Try adjusting or clearing your search term, category, or status filters.
+                </p>
+                <Button onClick={clearFilters} variant="outline" size="sm" className="mt-2">
+                  Reset All Filters
+                </Button>
+              </CardContent>
+            </Card>
+          ) : viewMode === "kanban" ? (
+            /* KANBAN BOARD VIEW */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+              {/* Column 1: To Do / Pending */}
+              <div className="p-3.5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/60">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-text">
+                      To Do / Pending
+                    </span>
+                    <Badge variant="secondary" className="text-xs font-mono px-2 py-0">
+                      {pendingTasks.length}
+                    </Badge>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setPrefilledForm({ priority: "Medium" });
+                      setShowCreateDialog(true);
+                    }}
+                    className="h-6 w-6 p-0 text-text-muted hover:text-text"
+                    title="Add task in To Do"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+
+                <div className="space-y-3 min-h-[200px]">
+                  {pendingTasks.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-text-muted/60 border border-dashed border-border/60 rounded-xl">
+                      No pending tasks
+                    </div>
+                  ) : (
+                    pendingTasks.map((t) => (
+                      <TaskCard key={t._id} task={t} onEdit={handleEditTask} />
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Column 2: High Priority / Focus */}
+              <div className="p-3.5 rounded-2xl bg-card border border-rose-500/20 shadow-xs space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/60">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                      Urgent & Focus
+                    </span>
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-mono px-2 py-0 bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                    >
+                      {urgentTasks.length}
+                    </Badge>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setPrefilledForm({ priority: "High" });
+                      setShowCreateDialog(true);
+                    }}
+                    className="h-6 w-6 p-0 text-text-muted hover:text-rose-500"
+                    title="Add Urgent task"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+
+                <div className="space-y-3 min-h-[200px]">
+                  {urgentTasks.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-text-muted/60 border border-dashed border-border/60 rounded-xl">
+                      No urgent tasks pending 🎉
+                    </div>
+                  ) : (
+                    urgentTasks.map((t) => (
+                      <TaskCard key={t._id} task={t} onEdit={handleEditTask} />
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Column 3: Completed */}
+              <div className="p-3.5 rounded-2xl bg-card border border-emerald-500/20 shadow-xs space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/60">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                      Completed
+                    </span>
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-mono px-2 py-0 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                    >
+                      {completedTasks.length}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="space-y-3 min-h-[200px]">
+                  {completedTasks.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-text-muted/60 border border-dashed border-border/60 rounded-xl">
+                      No completed tasks yet
+                    </div>
+                  ) : (
+                    completedTasks.map((t) => (
+                      <TaskCard key={t._id} task={t} onEdit={handleEditTask} />
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* GRID CARDS VIEW */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredTasks.map((task) => (
+                <TaskCard key={task._id} task={task} onEdit={handleEditTask} />
+              ))}
+            </div>
+          )}
 
           {/* Edit Dialog */}
           <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-            <DialogContent className="max-w-2xl p-0">
-              <DialogHeader className="p-6 border-b">
-                <DialogTitle className="text-2xl font-bold">Edit Task</DialogTitle>
+            <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl">
+              <DialogHeader className="p-5 border-b border-border bg-card">
+                <DialogTitle className="text-xl font-bold text-text">Edit Task</DialogTitle>
               </DialogHeader>
-              <div className="p-6">
-                <TaskForm task={editTask} onSuccess={handleUpdateTask} />
+              <div className="p-5">
+                <TaskForm
+                  task={editTask}
+                  isOpen={showEditDialog}
+                  onSuccess={handleUpdateTask}
+                  onClose={() => setShowEditDialog(false)}
+                />
               </div>
             </DialogContent>
           </Dialog>

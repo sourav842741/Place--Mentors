@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import PDFDocument from "pdfkit";
 import { askAi, extractJSON } from "../services/openRouter.service.js";
 import CoachChat from "../models/CoachChat.js";
 import { generateAI } from "../services/ai.service.js";
@@ -817,32 +818,107 @@ if (template === "modern") {
 </html>`;
 }
 
-   const browser = await puppeteer.launch({
-  executablePath: puppeteer.executablePath(),
-  headless: true,
-  args: [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-gpu",
-  ],
-});
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
-    const pdf = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-    });
-    await browser.close();
+    try {
+      const browser = await puppeteer.launch({
+        executablePath: puppeteer.executablePath(),
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+        ],
+      });
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: "networkidle0" });
+      const pdf = await page.pdf({
+        format: "A4",
+        printBackground: true,
+        margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+      });
+      await browser.close();
+
+      res.set({
+        "Content-Type": "application/pdf",
+        "Content-Disposition": 'attachment; filename="resume-' + template + '.pdf"',
+      });
+      return res.send(pdf);
+    } catch (puppeteerErr) {
+      console.warn("Puppeteer launch failed on environment, falling back to PDFKit:", puppeteerErr.message);
+      return generatePDFWithPDFKit(req.body, res);
+    }
+  } catch (error) {
+    console.error("PDF generation general error, falling back to PDFKit:", error);
+    try {
+      return generatePDFWithPDFKit(req.body, res);
+    } catch (fallbackErr) {
+      console.error("PDFKit fallback failed:", fallbackErr);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "PDF generation failed" });
+      }
+    }
+  }
+};
+
+const generatePDFWithPDFKit = (data, res) => {
+  try {
+    const doc = new PDFDocument({ margin: 40, size: "A4" });
+    const filename = `resume-${(data.name || "placement-resume").toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`;
 
     res.set({
       "Content-Type": "application/pdf",
-      "Content-Disposition": 'attachment; filename="resume-' + template + '.pdf"',
+      "Content-Disposition": `attachment; filename="${filename}"`,
     });
-    res.send(pdf);
-  } catch (error) {
-    console.error("PDF ERROR:", error);
-    res.status(500).json({ error: "PDF failed" });
+    doc.pipe(res);
+
+    // Header - Candidate Name
+    doc.fontSize(22).font("Helvetica-Bold").fillColor("#111827").text(data.name || "Your Name", { align: "center" });
+    doc.moveDown(0.2);
+
+    // Contact details line
+    const contactParts = [data.email, data.phone, data.linkedin, data.github].filter(Boolean);
+    if (contactParts.length > 0) {
+      doc.fontSize(9.5).font("Helvetica").fillColor("#4B5563").text(contactParts.join("  |  "), { align: "center" });
+    }
+    doc.moveDown(0.6);
+
+    // Horizontal divider
+    doc.strokeColor("#D1D5DB").lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+    doc.moveDown(0.6);
+
+    const renderSection = (title, content) => {
+      if (!content || !content.trim()) return;
+      doc.fontSize(11.5).font("Helvetica-Bold").fillColor("#1E40AF").text(title.toUpperCase());
+      doc.moveDown(0.15);
+      doc.strokeColor("#93C5FD").lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+      doc.moveDown(0.35);
+
+      doc.fontSize(9.5).font("Helvetica").fillColor("#1F2937");
+      const lines = content.split("\n").map((l) => l.trim()).filter(Boolean);
+      for (const line of lines) {
+        if (line.startsWith("•") || line.startsWith("-")) {
+          doc.text(`  •  ${line.replace(/^[•\-*]\s*/, "")}`, { lineGap: 2.5 });
+        } else {
+          doc.text(line, { lineGap: 2.5 });
+        }
+      }
+      doc.moveDown(0.6);
+    };
+
+    renderSection("Professional Summary", data.summary);
+    if (data.skills) {
+      renderSection("Technical Skills", data.skills);
+    }
+    renderSection("Work Experience", data.experience);
+    renderSection("Key Projects", data.projects);
+    renderSection("Education", data.education);
+    renderSection("Certifications & Achievements", data.achievements);
+
+    doc.end();
+  } catch (err) {
+    console.error("PDFKit fallback execution error:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to generate PDF via fallback" });
+    }
   }
 };

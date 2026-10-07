@@ -393,3 +393,20 @@ body {
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in;
 }
+
+/* Suppress rogue Mermaid error elements leaking into body/footer */
+body > svg[id*="mermaid"],
+body > div[id*="mermaid"],
+body > #dmermaid,
+#dmermaid,
+#mermaid-error,
+.mermaid-error {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
+

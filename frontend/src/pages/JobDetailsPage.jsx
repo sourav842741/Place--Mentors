@@ -56,7 +56,28 @@ const JobDetailsPage = () => {
 
   const formatDate = (dateStr) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : "Recently Posted";
-  const formatSalary = (salary) => (salary ? `$${parseInt(salary).toLocaleString()}+ / yr` : null);
+  const formatSalary = (salary) => {
+    if (!salary) return "Competitive";
+    const s = String(salary).trim();
+    if (/not disclosed|competitive|doe|negotiable|unspecified/i.test(s)) return "Competitive";
+    if (
+      s.includes("k") ||
+      s.includes("K") ||
+      s.includes("LPA") ||
+      s.includes("lpa") ||
+      s.includes("₹") ||
+      s.includes("$") ||
+      s.includes("€") ||
+      s.includes("£")
+    ) {
+      return s.replace(/^\$+\s*/, "$").replace(/\$+/g, "$");
+    }
+    const num = Number(s);
+    if (!isNaN(num)) {
+      return num >= 1000 ? `$${Math.round(num / 1000)}k/yr` : `$${num}k/yr`;
+    }
+    return s;
+  };
 
   // Loading Skeleton
   if (loading) {

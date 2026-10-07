@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -64,7 +64,7 @@ import TicketDetailPage from "./pages/TicketDetailPage";
 import AdminTickets from "./pages/admin/AdminTickets";
 import SettingsSecurity from "./pages/SettingsSecurity";
 import AdminPayments from "./pages/admin/AdminPayments";
-import InterviewExperienceComingSoon from "./pages/InterviewExperienceComingSoon";
+import InterviewExperience from "./pages/InterviewExperience";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 /* Components */
@@ -290,6 +290,8 @@ function App() {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/ai-planner" element={<AIPlanner />} />
           <Route path="/planner-history" element={<PlannerHistory />} />
+          <Route path="/planner history" element={<Navigate to="/planner-history" replace />} />
+          <Route path="/planner%20history" element={<Navigate to="/planner-history" replace />} />
           <Route path="/ai-planner/:id" element={<AIPlanner />} />
           <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
           <Route path="/resume-generator" element={<ResumeGenerator />} />
@@ -308,6 +310,8 @@ function App() {
           <Route path="/dashboard/tasks" element={<TaskBoard />} />
           <Route path="/dashboard/fruitbox-flex" element={<FruitboxFlex />} />
           <Route path="/ai-coach" element={<AICoach />} />
+          <Route path="/ai coach" element={<Navigate to="/ai-coach" replace />} />
+          <Route path="/ai%20coach" element={<Navigate to="/ai-coach" replace />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/battle/:roomId" element={<BattlePage />} />
@@ -319,7 +323,9 @@ function App() {
           <Route path="/support" element={<SupportPage />} />
           <Route path="/support/ticket/:id" element={<TicketDetailPage />} />
           <Route path="/payments" element={<Payments />} />
-          <Route path="/interview-experience" element={<InterviewExperienceComingSoon />} />
+          <Route path="/interview-experience" element={<InterviewExperience />} />
+          <Route path="/interview experience" element={<Navigate to="/interview-experience" replace />} />
+          <Route path="/interview%20experience" element={<Navigate to="/interview-experience" replace />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/maintenance-hub" element={<MaintenanceProductivityHub />} />
         </Route>

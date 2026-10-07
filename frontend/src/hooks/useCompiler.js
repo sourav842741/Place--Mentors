@@ -17,15 +17,32 @@ const useCompiler = () => {
       return res;
     } catch (err) {
       console.error("Code execution error:", err);
-      setResult({ error: "Execution failed" });
+      const errResponse = {
+        success: false,
+        hasError: true,
+        errorCategory: "Execution Failed",
+        status: { id: -1, description: "Execution Error" },
+        output: err?.data?.message || err?.data?.error || err?.message || "Execution request failed",
+        stderr: err?.data?.error || err?.message || "",
+        compile_output: "",
+        stdout: "",
+        time: "0.00s",
+        memory: "N/A",
+      };
+      setResult(errResponse);
+      return errResponse;
     }
   };
 
+  const clearResult = () => setResult(null);
+
   return {
     executeCode,
+    clearResult,
     isLoading,
     error,
     result,
+    setResult,
   };
 };
 

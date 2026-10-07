@@ -44,6 +44,7 @@ import certificateRouter from "./routes/certificate.routes.js";
 import predictionRoutes from "./routes/prediction.routes.js";
 import ticketRouter from "./routes/ticket.routes.js";
 import supportRouter from "./routes/support.routes.js";
+import interviewExperienceRoutes from "./routes/interviewExperience.routes.js";
 import setupSecurity from "./middlewares/security.js";
 import { attachSocketAuth } from "./middlewares/socketAuth.js";
 import sessionsRouter from "./routes/sessions.routes.js";
@@ -316,6 +317,7 @@ app.use("/api/certificates", certificateRouter);
 app.use("/api/prediction", predictionRoutes);
 app.use("/api/tickets", ticketRouter);
 app.use("/api/support", supportRouter);
+app.use("/api/interview-experiences", interviewExperienceRoutes);
 
 // ================= SENTRY TEST =================
 app.use("/api", sentryTestRouter);

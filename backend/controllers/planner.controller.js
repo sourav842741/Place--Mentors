@@ -704,3 +704,23 @@ ${resumeText}`,
     res.status(500).json({ message: error.message });
   }
 };
+
+// DELETE PLANNER
+export const deletePlanner = async (req, res) => {
+  try {
+    const planner = await Planner.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user._id,
+    });
+
+    if (!planner) {
+      return res.status(404).json({ message: "Planner not found or unauthorized" });
+    }
+
+    res.json({ success: true, message: "Planner deleted successfully", id: req.params.id });
+  } catch (error) {
+    console.error("deletePlanner error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
